@@ -10,11 +10,11 @@
       <span class="block font-symbol text-6xl h-4 relative -top-6 text-purple-500">j</span>
     </div>
     <div class="relative md:col-span-2 flex-1 bg-white dark:bg-gray-900 p-0 shadow-xl dark:shadow-purple-400/20 ring-1 ring-gray-900/5 rounded-lg flex flex-row gap-4 items-end">
-      <div class="flex-1 flex-grow">
-        <input type="text" class="w-full border-0 dark:bg-gray-900 placeholder-shown:bg-gray-100 dark:placeholder-shown:bg-black focus:border-purple-600 focus:ring-0 font-title text-3xl p-4 rounded-l-lg" placeholder="Name" value="Choppy Pete">
+      <div class="flex-1 flex-grow h-full w-3/4">
+        <input type="text" class="w-full border-0 dark:bg-gray-900 placeholder-shown:bg-gray-100 dark:placeholder-shown:bg-black focus:border-purple-600 focus:ring-0 font-title text-3xl p-4 rounded-l-lg h-full" placeholder="Name" value="Choppy Pete">
       </div>
-      <div class="h-full">
-        <input type="text" class="border-0 w-full dark:bg-gray-900 placeholder-shown:bg-gray-100 dark:placeholder-shown:bg-black focus:border-purple-600 focus:ring-0 font-title text-2xl p-4 rounded-r-lg h-full" placeholder="Pronouns" value="he/them">
+      <div class="h-full w-1/4 min-w-[8.125rem]">
+        <input type="text" class="border-0 w-full  dark:bg-gray-900 placeholder-shown:bg-gray-100 dark:placeholder-shown:bg-black focus:border-purple-600 focus:ring-0 font-title text-2xl p-4 rounded-r-lg h-full" placeholder="Pronouns" value="he/them">
       </div>
     </div>
     <div class="relative overflow-hidden rounded-lg bg-white shadow-xl dark:bg-gray-900 dark:shadow-purple-400/20 ring-1 ring-gray-900/5  flex flex-col gap-6">
