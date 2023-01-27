@@ -4,17 +4,17 @@
 <div class="relative flex min-h-screen flex-col justify-start overflow-hidden bg-gray-50 dark:bg-gray-800 py-6 px-4 gap-4">
   <!-- <img src="/img/beams.jpg" alt="" class="absolute top-1/2 left-1/2 max-w-none -translate-x-1/2 -translate-y-1/2" width="1308" /> -->
   <div class="absolute inset-0 bg-[url(/img/grid.svg)] dark:invert bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]"></div>
-  <div class="grid grid-cols-3 gap-4">
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
     <div class="relative justify-self-center text-center">
       <h1 class="text-4xl font-title">Brighter Worlds</h1>
       <span class="block font-symbol text-6xl h-4 relative -top-6 text-purple-500">j</span>
     </div>
-    <div class="relative col-span-2 flex-1 bg-white dark:bg-gray-900 p-0 shadow-xl dark:shadow-purple-400/20 ring-1 ring-gray-900/5 sm:rounded-lg flex flex-row gap-4 items-end">
-      <div class="flex-1">
-        <input type="text" class="w-full border-0 dark:bg-gray-900 placeholder-shown:bg-gray-100 dark:placeholder-shown:bg-black focus:border-purple-600 focus:ring-0 font-title text-3xl p-4 sm:rounded-l-lg" placeholder="Name" value="Choppy Pete">
+    <div class="relative md:col-span-2 flex-1 bg-white dark:bg-gray-900 p-0 shadow-xl dark:shadow-purple-400/20 ring-1 ring-gray-900/5 rounded-lg flex flex-row gap-4 items-end">
+      <div class="flex-1 flex-grow">
+        <input type="text" class="w-full border-0 dark:bg-gray-900 placeholder-shown:bg-gray-100 dark:placeholder-shown:bg-black focus:border-purple-600 focus:ring-0 font-title text-3xl p-4 rounded-l-lg" placeholder="Name" value="Choppy Pete">
       </div>
       <div class="h-full">
-        <input type="text" class="border-0 dark:bg-gray-900 placeholder-shown:bg-gray-100 dark:placeholder-shown:bg-black focus:border-purple-600 focus:ring-0 font-title text-2xl w-48 p-4 sm:rounded-r-lg h-full" placeholder="Pronouns" value="he/them">
+        <input type="text" class="border-0 w-full dark:bg-gray-900 placeholder-shown:bg-gray-100 dark:placeholder-shown:bg-black focus:border-purple-600 focus:ring-0 font-title text-2xl p-4 rounded-r-lg h-full" placeholder="Pronouns" value="he/them">
       </div>
     </div>
     <div class="relative overflow-hidden rounded-lg bg-white shadow-xl dark:bg-gray-900 dark:shadow-purple-400/20 ring-1 ring-gray-900/5  flex flex-col gap-6">
@@ -207,7 +207,7 @@
         </div>
       </div>
     </div>
-    <div class="col-span-2 relative divide-y divide-gray-200 dark:divide-gray-600 overflow-hidden rounded-lg bg-white shadow-xl dark:bg-gray-900 dark:shadow-purple-400/20 ring-1 ring-gray-900/5">
+    <div class="md:col-span-2 relative divide-y divide-gray-200 dark:divide-gray-600 overflow-hidden rounded-lg bg-white shadow-xl dark:bg-gray-900 dark:shadow-purple-400/20 ring-1 ring-gray-900/5">
       <div class="px-4 py-5 sm:px-6">
         <div class="-ml-4 -mt-4 flex flex-wrap items-center justify-between sm:flex-nowrap">
           <div class="ml-4 mt-4 flex w-full gap-8">
