@@ -1,6 +1,25 @@
+<script lang="ts">
+    import Modal from '$lib/Modal.svelte';
+import { roll } from '$lib/rolling/roll';
+import Name from "$lib/sheet/Name.svelte";
+
+let dieRoll = 0;
+let dieLabel = '';
+
+function showRoll(sides: number) {
+  dieRoll = roll(sides);
+  dieLabel = `d${sides} = ${dieRoll}`;
+  console.log(`d${sides} =`, dieRoll);
+}
+
+function closeModal() {
+  dieRoll = 0;
+}
+</script>
 <svelte:head>
   <title>Demo Brighter Worlds character sheet</title>
 </svelte:head>
+<Modal on:close={closeModal} show={dieRoll > 0} label={dieLabel}/>
 <div class="relative flex min-h-screen flex-col justify-start overflow-hidden bg-gray-50 dark:bg-gray-800 py-6 px-4 gap-4">
   <!-- <img src="/img/beams.jpg" alt="" class="absolute top-1/2 left-1/2 max-w-none -translate-x-1/2 -translate-y-1/2" width="1308" /> -->
   <div class="absolute inset-0 bg-[url(/img/grid.svg)] dark:invert bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]"></div>
@@ -9,14 +28,7 @@
       <h1 class="text-4xl font-title">Brighter Worlds</h1>
       <span class="block font-symbol text-6xl h-4 relative -top-6 text-purple-500">j</span>
     </div>
-    <div class="relative md:col-span-2 flex-1 bg-white dark:bg-gray-900 p-0 shadow-xl dark:shadow-purple-400/20 ring-1 ring-gray-900/5 rounded-lg flex flex-row gap-4 items-end">
-      <div class="flex-1 flex-grow h-full w-3/4">
-        <input type="text" class="w-full border-0 dark:bg-gray-900 placeholder-shown:bg-gray-100 dark:placeholder-shown:bg-black focus:border-purple-600 focus:ring-0 font-title text-3xl p-4 rounded-l-lg h-full" placeholder="Name" value="Choppy Pete">
-      </div>
-      <div class="h-full w-1/4 min-w-[8.125rem]">
-        <input type="text" class="border-0 w-full  dark:bg-gray-900 placeholder-shown:bg-gray-100 dark:placeholder-shown:bg-black focus:border-purple-600 focus:ring-0 font-title text-2xl p-4 rounded-r-lg h-full" placeholder="Pronouns" value="he/them">
-      </div>
-    </div>
+    <Name />
     <div class="relative overflow-hidden rounded-lg bg-white shadow-xl dark:bg-gray-900 dark:shadow-purple-400/20 ring-1 ring-gray-900/5  flex flex-col gap-6">
       <div class="px-4 py-5 sm:px-6 flex flex-col gap-4">
         <div class="grid grid-cols-8 items-center">
@@ -101,7 +113,7 @@
                     <p class="truncate text-sm font-medium">Colorful Rapier</p>
                   </div>
                   <div class="flex gap-2 items-center">
-                    <button class="inline-flex items-center  text-sm font-medium leading-5"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="w-5"><path fill="currentColor" d="M431.9 116.1l-192-111.9C235 1.438 229.5 0 224 0S213 1.438 208.1 4.25l-192 111.9C6.125 121.1 0 132.7 0 144.5v223c0 11.75 6.125 22.48 16.12 28.36l192 111.9C213 510.6 218.5 512 224 512s11-1.438 15.88-4.25l192-111.9C441.9 390 448 379.3 448 367.5V144.5C448 132.7 441.9 121.1 431.9 116.1zM224 32.1l175.8 102.9L224 237.5l-176.1-102.8L224 32.1zM32.25 162.6L208 265.1v205.4L32 367.5L32.25 162.6zM240 470.9V265.1L416 162.5l-.25 205.8L240 470.9z"/></svg></button>
+                    <button class="inline-flex items-center text-sm font-medium leading-5" on:click={() => showRoll(6)}><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="w-5"><path fill="currentColor" d="M431.9 116.1l-192-111.9C235 1.438 229.5 0 224 0S213 1.438 208.1 4.25l-192 111.9C6.125 121.1 0 132.7 0 144.5v223c0 11.75 6.125 22.48 16.12 28.36l192 111.9C213 510.6 218.5 512 224 512s11-1.438 15.88-4.25l192-111.9C441.9 390 448 379.3 448 367.5V144.5C448 132.7 441.9 121.1 431.9 116.1zM224 32.1l175.8 102.9L224 237.5l-176.1-102.8L224 32.1zM32.25 162.6L208 265.1v205.4L32 367.5L32.25 162.6zM240 470.9V265.1L416 162.5l-.25 205.8L240 470.9z"/></svg></button>
                   </div>
                 </div>
               </li>
