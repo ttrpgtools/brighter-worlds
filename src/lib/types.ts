@@ -8,7 +8,7 @@ interface Attribute<T = number> {
 
 interface Entity {
   name: string;
-  desc: string;
+  desc?: string;
 }
 
 interface UsableEntity extends Entity {
@@ -34,5 +34,5 @@ export interface Character {
   eulogy: string;
   spells: UsableEntity[];
   rituals: UsableEntity[];
-  notes: string;
+  notes?: string;
 }

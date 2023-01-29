@@ -1,10 +1,30 @@
 <script lang="ts">
-    import Modal from '$lib/Modal.svelte';
+import Modal from '$lib/Modal.svelte';
 import { roll } from '$lib/rolling/roll';
 import Name from "$lib/sheet/Name.svelte";
+import Card from "$lib/sheet/Card.svelte";
+    import type { Character } from '$lib/types';
 
 let dieRoll = 0;
 let dieLabel = '';
+
+const character: Character = {
+  name: 'Choppy Pete',
+  pronouns: 'he/them',
+  grit: { current: 4, max: 4 },
+  str: { current: 8, max: 8 },
+  dex: { current: 4, max: 4 },
+  wil: { current: 6, max: 6 },
+  statuses: new Set<string>(),
+  equipment: [],
+  calling: { name: 'Devoted' },
+  abilities: [],
+  eulogy: 'He is a fine warrior.',
+  xp: 0,
+  spells: [],
+  rituals: [],
+  notes: '',
+};
 
 function showRoll(sides: number) {
   dieRoll = roll(sides);
@@ -205,34 +225,20 @@ function closeModal() {
         </div>
       </div>
     </div>
-    <div class="relative divide-y divide-gray-200 dark:divide-gray-600 overflow-hidden rounded-lg bg-white shadow-xl dark:bg-gray-900 dark:shadow-purple-400/20 ring-1 ring-gray-900/5">
-      <div class="px-4 py-5 sm:px-6">
-        <div class="-ml-4 -mt-4 flex flex-wrap items-center justify-between sm:flex-nowrap">
-          <div class="ml-4 mt-4">
-            <h3 class="text-xl font-subtitle leading-6 flex-1">Eulogy / Notes</h3>
-          </div>
-        </div>
-      </div>
+    <Card title="Eulogy / Notes">
       <div class="h-full">
-        <div class="h-full">
-          <textarea rows="4" name="comment" id="comment" class="block w-full dark:bg-gray-900 rounded-b-lg border-0 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm h-full px-4 py-5 sm:p-6"></textarea>
-        </div>
+        <div id="eulogy" class="block min-h-[4rem] w-full dark:bg-gray-900 border-0 shadow-sm sm:text-sm">{character.eulogy}</div>
       </div>
-    </div>
-    <div class="md:col-span-2 relative divide-y divide-gray-200 dark:divide-gray-600 overflow-hidden rounded-lg bg-white shadow-xl dark:bg-gray-900 dark:shadow-purple-400/20 ring-1 ring-gray-900/5">
-      <div class="px-4 py-5 sm:px-6">
-        <div class="-ml-4 -mt-4 flex flex-wrap items-center justify-between sm:flex-nowrap">
-          <div class="ml-4 mt-4 flex w-full gap-8">
-            <h3 class="text-xl font-subtitle leading-6 flex-1">Spells</h3>
-            <h3 class="text-xl font-subtitle leading-6 flex-1">Rituals</h3>
-          </div>
-        </div>
-      </div>
+    </Card>
+    <Card title="Spells">
       <div class="h-full">
-        <div class="h-full">
-          <textarea rows="4" name="comment" id="comment" class="block w-full dark:bg-gray-900 rounded-b-lg border-0 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm h-full px-4 py-5 sm:p-6"></textarea>
-        </div>
+        <div id="spells" class="block min-h-[4rem] w-full dark:bg-gray-900 border-0 shadow-sm sm:text-sm"></div>
       </div>
-    </div>
+    </Card>
+    <Card title="Rituals">
+      <div class="h-full">
+        <div id="rituals" class="block min-h-[4rem] w-full dark:bg-gray-900 border-0 shadow-sm sm:text-sm"></div>
+      </div>
+    </Card>
   </div>
 </div>
