@@ -1,31 +1,32 @@
 
-type Die = 4 | 6 | 8 | 10 | 12;
+export type DieValue = 4 | 6 | 8 | 10 | 12;
 
-interface Attribute<T = number> {
+export interface Attribute<T = number> {
   current: T;
   max: T;
 }
 
-interface Entity {
+export interface Entity {
   name: string;
   desc?: string;
 }
 
-interface UsableEntity extends Entity {
-  damage?: Die;
+export interface UsableEntity extends Entity {
+  damage?: DieValue;
 }
 
-interface Item extends UsableEntity {
+export interface Item extends UsableEntity {
   bulky: boolean;
+  armor?: number;
 }
 
 export interface Character {
   name: string;
   pronouns: string;
   grit: Attribute;
-  str: Attribute<Die>;
-  dex: Attribute<Die>;
-  wil: Attribute<Die>;
+  str: Attribute<DieValue>;
+  dex: Attribute<DieValue>;
+  wil: Attribute<DieValue>;
   statuses: Set<string>;
   xp: number;
   equipment: Item[];

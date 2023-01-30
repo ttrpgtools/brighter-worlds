@@ -3,10 +3,13 @@ import Modal from '$lib/Modal.svelte';
 import { roll } from '$lib/rolling/roll';
 import Name from "$lib/sheet/Name.svelte";
 import Card from "$lib/sheet/Card.svelte";
-    import type { Character } from '$lib/types';
+    import type { Character, DieValue } from '$lib/types';
+    import Attribute from '$lib/sheet/Attribute.svelte';
+    import DieSelector from '$lib/sheet/DieSelector.svelte';
 
 let dieRoll = 0;
 let dieLabel = '';
+let dice: DieValue[] = [];
 
 const character: Character = {
   name: 'Choppy Pete',
@@ -16,7 +19,12 @@ const character: Character = {
   dex: { current: 4, max: 4 },
   wil: { current: 6, max: 6 },
   statuses: new Set<string>(),
-  equipment: [],
+  equipment: [
+    { name: 'Colorful Rapier', desc: 'Bright pink slender sword.', damage: 6, bulky: false },
+    { name: 'Plate Mail', desc: 'So nice you could eat off them.', bulky: true, armor: 2 },
+    { name: 'Old fashioned Cloak', desc: 'Always a classic.', bulky: false },
+    { name: 'Flexible 10-foot pole', desc: 'Why is it so droopy?', bulky: false },
+  ],
   calling: { name: 'Devoted' },
   abilities: [],
   eulogy: 'He is a fine warrior.',
@@ -26,10 +34,27 @@ const character: Character = {
   notes: '',
 };
 
-function showRoll(sides: number) {
-  dieRoll = roll(sides);
-  dieLabel = `d${sides} = ${dieRoll}`;
-  console.log(`d${sides} =`, dieRoll);
+function showRoll(sides: DieValue[], label: string = '') {
+  dice = sides;
+  const [first, second] = sides;
+  let interim = roll(first);
+  if (second) {
+    const secondValue = roll(second);
+    console.log('first', interim, 'second', secondValue);
+    if (secondValue > interim) {
+      interim = secondValue;
+    }
+  }
+  dieRoll = interim;
+  label = label || `d${sides}`;
+  dieLabel = `${label} = ${dieRoll}`;
+  console.log(`${label} =`, dieRoll);
+}
+
+function save(ev: CustomEvent<{ dice: DieValue[] }>, stat: string) {
+  const dice = ev.detail.dice;
+  const label = `${stat} Save`;
+  showRoll(dice, label);
 }
 
 function closeModal() {
@@ -39,7 +64,7 @@ function closeModal() {
 <svelte:head>
   <title>Demo Brighter Worlds character sheet</title>
 </svelte:head>
-<Modal on:close={closeModal} show={dieRoll > 0} label={dieLabel}/>
+<Modal on:close={closeModal} show={dieRoll > 0} label={dieLabel} {dice}/>
 <div class="relative flex min-h-screen flex-col justify-start overflow-hidden bg-gray-50 dark:bg-gray-800 py-6 px-4 gap-4">
   <!-- <img src="/img/beams.jpg" alt="" class="absolute top-1/2 left-1/2 max-w-none -translate-x-1/2 -translate-y-1/2" width="1308" /> -->
   <div class="absolute inset-0 bg-[url(/img/grid.svg)] dark:invert bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]"></div>
@@ -48,50 +73,15 @@ function closeModal() {
       <h1 class="text-4xl font-title">Brighter Worlds</h1>
       <span class="block font-symbol text-6xl h-4 relative -top-6 text-purple-500">j</span>
     </div>
-    <Name />
+    <Name bind:name={character.name} bind:pronouns={character.pronouns} />
     <div class="relative overflow-hidden rounded-lg bg-white shadow-xl dark:bg-gray-900 dark:shadow-purple-400/20 ring-1 ring-gray-900/5  flex flex-col gap-6">
       <div class="px-4 py-5 sm:px-6 flex flex-col gap-4">
-        <div class="grid grid-cols-8 items-center">
-          <div class="font-subtitle text-2xl col-span-2">Grit</div>
-          <div class="col-span-2 relative">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="w-12"><path fill="currentColor" d="M384 32C419.3 32 448 60.65 448 96V416C448 451.3 419.3 480 384 480H64C28.65 480 0 451.3 0 416V96C0 60.65 28.65 32 64 32H384zM384 64H64C46.33 64 32 78.33 32 96V416C32 433.7 46.33 448 64 448H384C401.7 448 416 433.7 416 416V96C416 78.33 401.7 64 384 64z"/></svg>
-            <span class="absolute font-subtitle text-4xl w-12 text-center top-[40%] -translate-y-1/2 leading-none">4</span>
-          </div>
-          <span class="text-2xl">/</span>
-          <span class="text-3xl w-6 text-center font-subtitle">4</span>
-          <div class="flex-1 text-right col-span-2">
-            <button type="button" class="inline-flex items-center rounded-full border border-transparent bg-purple-300 dark:bg-purple-700 px-2 py-0.25 text-xs font-medium shadow-sm hover:bg-purple-200 dark:hover:bg-purple-800 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="w-6"><path fill="currentColor" d="M352 256C352 238.3 366.3 224 384 224C401.7 224 416 238.3 416 256C416 273.7 401.7 288 384 288C366.3 288 352 273.7 352 256zM192 256C192 238.3 206.3 224 224 224C241.7 224 256 238.3 256 256C256 273.7 241.7 288 224 288C206.3 288 192 273.7 192 256zM96 256C96 273.7 81.67 288 64 288C46.33 288 32 273.7 32 256C32 238.3 46.33 224 64 224C81.67 224 96 238.3 96 256z"/></svg></button>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-8 items-center">
-          <div class="font-subtitle text-2xl col-span-2">STR</div>
-          <div class="col-span-2"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="w-12"><path fill="currentColor" d="M512 256c0-8.643-3.305-17.32-9.868-23.88l-222.2-222.3C273.3 3.26 264.6 0 256 0S238.7 3.26 232.1 9.887L9.868 232.1C3.305 238.7 0 247.4 0 256s3.305 17.27 9.868 23.84l222.2 222.3C238.7 508.7 247.2 512 256 512s17.26-3.26 23.89-9.887l222.2-222.3C508.7 273.4 512 264.7 512 256zM239.1 464.9L61.23 285.9l178.8 76.64V464.9zM239.1 327.8L43.72 243.7L239.1 47.26V327.8zM272 464.9v-102.3l178.8-76.64L272 464.9zM272 327.8v-280.6L468.3 243.7L272 327.8z"/></svg></div>
-          <span class="text-2xl">/</span>
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="w-6"><path fill="currentColor" d="M512 256c0-8.643-3.305-17.32-9.868-23.88l-222.2-222.3C273.3 3.26 264.6 0 256 0S238.7 3.26 232.1 9.887L9.868 232.1C3.305 238.7 0 247.4 0 256s3.305 17.27 9.868 23.84l222.2 222.3C238.7 508.7 247.2 512 256 512s17.26-3.26 23.89-9.887l222.2-222.3C508.7 273.4 512 264.7 512 256zM239.1 464.9L61.23 285.9l178.8 76.64V464.9zM239.1 327.8L43.72 243.7L239.1 47.26V327.8zM272 464.9v-102.3l178.8-76.64L272 464.9zM272 327.8v-280.6L468.3 243.7L272 327.8z"/></svg>
-          <div class="flex-1 text-right col-span-2">
-            <button type="button" class="inline-flex items-center rounded-full border border-transparent bg-purple-300 dark:bg-purple-700 px-2 py-0.25 text-xs font-medium shadow-sm hover:bg-purple-200 dark:hover:bg-purple-800 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="w-6"><path fill="currentColor" d="M352 256C352 238.3 366.3 224 384 224C401.7 224 416 238.3 416 256C416 273.7 401.7 288 384 288C366.3 288 352 273.7 352 256zM192 256C192 238.3 206.3 224 224 224C241.7 224 256 238.3 256 256C256 273.7 241.7 288 224 288C206.3 288 192 273.7 192 256zM96 256C96 273.7 81.67 288 64 288C46.33 288 32 273.7 32 256C32 238.3 46.33 224 64 224C81.67 224 96 238.3 96 256z"/></svg></button>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-8 items-center">
-          <div class="font-subtitle text-2xl col-span-2">DEX</div>
-          <div class="col-span-2"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="w-12"><path fill="currentColor" d="M512 309.1c0-7.05-2.318-14.15-7.127-20.07l-224-277.1C274.5 3.1 265.2 0 256 0C246.8 0 237.5 3.1 231.1 11.88l-224 277.1C2.318 294.9 0 302 0 309.1c0 9.625 4.319 19.15 12.62 25.43l224 170.1C242.4 509.9 249.1 512 256 512c6.875 0 13.62-2.135 19.37-6.51l224-170.1C507.7 328.2 512 318.7 512 309.1zM32.01 309.1L240 51.75v416L32.01 309.1zM271.1 467.9v-416l207.1 257.3L271.1 467.9z"/></svg></div>
-          <span class="text-2xl">/</span>
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="w-6"><path fill="currentColor" d="M512 309.1c0-7.05-2.318-14.15-7.127-20.07l-224-277.1C274.5 3.1 265.2 0 256 0C246.8 0 237.5 3.1 231.1 11.88l-224 277.1C2.318 294.9 0 302 0 309.1c0 9.625 4.319 19.15 12.62 25.43l224 170.1C242.4 509.9 249.1 512 256 512c6.875 0 13.62-2.135 19.37-6.51l224-170.1C507.7 328.2 512 318.7 512 309.1zM32.01 309.1L240 51.75v416L32.01 309.1zM271.1 467.9v-416l207.1 257.3L271.1 467.9z"/></svg>
-          <div class="flex-1 text-right col-span-2">
-            <button type="button" class="inline-flex items-center rounded-full border border-transparent bg-purple-300 dark:bg-purple-700 px-2 py-0.25 text-xs font-medium shadow-sm hover:bg-purple-200 dark:hover:bg-purple-800 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="w-6"><path fill="currentColor" d="M352 256C352 238.3 366.3 224 384 224C401.7 224 416 238.3 416 256C416 273.7 401.7 288 384 288C366.3 288 352 273.7 352 256zM192 256C192 238.3 206.3 224 224 224C241.7 224 256 238.3 256 256C256 273.7 241.7 288 224 288C206.3 288 192 273.7 192 256zM96 256C96 273.7 81.67 288 64 288C46.33 288 32 273.7 32 256C32 238.3 46.33 224 64 224C81.67 224 96 238.3 96 256z"/></svg></button>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-8 items-center">
-          <div class="font-subtitle text-2xl col-span-2">WIL</div>
-          <div class="col-span-2"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="w-12"><path fill="currentColor" d="M431.9 116.1l-192-111.9C235 1.438 229.5 0 224 0S213 1.438 208.1 4.25l-192 111.9C6.125 121.1 0 132.7 0 144.5v223c0 11.75 6.125 22.48 16.12 28.36l192 111.9C213 510.6 218.5 512 224 512s11-1.438 15.88-4.25l192-111.9C441.9 390 448 379.3 448 367.5V144.5C448 132.7 441.9 121.1 431.9 116.1zM224 32.1l175.8 102.9L224 237.5l-176.1-102.8L224 32.1zM32.25 162.6L208 265.1v205.4L32 367.5L32.25 162.6zM240 470.9V265.1L416 162.5l-.25 205.8L240 470.9z"/></svg></div>
-          <span class="text-2xl">/</span>
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="w-6"><path fill="currentColor" d="M431.9 116.1l-192-111.9C235 1.438 229.5 0 224 0S213 1.438 208.1 4.25l-192 111.9C6.125 121.1 0 132.7 0 144.5v223c0 11.75 6.125 22.48 16.12 28.36l192 111.9C213 510.6 218.5 512 224 512s11-1.438 15.88-4.25l192-111.9C441.9 390 448 379.3 448 367.5V144.5C448 132.7 441.9 121.1 431.9 116.1zM224 32.1l175.8 102.9L224 237.5l-176.1-102.8L224 32.1zM32.25 162.6L208 265.1v205.4L32 367.5L32.25 162.6zM240 470.9V265.1L416 162.5l-.25 205.8L240 470.9z"/></svg>
-          <div class="flex-1 text-right col-span-2">
-            <button type="button" class="inline-flex items-center rounded-full border border-transparent bg-purple-300 dark:bg-purple-700 px-2 py-0.25 text-xs font-medium shadow-sm hover:bg-purple-200 dark:hover:bg-purple-800 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="w-6"><path fill="currentColor" d="M352 256C352 238.3 366.3 224 384 224C401.7 224 416 238.3 416 256C416 273.7 401.7 288 384 288C366.3 288 352 273.7 352 256zM192 256C192 238.3 206.3 224 224 224C241.7 224 256 238.3 256 256C256 273.7 241.7 288 224 288C206.3 288 192 273.7 192 256zM96 256C96 273.7 81.67 288 64 288C46.33 288 32 273.7 32 256C32 238.3 46.33 224 64 224C81.67 224 96 238.3 96 256z"/></svg></button>
-          </div>
+        <Attribute name="Grit" num={character.grit} numerical={true} />
+        <Attribute name="STR" value={character.str} on:roll={(ev) => save(ev, 'STR')} />
+        <Attribute name="DEX" value={character.dex} on:roll={(ev) => save(ev, 'DEX')} />
+        <Attribute name="WIL" value={character.wil} on:roll={(ev) => save(ev, 'WIL')} />
+        <div class="flex">
+          <DieSelector bind:current={character.str.current} />
         </div>
         
         <div>
@@ -133,7 +123,7 @@ function closeModal() {
                     <p class="truncate text-sm font-medium">Colorful Rapier</p>
                   </div>
                   <div class="flex gap-2 items-center">
-                    <button class="inline-flex items-center text-sm font-medium leading-5" on:click={() => showRoll(6)}><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="w-5"><path fill="currentColor" d="M431.9 116.1l-192-111.9C235 1.438 229.5 0 224 0S213 1.438 208.1 4.25l-192 111.9C6.125 121.1 0 132.7 0 144.5v223c0 11.75 6.125 22.48 16.12 28.36l192 111.9C213 510.6 218.5 512 224 512s11-1.438 15.88-4.25l192-111.9C441.9 390 448 379.3 448 367.5V144.5C448 132.7 441.9 121.1 431.9 116.1zM224 32.1l175.8 102.9L224 237.5l-176.1-102.8L224 32.1zM32.25 162.6L208 265.1v205.4L32 367.5L32.25 162.6zM240 470.9V265.1L416 162.5l-.25 205.8L240 470.9z"/></svg></button>
+                    <button class="inline-flex items-center text-sm font-medium leading-5" on:click={() => showRoll([6], 'Damage')}><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="w-5"><path fill="currentColor" d="M431.9 116.1l-192-111.9C235 1.438 229.5 0 224 0S213 1.438 208.1 4.25l-192 111.9C6.125 121.1 0 132.7 0 144.5v223c0 11.75 6.125 22.48 16.12 28.36l192 111.9C213 510.6 218.5 512 224 512s11-1.438 15.88-4.25l192-111.9C441.9 390 448 379.3 448 367.5V144.5C448 132.7 441.9 121.1 431.9 116.1zM224 32.1l175.8 102.9L224 237.5l-176.1-102.8L224 32.1zM32.25 162.6L208 265.1v205.4L32 367.5L32.25 162.6zM240 470.9V265.1L416 162.5l-.25 205.8L240 470.9z"/></svg></button>
                   </div>
                 </div>
               </li>
