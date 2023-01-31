@@ -9,7 +9,7 @@ const dispatch = createEventDispatcher();
 function rollSave(ev: MouseEvent) {
   if (value.current <= 0) return;
   const dice = [ev.altKey ? 4 : value.current];
-  if (!ev.altKey && ev.metaKey) {
+  if (!ev.altKey && ev.shiftKey) {
     dice.push(12);
   }
   dispatch('roll', { dice });
