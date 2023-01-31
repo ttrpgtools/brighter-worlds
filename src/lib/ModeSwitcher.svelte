@@ -16,8 +16,7 @@
   }
 
   onMount(() => {
-    const mode = window.localStorage.getItem('dark-mode');
-    setDarkTheme(mode === 'dark');
+    darkMode = document.documentElement.classList.contains('dark');
   });
 </script>
 <button class="absolute top-0 right-0 w-8 h-8 p-2" on:click={toggleMode}>
