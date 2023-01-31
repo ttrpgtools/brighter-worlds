@@ -1,4 +1,7 @@
 <script lang="ts">
+  import { onMount } from "svelte";
+
+
   let darkMode = false;
   const THEME_KEY = 'dark-mode';
 
@@ -11,6 +14,11 @@
     setDarkTheme(!darkMode);
     window.localStorage.setItem(THEME_KEY, darkMode ? 'dark' : 'light');
   }
+
+  onMount(() => {
+    const mode = window.localStorage.getItem('dark-mode');
+    setDarkTheme(mode === 'dark');
+  });
 </script>
 <button class="absolute top-0 right-0 w-8 h-8 p-2" on:click={toggleMode}>
   {#if darkMode}

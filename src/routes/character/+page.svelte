@@ -3,9 +3,17 @@ import Modal from '$lib/Modal.svelte';
 import { roll } from '$lib/rolling/roll';
 import Name from "$lib/sheet/Name.svelte";
 import Card from "$lib/sheet/Card.svelte";
-    import type { Character, DieValue } from '$lib/types';
-    import Attribute from '$lib/sheet/Attribute.svelte';
-    import DieSelector from '$lib/sheet/DieSelector.svelte';
+import type { Character, DieValue } from '$lib/types';
+import Attribute from '$lib/sheet/Attribute.svelte';
+import Equipment from '$lib/sheet/Equipment.svelte';
+import { renderUnsafe } from '$lib/md/render';
+import Grit from '$lib/sheet/Grit.svelte';
+import { stepDown } from '$lib/dice';
+const DEPRIVED = 'deprived';
+const PARALYSED = 'paralysed';
+const CATATONIC = 'catatonic';
+const DEAD = 'dead';
+const INCAPACITATED = 'incapacitated';
 
 let dieRoll = 0;
 let dieLabel = '';
@@ -18,21 +26,38 @@ const character: Character = {
   str: { current: 8, max: 8 },
   dex: { current: 4, max: 4 },
   wil: { current: 6, max: 6 },
-  statuses: new Set<string>(),
+  statuses: new Set<string>([]),
   equipment: [
     { name: 'Colorful Rapier', desc: 'Bright pink slender sword.', damage: 6, bulky: false },
-    { name: 'Plate Mail', desc: 'So nice you could eat off them.', bulky: true, armor: 2 },
+    { name: 'Decorated Armor', desc: 'Plates so nice you could eat off them.', bulky: true, armor: 1 },
     { name: 'Old fashioned Cloak', desc: 'Always a classic.', bulky: false },
     { name: 'Flexible 10-foot pole', desc: 'Why is it so droopy?', bulky: false },
   ],
   calling: { name: 'Devoted' },
-  abilities: [],
+  abilities: [
+    {
+      name: 'Devoted Oath',
+      core: true,
+      desc: `Choose a vow you must live by, and two boons your devotion grants you. If you break your vow, you lose your boons for a year and a day, or until you make amends.`,
+      details: '**Devotion:** My fair goddess of the light.\n\n**Vow:** Poverty\n\n**Boons:** Can\'t Stop Won\'t Stop, Weapon of Faith (Paired)'
+    },
+  ],
   eulogy: 'He is a fine warrior.',
   xp: 0,
   spells: [],
   rituals: [],
   notes: '',
 };
+
+const ENDGAME = {
+  str: { msg: 'You died.', status: DEAD },
+  dex: { msg: 'You are paralysed.', status: PARALYSED },
+  wil: { msg: 'You are catatonic.', status: CATATONIC },
+};
+
+function capitalize(word: string) {
+  return word[0].toUpperCase() + word.substring(1);
+}
 
 function showRoll(sides: DieValue[], label: string = '') {
   dice = sides;
@@ -57,9 +82,97 @@ function save(ev: CustomEvent<{ dice: DieValue[] }>, stat: string) {
   showRoll(dice, label);
 }
 
+function damage(ev: CustomEvent<{ dice: DieValue[], name: string }>) {
+  const dice = ev.detail.dice;
+  const name = ev.detail.name;
+  const label = `Damage from ${name}`;
+  showRoll(dice, label);
+}
+
+function rest() {
+  if (!character.statuses.has(DEPRIVED)) {
+    character.grit.current = character.grit.max;
+  }
+}
+
+function addGear() {
+  dieLabel = 'Not implemented (yet)';
+  dice = [];
+  dieRoll = 1;
+}
+
+function takeDamage(ev: CustomEvent<{ type: 'str' | 'dex' | 'wil' }>) {
+  const type = ev.detail.type;
+  const howmuch = prompt('How much potential damage?');
+  if (howmuch == null || howmuch === '') return;
+  const amount = parseInt(howmuch, 10);
+  if (Number.isNaN(amount)) return;
+  const totalArmor = character.equipment.reduce((p, c) => p + (!!c.armor ? c.armor : 0), 0);
+  let unmitigated = amount - totalArmor;
+  if (unmitigated <= 0) {
+    dieLabel = 'Your armor protected you from the damage.';
+    dieRoll = 1;
+    dice = [];
+    return;
+  }
+  if (character.grit.current > 0) {
+    const gritUsed = Math.min(character.grit.current, unmitigated);
+    character.grit.current -= gritUsed;
+    unmitigated -= gritUsed;
+  }
+  if (unmitigated <= 0) {
+    dieLabel = 'You managed to avoid damage through your grit.';
+    dieRoll = 1;
+    dice = [];
+    return;
+  }
+  const currentAttr = character[type].current;
+  if (currentAttr === 0) {
+    dieLabel = ENDGAME[type].msg;
+    character.statuses.delete(INCAPACITATED);
+    character.statuses.add(ENDGAME[type].status);
+    character.statuses = character.statuses;
+    dieRoll = 1;
+    dice = [];
+    return;
+  }
+  const saveAgainstDirectDamage = roll(currentAttr);
+  const critical = unmitigated >= saveAgainstDirectDamage;
+  if (critical) {
+    const newAttr = stepDown(currentAttr);
+    let ps = '';
+    if (newAttr === 0) {
+      ps = 'You are now incapacitated.';
+      character.statuses.add(INCAPACITATED);
+      character.statuses = character.statuses;
+    } else {
+      ps = `Your d${currentAttr} is now a d${newAttr}.`;
+    }
+    dieLabel = `You took ${unmitigated} direct damage, rolled a ${saveAgainstDirectDamage} and have taken critical damage. ${ps}`;
+    dieRoll = 1;
+    dice = [currentAttr];
+    character[type].current = newAttr;
+  } else {
+    dieLabel = `You took ${unmitigated} direct damage but rolled a ${saveAgainstDirectDamage} and avoided critical damage.`;
+    dieRoll = 1;
+    dice = [currentAttr];
+  }
+}
+
 function closeModal() {
   dieRoll = 0;
 }
+
+function toggleStatus(status: string) {
+  if (character.statuses.has(status)) {
+    character.statuses.delete(status);
+  } else {
+    character.statuses.add(status);
+  }
+  character.statuses = character.statuses;
+}
+
+$: isDeprived = character.statuses.has(DEPRIVED);
 </script>
 <svelte:head>
   <title>Demo Brighter Worlds character sheet</title>
@@ -68,166 +181,68 @@ function closeModal() {
 <div class="relative flex min-h-screen flex-col justify-start overflow-hidden bg-gray-50 dark:bg-gray-800 py-6 px-4 gap-4">
   <!-- <img src="/img/beams.jpg" alt="" class="absolute top-1/2 left-1/2 max-w-none -translate-x-1/2 -translate-y-1/2" width="1308" /> -->
   <div class="absolute inset-0 bg-[url(/img/grid.svg)] dark:invert bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]"></div>
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
     <div class="relative justify-self-center text-center">
       <h1 class="text-4xl font-title">Brighter Worlds</h1>
       <span class="block font-symbol text-6xl h-4 relative -top-6 text-purple-500">j</span>
     </div>
     <Name bind:name={character.name} bind:pronouns={character.pronouns} />
-    <div class="relative overflow-hidden rounded-lg bg-white shadow-xl dark:bg-gray-900 dark:shadow-purple-400/20 ring-1 ring-gray-900/5  flex flex-col gap-6">
+    <div class="relative rounded-lg bg-white shadow-xl dark:bg-gray-900 dark:shadow-purple-400/20 ring-1 ring-gray-900/5  flex flex-col gap-6">
       <div class="px-4 py-5 sm:px-6 flex flex-col gap-4">
-        <Attribute name="Grit" num={character.grit} numerical={true} />
-        <Attribute name="STR" value={character.str} on:roll={(ev) => save(ev, 'STR')} />
-        <Attribute name="DEX" value={character.dex} on:roll={(ev) => save(ev, 'DEX')} />
-        <Attribute name="WIL" value={character.wil} on:roll={(ev) => save(ev, 'WIL')} />
-        <div class="flex">
-          <DieSelector bind:current={character.str.current} />
-        </div>
+        <Grit value={character.grit} on:rest={rest} />
+        <Attribute name="STR" value={character.str} on:roll={(ev) => save(ev, 'STR')} on:damage={takeDamage} />
+        <Attribute name="DEX" value={character.dex} on:roll={(ev) => save(ev, 'DEX')} on:damage={takeDamage} />
+        <Attribute name="WIL" value={character.wil} on:roll={(ev) => save(ev, 'WIL')} on:damage={takeDamage} />
         
         <div>
-          <div class="flex items-center">
-            <button type="button" class="inline-flex items-center rounded border border-gray-300 bg-white dark:bg-gray-900 dark:hover:bg-gray-800 dark:border-gray-600 px-2.5 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="-ml-0.5 mr-2 h-4 w-4 text-gray-400 dark:text-gray-500"><path fill="currentColor" d="M35.2 126.3c4.1 1.1 8.4 1.7 12.8 1.7c26.5 0 48-21 48-47c0-5-1.8-11.3-4.6-18.1c-.3-.7-.6-1.4-.9-2.1c-8.9-20.2-26.5-44.9-36-57.5c-3.2-4.4-9.6-4.4-12.8 0C28.6 20.6 0 61 0 81c0 21.7 14.9 39.8 35.2 45.3zM256 0c-51.4 0-99.3 15.2-139.4 41.2c1.5 3.1 3 6.2 4.3 9.3c3.4 8 7.1 19 7.1 30.5c0 44.3-36.6 79-80 79c-9.6 0-18.8-1.7-27.4-4.8C7.3 186.2 0 220.2 0 256C0 397.4 114.6 512 256 512s256-114.6 256-256S397.4 0 256 0zM195.9 410.7c-5.9 6.6-16 7.1-22.6 1.2s-7.1-16-1.2-22.6C188.2 371.4 216.3 352 256 352s67.8 19.4 83.9 37.3c5.9 6.6 5.4 16.7-1.2 22.6s-16.7 5.4-22.6-1.2c-11.7-13-31.6-26.7-60.1-26.7s-48.4 13.7-60.1 26.7zM96 272c0-8.8 7.2-16 16-16h96c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16zm208-16h96c8.8 0 16 7.2 16 16s-7.2 16-16 16H304c-8.8 0-16-7.2-16-16s7.2-16 16-16z"/></svg>
-            Deprived
-          </button>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="relative divide-y divide-gray-200 dark:divide-gray-600 overflow-hidden rounded-lg bg-white shadow-xl dark:bg-gray-900 dark:shadow-purple-400/20 ring-1 ring-gray-900/5">
-      <div class="px-4 py-5 sm:px-6">
-        <div class="-ml-4 -mt-4 flex flex-wrap items-center justify-between sm:flex-nowrap">
-          <div class="ml-4 mt-4">
-            <h3 class="text-xl font-subtitle leading-6">Equipment</h3>
-            <p class="mt-1 text-sm text-gray-500">More than two bulky items sets your Grit to 0.</p>
-          </div>
-          <div class="ml-4 mt-4 flex-shrink-0">
-            <div class="flex gap-4 items-center">
-              <div class="relative">
-                <div class="absolute w-full text-center text-4xl font-title top-[40%] -translate-y-1/2 leading-none">2</div>
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="w-12"><path fill="currentColor" d="M231 7.838C247 1.065 265.1 1.066 281 7.84L457.7 82.79C479.7 92.12 496.2 113.8 496 139.1C495.5 239.2 454.7 420.7 282.4 503.2C265.7 511.1 246.3 511.1 229.6 503.2C57.26 420.7 16.49 239.2 16 139.1C15.87 113.8 32.32 92.12 54.3 82.79L231 7.838zM268.5 37.3C260.5 33.91 251.5 33.91 243.5 37.3L66.79 112.3C55.51 117 47.94 127.7 48 139.8C48.46 233.8 87.33 399.6 243.4 474.3C251.4 478.1 260.6 478.1 268.6 474.3C424.7 399.6 463.6 233.8 464 139.8C464.1 127.7 456.5 117 445.2 112.3L268.5 37.3z"/></svg>
-              </div>
-              <div><button type="button" class="relative inline-flex items-center rounded-full border border-transparent bg-purple-300 dark:bg-purple-700 px-2 py-2 text-sm font-medium shadow-sm hover:bg-purple-200 dark:hover:bg-purple-800 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="w-6"><path fill="currentColor" d="M272 240H496C504.8 240 512 247.2 512 256C512 264.8 504.8 272 496 272H272V496C272 504.8 264.8 512 255.1 512C247.2 512 239.1 504.8 239.1 496V272H16C7.164 272 0 264.8 0 256C0 247.2 7.164 240 16 240H239.1V16C239.1 7.164 247.2 0 255.1 0C264.8 0 272 7.164 272 16V240z"/></svg></button></div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="px-4 py-5 sm:p-6">
-        <div>
-          <div class="flow-root">
-            <ul class="-my-5 divide-y divide-gray-200 dark:divide-gray-600">
-              <li class="py-3">
-                <div class="flex items-center space-x-4">
-
-                  <div class="min-w-0 flex-1">
-                    <p class="truncate text-sm font-medium">Colorful Rapier</p>
-                  </div>
-                  <div class="flex gap-2 items-center">
-                    <button class="inline-flex items-center text-sm font-medium leading-5" on:click={() => showRoll([6], 'Damage')}><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="w-5"><path fill="currentColor" d="M431.9 116.1l-192-111.9C235 1.438 229.5 0 224 0S213 1.438 208.1 4.25l-192 111.9C6.125 121.1 0 132.7 0 144.5v223c0 11.75 6.125 22.48 16.12 28.36l192 111.9C213 510.6 218.5 512 224 512s11-1.438 15.88-4.25l192-111.9C441.9 390 448 379.3 448 367.5V144.5C448 132.7 441.9 121.1 431.9 116.1zM224 32.1l175.8 102.9L224 237.5l-176.1-102.8L224 32.1zM32.25 162.6L208 265.1v205.4L32 367.5L32.25 162.6zM240 470.9V265.1L416 162.5l-.25 205.8L240 470.9z"/></svg></button>
-                  </div>
-                </div>
-              </li>
-
-              <li class="py-3">
-                <div class="flex items-center space-x-4">
-                  <div class="min-w-0 flex-1">
-                    <p class="truncate text-sm font-medium">Plate Mail</p>
-                  </div>
-                  <div class="flex gap-2 items-center">
-                    <span class="inline-flex items-center rounded-full dark:bg-purple-100 px-2.5 py-0.5 text-xs font-medium dark:text-purple-800 bg-purple-800 text-purple-100">Bulky</span>
-                  </div>
-                </div>
-              </li>
-
-              <li class="py-3">
-                <div class="flex items-center space-x-4">
-                  <div class="min-w-0 flex-1">
-                    <p class="truncate text-sm font-medium">Old fashioned Cloak</p>
-                  </div>
-                  <div>
-                    
-                  </div>
-                </div>
-              </li>
-
-              <li class="py-3">
-                <div class="flex items-center space-x-4">
-                  <div class="min-w-0 flex-1">
-                    <p class="truncate text-sm font-medium">Flexible 10-foot pole</p>
-                  </div>
-                  <div>
-                    
-                  </div>
-                </div>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="relative divide-y divide-gray-200 dark:divide-gray-600 overflow-hidden rounded-lg bg-white shadow-xl dark:bg-gray-900 dark:shadow-purple-400/20 ring-1 ring-gray-900/5">
-      <div class="px-4 py-5 sm:px-6">
-        <div class="-ml-4 -mt-4 flex flex-wrap items-center justify-between sm:flex-nowrap">
-          <div class="ml-4 mt-4">
-            <h3 class="text-xl font-subtitle leading-6">Calling</h3>
-            <div class="relative mt-1">
-              <input id="combobox" type="text" class="w-full rounded-md border border-gray-300 bg-white dark:bg-gray-900 dark:border-gray-600 py-2 pl-3 pr-12 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm" role="combobox" aria-controls="options" aria-expanded="false" value="Devoted">
-              <button type="button" class="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">
-                <!-- Heroicon name: mini/chevron-up-down -->
-                <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                  <path fill-rule="evenodd" d="M10 3a.75.75 0 01.55.24l3.25 3.5a.75.75 0 11-1.1 1.02L10 4.852 7.3 7.76a.75.75 0 01-1.1-1.02l3.25-3.5A.75.75 0 0110 3zm-3.76 9.2a.75.75 0 011.06.04l2.7 2.908 2.7-2.908a.75.75 0 111.1 1.02l-3.25 3.5a.75.75 0 01-1.1 0l-3.25-3.5a.75.75 0 01.04-1.06z" clip-rule="evenodd" />
-                </svg>
+          <div class="flex items-center gap-2">
+            <button type="button" on:click={() => toggleStatus(DEPRIVED)} class="inline-flex items-center rounded border border-gray-300 bg-white dark:bg-gray-900 dark:border-gray-600 px-2.5 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2" class:bg-purple-200={isDeprived} class:border-purple-800={isDeprived} class:dark:bg-purple-800={isDeprived} class:dark:border-purple-200={isDeprived}>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="-ml-0.5 mr-2 h-4 w-4 text-gray-400 dark:text-gray-500" class:!text-purple-800={isDeprived} class:dark:!text-purple-100={isDeprived}><path fill="currentColor" d="M35.2 126.3c4.1 1.1 8.4 1.7 12.8 1.7c26.5 0 48-21 48-47c0-5-1.8-11.3-4.6-18.1c-.3-.7-.6-1.4-.9-2.1c-8.9-20.2-26.5-44.9-36-57.5c-3.2-4.4-9.6-4.4-12.8 0C28.6 20.6 0 61 0 81c0 21.7 14.9 39.8 35.2 45.3zM256 0c-51.4 0-99.3 15.2-139.4 41.2c1.5 3.1 3 6.2 4.3 9.3c3.4 8 7.1 19 7.1 30.5c0 44.3-36.6 79-80 79c-9.6 0-18.8-1.7-27.4-4.8C7.3 186.2 0 220.2 0 256C0 397.4 114.6 512 256 512s256-114.6 256-256S397.4 0 256 0zM195.9 410.7c-5.9 6.6-16 7.1-22.6 1.2s-7.1-16-1.2-22.6C188.2 371.4 216.3 352 256 352s67.8 19.4 83.9 37.3c5.9 6.6 5.4 16.7-1.2 22.6s-16.7 5.4-22.6-1.2c-11.7-13-31.6-26.7-60.1-26.7s-48.4 13.7-60.1 26.7zM96 272c0-8.8 7.2-16 16-16h96c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16zm208-16h96c8.8 0 16 7.2 16 16s-7.2 16-16 16H304c-8.8 0-16-7.2-16-16s7.2-16 16-16z"/></svg>
+              Deprived
+            </button>
+            {#each Array.from(character.statuses.values()) as status}
+              {#if status !== DEPRIVED}
+              <button type="button" on:click={() => toggleStatus(status)} class="inline-flex items-center rounded border border-purple-800 bg-purple-200 dark:bg-purple-800 dark:border-purple-200 px-2.5 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2">
+                {capitalize(status)}
               </button>
-
-              <ul class="hidden absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm" id="options" role="listbox">
-                <!--
-                  Combobox option, manage highlight styles based on mouseenter/mouseleave and keyboard navigation.
-
-                  Active: "text-white bg-indigo-600", Not Active: "text-gray-900"
-                -->
-                <li class="relative cursor-default select-none py-2 pl-8 pr-4 text-gray-900" id="option-0" role="option" tabindex="-1">
-                  <!-- Selected: "font-semibold" -->
-                  <span class="block truncate">Leslie Alexander</span>
-
-                  <!--
-                    Checkmark, only display for selected option.
-
-                    Active: "text-white", Not Active: "text-indigo-600"
-                  -->
-                  <span class="absolute inset-y-0 left-0 flex items-center pl-1.5 text-indigo-600">
-                    <!-- Heroicon name: mini/check -->
-                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                      <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
-                    </svg>
-                  </span>
-                </li>
-
-                <!-- More items... -->
-              </ul>
-            </div>
+              {/if}
+            {/each}
           </div>
         </div>
       </div>
-      <div class="h-full">
-        <div class="h-full">
-          <textarea rows="4" name="comment" id="comment" class="block w-full rounded-b-lg border-0 dark:bg-gray-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm h-full px-4 py-5 sm:p-6"></textarea>
-        </div>
-      </div>
     </div>
+    
+    <Equipment equipment={character.equipment} on:roll={damage} on:add={addGear} />
+
+    <Card>
+      <div class="ml-4 mt-4 flex items-center gap-2" slot="header">
+        <h3 class="text-xl font-subtitle leading-6 flex-1">{character.calling.name}</h3>
+        <p class="text-gray-500 relative -top-1">(Calling)</p>
+      </div>
+      {#if character.calling.desc}
+      <div>
+        {character.calling.desc}
+      </div>
+      {/if}
+      <ul>
+        {#each character.abilities as ability}
+        <li><span><strong>{ability.name}</strong> {ability.desc}</span><div>{@html renderUnsafe(ability.details ?? '')}</div></li>
+        {/each}
+      </ul>
+    </Card>
     <Card title="Eulogy / Notes">
       <div class="h-full">
-        <div id="eulogy" class="block min-h-[4rem] w-full dark:bg-gray-900 border-0 shadow-sm sm:text-sm">{character.eulogy}</div>
+        <div id="eulogy" class="block min-h-[4rem] w-full dark:bg-gray-900 border-0 sm:text-sm">{character.eulogy}</div>
       </div>
     </Card>
     <Card title="Spells">
       <div class="h-full">
-        <div id="spells" class="block min-h-[4rem] w-full dark:bg-gray-900 border-0 shadow-sm sm:text-sm"></div>
+        <div id="spells" class="block min-h-[4rem] w-full dark:bg-gray-900 border-0 sm:text-sm"></div>
       </div>
     </Card>
     <Card title="Rituals">
       <div class="h-full">
-        <div id="rituals" class="block min-h-[4rem] w-full dark:bg-gray-900 border-0 shadow-sm sm:text-sm"></div>
+        <div id="rituals" class="block min-h-[4rem] w-full dark:bg-gray-900 border-0 sm:text-sm"></div>
       </div>
     </Card>
   </div>

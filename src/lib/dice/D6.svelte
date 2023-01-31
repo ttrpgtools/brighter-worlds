@@ -1,3 +1,7 @@
+<script lang="ts" context="module">
+  import type { DieValue } from "$lib/types";
+  export const value: DieValue = 6;
+  </script>
 <script lang="ts">
   export let size = 'h-6 w-6';
 </script>

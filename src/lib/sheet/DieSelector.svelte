@@ -1,41 +1,35 @@
 <script lang="ts">
 import { Die } from "$lib/dice";
 import type { DieValue } from "$lib/types";
-export let current: DieValue;
+import { scale } from 'svelte/transition';
+import { Listbox, ListboxButton, ListboxOptions, ListboxOption } from '@rgossiaux/svelte-headlessui'
+export let current: DieValue | 0;
+export let nullable = false;
+export let invalid = false;
 
 const dice: DieValue[] = [4, 6, 8, 10, 12];
 
-let open = false;
-
-function toggle() {
-  open = !open;
-}
-
-function select(d: DieValue) {
-  current = d;
-  open = false;
-}
-
-function press(ev: KeyboardEvent, d: DieValue) {
-  if (ev.key === 'Enter') {
-    select(d);
-  }
-}
 </script>
-<div class="relative mt-1">
-  <button type="button" on:click={toggle} class="relative w-full cursor-default rounded-md border border-gray-300 bg-white py-2 pl-3 pr-10 text-left shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm" aria-haspopup="listbox" aria-expanded="true" aria-labelledby="listbox-label">
-    <span class="flex items-center">
-      <Die which={current} />
-    </span>
+<Listbox let:open value={current} on:change={(e) => (current = e.detail)} class="relative">
+  <ListboxButton class="relative w-full cursor-default rounded-md border {invalid ? 'border-red-500 text-red-500' : 'border-gray-300 dark:border-gray-600'} bg-white dark:bg-gray-900 dark:hover:bg-gray-800 py-2 pl-3 pr-10 text-left shadow-sm focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500 sm:text-sm">
+    {#if current === 0}
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" class="w-6 h-6"><path fill="currentColor" d="M315.3 411.3c-6.253 6.253-16.37 6.253-22.63 0L160 278.6l-132.7 132.7c-6.253 6.253-16.37 6.253-22.63 0c-6.253-6.253-6.253-16.37 0-22.63L137.4 256L4.69 123.3c-6.253-6.253-6.253-16.37 0-22.63c6.253-6.253 16.37-6.253 22.63 0L160 233.4l132.7-132.7c6.253-6.253 16.37-6.253 22.63 0c6.253 6.253 6.253 16.37 0 22.63L182.6 256l132.7 132.7C321.6 394.9 321.6 405.1 315.3 411.3z"/></svg>
+    {:else}<Die which={current} />{/if}
     <span class="pointer-events-none absolute inset-y-0 right-0 ml-3 flex items-center pr-2">
-      <!-- Heroicon name: mini/chevron-up-down -->
       <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
         <path fill-rule="evenodd" d="M10 3a.75.75 0 01.55.24l3.25 3.5a.75.75 0 11-1.1 1.02L10 4.852 7.3 7.76a.75.75 0 01-1.1-1.02l3.25-3.5A.75.75 0 0110 3zm-3.76 9.2a.75.75 0 011.06.04l2.7 2.908 2.7-2.908a.75.75 0 111.1 1.02l-3.25 3.5a.75.75 0 01-1.1 0l-3.25-3.5a.75.75 0 01.04-1.06z" clip-rule="evenodd" />
       </svg>
     </span>
-  </button>
+  </ListboxButton>
 
   <!--
+    <span class="pointer-events-none absolute inset-y-0 right-0 ml-3 flex items-center pr-2">
+      Heroicon name: mini/chevron-up-down 
+      <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+        <path fill-rule="evenodd" d="M10 3a.75.75 0 01.55.24l3.25 3.5a.75.75 0 11-1.1 1.02L10 4.852 7.3 7.76a.75.75 0 01-1.1-1.02l3.25-3.5A.75.75 0 0110 3zm-3.76 9.2a.75.75 0 011.06.04l2.7 2.908 2.7-2.908a.75.75 0 111.1 1.02l-3.25 3.5a.75.75 0 01-1.1 0l-3.25-3.5a.75.75 0 01.04-1.06z" clip-rule="evenodd" />
+      </svg>
+    </span>
+
     Select popover, show/hide based on select state.
 
     Entering: ""
@@ -45,21 +39,25 @@ function press(ev: KeyboardEvent, d: DieValue) {
       From: "opacity-100"
       To: "opacity-0"
   -->
-  {#if open}
-  <ul class="absolute z-10 mt-1 max-h-56 overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm" tabindex="-1" role="listbox" aria-labelledby="listbox-label" aria-activedescendant="listbox-option-3">
-    {#each dice as die}
-    <!--
-      Select option, manage highlight styles based on mouseenter/mouseleave and keyboard navigation.
 
-      Highlighted: "text-white bg-indigo-600", Not Highlighted: "text-gray-900"
-    -->
-    <li class="text-gray-900 relative cursor-default select-none py-2 px-3" role="option" aria-selected={current === die} class:bg-purple-600={current === die} class:text-white={current === die} on:click={() => select(die)} on:keydown={(ev) => press(ev, die)}>
-      <div class="flex items-center gap-2">
-        <Die which={die}/> d{die}
-      </div>
-    </li>
-    {/each}
-    <!-- More items... -->
-  </ul>
+  {#if open}
+  <div class="absolute z-10" transition:scale={{start: 0.5, duration: 100}}>
+    <ListboxOptions static class="absolute z-10 mt-1 max-h-56 overflow-auto rounded-md bg-white dark:bg-gray-900 py-1 text-base shadow-lg dark:shadow-purple-400/20 ring-1 ring-black dark:ring-gray-300 ring-opacity-5 focus:outline-none sm:text-sm">
+      {#if nullable}
+      <ListboxOption value={0} class={({active}) => `relative cursor-default select-none py-2 px-3 ${(active ? 'text-white bg-purple-500' : '')}`}>
+        <div class="flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" class="w-6 h-6"><path fill="currentColor" d="M315.3 411.3c-6.253 6.253-16.37 6.253-22.63 0L160 278.6l-132.7 132.7c-6.253 6.253-16.37 6.253-22.63 0c-6.253-6.253-6.253-16.37 0-22.63L137.4 256L4.69 123.3c-6.253-6.253-6.253-16.37 0-22.63c6.253-6.253 16.37-6.253 22.63 0L160 233.4l132.7-132.7c6.253-6.253 16.37-6.253 22.63 0c6.253 6.253 6.253 16.37 0 22.63L182.6 256l132.7 132.7C321.6 394.9 321.6 405.1 315.3 411.3z"/></svg> 0
+        </div>
+      </ListboxOption>
+      {/if}
+      {#each dice as die}
+      <ListboxOption value={die} class={({active}) => `relative cursor-default select-none py-2 px-3 ${(active ? 'text-white bg-purple-500' : '')}`}>
+        <div class="flex items-center gap-2">
+          <Die which={die}/> d{die}
+        </div>
+      </ListboxOption>
+      {/each}
+    </ListboxOptions>
+  </div>
   {/if}
-</div>
+</Listbox>
