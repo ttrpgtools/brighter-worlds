@@ -2,7 +2,7 @@
 import { Die } from "$lib/dice";
 import type { DieValue, Item } from "$lib/types";
 import { createEventDispatcher } from "svelte";
-import Card from "./Card.svelte";
+import Card from "../Card.svelte";
 export let equipment: Item[];
 $: totalArmor = equipment.reduce((p, c) => p + (!!c.armor ? c.armor : 0), 0);
 

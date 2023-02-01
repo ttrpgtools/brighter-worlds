@@ -1,6 +1,5 @@
 <script>
   import MenuLink from "$lib/MenuLink.svelte";
-
 </script>
 <svelte:head>
   <title>Brighter Worlds Tools</title>
@@ -13,7 +12,7 @@
   <MenuLink href="/character">Character Sheet</MenuLink>
   <MenuLink href="/bestiary">Bestiary</MenuLink>
   <MenuLink href="/reliquary">Reliquary</MenuLink>
-  <MenuLink href="/magna-arcana">Magna Arcana</MenuLink>
+  <MenuLink href="/arcana">Magna Arcana</MenuLink>
   <MenuLink href="/academy">Dream Academy</MenuLink>
 
 </main>

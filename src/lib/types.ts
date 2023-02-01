@@ -12,6 +12,8 @@ export interface Entity {
 
 export interface UsableEntity extends Entity {
   damage?: DieValue;
+  extra?: DieValue;
+  blast?: boolean;
 }
 
 export interface Item extends UsableEntity {

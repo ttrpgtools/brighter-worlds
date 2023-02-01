@@ -1,26 +1,26 @@
 /* Write your global styles here, in PostCSS syntax */
 @font-face {
-    font-family: 'Ander Brush';
-    src: local('Ander Brush'),
-         url('/fonts/ander-brush.woff');
-    font-weight: normal;
-    font-style: normal;
+  font-family: 'Ander Brush';
+  src: local('Ander Brush'),
+       url('/fonts/ander-brush.woff');
+  font-weight: normal;
+  font-style: normal;
 }
 
 @font-face {
-    font-family: 'Ander Symbols';
-    src: local('Ander Symbols'),
-         url('/fonts/ander-symbols.woff');
-    font-weight: normal;
-    font-style: normal;
+  font-family: 'Ander Symbols';
+  src: local('Ander Symbols'),
+       url('/fonts/ander-symbols.woff');
+  font-weight: normal;
+  font-style: normal;
 }
 
 @font-face {
-    font-family: 'Fanwood';
-    src: local('Fanwood'),
-         url('/fonts/fanwood.woff');
-    font-weight: normal;
-    font-style: normal;
+  font-family: 'Fanwood';
+  src: local('Fanwood'),
+       url('/fonts/fanwood.woff');
+  font-weight: normal;
+  font-style: normal;
 }
 
 html.dark {
@@ -29,4 +29,16 @@ html.dark {
 
 @tailwind base;
 @tailwind components;
+
+.list-bw {
+  @apply relative;
+}
+
+.list-bw::before {
+  content: "1";
+  font-size: 2em;
+  top: -0.5em;
+  @apply font-symbol text-purple-500 absolute left-0;
+}
+
 @tailwind utilities;

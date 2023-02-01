@@ -2,7 +2,7 @@
 import Modal from '$lib/Modal.svelte';
 import { roll } from '$lib/rolling/roll';
 import Name from "$lib/sheet/Name.svelte";
-import Card from "$lib/sheet/Card.svelte";
+import Card from "$lib/Card.svelte";
 import type { Character, DieValue } from '$lib/types';
 import Attribute from '$lib/sheet/Attribute.svelte';
 import Equipment from '$lib/sheet/Equipment.svelte';
