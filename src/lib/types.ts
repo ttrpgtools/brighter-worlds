@@ -1,4 +1,3 @@
-
 export type DieValue = 4 | 6 | 8 | 10 | 12;
 
 export interface Attribute<T = number, T2 = T> {
@@ -41,4 +40,17 @@ export interface Character {
   spells: UsableEntity[];
   rituals: UsableEntity[];
   notes?: string;
+}
+
+export interface NpcStats {
+  name: string;
+  grit: number;
+  str: DieValue;
+  dex: DieValue;
+  wil: DieValue;
+  armor?: number;
+  attacks: UsableEntity[],
+  notes: string[],
+  wants?: string,
+  found?: string,
 }
