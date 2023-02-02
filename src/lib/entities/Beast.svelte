@@ -8,7 +8,7 @@ const last = (a: unknown[], i: number) => i === a.length - 1;
 </script>
 <Card>
   <div class="text-left ml-4 mt-4" slot="header">
-    <h3 class="text-3xl font-bold font-subtitle text-purple-500">{stats.name}</h3>
+    <h3 class="text-3xl font-subtitle text-purple-500">{stats.name}</h3>
     <p class="flex gap-1 items-center my-1">
       <span>{stats.grit} Grit,</span>
       {#if stats.armor}<span>{stats.armor} Armor,</span>{/if}
@@ -19,7 +19,7 @@ const last = (a: unknown[], i: number) => i === a.length - 1;
     
     {#if hasAttacks}
       {#each stats.attacks as attack, a}
-      <p class="flex flex-wrap my-1 items-center"><span class="mr-1">{attack.name}</span>{#if attack.damage} (<Die which={attack.damage} size="w-4 h-4"/><span class="ml-1">d{attack.damage}</span>){/if}{#if attack.desc}, <span>{attack.desc}</span>{/if}</p>
+      <p class="flex flex-wrap my-1 items-center"><span class="mr-1">{attack.name}</span>{#if attack.damage} (<Die which={attack.damage} size="w-4 h-4"/><span class="ml-1">d{attack.damage}</span>){/if}{#if attack.desc}, <span class="ml-1">{attack.desc}</span>{/if}</p>
       {/each}
     {/if}
   </div>

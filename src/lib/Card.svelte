@@ -14,7 +14,7 @@ $: needHeader = !!title || $$slots.header;
     </div>
     {/if}
   </div>
-  <div class="h-full px-4 py-5 sm:p-6">
+  <div class="px-4 py-5 sm:p-6">
     <slot></slot>
   </div>
 </div>

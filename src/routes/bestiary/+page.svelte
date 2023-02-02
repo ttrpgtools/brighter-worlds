@@ -40,6 +40,22 @@
       wants: 'Respect and bread crumbs.',
       found: 'Harassing random passersby.'
     }} />
+    <Beast stats={{
+      name: `Screaming Ghost`,
+      grit: 4,
+      str: 4,
+      dex: 6,
+      wil: 8,
+      attacks: [
+        { name: 'Scream', damage: 6, desc: 'sonic damage, also roll a WIL save against fear.'},
+      ],
+      notes: [
+        'Weak to salt. While within a few feet of salt, attacks against are enhanced and its attacks are impaired.',
+        'Can enter another creature\'s body, causing that creature to freeze up for ~10 seconds if that creature has lower WIL. Doing this releases the ghost into it proper afterlife.'
+      ],
+      wants: 'To move on.',
+      found: 'Wherever people were killed in brutal ways.'
+    }} />
   </div>
   <MenuLink href="/">Home</MenuLink>
 </main>
