@@ -2,7 +2,6 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
-		<link rel="icon" href="%sveltekit.assets%/favicon.png" />
 		<meta name="viewport" content="width=device-width" />
 		<script>
 			const mode = window.localStorage.getItem('dark-mode');
@@ -13,6 +12,15 @@
 			}
 		</script>
 		%sveltekit.head%
+		<link rel="apple-touch-icon" sizes="180x180" href="%sveltekit.assets%/apple-touch-icon.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="%sveltekit.assets%/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="%sveltekit.assets%/favicon-16x16.png">
+		<link rel="manifest" href="%sveltekit.assets%/site.webmanifest">
+		<link rel="mask-icon" href="%sveltekit.assets%/safari-pinned-tab.svg" color="#5bbad5">
+		<meta name="apple-mobile-web-app-title" content="Brighter Worlds">
+		<meta name="application-name" content="Brighter Worlds">
+		<meta name="msapplication-TileColor" content="#da532c">
+		<meta name="theme-color" content="#a855f7">
 	</head>
 	<body data-sveltekit-preload-data="hover" class="accent-purple-500 text-gray-800 bg-white dark:text-white dark:bg-gray-800">
 		<div style="display: contents">%sveltekit.body%</div>
