@@ -51,7 +51,7 @@
       ],
       notes: [
         'Weak to salt. While within a few feet of salt, attacks against are enhanced and its attacks are impaired.',
-        'Can enter another creature\'s body, causing that creature to freeze up for ~10 seconds if that creature has lower WIL. Doing this releases the ghost into it proper afterlife.'
+        'Can enter another creature\'s body, causing that creature to freeze up for ~10 seconds if that creature has lower WIL. Doing this releases the ghost into its proper afterlife.'
       ],
       wants: 'To move on.',
       found: 'Wherever people were killed in brutal ways.'

@@ -56,3 +56,8 @@ export interface NpcStats {
   wants?: string,
   found?: string,
 }
+
+export interface Calling extends Entity {
+  tagline: string;
+  for: string;
+}

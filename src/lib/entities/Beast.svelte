@@ -7,7 +7,7 @@ $: hasAttacks = Array.isArray(stats.attacks) && stats.attacks.length > 0;
 const last = (a: unknown[], i: number) => i === a.length - 1;
 </script>
 <Card>
-  <div class="text-left ml-4 mt-4" slot="header">
+  <div class="text-left">
     <h3 class="text-3xl font-subtitle text-purple-500">{stats.name}</h3>
     <p class="flex gap-1 items-center my-1">
       <span>{stats.grit} Grit,</span>
@@ -22,10 +22,8 @@ const last = (a: unknown[], i: number) => i === a.length - 1;
       <p class="flex flex-wrap my-1 items-center"><span class="mr-1">{attack.name}</span>{#if attack.damage} (<Die which={attack.damage} size="w-4 h-4"/><span class="ml-1">d{attack.damage}</span>){/if}{#if attack.desc}, <span class="ml-1">{attack.desc}</span>{/if}</p>
       {/each}
     {/if}
-  </div>
-  <div class="text-left">
     {#if stats.notes.length > 0}
-    <ul class="mb-4">
+    <ul class="mb-4 mt-8">
       {#each stats.notes as note}
         <li class="pl-8 my-2 list-bw">{note}</li>
       {/each}
