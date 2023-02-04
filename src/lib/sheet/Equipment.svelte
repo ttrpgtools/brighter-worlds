@@ -22,11 +22,11 @@ function addGear() {
 </script>
 <Card>
   <svelte:fragment slot="header">
-    <div class="ml-4 mt-4">
+    <div class="">
       <h3 class="text-xl font-subtitle leading-6">Equipment</h3>
       <p class="mt-1 text-sm text-gray-500">More than two bulky items sets your Grit to 0.</p>
     </div>
-    <div class="ml-4 mt-4 flex-shrink-0">
+    <div class="flex-shrink-0">
       <div class="flex gap-4 items-center">
         <div class="relative">
           <div class="absolute w-full text-center text-2xl top-1/2 -translate-y-1/2 leading-none">{totalArmor}</div>

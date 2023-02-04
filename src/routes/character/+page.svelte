@@ -9,6 +9,7 @@ import Equipment from '$lib/sheet/Equipment.svelte';
 import { renderUnsafe } from '$lib/md/render';
 import Grit from '$lib/sheet/Grit.svelte';
 import { stepDown } from '$lib/dice';
+  import EulogyNotes from '$lib/sheet/EulogyNotes.svelte';
 const DEPRIVED = 'deprived';
 const PARALYSED = 'paralysed';
 const CATATONIC = 'catatonic';
@@ -22,7 +23,7 @@ let dice: DieValue[] = [];
 const character: Character = {
   name: 'Choppy Pete',
   pronouns: 'he/them',
-  grit: { current: 4, max: 4 },
+  grit: { current: 3, max: 3 },
   str: { current: 8, max: 8 },
   dex: { current: 4, max: 4 },
   wil: { current: 6, max: 6 },
@@ -42,11 +43,13 @@ const character: Character = {
       details: '**Devotion:** My fair goddess of the light.\n\n**Vow:** Poverty\n\n**Boons:** Can\'t Stop Won\'t Stop, Weapon of Faith (Paired)'
     },
   ],
-  eulogy: 'He is a fine warrior.',
+  eulogy: [
+    {message: 'I remember the time he killed that whole flock of seagulls when one bit his friend.', xp: 1, spent: 0},
+  ],
   xp: 0,
   spells: [],
   rituals: [],
-  notes: '',
+  notes: 'Hello note.',
 };
 
 const ENDGAME = {
@@ -215,7 +218,7 @@ $: isDeprived = character.statuses.has(DEPRIVED);
     <Equipment equipment={character.equipment} on:roll={damage} on:add={addGear} />
 
     <Card>
-      <div class="ml-4 mt-4 flex items-center gap-2" slot="header">
+      <div class="flex items-center gap-2" slot="header">
         <h3 class="text-xl font-subtitle leading-6 flex-1">{character.calling.name}</h3>
         <p class="text-gray-500 relative -top-1">(Calling)</p>
       </div>
@@ -230,11 +233,7 @@ $: isDeprived = character.statuses.has(DEPRIVED);
         {/each}
       </ul>
     </Card>
-    <Card title="Eulogy / Notes">
-      <div class="h-full">
-        <div id="eulogy" class="block min-h-[4rem] w-full dark:bg-gray-900 border-0 sm:text-sm">{character.eulogy}</div>
-      </div>
-    </Card>
+    <EulogyNotes notes={character.notes} eulogy={character.eulogy} />
     <Card title="Spells">
       <div class="h-full">
         <div id="spells" class="block min-h-[4rem] w-full dark:bg-gray-900 border-0 sm:text-sm"></div>

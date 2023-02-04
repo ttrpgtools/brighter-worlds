@@ -50,11 +50,6 @@
     "for": "For players who like their character to live by a code."
   },
   {
-    "name": "Great Soul Shaman",
-    "tagline": "A steward of a beast’s soul, able to transform into that creature through ancient rites.",
-    "for": "For players who want to be an animal sometimes."
-  },
-  {
     "name": "Grimblade",
     "tagline": "Owner of a mystic weapon.",
     "for": "For players who want to hit things and cast spells at the same time."
@@ -68,6 +63,11 @@
     "name": "Sneaky Bastard",
     "tagline": "An expert in self cloning and underhanded tricks.",
     "for": "For players who like plans within plans, and to be in two places at once."
+  },
+  {
+    "name": "Soulbearer",
+    "tagline": "A steward of a beast’s soul, able to transform into that creature through ancient rites.",
+    "for": "For players who want to be an animal sometimes."
   },
   {
     "name": "Witch",

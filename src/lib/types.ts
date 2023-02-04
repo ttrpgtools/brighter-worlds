@@ -26,6 +26,12 @@ export interface Ability extends UsableEntity {
   core: boolean;
 }
 
+export interface EulogyStanza {
+  message: string;
+  xp: number;
+  spent: number;
+}
+
 export interface Character {
   name: string;
   pronouns: string;
@@ -38,7 +44,7 @@ export interface Character {
   equipment: Item[];
   calling: Entity;
   abilities: Ability[];
-  eulogy: string;
+  eulogy: EulogyStanza[];
   spells: UsableEntity[];
   rituals: UsableEntity[];
   notes?: string;

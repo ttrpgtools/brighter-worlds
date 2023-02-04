@@ -42,18 +42,20 @@ const dice: DieValue[] = [4, 6, 8, 10, 12];
 
   {#if open}
   <div class="absolute z-10" transition:scale={{start: 0.5, duration: 100}}>
-    <ListboxOptions static class="absolute z-10 mt-1 max-h-56 overflow-auto rounded-md bg-white dark:bg-gray-900 py-1 text-base shadow-lg dark:shadow-purple-400/20 ring-1 ring-black dark:ring-gray-300 ring-opacity-5 focus:outline-none sm:text-sm">
+    <ListboxOptions static class="absolute z-10 mt-1 max-h-64 overflow-auto rounded-md bg-white dark:bg-gray-900 py-1 text-base shadow-lg dark:shadow-purple-400/20 ring-1 ring-black dark:ring-gray-300 ring-opacity-5 focus:outline-none sm:text-sm">
       {#if nullable}
       <ListboxOption value={0} class={({active}) => `relative cursor-default select-none py-2 px-3 ${(active ? 'text-white bg-purple-500' : '')}`}>
         <div class="flex items-center gap-2">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" class="w-6 h-6"><path fill="currentColor" d="M315.3 411.3c-6.253 6.253-16.37 6.253-22.63 0L160 278.6l-132.7 132.7c-6.253 6.253-16.37 6.253-22.63 0c-6.253-6.253-6.253-16.37 0-22.63L137.4 256L4.69 123.3c-6.253-6.253-6.253-16.37 0-22.63c6.253-6.253 16.37-6.253 22.63 0L160 233.4l132.7-132.7c6.253-6.253 16.37-6.253 22.63 0c6.253 6.253 6.253 16.37 0 22.63L182.6 256l132.7 132.7C321.6 394.9 321.6 405.1 315.3 411.3z"/></svg> 0
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" class="w-6 h-6"><path fill="currentColor" d="M315.3 411.3c-6.253 6.253-16.37 6.253-22.63 0L160 278.6l-132.7 132.7c-6.253 6.253-16.37 6.253-22.63 0c-6.253-6.253-6.253-16.37 0-22.63L137.4 256L4.69 123.3c-6.253-6.253-6.253-16.37 0-22.63c6.253-6.253 16.37-6.253 22.63 0L160 233.4l132.7-132.7c6.253-6.253 16.37-6.253 22.63 0c6.253 6.253 6.253 16.37 0 22.63L182.6 256l132.7 132.7C321.6 394.9 321.6 405.1 315.3 411.3z"/></svg>
+          <div>0</div>
         </div>
       </ListboxOption>
       {/if}
       {#each dice as die}
       <ListboxOption value={die} class={({active}) => `relative cursor-default select-none py-2 px-3 ${(active ? 'text-white bg-purple-500' : '')}`}>
         <div class="flex items-center gap-2">
-          <Die which={die}/> d{die}
+          <div class="h-6 w-6"><Die which={die}/></div>
+          <div>d{die}</div>
         </div>
       </ListboxOption>
       {/each}
