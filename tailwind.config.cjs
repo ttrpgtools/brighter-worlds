@@ -8,6 +8,9 @@ const config = {
         'symbol': ['Ander Symbols', 'serif'],
         'subtitle': ['Fanwood', 'serif']
       },
+			borderWidth: {
+				'3': '3px',
+			},
 		}
 	},
 

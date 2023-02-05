@@ -33,6 +33,7 @@ export interface EulogyStanza {
 }
 
 export interface Character {
+  id: string;
   name: string;
   pronouns: string;
   grit: Attribute;
@@ -40,7 +41,6 @@ export interface Character {
   dex: Attribute<DieValue, 0>;
   wil: Attribute<DieValue, 0>;
   statuses: Set<string>;
-  xp: number;
   equipment: Item[];
   calling: Entity;
   abilities: Ability[];
@@ -48,6 +48,11 @@ export interface Character {
   spells: UsableEntity[];
   rituals: UsableEntity[];
   notes?: string;
+}
+export interface CharacterSummary {
+  id: string;
+  name: string;
+  calling: string;
 }
 
 export interface NpcStats {
