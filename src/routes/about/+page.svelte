@@ -23,6 +23,9 @@
 </main>
 <style>
   a {
-    @apply text-purple-500 no-underline hover:underline;
+    @apply text-purple-700 no-underline hover:underline;
+  }
+  :global(html.dark) a {
+    @apply text-purple-300
   }
 </style>

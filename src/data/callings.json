@@ -7,9 +7,12 @@
     "equipment": [
 
     ],
-    "core": { "name": "", "desc": "" },
-    "advanced": [
-
+    "abilities": [
+      { "name": "", "desc": "", "type": "core" },
+      { "name": "", "desc": "", "type": "advanced" },
+      { "name": "", "desc": "", "type": "advanced" },
+      { "name": "", "desc": "", "type": "advanced" },
+      { "name": "", "desc": "", "type": "advanced" }
     ],
     "info": ""
   },
@@ -21,9 +24,12 @@
     "equipment": [
 
     ],
-    "core": { "name": "", "desc": "" },
-    "advanced": [
-
+    "abilities": [
+      { "name": "", "desc": "", "type": "core" },
+      { "name": "", "desc": "", "type": "advanced" },
+      { "name": "", "desc": "", "type": "advanced" },
+      { "name": "", "desc": "", "type": "advanced" },
+      { "name": "", "desc": "", "type": "advanced" }
     ],
     "info": ""
   },
@@ -35,9 +41,12 @@
     "equipment": [
 
     ],
-    "core": { "name": "", "desc": "" },
-    "advanced": [
-
+    "abilities": [
+      { "name": "", "desc": "", "type": "core" },
+      { "name": "", "desc": "", "type": "advanced" },
+      { "name": "", "desc": "", "type": "advanced" },
+      { "name": "", "desc": "", "type": "advanced" },
+      { "name": "", "desc": "", "type": "advanced" }
     ],
     "info": ""
   },
@@ -49,9 +58,12 @@
     "equipment": [
 
     ],
-    "core": { "name": "", "desc": "" },
-    "advanced": [
-
+    "abilities": [
+      { "name": "", "desc": "", "type": "core" },
+      { "name": "", "desc": "", "type": "advanced" },
+      { "name": "", "desc": "", "type": "advanced" },
+      { "name": "", "desc": "", "type": "advanced" },
+      { "name": "", "desc": "", "type": "advanced" }
     ],
     "info": ""
   },
@@ -63,9 +75,12 @@
     "equipment": [
 
     ],
-    "core": { "name": "", "desc": "" },
-    "advanced": [
-
+    "abilities": [
+      { "name": "", "desc": "", "type": "core" },
+      { "name": "", "desc": "", "type": "advanced" },
+      { "name": "", "desc": "", "type": "advanced" },
+      { "name": "", "desc": "", "type": "advanced" },
+      { "name": "", "desc": "", "type": "advanced" }
     ],
     "info": ""
   },
@@ -77,9 +92,12 @@
     "equipment": [
 
     ],
-    "core": { "name": "", "desc": "" },
-    "advanced": [
-
+    "abilities": [
+      { "name": "", "desc": "", "type": "core" },
+      { "name": "", "desc": "", "type": "advanced" },
+      { "name": "", "desc": "", "type": "advanced" },
+      { "name": "", "desc": "", "type": "advanced" },
+      { "name": "", "desc": "", "type": "advanced" }
     ],
     "info": ""
   },
@@ -91,9 +109,12 @@
     "equipment": [
 
     ],
-    "core": { "name": "", "desc": "" },
-    "advanced": [
-
+    "abilities": [
+      { "name": "", "desc": "", "type": "core" },
+      { "name": "", "desc": "", "type": "advanced" },
+      { "name": "", "desc": "", "type": "advanced" },
+      { "name": "", "desc": "", "type": "advanced" },
+      { "name": "", "desc": "", "type": "advanced" }
     ],
     "info": ""
   },
@@ -105,9 +126,12 @@
     "equipment": [
 
     ],
-    "core": { "name": "", "desc": "" },
-    "advanced": [
-
+    "abilities": [
+      { "name": "", "desc": "", "type": "core" },
+      { "name": "", "desc": "", "type": "advanced" },
+      { "name": "", "desc": "", "type": "advanced" },
+      { "name": "", "desc": "", "type": "advanced" },
+      { "name": "", "desc": "", "type": "advanced" }
     ],
     "info": ""
   },
@@ -119,9 +143,12 @@
     "equipment": [
 
     ],
-    "core": { "name": "", "desc": "" },
-    "advanced": [
-
+    "abilities": [
+      { "name": "", "desc": "", "type": "core" },
+      { "name": "", "desc": "", "type": "advanced" },
+      { "name": "", "desc": "", "type": "advanced" },
+      { "name": "", "desc": "", "type": "advanced" },
+      { "name": "", "desc": "", "type": "advanced" }
     ],
     "info": ""
   },
@@ -133,9 +160,12 @@
     "equipment": [
 
     ],
-    "core": { "name": "", "desc": "" },
-    "advanced": [
-
+    "abilities": [
+      { "name": "", "desc": "", "type": "core" },
+      { "name": "", "desc": "", "type": "advanced" },
+      { "name": "", "desc": "", "type": "advanced" },
+      { "name": "", "desc": "", "type": "advanced" },
+      { "name": "", "desc": "", "type": "advanced" }
     ],
     "info": ""
   },
@@ -147,9 +177,12 @@
     "equipment": [
 
     ],
-    "core": { "name": "", "desc": "" },
-    "advanced": [
-
+    "abilities": [
+      { "name": "", "desc": "", "type": "core" },
+      { "name": "", "desc": "", "type": "advanced" },
+      { "name": "", "desc": "", "type": "advanced" },
+      { "name": "", "desc": "", "type": "advanced" },
+      { "name": "", "desc": "", "type": "advanced" }
     ],
     "info": ""
   },
@@ -161,9 +194,12 @@
     "equipment": [
 
     ],
-    "core": { "name": "", "desc": "" },
-    "advanced": [
-
+    "abilities": [
+      { "name": "", "desc": "", "type": "core" },
+      { "name": "", "desc": "", "type": "advanced" },
+      { "name": "", "desc": "", "type": "advanced" },
+      { "name": "", "desc": "", "type": "advanced" },
+      { "name": "", "desc": "", "type": "advanced" }
     ],
     "info": ""
   },
@@ -175,9 +211,12 @@
     "equipment": [
 
     ],
-    "core": { "name": "", "desc": "" },
-    "advanced": [
-
+    "abilities": [
+      { "name": "", "desc": "", "type": "core" },
+      { "name": "", "desc": "", "type": "advanced" },
+      { "name": "", "desc": "", "type": "advanced" },
+      { "name": "", "desc": "", "type": "advanced" },
+      { "name": "", "desc": "", "type": "advanced" }
     ],
     "info": ""
   },
@@ -189,9 +228,12 @@
     "equipment": [
 
     ],
-    "core": { "name": "", "desc": "" },
-    "advanced": [
-
+    "abilities": [
+      { "name": "", "desc": "", "type": "core" },
+      { "name": "", "desc": "", "type": "advanced" },
+      { "name": "", "desc": "", "type": "advanced" },
+      { "name": "", "desc": "", "type": "advanced" },
+      { "name": "", "desc": "", "type": "advanced" }
     ],
     "info": ""
   },
@@ -203,9 +245,12 @@
     "equipment": [
 
     ],
-    "core": { "name": "", "desc": "" },
-    "advanced": [
-
+    "abilities": [
+      { "name": "", "desc": "", "type": "core" },
+      { "name": "", "desc": "", "type": "advanced" },
+      { "name": "", "desc": "", "type": "advanced" },
+      { "name": "", "desc": "", "type": "advanced" },
+      { "name": "", "desc": "", "type": "advanced" }
     ],
     "info": ""
   }

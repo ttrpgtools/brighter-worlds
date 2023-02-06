@@ -22,9 +22,11 @@ export interface Item extends UsableEntity {
   armor?: number;
 }
 
+export type AbilityType = 'core' | 'advanced';
+
 export interface Ability extends UsableEntity {
   details?: string;
-  core: boolean;
+  type: AbilityType;
 }
 
 export interface EulogyStanza {
@@ -54,6 +56,9 @@ export interface CharacterSummary {
   id: string;
   name: string;
   calling: string;
+  str: DieValue;
+  dex: DieValue;
+  wil: DieValue;
 }
 
 export interface NpcStats {
@@ -72,4 +77,7 @@ export interface NpcStats {
 export interface Calling extends Entity {
   tagline: string;
   for: string;
+  equipment: UsableEntity[];
+  abilities: Ability[];
+  info: string;
 }
