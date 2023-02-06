@@ -2,7 +2,7 @@
   import MenuLink from "$lib/MenuLink.svelte";
 </script>
 <svelte:head>
-  <title>Magna Arcana :: Brighter Worlds</title>
+  <title>Magna Arcana :: Brighter Worlds Online</title>
 </svelte:head>
 <main class="p-8 flex flex-col items-center gap-2">
   <h2 class="font-title text-4xl text-center">The Magic of Brighter Worlds</h2>

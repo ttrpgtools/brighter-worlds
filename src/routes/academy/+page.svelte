@@ -2,7 +2,7 @@
   import MenuLink from "$lib/MenuLink.svelte";
 </script>
 <svelte:head>
-  <title>Dream Academy :: Brighter Worlds</title>
+  <title>Dream Academy :: Brighter Worlds Online</title>
 </svelte:head>
 <main class="p-8 flex flex-col items-center gap-2">
   <h2 class="font-title text-4xl text-center">Discover Your Calling</h2>

@@ -14,6 +14,7 @@ export interface UsableEntity extends Entity {
   damage?: DieValue;
   extra?: DieValue;
   blast?: boolean;
+  enableMagic?: boolean | { type: 'spells' | 'rituals' | 'all', count?: number }
 }
 
 export interface Item extends UsableEntity {

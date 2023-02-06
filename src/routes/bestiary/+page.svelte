@@ -3,7 +3,7 @@
   import MenuLink from "$lib/MenuLink.svelte";
 </script>
 <svelte:head>
-  <title>Bestiary :: Brighter Worlds</title>
+  <title>Bestiary :: Brighter Worlds Online</title>
 </svelte:head>
 <main class="p-4 sm:p-8 flex flex-col items-center gap-2">
   <h2 class="font-title text-4xl text-center">The Creatures of Brighter Worlds</h2>

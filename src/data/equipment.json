@@ -1,0 +1,83 @@
+{
+  "str": {
+    "name": "Weapons",
+    "flair": [
+      "Bloodstained",
+      "Repaired",
+      "Hand Me Down",
+      "Rugged",
+      "Antique",
+      "Colorful",
+      "Well Maintained",
+      "Blackened",
+      "Ornate",
+      "Glowing"
+    ],
+    "items": [
+      { "name": "Stiletto", "damage": 6 },
+      { "name": "Staff", "damage": 6 },
+      { "name": "Whip", "damage": 6 },
+      { "name": "Rapier", "damage": 6 },
+      { "name": "Bow", "damage": 6 },
+      { "name": "Spear", "damage": 8 },
+      { "name": "Axe", "damage": 8 },
+      { "name": "Flail", "damage": 8 },
+      { "name": "Longsword", "damage": 10, "bulky": true },
+      { "name": "War Hammer", "damage": 10, "bulky": true }
+    ]
+  },
+  "dex": {
+    "name": "Tools",
+    "flair": [
+      "Durable",
+      "Flexible",
+      "Limited Edition",
+      "Luxury",
+      "Mini",
+      "Collapsible",
+      "Concealable",
+      "Wearable",
+      "Multi Function",
+      "Weaponized"
+    ],
+    "items": [
+      { "name": "10ft Pole" },
+      { "name": "Bucket" },
+      { "name": "Prybar" },
+      { "name": "Torch" },
+      { "name": "Compass" },
+      { "name": "Oil Flask" },
+      { "name": "Lockpick Set" },
+      { "name": "Rope (100ft)" },
+      { "name": "Air Bladder" },
+      { "name": "Lantern" }
+    ]
+  },
+  "wil": {
+    "name": "Miscellanea",
+    "flair": [
+      "Stolen",
+      "Refurbished",
+      "OldFashioned",
+      "Skeletal",
+      "Crystalline",
+      "Translucent",
+      "Oversized",
+      "SelfCleaning",
+      "Ethereal",
+      "Floating"
+    ],
+    "items": [
+      { "name": "Key" },
+      { "name": "Flask" },
+      { "name": "Cloak" },
+      { "name": "Hat" },
+      { "name": "Map" },
+      { "name": "Pipe (w/ tobacco)" },
+      { "name": "Spyglass" },
+      { "name": "Donkey (carries 4 bulky items)" },
+      { "name": "Random Ritual Scroll" },
+      { "name": "Random Spell Scroll" }
+    ]
+  }
+}

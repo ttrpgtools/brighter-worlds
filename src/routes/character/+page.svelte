@@ -9,7 +9,7 @@
   });
 </script>
 <svelte:head>
-  <title>Your Characters :: Brighter Worlds</title>
+  <title>Your Characters :: Brighter Worlds Online</title>
 </svelte:head>
 <main class="p-8 flex flex-col items-center gap-2">
   <h2 class="font-title text-4xl text-center">Choose Your Adventurer</h2>
@@ -22,6 +22,7 @@
       <div>No characters saved.</div>
     {/each}
   </div>
+  <div class="font-symbol text-5xl">P</div>
   <MenuLink href="/character/new">Create A New Character</MenuLink>
   <MenuLink href="/">Home</MenuLink>
 </main>

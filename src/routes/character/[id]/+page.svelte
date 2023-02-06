@@ -10,6 +10,7 @@
   import Grit from '$lib/sheet/Grit.svelte';
   import { stepDown } from '$lib/dice';
   import EulogyNotes from '$lib/sheet/EulogyNotes.svelte';
+  import MenuLink from "$lib/MenuLink.svelte";
   import { manager } from '$lib/data/sheet-manager';
   import { onMount } from 'svelte';
   const DEPRIVED = 'deprived';
@@ -191,10 +192,10 @@
   $: isDeprived = $character.statuses.has(DEPRIVED);
   </script>
   <svelte:head>
-    <title>Demo Brighter Worlds character sheet</title>
+    <title>{$character.name || 'Character Sheet'} :: Brighter Worlds Online</title>
   </svelte:head>
   <Modal on:close={closeModal} show={dieRoll > 0} label={dieLabel} {dice}/>
-  <div class="relative flex min-h-screen flex-col justify-start overflow-hidden bg-gray-50 dark:bg-gray-800 py-6 px-4 gap-4">
+  <div class="relative flex min-h-screen flex-col justify-start overflow-hidden bg-gray-50 dark:bg-gray-800 pt-6 pb-10 px-4 gap-4">
     <!-- <img src="/img/beams.jpg" alt="" class="absolute top-1/2 left-1/2 max-w-none -translate-x-1/2 -translate-y-1/2" width="1308" /> -->
     <div class="absolute inset-0 bg-[url(/img/grid.svg)] dark:invert bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]"></div>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -258,4 +259,7 @@
         </div>
       </Card>
     </div>
+  </div>
+  <div class="text-center my-6">
+    <MenuLink href="/character/">All Characters</MenuLink>
   </div>
