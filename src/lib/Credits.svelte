@@ -1,1 +1,1 @@
-<a href="/about/" class="absolute bottom-1 right-1 rounded-full w-6 h-6 flex items-center justify-center bg-purple-500">?</a>
+<a href="/about/" class="fixed bottom-1 right-1 rounded-full w-6 h-6 flex items-center justify-center bg-purple-500">?</a>

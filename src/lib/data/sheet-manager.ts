@@ -1,7 +1,7 @@
 import { id } from "$lib/rolling/id";
 import type { Calling, Character, CharacterSummary } from "$lib/types";
 import type { Writable } from "svelte/store";
-import { lazyFactory } from "./storage";
+import { clear, lazyFactory, type LazyWritable } from "./storage";
 
 const LIST_KEY = 'bw-sheet-list';
 const SHEET_KEY_PREFIX = 'bw-sheet-';
@@ -51,6 +51,7 @@ function reviveSheet(key: string, value: unknown) {
 class Manager {
   public list = lazyFactory<CharacterSummary[]>(LIST_KEY, []);
   private loaded = false;
+  private sheetCache = new Map<string, LazyWritable<Character>>();
 
   loadList() {
     this.list.load();
@@ -62,7 +63,7 @@ class Manager {
     if (!this.loaded) {
       this.loadList();
     }
-    this.list.update((current) => ([...current, { id: newId, name, calling: calling.name }]));
+    this.list.update((current) => ([...current, { id: newId, name, calling: calling.name, str: 4, dex: 4, wil: 4 }]));
     const sheet = this.getSheet(newId);
     sheet.load();
     // TODO load more of the calling.
@@ -70,10 +71,29 @@ class Manager {
     return [newId, sheet];
   }
 
+  deleteSheet(id: string) {
+    clear(`${SHEET_KEY_PREFIX}${id}`);
+    this.list.update((current) => current.filter(x => x.id !== id));
+  }
+
   getSheet(id: string) {
+    let sheet: LazyWritable<Character> | undefined = undefined;
+    if (this.sheetCache.has(id)) {
+      sheet = this.sheetCache.get(id);
+    }
+    if (sheet != null) {
+      return sheet;
+    }
     const empty = getEmptySheet();
     empty.id = id;
-    return lazyFactory<Character>(`${SHEET_KEY_PREFIX}${id}`, empty, { replacer: replaceSheet, reviver: reviveSheet });
+    sheet = lazyFactory<Character>(`${SHEET_KEY_PREFIX}${id}`, empty, { replacer: replaceSheet, reviver: reviveSheet });
+    sheet.subscribe(char => {
+      this.list.update(current => {
+        const index = current.findIndex(x => x.id === id);
+        return [...current.slice(0, index), {...current[index], name: char.name, calling: char.calling?.name, str: char.str.max, dex: char.dex.max, wil: char.wil.max}, ...current.slice(index + 1)];
+      });
+    });
+    return sheet;
   }
 }
 

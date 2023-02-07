@@ -53,7 +53,7 @@
     abilities: [
       {
         name: 'Devoted Oath',
-        core: true,
+        type: 'core',
         desc: `Choose a vow you must live by, and two boons your devotion grants you. If you break your vow, you lose your boons for a year and a day, or until you make amends.`,
         details: '**Devotion:** My fair goddess of the light.\n\n**Vow:** Poverty\n\n**Boons:** Can\'t Stop Won\'t Stop, Weapon of Faith (Paired)'
       },

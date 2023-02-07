@@ -1,5 +1,6 @@
 <script lang="ts">
 import { createEventDispatcher } from 'svelte';
+  import { primaryInput } from './util/detect';
 const dispatch = createEventDispatcher();
 
 let confirming = false;
@@ -11,6 +12,12 @@ function handleClick() {
   if (!confirming) {
     confirming = true;
     setTimeout(() => ready = true, 350);
+    if (primaryInput === 'touch') {
+      setTimeout(() => {
+        ready = false;
+        confirming = false;
+      }, 4000);
+    }
   } else if (ready) {
     confirming = false;
     ready = false;

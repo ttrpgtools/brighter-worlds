@@ -14,12 +14,12 @@ export interface UsableEntity extends Entity {
   damage?: DieValue;
   extra?: DieValue;
   blast?: boolean;
-  enableMagic?: boolean | { type: 'spells' | 'rituals' | 'all', count?: number }
 }
 
 export interface Item extends UsableEntity {
   bulky: boolean;
   armor?: number;
+  enableMagic?: boolean | { type: 'spells' | 'rituals' | 'all', count?: number }
 }
 
 export type AbilityType = 'core' | 'advanced';
