@@ -1,5 +1,6 @@
 <script lang="ts">
-  import Modal from '$lib/Modal.svelte';
+  import NotificationDialog from '$lib/NotificationDialog.svelte';
+  import InputDialog from '$lib/InputDialog.svelte';
   import { roll } from '$lib/rolling/roll';
   import Name from "$lib/sheet/Name.svelte";
   import Card from "$lib/Card.svelte";
@@ -21,9 +22,11 @@
 
   export let data: {id: string;}
   
-  let dieRoll = 0;
   let dieLabel = '';
   let dice: DieValue[] = [];
+  let notify: NotificationDialog;
+  let damageDialog: InputDialog;
+  const damageForm = { damage: '' };
   const character = manager.getSheet(data.id);
 
   onMount(() => {
@@ -87,9 +90,10 @@
         interim = secondValue;
       }
     }
-    dieRoll = interim;
+    const dieRoll = interim;
     label = label || `d${sides}`;
     dieLabel = `${label} = ${dieRoll}`;
+    notify.open();
     console.log(`${label} =`, dieRoll);
   }
   
@@ -115,21 +119,21 @@
   function addGear() {
     dieLabel = 'Not implemented (yet)';
     dice = [];
-    dieRoll = 1;
+    notify.open();
   }
   
-  function takeDamage(ev: CustomEvent<{ type: 'str' | 'dex' | 'wil' }>) {
+  async function takeDamage(ev: CustomEvent<{ type: 'str' | 'dex' | 'wil' }>) {
     const type = ev.detail.type;
-    const howmuch = prompt('How much potential damage?');
-    if (howmuch == null || howmuch === '') return;
-    const amount = parseInt(howmuch, 10);
+    const howmuch = await damageDialog.open(); 
+    if (howmuch == null || howmuch.damage === '') return;
+    const amount = parseInt(howmuch.damage, 10);
     if (Number.isNaN(amount)) return;
     const totalArmor = $character.equipment.reduce((p, c) => p + (!!c.armor ? c.armor : 0), 0);
     let unmitigated = amount - totalArmor;
     if (unmitigated <= 0) {
       dieLabel = 'Your armor protected you from the damage.';
-      dieRoll = 1;
       dice = [];
+      notify.open();
       return;
     }
     if ($character.grit.current > 0) {
@@ -139,8 +143,8 @@
     }
     if (unmitigated <= 0) {
       dieLabel = 'You managed to avoid damage through your grit.';
-      dieRoll = 1;
       dice = [];
+      notify.open();
       return;
     }
     const currentAttr = $character[type].current;
@@ -149,8 +153,8 @@
       $character.statuses.delete(INCAPACITATED);
       $character.statuses.add(ENDGAME[type].status);
       $character.statuses = $character.statuses;
-      dieRoll = 1;
       dice = [];
+      notify.open();
       return;
     }
     const saveAgainstDirectDamage = roll(currentAttr);
@@ -166,18 +170,14 @@
         ps = `Your d${currentAttr} is now a d${newAttr}.`;
       }
       dieLabel = `You took ${unmitigated} direct damage, rolled a ${saveAgainstDirectDamage} and have taken critical damage. ${ps}`;
-      dieRoll = 1;
       dice = [currentAttr];
+      notify.open();
       $character[type].current = newAttr;
     } else {
       dieLabel = `You took ${unmitigated} direct damage but rolled a ${saveAgainstDirectDamage} and avoided critical damage.`;
-      dieRoll = 1;
       dice = [currentAttr];
+      notify.open();
     }
-  }
-  
-  function closeModal() {
-    dieRoll = 0;
   }
   
   function toggleStatus(status: string) {
@@ -194,7 +194,12 @@
   <svelte:head>
     <title>{$character.name || 'Character Sheet'} :: Brighter Worlds Online</title>
   </svelte:head>
-  <Modal on:close={closeModal} show={dieRoll > 0} label={dieLabel} {dice}/>
+  <NotificationDialog title={dieLabel} {dice} bind:this={notify}/>
+  <InputDialog title="How much potential damage?" dice={[]} bind:this={damageDialog} form={damageForm}>
+    <form class="text-center">
+      <input type="text" inputmode="numeric" name="damage" bind:value={damageForm.damage} class="rounded-full dark:bg-gray-900 dark:text-white focus:ring-purple-500 focus:border-purple-500">
+    </form>
+  </InputDialog>
   <div class="relative flex flex-col justify-start overflow-hidden dark:bg-gray-800 pt-6 pb-10 px-4 gap-4">
     <!-- <img src="/img/beams.jpg" alt="" class="absolute top-1/2 left-1/2 max-w-none -translate-x-1/2 -translate-y-1/2" width="1308" /> -->
     <div class="absolute inset-0 bg-[url(/img/grid.svg)] dark:invert bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]"></div>

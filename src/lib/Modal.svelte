@@ -3,7 +3,7 @@ import Button from "./Button.svelte";
 import { blur, scale } from 'svelte/transition';
 import { createEventDispatcher } from "svelte";
 import { Die } from "./dice";
-    import type { DieValue } from "./types";
+import type { DieValue } from "./types";
 
 export let show = false;
 export let label = '';

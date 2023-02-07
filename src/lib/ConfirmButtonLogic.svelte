@@ -6,7 +6,6 @@ const dispatch = createEventDispatcher();
 let confirming = false;
 let ready = false;
 let mouseouttimer: NodeJS.Timeout | undefined = undefined;
-let readytimer = undefined;
   
 function handleClick() {
   if (!confirming) {
