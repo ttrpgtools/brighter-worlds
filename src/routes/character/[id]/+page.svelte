@@ -5,26 +5,40 @@
   import { roll } from '$lib/rolling/roll';
   import Name from "$lib/sheet/Name.svelte";
   import Card from "$lib/Card.svelte";
-  import type { Character, CharacterDetails, DamageForm, DieValue } from '$lib/types';
+  import type { Character, CharacterDetails, DamageForm, DieValue, Item } from '$lib/types';
   import Attribute from '$lib/sheet/Attribute.svelte';
   import Equipment from '$lib/sheet/Equipment.svelte';
   import { renderUnsafe } from '$lib/md/render';
   import Grit from '$lib/sheet/Grit.svelte';
-  import { stepDown } from '$lib/dice';
   import EulogyNotes from '$lib/sheet/EulogyNotes.svelte';
   import MenuLink from "$lib/MenuLink.svelte";
   import { manager } from '$lib/data/sheet-manager';
   import { onMount } from 'svelte';
   import { status } from '$lib/const';
   import { calculateDamage } from './damage';
+  import DieSelector from '$lib/sheet/DieSelector.svelte';
 
   export let data: {id: string;}
+
+  interface ItemForm {
+    name: string;
+    desc: string;
+    bulky: boolean;
+    damage: DieValue | 0;
+    blast: boolean;
+    enableMagic: boolean;
+    armor: string;
+  }
   
   let dieLabel = '';
   let dice: DieValue[] = [];
+  let saveType = '';
   let notify: NotificationDialog;
   let damageDialog: InputDialog<DamageForm>;
   const damageForm: DamageForm = { damage: '', bypassGrit: false, bypassArmor: false, overflow: true };
+  let itemDialog: InputDialog<ItemForm>;
+  let itemDialogTitle = '';
+  let itemForm: ItemForm = newItemForm();
   const character = manager.getSheet(data.id);
 
   onMount(() => {
@@ -33,6 +47,16 @@
   
   function persist() {
     $character = $character;
+  }
+
+  function newItemForm() {
+    return {
+      name: '',
+      desc: '',
+      damage: 0,
+      blast: false,
+      enableMagic: false,
+    } as ItemForm;
   }
 
   const testcharacter: Character = {
@@ -108,14 +132,31 @@
     }
   }
   
-  function addGear() {
-    dieLabel = 'Not implemented (yet)';
-    dice = [];
-    notify.open();
+  async function addGear() {
+    itemDialogTitle = 'Add item';
+    itemForm = newItemForm();
+    const item = await itemDialog.open();
+    if (item != null) {
+      const proper: Item = {
+        name: item.name,
+        desc: item.desc,
+        bulky: item.bulky,
+        blast: item.blast,
+        enableMagic: item.enableMagic
+      }
+      if (item.damage !== 0) {
+        proper.damage = item.damage;
+      }
+      if (item.armor) {
+        proper.armor = parseInt(item.armor, 10);
+      }
+      $character.equipment = [...$character.equipment, proper];
+    }
   }
   
   async function takeDamage(ev: CustomEvent<{ type: 'str' | 'dex' | 'wil' }>) {
     const type = ev.detail.type;
+    saveType = type.toUpperCase();
     const howmuch = await damageDialog.open();
     const chinfo: CharacterDetails = {
       type,
@@ -157,7 +198,7 @@
     <title>{$character.name || 'Character Sheet'} :: Brighter Worlds Online</title>
   </svelte:head>
   <NotificationDialog title={dieLabel} {dice} bind:this={notify}/>
-  <InputDialog title="How much potential damage?" dice={[]} bind:this={damageDialog} form={damageForm}>
+  <InputDialog title="How much {saveType} potential damage?" dice={[]} bind:this={damageDialog} form={damageForm}>
     <form class="text-center">
       <input type="text" inputmode="numeric" name="damage" bind:value={damageForm.damage} class="rounded-full dark:bg-gray-900 dark:text-white focus:ring-purple-500 focus:border-purple-500">
       <div class="flex gap-4 items-center flex-wrap mt-4">
@@ -170,6 +211,31 @@
         <div class="flex gap-2 items-center">
           <Toggle bind:value={damageForm.overflow} /> Overflow 
         </div>
+      </div>
+    </form>
+  </InputDialog>
+  <InputDialog title={itemDialogTitle} dice={[]} bind:this={itemDialog} form={itemForm}>
+    <form class="text-center flex flex-col gap-2">
+      <input type="text" name="name" placeholder="Name" bind:value={itemForm.name} class="rounded-full dark:bg-gray-900 dark:text-white focus:ring-purple-500 focus:border-purple-500">
+      <input type="text" name="desc" placeholder="Description" bind:value={itemForm.desc} class="rounded-full dark:bg-gray-900 dark:text-white focus:ring-purple-500 focus:border-purple-500">
+      <div class="flex gap-4 items-center flex-wrap mt-4">
+        <div class="flex gap-2 items-center">
+          <Toggle bind:value={itemForm.bulky} /> Bulky 
+        </div>
+        <div class="flex gap-2 items-center">
+          <Toggle bind:value={itemForm.enableMagic} /> Enable Magic 
+        </div>
+        <div class="flex gap-2 items-center">
+          <input type="text" name="armor" size=5 inputmode="numeric" placeholder="Armor" bind:value={itemForm.armor} class="rounded-full dark:bg-gray-900 dark:text-white focus:ring-purple-500 focus:border-purple-500"> 
+        </div>
+        <div class="flex gap-2 items-center">
+          <DieSelector bind:current={itemForm.damage} /> Damage 
+        </div>
+        {#if itemForm.damage !== 0}
+        <div class="flex gap-2 items-center">
+          <Toggle bind:value={itemForm.blast} /> Blast
+        </div>
+        {/if}
       </div>
     </form>
   </InputDialog>
