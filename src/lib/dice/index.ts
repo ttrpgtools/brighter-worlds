@@ -13,7 +13,8 @@ export function stepDown(die: DieValue) {
   return (die - 2) as DieValue;
 }
 
-export function stepUp(die: DieValue) {
+export function stepUp(die: DieValue | 0) {
   if (die === 12) return 12;
+  if (die === 0) return 4;
   return (die + 2) as DieValue;
 }

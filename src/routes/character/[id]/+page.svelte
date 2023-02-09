@@ -1,10 +1,11 @@
 <script lang="ts">
   import NotificationDialog from '$lib/NotificationDialog.svelte';
   import InputDialog from '$lib/InputDialog.svelte';
+  import Toggle from '$lib/Toggle.svelte';
   import { roll } from '$lib/rolling/roll';
   import Name from "$lib/sheet/Name.svelte";
   import Card from "$lib/Card.svelte";
-  import type { Character, DieValue } from '$lib/types';
+  import type { Character, CharacterDetails, DamageForm, DieValue } from '$lib/types';
   import Attribute from '$lib/sheet/Attribute.svelte';
   import Equipment from '$lib/sheet/Equipment.svelte';
   import { renderUnsafe } from '$lib/md/render';
@@ -14,19 +15,16 @@
   import MenuLink from "$lib/MenuLink.svelte";
   import { manager } from '$lib/data/sheet-manager';
   import { onMount } from 'svelte';
-  const DEPRIVED = 'deprived';
-  const PARALYSED = 'paralysed';
-  const CATATONIC = 'catatonic';
-  const DEAD = 'dead';
-  const INCAPACITATED = 'incapacitated';
+  import { status } from '$lib/const';
+  import { calculateDamage } from './damage';
 
   export let data: {id: string;}
   
   let dieLabel = '';
   let dice: DieValue[] = [];
   let notify: NotificationDialog;
-  let damageDialog: InputDialog;
-  const damageForm = { damage: '' };
+  let damageDialog: InputDialog<DamageForm>;
+  const damageForm: DamageForm = { damage: '', bypassGrit: false, bypassArmor: false, overflow: true };
   const character = manager.getSheet(data.id);
 
   onMount(() => {
@@ -69,12 +67,6 @@
     notes: 'Hello note.',
   };
   
-  const ENDGAME = {
-    str: { msg: 'You died.', status: DEAD },
-    dex: { msg: 'You are paralysed.', status: PARALYSED },
-    wil: { msg: 'You are catatonic.', status: CATATONIC },
-  };
-  
   function capitalize(word: string) {
     return word[0].toUpperCase() + word.substring(1);
   }
@@ -111,7 +103,7 @@
   }
   
   function rest() {
-    if (!$character.statuses.has(DEPRIVED)) {
+    if (!$character.statuses.has(status.DEPRIVED)) {
       $character.grit.current = $character.grit.max;
     }
   }
@@ -124,60 +116,30 @@
   
   async function takeDamage(ev: CustomEvent<{ type: 'str' | 'dex' | 'wil' }>) {
     const type = ev.detail.type;
-    const howmuch = await damageDialog.open(); 
-    if (howmuch == null || howmuch.damage === '') return;
-    const amount = parseInt(howmuch.damage, 10);
-    if (Number.isNaN(amount)) return;
-    const totalArmor = $character.equipment.reduce((p, c) => p + (!!c.armor ? c.armor : 0), 0);
-    let unmitigated = amount - totalArmor;
-    if (unmitigated <= 0) {
-      dieLabel = 'Your armor protected you from the damage.';
-      dice = [];
-      notify.open();
-      return;
+    const howmuch = await damageDialog.open();
+    const chinfo: CharacterDetails = {
+      type,
+      equipment: $character.equipment,
+      statuses: $character.statuses,
+      grit: $character.grit.current,
+      die: $character[type].current,
+    };
+    const results = calculateDamage(chinfo, howmuch);
+
+    if (results == null) return;
+
+    dieLabel = results.msg;
+    dice = results.dice;
+    if (results.statuses != null) {
+      $character.statuses = results.statuses;
     }
-    if ($character.grit.current > 0) {
-      const gritUsed = Math.min($character.grit.current, unmitigated);
-      $character.grit.current -= gritUsed;
-      unmitigated -= gritUsed;
+    if (results.grit != null) {
+      $character.grit.current = results.grit;
     }
-    if (unmitigated <= 0) {
-      dieLabel = 'You managed to avoid damage through your grit.';
-      dice = [];
-      notify.open();
-      return;
+    if (results.die != null) {
+      $character[type].current = results.die;
     }
-    const currentAttr = $character[type].current;
-    if (currentAttr === 0) {
-      dieLabel = ENDGAME[type].msg;
-      $character.statuses.delete(INCAPACITATED);
-      $character.statuses.add(ENDGAME[type].status);
-      $character.statuses = $character.statuses;
-      dice = [];
-      notify.open();
-      return;
-    }
-    const saveAgainstDirectDamage = roll(currentAttr);
-    const critical = unmitigated >= saveAgainstDirectDamage;
-    if (critical) {
-      const newAttr = stepDown(currentAttr);
-      let ps = '';
-      if (newAttr === 0) {
-        ps = 'You are now incapacitated.';
-        $character.statuses.add(INCAPACITATED);
-        $character.statuses = $character.statuses;
-      } else {
-        ps = `Your d${currentAttr} is now a d${newAttr}.`;
-      }
-      dieLabel = `You took ${unmitigated} direct damage, rolled a ${saveAgainstDirectDamage} and have taken critical damage. ${ps}`;
-      dice = [currentAttr];
-      notify.open();
-      $character[type].current = newAttr;
-    } else {
-      dieLabel = `You took ${unmitigated} direct damage but rolled a ${saveAgainstDirectDamage} and avoided critical damage.`;
-      dice = [currentAttr];
-      notify.open();
-    }
+    notify.open();
   }
   
   function toggleStatus(status: string) {
@@ -189,7 +151,7 @@
     $character.statuses = $character.statuses;
   }
   
-  $: isDeprived = $character.statuses.has(DEPRIVED);
+  $: isDeprived = $character.statuses.has(status.DEPRIVED);
   </script>
   <svelte:head>
     <title>{$character.name || 'Character Sheet'} :: Brighter Worlds Online</title>
@@ -198,6 +160,17 @@
   <InputDialog title="How much potential damage?" dice={[]} bind:this={damageDialog} form={damageForm}>
     <form class="text-center">
       <input type="text" inputmode="numeric" name="damage" bind:value={damageForm.damage} class="rounded-full dark:bg-gray-900 dark:text-white focus:ring-purple-500 focus:border-purple-500">
+      <div class="flex gap-4 items-center flex-wrap mt-4">
+        <div class="flex gap-2 items-center">
+          <Toggle bind:value={damageForm.bypassGrit} /> Bypass Grit 
+        </div>
+        <div class="flex gap-2 items-center">
+          <Toggle bind:value={damageForm.bypassArmor} /> Bypass Armor 
+        </div>
+        <div class="flex gap-2 items-center">
+          <Toggle bind:value={damageForm.overflow} /> Overflow 
+        </div>
+      </div>
     </form>
   </InputDialog>
   <div class="relative flex flex-col justify-start overflow-hidden dark:bg-gray-800 pt-6 pb-10 px-4 gap-4">
@@ -218,14 +191,14 @@
           
           <div>
             <div class="flex items-center gap-2">
-              <button type="button" on:click={() => toggleStatus(DEPRIVED)} class="inline-flex items-center rounded border border-gray-300 bg-white dark:bg-gray-900 dark:border-gray-600 px-2.5 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2" class:bg-purple-200={isDeprived} class:border-purple-800={isDeprived} class:dark:bg-purple-800={isDeprived} class:dark:border-purple-200={isDeprived}>
+              <button type="button" on:click={() => toggleStatus(status.DEPRIVED)} class="inline-flex items-center rounded border border-gray-300 bg-white dark:bg-gray-900 dark:border-gray-600 px-2.5 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2" class:bg-purple-200={isDeprived} class:border-purple-800={isDeprived} class:dark:bg-purple-800={isDeprived} class:dark:border-purple-200={isDeprived}>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="-ml-0.5 mr-2 h-4 w-4 text-gray-400 dark:text-gray-500" class:!text-purple-800={isDeprived} class:dark:!text-purple-100={isDeprived}><path fill="currentColor" d="M35.2 126.3c4.1 1.1 8.4 1.7 12.8 1.7c26.5 0 48-21 48-47c0-5-1.8-11.3-4.6-18.1c-.3-.7-.6-1.4-.9-2.1c-8.9-20.2-26.5-44.9-36-57.5c-3.2-4.4-9.6-4.4-12.8 0C28.6 20.6 0 61 0 81c0 21.7 14.9 39.8 35.2 45.3zM256 0c-51.4 0-99.3 15.2-139.4 41.2c1.5 3.1 3 6.2 4.3 9.3c3.4 8 7.1 19 7.1 30.5c0 44.3-36.6 79-80 79c-9.6 0-18.8-1.7-27.4-4.8C7.3 186.2 0 220.2 0 256C0 397.4 114.6 512 256 512s256-114.6 256-256S397.4 0 256 0zM195.9 410.7c-5.9 6.6-16 7.1-22.6 1.2s-7.1-16-1.2-22.6C188.2 371.4 216.3 352 256 352s67.8 19.4 83.9 37.3c5.9 6.6 5.4 16.7-1.2 22.6s-16.7 5.4-22.6-1.2c-11.7-13-31.6-26.7-60.1-26.7s-48.4 13.7-60.1 26.7zM96 272c0-8.8 7.2-16 16-16h96c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16zm208-16h96c8.8 0 16 7.2 16 16s-7.2 16-16 16H304c-8.8 0-16-7.2-16-16s7.2-16 16-16z"/></svg>
                 Deprived
               </button>
-              {#each Array.from($character.statuses.values()) as status}
-                {#if status !== DEPRIVED}
-                <button type="button" on:click={() => toggleStatus(status)} class="inline-flex items-center rounded border border-purple-800 bg-purple-200 dark:bg-purple-800 dark:border-purple-200 px-2.5 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2">
-                  {capitalize(status)}
+              {#each Array.from($character.statuses.values()) as stat}
+                {#if stat !== status.DEPRIVED}
+                <button type="button" on:click={() => toggleStatus(stat)} class="inline-flex items-center rounded border border-purple-800 bg-purple-200 dark:bg-purple-800 dark:border-purple-200 px-2.5 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2">
+                  {capitalize(stat)}
                 </button>
                 {/if}
               {/each}

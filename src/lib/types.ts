@@ -1,3 +1,5 @@
+import type { status } from "./const";
+
 export type DieValue = 4 | 6 | 8 | 10 | 12;
 
 export interface Attribute<T = number, T2 = T> {
@@ -80,4 +82,29 @@ export interface Calling extends Entity {
   equipment: UsableEntity[];
   abilities: Ability[];
   info: string;
+}
+
+export interface DamageForm {
+  damage: string;
+  bypassGrit: boolean;
+  bypassArmor: boolean;
+  overflow: boolean;
+}
+
+export type Status = typeof status[keyof typeof status]
+
+export interface CharacterDetails {
+  equipment: Item[];
+  grit: number;
+  type: 'str' | 'dex' | 'wil';
+  die: DieValue | 0;
+  statuses: Set<string>;
+}
+
+export interface DamageResults {
+  msg: string;
+  dice: DieValue[];
+  grit?: number;
+  die?: DieValue | 0;
+  statuses?: Set<string>;
 }

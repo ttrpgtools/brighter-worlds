@@ -3,9 +3,12 @@
     "name": "Alchemist",
     "tagline": "A crafter distilling the natural world into potions.",
     "for": "For players who like to plan ahead, collect ingredients, and do alchemy.",
-    "desc": "",
+    "desc": "Through branch and root you know how to unlock the secrets of the earth. You use this knowledge to wrench the very world to will.",
     "equipment": [
-
+      { "name": "Recipe Book", "desc": "Acts as a Grimoire that also stores your potion recipes.", "bulky": true, "enableMagic": true },
+      { "name": "Alchemy Supplies", "desc": "", "bulky": false },
+      { "name": "Complete Potion 1", "desc": "Edit this to your first potion", "bulky": false },
+      { "name": "Complete Potion 2", "desc": "Edit this to your second potion", "bulky": false }
     ],
     "abilities": [
       { "name": "", "desc": "", "type": "core" },
@@ -20,9 +23,10 @@
     "name": "Animal’s Companion",
     "tagline": "A bonded pair of person and beast, facing the world side by side.",
     "for": "For players who want a cool pet or to ride a bear.",
-    "desc": "",
+    "desc": "Ranger, beastmaster, wildspeaker, hunter… the labels don’t matter, what’s important is that your companion is by your side. Your bond extends to the ends of the world and beyond.",
     "equipment": [
-
+      { "name": "Your Companion", "desc": "Add URL to separate sheet.", "bulky": false },
+      { "name": "Bag of Snacks", "desc": "Something your companion loves.", "bulky": false }
     ],
     "abilities": [
       { "name": "", "desc": "", "type": "core" },
@@ -37,9 +41,10 @@
     "name": "Archivist",
     "tagline": "A collector and collator of knowledge.",
     "for": "For players who like to keep notes and read lore.",
-    "desc": "",
+    "desc": "You’ve always liked knowing things. Collecting information and stories like a squirrel collecting nuts for the winter. Frustrated with incomplete, inconsistent, and obviously biased records you’ve emerged from your study to do first hand research and correct the record.",
     "equipment": [
-
+      { "name": "Your Archive", "desc": "Acts as a Grimoire that also stores your Topics. Starts with one Topic of information based on your prior studies and one ritual of your choice.", "bulky": true },
+      { "name": "An extra piece of WIL starting gear", "desc": "Rolled with d10s", "bulky": false }
     ],
     "abilities": [
       { "name": "", "desc": "", "type": "core" },
@@ -54,9 +59,13 @@
     "name": "Artificer",
     "tagline": "A builder of weapons, armor, and tools.",
     "for": "For players who like to craft items, or assemble mechanics like lego bricks.",
-    "desc": "",
+    "desc": "Your habit of always taking things apart to learn how they worked didn’t always endear you to people. When you started putting things back together people were mollified. Once they realized the things you’d put back together were better than before? That’s when you got popular.",
     "equipment": [
-
+      { "name": "Your Artificing Tools", "desc": "", "bulky": false },
+      { "name": "Masterwork Weapon", "desc": "", "bulky": false, "damage": "6" },
+      { "name": "Masterwork Armor", "desc": "", "bulky": false, "armor": 1 },
+      { "name": "Masterwork Item", "desc": "", "bulky": false },
+      { "name": "Three additional improvements", "desc": "", "bulky": false }
     ],
     "abilities": [
       { "name": "", "desc": "", "type": "core" },
@@ -71,9 +80,10 @@
     "name": "Bag of Bones",
     "tagline": "A walking, talking skeleton.",
     "for": "For players who don’t want to be at risk of dying easily, and would like to play a living cartoon.",
-    "desc": "",
+    "desc": "You’re a walking, talking skeleton. Devoid of life and yet alive. Perhaps your state is the result of a run-in with a grumpy necromancer. Or maybe a ritual for lichdom went badly. Or did you get bored of guarding a dungeon, and decide to try your luck with a life of adventure? Your status as a bag of bones means you’re harder to kill (a second time) but making friends is perhaps a bit more difficult now.",
     "equipment": [
-
+      { "name": "A Lack of Flesh", "desc": "Add URL to separate sheet.", "bulky": false, "armor": 1 },
+      { "name": "A Fearsome Visage", "desc": "Whoa, that's frightening.", "bulky": false }
     ],
     "abilities": [
       { "name": "", "desc": "", "type": "core" },
@@ -88,9 +98,10 @@
     "name": "Blessed of Water",
     "tagline": "Empowered through spiritually bonding with an aquatic place.",
     "for": "For players who like free-form effects, or want to play a water bender.",
-    "desc": "",
+    "desc": "Were you granted a boon by an ocean goddess? Are you the daughter of a river spirit? Perhaps you did some great deed for the guardian of a particular cove? Your watery patron granted you a part of itself and bound you to water. They are not a dominant presence in your journey, but their support is constant and you hear their voice in the patter of rain, the burble of a creek, or the crash of ocean waves.",
     "equipment": [
-
+      { "name": "Waterskin", "desc": "", "bulky": false },
+      { "name": "A small, impossible token from your Patron", "desc": "", "bulky": false }
     ],
     "abilities": [
       { "name": "", "desc": "", "type": "core" },
@@ -105,9 +116,11 @@
     "name": "Cleric of Small Gods",
     "tagline": "The only priest of a tiny deity whose words can change reality.",
     "for": "For players who prefer freeform magic over spell lists.",
-    "desc": "",
+    "desc": "You carry a small god around with you. You protect it, rather than the other way around. Possibly a baby god, a god of a small concept, a recently reincarnated god, a local god whose home was destroyed, or a ‘killed’ god. Regardless you are bound to it, and may speak with its words to alter the world around you.",
     "equipment": [
-
+      { "name": "Your Small God", "desc": "", "bulky": false },
+      { "name": "Domain Die", "desc": "", "bulky": false, "damage": 8 },
+      { "name": "Holy Vestments", "desc": "", "bulky": false }
     ],
     "abilities": [
       { "name": "", "desc": "", "type": "core" },
@@ -122,9 +135,10 @@
     "name": "Crystal Wizard",
     "tagline": "A magic user harnessing the mystic properties of crystals.",
     "for": "For players who like to prepare magic before casting it, like to read through lists of magic, or want to focus on rituals over spells.",
-    "desc": "",
+    "desc": "The spheres talk. They speak in frequencies and tones inaudible to all living things. You’ve discovered that crystals, when prepared in particular ways, can resonant with this divine conversation. Others may scoff at your talk of the mystic resonance of quartz, or sympathetic vibrations of tourmaline, but you know that by listening carefully you can access powers beyond the ken of your contemporaries.",
     "equipment": [
-
+      { "name": "Crystal Grimoire", "desc": "Choose one spell and two rituals.", "bulky": false, "enableMagic": true },
+      { "name": "Arcane Storage Crystal", "desc": "Attuned to one of your rituals.", "bulky": false }
     ],
     "abilities": [
       { "name": "", "desc": "", "type": "core" },
@@ -139,9 +153,10 @@
     "name": "Demonic Sorcerer",
     "tagline": "A magic specialist borrowing the skills of a spirit living in their head.",
     "for": "For players who like to make do with random results, or like to talk to themselves.",
-    "desc": "",
+    "desc": "A spirit of chaos, better known as a demon, has made its home in your head. In exchange for the shelter your body provides, it grants you access to the knowledge and skills its picked up from prior hosts. Sometime, when you die, it will leap to a new body and pass along the skills and knowledge it learned from you, but you might prefer not to think about that.",
     "equipment": [
-
+      { "name": "Demon in your brain", "desc": "One random spell and ritual plus one chosen spell and ritual.", "bulky": false, "enableMagic": true },
+      { "name": "Unusual choice of clothing", "desc": "Your demon insists on it.", "bulky": false }
     ],
     "abilities": [
       { "name": "", "desc": "", "type": "core" },
@@ -156,9 +171,10 @@
     "name": "Devoted",
     "tagline": "Dedicated to an ideal. A paladin empowered through their faith and belief.",
     "for": "For players who like their character to live by a code.",
-    "desc": "",
+    "desc": "You are devoted to something larger than yourself. It might be a deity, an organization, or simply an ideal. Whatever it is, your devotion to it grants you strength beyond mortal ken. Whether it is power granted to you, or pulled from within, your devotion guides your actions.",
     "equipment": [
-
+      { "name": "Decorated Armor", "desc": "", "bulky": false, "armor": 1 },
+      { "name": "Extra STR item", "desc": "Rolled with d10s", "bulky": false }
     ],
     "abilities": [
       { "name": "", "desc": "", "type": "core" },
@@ -173,9 +189,9 @@
     "name": "Grimblade",
     "tagline": "Owner of a mystic weapon.",
     "for": "For players who want to hit things and cast spells at the same time.",
-    "desc": "",
+    "desc": "You are a grimblade and you have a grimblade, a unique and very large weapon that you’ve learned the trick of putting spells into. Whether you physically inscribe it onto a meteor metal blade, or embed the spells into a crystal hammer, you find this eminently more practical than lugging a big book around.",
     "equipment": [
-
+      { "name": "Grimblade", "desc": "Choose two spells", "bulky": true, "enableMagic": { "type": "spells" } }
     ],
     "abilities": [
       { "name": "", "desc": "", "type": "core" },
@@ -190,9 +206,11 @@
     "name": "Runewright",
     "tagline": "A crafter of precise and unique magics.",
     "for": "For players who like to assemble unique effects out of logical or grammatical components.",
-    "desc": "",
+    "desc": "You are a runewright, you imbue and channel power through engraved symbols of power. You are no wizard. You’re above running around shooting crude magic from your fingertips, blasting things with fireballs. Runes are sophisticated. Runes are subtler, slower, and longer lasting than spells. Anyone can pick up a spellbook and cast a spell, crafting runes takes refinement. And you are refined.",
     "equipment": [
-
+      { "name": "Knowledge of 2 Elements, 2 Verbs, 2 Subjects", "desc": "", "bulky": false },
+      { "name": "Etching or Drawing tools", "desc": "", "bulky": false },
+      { "name": "Flawless handwriting", "desc": "", "bulky": false }
     ],
     "abilities": [
       { "name": "", "desc": "", "type": "core" },
@@ -207,9 +225,11 @@
     "name": "Sneaky Bastard",
     "tagline": "An expert in self cloning and underhanded tricks.",
     "for": "For players who like plans within plans, and to be in two places at once.",
-    "desc": "",
+    "desc": "You’ve always been up to something. When people look one way, you’re going the other. There’s always at least one more ace up your sleeve. Of course all this has a tendency to ruffle feathers, so it’s a good thing you’ve got the perfect partner to watch your back… yourself.",
     "equipment": [
-
+      { "name": "Daggers", "desc": "You always manage to have another one secreted about your person.", "bulky": false, "damage": 6 },
+      { "name": "Bump keys", "desc": "(1: the lock and key break, 2: the lock breaks, 3: the key breaks, 4-6: nothing breaks)", "bulky": false, "damage": 6 },
+      { "name": "Dramatic looking Cloak", "desc": "Stylish", "bulky": false }
     ],
     "abilities": [
       { "name": "", "desc": "", "type": "core" },
@@ -224,9 +244,11 @@
     "name": "Soulbearer",
     "tagline": "A steward of a beast’s soul, able to transform into that creature through ancient rites.",
     "for": "For players who want to be an animal sometimes.",
-    "desc": "",
+    "desc": "The soul of a great beast lives within you, granting you its skills and form. Shamanic ritual prepares for such a transfer, layering soul upon soul for generations until an animal is ready to make a Soulbearer.",
     "equipment": [
-
+      { "name": "Your Great Soul", "desc": "You may want to maintain a separate sheet for your animal shape.", "bulky": false },
+      { "name": "Beneficial trait", "desc": "Something from your soul animal.", "bulky": false },
+      { "name": "Inconvenient trait", "desc": "Something from your soul animal.", "bulky": false }
     ],
     "abilities": [
       { "name": "", "desc": "", "type": "core" },
@@ -241,9 +263,11 @@
     "name": "Witch",
     "tagline": "A magician of ancient secrets, assisted by their magically bonded familiar.",
     "for": "For players who want to cast spells and also have an adorable pet.",
-    "desc": "",
+    "desc": "Familiar at your side, you channel the forces of magic across the mystic bond that connects you. You are a shepherd to ancient secrets, passed from person to person to keep them safe from forces who would rather see it lost.",
     "equipment": [
-
+      { "name": "Your Familiar", "desc": "You can link to your familiar's sheet", "bulky": false },
+      { "name": "Grimoire", "desc": "Choose two spells and one ritual.", "bulky": true, "enableMagic": true },
+      { "name": "A fanciful hat or ornamentation", "desc": "Ooo, that is fancy.", "bulky": false }
     ],
     "abilities": [
       { "name": "", "desc": "", "type": "core" },

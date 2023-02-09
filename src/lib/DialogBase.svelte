@@ -3,21 +3,20 @@
   import { blur, scale } from 'svelte/transition';
 
   export let title = '';
+  type T = $$Generic;
 
   const dialog = createDialog({ label: title });
   let resolve: ((value?: any) => void) | undefined;
 
-  export async function open<T = unknown>() {
+  export async function open<T>() {
     return new Promise<T | undefined>((res) => {
       resolve = res;
       dialog.open();
     });
   }
 
-  export function close(value?: unknown) {
-    console.log('Try to close');
+  export function close(value?: T) {
     if (resolve != null) {
-      console.log('I am closing with', value);
       resolve(value);
       resolve = undefined;
     }
@@ -27,7 +26,6 @@
   dialog.subscribe(({expanded}) => {
     if (!expanded) {
       if (resolve != null) {
-        console.log('I am cleaning up.');
         resolve();
         resolve = undefined;
       }
@@ -38,7 +36,7 @@
 <div class="relative z-10">
   {#if $dialog.expanded}
     
-    <div class="fixed inset-0 bg-purple-500 bg-opacity-20" on:click={close} transition:blur />
+    <div class="fixed inset-0 bg-purple-500 bg-opacity-20" on:click={() => close()} transition:blur />
 
     <div class="fixed inset-0 overflow-y-auto">
       <div class="flex min-h-full items-center justify-center p-4 text-center">
