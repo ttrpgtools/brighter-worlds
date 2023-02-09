@@ -1,6 +1,6 @@
 <script lang="ts">
 import { createEventDispatcher } from 'svelte';
-  import { primaryInput } from './util/detect';
+import { primaryInput } from './util/detect';
 const dispatch = createEventDispatcher();
 
 let confirming = false;

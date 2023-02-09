@@ -6,9 +6,9 @@ import type { DieValue } from "./types";
 export let dice: DieValue[] = [];
 export let title = '';
 export let msg = '';
-let comp: DialogBase;
+let comp: DialogBase<undefined>;
 export async function open() {
-  return comp.open<number>();
+  return comp.open<undefined>();
 }
 </script>
 <DialogBase {title} let:open let:close bind:this={comp}>

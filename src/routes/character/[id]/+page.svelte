@@ -5,7 +5,7 @@
   import { roll } from '$lib/rolling/roll';
   import Name from "$lib/sheet/Name.svelte";
   import Card from "$lib/Card.svelte";
-  import type { Character, CharacterDetails, DamageForm, DieValue, Item } from '$lib/types';
+  import type { Magic as ArcaneItem, CharacterDetails, DamageForm, DieValue, Item, MagicType } from '$lib/types';
   import Attribute from '$lib/sheet/Attribute.svelte';
   import Equipment from '$lib/sheet/Equipment.svelte';
   import { renderUnsafe } from '$lib/md/render';
@@ -17,10 +17,13 @@
   import { status } from '$lib/const';
   import { calculateDamage } from './damage';
   import DieSelector from '$lib/sheet/DieSelector.svelte';
+  import { id } from '$lib/rolling/id';
+  import Magic from '$lib/sheet/Magic.svelte';
 
   export let data: {id: string;}
 
   interface ItemForm {
+    id?: string;
     name: string;
     desc: string;
     bulky: boolean;
@@ -28,6 +31,15 @@
     blast: boolean;
     enableMagic: boolean;
     armor: string;
+  }
+
+  interface MagicForm {
+    id?: string;
+    type?: MagicType;
+    name: string;
+    desc: string;
+    damage: DieValue | 0;
+    blast: boolean;
   }
   
   let dieLabel = '';
@@ -38,7 +50,14 @@
   const damageForm: DamageForm = { damage: '', bypassGrit: false, bypassArmor: false, overflow: true };
   let itemDialog: InputDialog<ItemForm>;
   let itemDialogTitle = '';
+  let itemDialogDelete = false;
   let itemForm: ItemForm = newItemForm();
+
+  let magicDialog: InputDialog<MagicForm>;
+  let magicDialogTitle = '';
+  let magicDialogDelete = false;
+  let magicForm: MagicForm = newMagicForm();
+
   const character = manager.getSheet(data.id);
 
   onMount(() => {
@@ -49,47 +68,45 @@
     $character = $character;
   }
 
-  function newItemForm() {
+  function newItemForm(id?: string) {
+    if (id) {
+      const item = $character.equipment.find(x => x.id === id);
+      if (item != null) {
+        return {
+          ...item,
+          damage: item.damage ?? 0,
+          armor: item.armor ? item.armor.toString() : ''
+        } as ItemForm;
+      }
+    }
     return {
       name: '',
       desc: '',
       damage: 0,
       blast: false,
+      bulky: false,
       enableMagic: false,
+      armor: '',
     } as ItemForm;
   }
 
-  const testcharacter: Character = {
-    id: '',
-    name: 'Choppy Pete',
-    pronouns: 'he/them',
-    grit: { current: 3, max: 3 },
-    str: { current: 8, max: 8 },
-    dex: { current: 4, max: 4 },
-    wil: { current: 6, max: 6 },
-    statuses: new Set<string>([]),
-    equipment: [
-      { name: 'Colorful Rapier', desc: 'Bright pink slender sword.', damage: 6, bulky: false },
-      { name: 'Decorated Armor', desc: 'Plates so nice you could eat off them.', bulky: true, armor: 1 },
-      { name: 'Old fashioned Cloak', desc: 'Always a classic.', bulky: false },
-      { name: 'Flexible 10-foot pole', desc: 'Why is it so droopy?', bulky: false },
-    ],
-    calling: { name: 'Devoted' },
-    abilities: [
-      {
-        name: 'Devoted Oath',
-        type: 'core',
-        desc: `Choose a vow you must live by, and two boons your devotion grants you. If you break your vow, you lose your boons for a year and a day, or until you make amends.`,
-        details: '**Devotion:** My fair goddess of the light.\n\n**Vow:** Poverty\n\n**Boons:** Can\'t Stop Won\'t Stop, Weapon of Faith (Paired)'
-      },
-    ],
-    eulogy: [
-      {message: 'I remember the time he killed that whole flock of seagulls when one bit his friend.', xp: 1, spent: 0},
-    ],
-    spells: [],
-    rituals: [],
-    notes: 'Hello note.',
-  };
+  function newMagicForm(existing?: {id: string, type: MagicType}) {
+    if (existing?.id) {
+      const magic = existing.type === 'spell' ? $character.spells.find(x => x.id === existing.id) : $character.rituals.find(x => x.id === existing.id);
+      if (magic != null) {
+        return {
+          ...magic,
+          damage: magic.damage ?? 0,
+        } as MagicForm;
+      }
+    }
+    return {
+      name: '',
+      desc: '',
+      damage: 0,
+      blast: false,
+    } as MagicForm;
+  }
   
   function capitalize(word: string) {
     return word[0].toUpperCase() + word.substring(1);
@@ -131,13 +148,12 @@
       $character.grit.current = $character.grit.max;
     }
   }
-  
-  async function addGear() {
-    itemDialogTitle = 'Add item';
-    itemForm = newItemForm();
+
+  async function gearForm() {
     const item = await itemDialog.open();
     if (item != null) {
       const proper: Item = {
+        id: item.id || id(),
         name: item.name,
         desc: item.desc,
         bulky: item.bulky,
@@ -150,7 +166,104 @@
       if (item.armor) {
         proper.armor = parseInt(item.armor, 10);
       }
-      $character.equipment = [...$character.equipment, proper];
+      return proper;
+    }
+  }
+  
+  async function addGear() {
+    itemDialogTitle = 'Add item';
+    itemDialogDelete = false;
+    itemForm = newItemForm();
+    const item = await gearForm();
+    if (item != null) {
+      $character.equipment = [...$character.equipment, item];
+    }
+  }
+
+  async function editGear(ev: CustomEvent<string>) {
+    const id = ev.detail;
+    itemDialogTitle = 'Edit item';
+    itemDialogDelete = true;
+    itemForm = newItemForm(id);
+    const item = await gearForm();
+    if (item != null) {
+      const index = $character.equipment.findIndex(x => x.id === id);
+      if (index >= 0) {
+        $character.equipment = [...$character.equipment.slice(0, index), item, ...$character.equipment.slice(index + 1)];
+      }
+    }
+  }
+
+  function removeGear(ev: CustomEvent<ItemForm>) {
+    const id = ev.detail.id;
+    if (id) {
+      $character.equipment = $character.equipment.filter(e => e.id !== id);
+    }
+  }
+
+  async function arcaneForm(type: MagicType) {
+    const item = await magicDialog.open();
+    if (item != null) {
+      const proper: ArcaneItem = {
+        id: item.id || id(),
+        type,
+        name: item.name,
+        desc: item.desc,
+        blast: item.blast,
+      }
+      if (item.damage !== 0) {
+        proper.damage = item.damage;
+      }
+      return proper;
+    }
+  }
+
+  async function addMagic(ev: CustomEvent<MagicType>) {
+    const type = ev.detail;
+    magicDialogTitle = `Add ${type}`;
+    magicDialogDelete = false;
+    magicForm = newItemForm();
+    const item = await arcaneForm(type);
+    if (item != null) {
+      if (type === 'spell' && item.type === 'spell') {
+        $character.spells = [...$character.spells, item];
+      } else if (type === 'ritual' && item.type === 'ritual') {
+        $character.rituals = [...$character.rituals, item];
+      }
+    }
+  }
+
+  async function editMagic(ev: CustomEvent<{id: string; type: MagicType}>) {
+    const {id, type} = ev.detail;
+    magicDialogTitle = `Edit ${type}`;
+    magicDialogDelete = true;
+    magicForm = newMagicForm({id, type});
+    const item = await arcaneForm(type);
+    if (item != null) {
+      if (type === 'spell' && item.type === 'spell') {
+        const index = $character.spells.findIndex(x => x.id === id);
+        if (index >= 0) {
+          $character.spells = [...$character.spells.slice(0, index), item, ...$character.spells.slice(index + 1)];
+        }
+      } else if (type === 'ritual' && item.type === 'ritual') {
+        const index = $character.rituals.findIndex(x => x.id === id);
+        if (index >= 0) {
+          $character.rituals = [...$character.rituals.slice(0, index), item, ...$character.rituals.slice(index + 1)];
+        }
+      }
+      
+    }
+  }
+
+  function removeMagic(ev: CustomEvent<MagicForm>) {
+    const id = ev.detail.id;
+    const type = ev.detail.type;
+    if (id && type) {
+      if (type === 'spell') {
+        $character.spells = $character.spells.filter(e => e.id !== id);
+      } else {
+        $character.rituals = $character.rituals.filter(e => e.id !== id);
+      }
     }
   }
   
@@ -198,10 +311,10 @@
     <title>{$character.name || 'Character Sheet'} :: Brighter Worlds Online</title>
   </svelte:head>
   <NotificationDialog title={dieLabel} {dice} bind:this={notify}/>
-  <InputDialog title="How much {saveType} potential damage?" dice={[]} bind:this={damageDialog} form={damageForm}>
-    <form class="text-center">
-      <input type="text" inputmode="numeric" name="damage" bind:value={damageForm.damage} class="rounded-full dark:bg-gray-900 dark:text-white focus:ring-purple-500 focus:border-purple-500">
-      <div class="flex gap-4 items-center flex-wrap mt-4">
+  <InputDialog title="How much potential {saveType} damage?" dice={[]} bind:this={damageDialog} form={damageForm}>
+    <form class="text-center flex flex-col gap-3">
+      <input type="text" inputmode="tel" name="damage" bind:value={damageForm.damage} class="rounded-full dark:bg-gray-900 dark:text-white focus:ring-purple-500 focus:border-purple-500">
+      <div class="flex gap-4 items-center flex-wrap">
         <div class="flex gap-2 items-center">
           <Toggle bind:value={damageForm.bypassGrit} /> Bypass Grit 
         </div>
@@ -214,7 +327,7 @@
       </div>
     </form>
   </InputDialog>
-  <InputDialog title={itemDialogTitle} dice={[]} bind:this={itemDialog} form={itemForm}>
+  <InputDialog title={itemDialogTitle} showDelete={itemDialogDelete} dice={[]} bind:this={itemDialog} form={itemForm} on:delete={removeGear}>
     <form class="text-center flex flex-col gap-2">
       <input type="text" name="name" placeholder="Name" bind:value={itemForm.name} class="rounded-full dark:bg-gray-900 dark:text-white focus:ring-purple-500 focus:border-purple-500">
       <input type="text" name="desc" placeholder="Description" bind:value={itemForm.desc} class="rounded-full dark:bg-gray-900 dark:text-white focus:ring-purple-500 focus:border-purple-500">
@@ -234,6 +347,22 @@
         {#if itemForm.damage !== 0}
         <div class="flex gap-2 items-center">
           <Toggle bind:value={itemForm.blast} /> Blast
+        </div>
+        {/if}
+      </div>
+    </form>
+  </InputDialog>
+  <InputDialog title={magicDialogTitle} showDelete={magicDialogDelete} dice={[]} bind:this={magicDialog} form={magicForm} on:delete={removeMagic}>
+    <form class="text-center flex flex-col gap-2">
+      <input type="text" name="name" placeholder="Name" bind:value={magicForm.name} class="rounded-full dark:bg-gray-900 dark:text-white focus:ring-purple-500 focus:border-purple-500">
+      <input type="text" name="desc" placeholder="Description" bind:value={magicForm.desc} class="rounded-full dark:bg-gray-900 dark:text-white focus:ring-purple-500 focus:border-purple-500">
+      <div class="flex gap-4 items-center flex-wrap mt-4">
+        <div class="flex gap-2 items-center">
+          <DieSelector bind:current={magicForm.damage} /> Damage 
+        </div>
+        {#if magicForm.damage !== 0}
+        <div class="flex gap-2 items-center">
+          <Toggle bind:value={magicForm.blast} /> Blast
         </div>
         {/if}
       </div>
@@ -273,7 +402,7 @@
         </div>
       </div>
       
-      <Equipment equipment={$character.equipment} on:roll={damage} on:add={addGear} />
+      <Equipment equipment={$character.equipment} on:roll={damage} on:add={addGear} on:edit={editGear} />
   
       <Card>
         <div class="flex items-center gap-2" slot="header">
@@ -292,16 +421,9 @@
         </ul>
       </Card>
       <EulogyNotes notes={$character.notes} eulogy={$character.eulogy} />
-      <Card title="Spells">
-        <div class="h-full">
-          <div id="spells" class="block min-h-[4rem] w-full dark:bg-gray-900 border-0 sm:text-sm"></div>
-        </div>
-      </Card>
-      <Card title="Rituals">
-        <div class="h-full">
-          <div id="rituals" class="block min-h-[4rem] w-full dark:bg-gray-900 border-0 sm:text-sm"></div>
-        </div>
-      </Card>
+      <Magic title="Spells" magic={$character.spells} on:roll={damage} type={'spell'} on:add={addMagic} on:edit={editMagic} />
+      <Magic title="Rituals" magic={$character.rituals} on:roll={damage} type={'ritual'} on:add={addMagic} on:edit={editMagic} />
+
     </div>
   </div>
   <div class="text-center my-6">

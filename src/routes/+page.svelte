@@ -14,4 +14,19 @@
   <MenuLink href="/reliquary">Reliquary</MenuLink>
   <MenuLink href="/arcana">Magna Arcana</MenuLink>
   <MenuLink href="/academy">Dream Academy</MenuLink>
+  <div class="font-subtitle text-center text-2xl p-4 caution shadow-xl dark:shadow-purple-400/20 rotate-6 translate-y-4">
+    <div class="bg-white dark:bg-gray-900 p-2">
+      <div>Caution</div>
+      <div>Work in progress</div>
+      <div>
+        v0.1.15
+      </div>
+    </div>
+  </div>
 </main>
+<style>
+  .caution {
+    background-image: linear-gradient(45deg, #facc15 25%, #171717 25%, #171717 50%, #facc15 50%, #facc15 75%, #171717 75%, #171717 100%);
+    background-size: 70.71px 70.71px;
+  }
+</style>

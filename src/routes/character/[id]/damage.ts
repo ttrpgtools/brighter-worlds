@@ -11,7 +11,7 @@ const ENDGAME = {
 
 export function calculateDamage(character: CharacterDetails, howmuch: DamageForm | undefined) {
   if (howmuch == null || howmuch.damage === '') return;
-  const allDmg = howmuch.damage.split(/[,\s]+/);
+  const allDmg = howmuch.damage.split(/[#*,\s]+/);
   const allAmt = allDmg.map(x => parseInt(x, 10)).filter(x => !Number.isNaN(x) && x !== 0);
   if (allAmt.length === 0) return;
   let unmitigated = 0;

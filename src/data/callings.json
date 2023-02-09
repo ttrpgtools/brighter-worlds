@@ -1,5 +1,6 @@
 [
   {
+    "id": "calling-alchemist",
     "name": "Alchemist",
     "tagline": "A crafter distilling the natural world into potions.",
     "for": "For players who like to plan ahead, collect ingredients, and do alchemy.",
@@ -20,6 +21,7 @@
     "info": ""
   },
   {
+    "id": "calling-animals-companion",
     "name": "Animal’s Companion",
     "tagline": "A bonded pair of person and beast, facing the world side by side.",
     "for": "For players who want a cool pet or to ride a bear.",
@@ -38,6 +40,7 @@
     "info": ""
   },
   {
+    "id": "calling-archivist",
     "name": "Archivist",
     "tagline": "A collector and collator of knowledge.",
     "for": "For players who like to keep notes and read lore.",
@@ -56,6 +59,7 @@
     "info": ""
   },
   {
+    "id": "calling-artificer",
     "name": "Artificer",
     "tagline": "A builder of weapons, armor, and tools.",
     "for": "For players who like to craft items, or assemble mechanics like lego bricks.",
@@ -77,6 +81,7 @@
     "info": ""
   },
   {
+    "id": "calling-bag-bones",
     "name": "Bag of Bones",
     "tagline": "A walking, talking skeleton.",
     "for": "For players who don’t want to be at risk of dying easily, and would like to play a living cartoon.",
@@ -95,6 +100,7 @@
     "info": ""
   },
   {
+    "id": "calling-blessed-water",
     "name": "Blessed of Water",
     "tagline": "Empowered through spiritually bonding with an aquatic place.",
     "for": "For players who like free-form effects, or want to play a water bender.",
@@ -113,6 +119,7 @@
     "info": ""
   },
   {
+    "id": "calling-cleric-small-gods",
     "name": "Cleric of Small Gods",
     "tagline": "The only priest of a tiny deity whose words can change reality.",
     "for": "For players who prefer freeform magic over spell lists.",
@@ -132,6 +139,7 @@
     "info": ""
   },
   {
+    "id": "calling-crystal-wizard",
     "name": "Crystal Wizard",
     "tagline": "A magic user harnessing the mystic properties of crystals.",
     "for": "For players who like to prepare magic before casting it, like to read through lists of magic, or want to focus on rituals over spells.",
@@ -150,6 +158,7 @@
     "info": ""
   },
   {
+    "id": "calling-demonic-sorcerer",
     "name": "Demonic Sorcerer",
     "tagline": "A magic specialist borrowing the skills of a spirit living in their head.",
     "for": "For players who like to make do with random results, or like to talk to themselves.",
@@ -168,6 +177,7 @@
     "info": ""
   },
   {
+    "id": "calling-devoted",
     "name": "Devoted",
     "tagline": "Dedicated to an ideal. A paladin empowered through their faith and belief.",
     "for": "For players who like their character to live by a code.",
@@ -186,6 +196,7 @@
     "info": ""
   },
   {
+    "id": "calling-grimblade",
     "name": "Grimblade",
     "tagline": "Owner of a mystic weapon.",
     "for": "For players who want to hit things and cast spells at the same time.",
@@ -203,6 +214,7 @@
     "info": ""
   },
   {
+    "id": "calling-runewright",
     "name": "Runewright",
     "tagline": "A crafter of precise and unique magics.",
     "for": "For players who like to assemble unique effects out of logical or grammatical components.",
@@ -222,6 +234,7 @@
     "info": ""
   },
   {
+    "id": "calling-sneaky-bastard",
     "name": "Sneaky Bastard",
     "tagline": "An expert in self cloning and underhanded tricks.",
     "for": "For players who like plans within plans, and to be in two places at once.",
@@ -241,6 +254,7 @@
     "info": ""
   },
   {
+    "id": "calling-soulbearer",
     "name": "Soulbearer",
     "tagline": "A steward of a beast’s soul, able to transform into that creature through ancient rites.",
     "for": "For players who want to be an animal sometimes.",
@@ -260,6 +274,7 @@
     "info": ""
   },
   {
+    "id": "calling-witch",
     "name": "Witch",
     "tagline": "A magician of ancient secrets, assisted by their magically bonded familiar.",
     "for": "For players who want to cast spells and also have an adorable pet.",

@@ -17,7 +17,7 @@ function getEmptySheet() {
     wil: { current: 4, max: 4 },
     statuses: new Set<string>(),
     equipment: [],
-    calling: { name: '' },
+    calling: { id: '', name: '' },
     abilities: [],
     eulogy: [],
     spells: [],
@@ -67,7 +67,7 @@ class Manager {
     const sheet = this.getSheet(newId);
     sheet.load();
     // TODO load more of the calling.
-    sheet.update((current) => ({...current, name, calling: { name: calling.name, desc: calling.tagline }}));
+    sheet.update((current) => ({...current, name, calling: { id: calling.id, name: calling.name, desc: calling.tagline }}));
     return [newId, sheet];
   }
 

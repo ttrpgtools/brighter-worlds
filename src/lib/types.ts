@@ -8,6 +8,7 @@ export interface Attribute<T = number, T2 = T> {
 }
 
 export interface Entity {
+  id: string;
   name: string;
   desc?: string;
 }
@@ -18,11 +19,23 @@ export interface UsableEntity extends Entity {
   blast?: boolean;
 }
 
+export type MagicType = 'spell' | 'ritual';
+
 export interface Item extends UsableEntity {
   bulky: boolean;
   armor?: number;
-  enableMagic?: boolean | { type: 'spells' | 'rituals' | 'all', count?: number }
+  enableMagic?: boolean | { type: MagicType | 'all', count?: number }
 }
+
+export interface Ritual extends UsableEntity {
+  type: 'ritual';
+}
+
+export interface Spell extends UsableEntity {
+  type: 'spell';
+}
+
+export type Magic = Spell | Ritual;
 
 export type AbilityType = 'core' | 'advanced';
 
@@ -50,8 +63,8 @@ export interface Character {
   calling: Entity;
   abilities: Ability[];
   eulogy: EulogyStanza[];
-  spells: UsableEntity[];
-  rituals: UsableEntity[];
+  spells: Spell[];
+  rituals: Ritual[];
   notes?: string;
 }
 export interface CharacterSummary {
@@ -79,7 +92,7 @@ export interface NpcStats {
 export interface Calling extends Entity {
   tagline: string;
   for: string;
-  equipment: UsableEntity[];
+  equipment: Item[];
   abilities: Ability[];
   info: string;
 }

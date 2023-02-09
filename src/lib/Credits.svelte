@@ -1,1 +1,1 @@
-<a href="/about/" class="fixed bottom-1 right-1 rounded-full w-6 h-6 flex items-center justify-center bg-purple-500">?</a>
+<a href="/about/" class="fixed bottom-1 right-1 rounded-full w-6 h-6 flex items-center justify-center bg-purple-300 dark:bg-purple-700 hover:bg-purple-200 dark:hover:bg-purple-800 text-purple-900 dark:text-purple-100">?</a>

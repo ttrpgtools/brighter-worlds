@@ -13,7 +13,7 @@ const dispatch = createEventDispatcher();
 
 
 <TabbedCard tabs={[{label: 'Eulogy'},{label: 'Notes'}]}>
-  <div slot="sidehead" class="py-4"><span class="text-lg font-subtitle">XP:</span><span class="text-lg ml-2">{availableXp}</span></div>
+  <div slot="sidehead" class="py-4 flex gap-2 items-center"><span class="text-lg font-subtitle inline-block h-6">XP:</span><span class="">{availableXp}</span></div>
   <TabPanels>
     <TabPanel>
       {#each eulogy as stanza}

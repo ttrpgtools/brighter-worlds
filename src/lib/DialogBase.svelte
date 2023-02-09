@@ -40,7 +40,7 @@
 
     <div class="fixed inset-0 overflow-y-auto">
       <div class="flex min-h-full items-center justify-center p-4 text-center">
-        <div class="w-full max-w-md transform overflow-hidden rounded-2xl bg-white dark:bg-gray-900 p-6 text-left align-middle shadow-xl transition-all" use:dialog.modal transition:scale={{start: 0.5}}>
+        <div class="w-full max-w-md transform rounded-2xl bg-white dark:bg-gray-900 p-6 text-left align-middle shadow-xl transition-all" use:dialog.modal transition:scale={{start: 0.5}}>
           <slot name="pretitle"></slot>
           {#if !!title}<h3 class="text-lg font-medium leading-6 text-center" id="modal-title">{title}</h3>{/if}
           <slot {close} {open}></slot>
