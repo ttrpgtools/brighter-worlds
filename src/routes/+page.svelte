@@ -19,7 +19,7 @@
       <div>Caution</div>
       <div>Work in progress</div>
       <div>
-        v0.1.15
+        v0.1.16
       </div>
     </div>
   </div>

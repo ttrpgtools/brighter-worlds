@@ -1,5 +1,11 @@
 # Changes
 
+## v0.1.16
+
+- Notes can be added and are persisted.
+- You can add eulogy entries with XP
+  - No way to spend that xp or delete entries yet
+
 ## v0.1.15
 
 - Editing equipment.

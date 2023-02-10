@@ -420,7 +420,7 @@
           {/each}
         </ul>
       </Card>
-      <EulogyNotes notes={$character.notes} eulogy={$character.eulogy} />
+      <EulogyNotes bind:notes={$character.notes} bind:eulogy={$character.eulogy} />
       <Magic title="Spells" magic={$character.spells} on:roll={damage} type={'spell'} on:add={addMagic} on:edit={editMagic} />
       <Magic title="Rituals" magic={$character.rituals} on:roll={damage} type={'ritual'} on:add={addMagic} on:edit={editMagic} />
 
