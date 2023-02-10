@@ -1,7 +1,6 @@
 <script lang="ts">
   import { manager } from "$lib/data/sheet-manager";
   import MenuLink from "$lib/MenuLink.svelte";
-  import ConfirmButton from "$lib/ConfirmButton.svelte";
   import Card from "$lib/Card.svelte";
   import { onMount } from "svelte";
   import { Die } from "$lib/dice/";
@@ -49,7 +48,6 @@
           </div>
           <div class="flex justify-between w-full">
             <ButtonLink href={`/character/${sheet.id}`}>View</ButtonLink>
-
             <DeleteButton on:confirm={() => deleteCharacter(sheet.id)}></DeleteButton>
           </div>
         </div>

@@ -1,12 +1,17 @@
 <script lang="ts">
 import { Die } from "$lib/dice";
-import type { Magic, MagicType } from "$lib/types";
+import type { Magic } from "$lib/types";
 import { onEnter } from "$lib/util/handlers";
 import { createEventDispatcher } from "svelte";
 import Card from "../Card.svelte";
-export let magic: Magic[];
+import MagicDialog from "./MagicDialog.svelte";
+type T = $$Generic<Magic>
+export let magicList: T[];
 export let title: string;
-export let type: MagicType;
+type TType = T["type"]
+export let type: TType;
+
+let dialog: MagicDialog<T>;
 
 const dispatch = createEventDispatcher();
 function rollDamage(ev: MouseEvent, item: Magic) {
@@ -19,13 +24,14 @@ function rollDamage(ev: MouseEvent, item: Magic) {
 }
 
 function addMagic() {
-  dispatch('add', type);
+  dialog.addMagic();
 }
 
 function editMagic(id: string) {
-  dispatch('edit', {id, type});
+  dialog.editMagic(id);
 }
 </script>
+<MagicDialog bind:magicList {type} bind:this={dialog} />
 <Card>
   <svelte:fragment slot="header">
     <div class="">
@@ -41,7 +47,7 @@ function editMagic(id: string) {
   <div>
     <div class="flow-root">
       <ul class="-my-5 divide-y divide-gray-200 dark:divide-gray-600">
-        {#each magic as arcana (arcana.id)}
+        {#each magicList as arcana (arcana.id)}
         <li class="py-3">
           <div class="flex items-center space-x-4">
             <div class="min-w-0 flex-1 flex gap-4">
@@ -54,7 +60,7 @@ function editMagic(id: string) {
           </div>
         </li>
         {:else}
-        <li class="py-3">No magic here.</li>
+        <li class="py-3 italic text-gray-600 dark:text-gray-400">No magic here.</li>
         {/each}
       </ul>
     </div>

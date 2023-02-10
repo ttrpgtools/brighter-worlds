@@ -1,5 +1,8 @@
 <script lang="ts">
+  import { Die } from "$lib/dice";
   import MenuLink from "$lib/MenuLink.svelte";
+  import type { DieValue } from "$lib/types";
+  const dice: DieValue[] = [4, 6, 8, 10, 12];
 </script>
 <svelte:head>
   <title>About :: Brighter Worlds Online</title>
@@ -18,6 +21,18 @@
     <p>
       There is text used from the Brighter Worlds SRD, and that content is used under the CC-BY-SA 4.0 license. Any of the base callings, spells, rituals, equipment and creature desciptions fall under this license and are similarly licensed on this site. 
     </p>
+    <div class="font-symbol text-4xl text-center text-purple-700 dark:text-purple-300">l</div>
+    <p>
+      Throughout the application we use icons to represent various dice that it is possible to roll. Sometimes these are labeled, other times they appear on their own. These are those icons in case you have issues with them. The number after the <strong>d</strong> is the number of sides on that die.
+    </p>
+    <div class="flex gap-6 sm:gap-8 justify-center p-4">
+      {#each dice as die}
+      <div class="flex flex-col gap-3 items-center">
+        <Die which={die} size="h-8 w-8" />
+        <span class="text-lg">d{die}</span>
+      </div>
+      {/each}
+    </div>
   </div>
   <MenuLink href="/">Home</MenuLink>
 </main>

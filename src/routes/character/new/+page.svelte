@@ -6,7 +6,6 @@
   import { manager } from "$lib/data/sheet-manager";
   import { goto } from "$app/navigation";
   import { callingManager } from "$lib/data/calling-manager";
-  import Attribute from '$lib/sheet/Attribute.svelte';
   const callingList = callingManager.list;
 
   function startWizard(calling: CallingType) {

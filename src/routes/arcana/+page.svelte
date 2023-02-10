@@ -13,13 +13,13 @@
   <div class="font-symbol text-6xl">A</div>
   <h3 class="font-subtitle text-3xl mb-4 text-purple-800 dark:text-purple-300">Spells</h3>
   <div class="max-w-prose mb-6">
-    {#each $spells as spell}
+    {#each $spells as spell (spell.id)}
     <Magic magic={spell} />
     {/each}
   </div>
   <h3 class="font-subtitle text-3xl mb-4 text-purple-800 dark:text-purple-300">Rituals</h3>
   <div class="max-w-prose mb-6">
-    {#each $rituals as ritual}
+    {#each $rituals as ritual (ritual.id)}
     <Magic magic={ritual} />
     {/each}
   </div>

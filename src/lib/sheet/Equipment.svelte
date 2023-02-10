@@ -1,11 +1,15 @@
 <script lang="ts">
 import { Die } from "$lib/dice";
 import type { Item } from "$lib/types";
+import { armor } from "$lib/util/character";
 import { onEnter } from "$lib/util/handlers";
 import { createEventDispatcher } from "svelte";
 import Card from "../Card.svelte";
-export let equipment: Item[];
-$: totalArmor = equipment.reduce((p, c) => p + (!!c.armor ? c.armor : 0), 0);
+import EquipmentDialog from "./EquipmentDialog.svelte";
+export let equipment: Item[] = [];
+$: totalArmor = armor(equipment);
+
+let dialog: EquipmentDialog;
 
 const dispatch = createEventDispatcher();
 function rollDamage(ev: MouseEvent, item: Item) {
@@ -18,14 +22,15 @@ function rollDamage(ev: MouseEvent, item: Item) {
 }
 
 function addGear() {
-  dispatch('add');
+  dialog.addGear();
 }
 
 function editGear(id: string) {
-  dispatch('edit', id);
+  dialog.editGear(id);
 }
 </script>
 <Card>
+  <EquipmentDialog bind:equipment bind:this={dialog} />
   <svelte:fragment slot="header">
     <div class="">
       <h3 class="text-xl font-subtitle leading-6">Equipment</h3>

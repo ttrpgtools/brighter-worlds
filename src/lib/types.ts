@@ -2,10 +2,14 @@ import type { status } from "./const";
 
 export type DieValue = 4 | 6 | 8 | 10 | 12;
 
+export type Attr = 'str' | 'dex' | 'wil';
+
 export interface Attribute<T = number, T2 = T> {
   current: T | T2;
   max: T;
 }
+
+export type Identifiable = { id: string };
 
 export interface Entity {
   id: string;
@@ -45,9 +49,10 @@ export interface Ability extends UsableEntity {
 }
 
 export interface EulogyStanza {
+  id: string;
   message: string;
-  xp: number;
-  spent: number;
+  xp: boolean;
+  spent: boolean;
 }
 
 export interface Character {
@@ -106,10 +111,10 @@ export interface DamageForm {
 
 export type Status = typeof status[keyof typeof status]
 
-export interface CharacterDetails {
-  equipment: Item[];
+export interface DamageDetails {
+  armor: number;
   grit: number;
-  type: 'str' | 'dex' | 'wil';
+  type: Attr;
   die: DieValue | 0;
   statuses: Set<string>;
 }

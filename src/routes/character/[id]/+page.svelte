@@ -1,11 +1,9 @@
 <script lang="ts">
-  import NotificationDialog from '$lib/NotificationDialog.svelte';
-  import InputDialog from '$lib/InputDialog.svelte';
-  import Toggle from '$lib/Toggle.svelte';
+  import DiceDialog from './DiceDialog.svelte';
   import { roll } from '$lib/rolling/roll';
   import Name from "$lib/sheet/Name.svelte";
   import Card from "$lib/Card.svelte";
-  import type { Magic as ArcaneItem, CharacterDetails, DamageForm, DieValue, Item, MagicType } from '$lib/types';
+  import type { DamageDetails, DieValue } from '$lib/types';
   import Attribute from '$lib/sheet/Attribute.svelte';
   import Equipment from '$lib/sheet/Equipment.svelte';
   import { renderUnsafe } from '$lib/md/render';
@@ -15,48 +13,14 @@
   import { manager } from '$lib/data/sheet-manager';
   import { onMount } from 'svelte';
   import { status } from '$lib/const';
-  import { calculateDamage } from './damage';
-  import DieSelector from '$lib/sheet/DieSelector.svelte';
-  import { id } from '$lib/rolling/id';
   import Magic from '$lib/sheet/Magic.svelte';
+  import { armor, burdened } from '$lib/util/character';
+  import DamageDialog from './DamageDialog.svelte';
 
   export let data: {id: string;}
 
-  interface ItemForm {
-    id?: string;
-    name: string;
-    desc: string;
-    bulky: boolean;
-    damage: DieValue | 0;
-    blast: boolean;
-    enableMagic: boolean;
-    armor: string;
-  }
-
-  interface MagicForm {
-    id?: string;
-    type?: MagicType;
-    name: string;
-    desc: string;
-    damage: DieValue | 0;
-    blast: boolean;
-  }
-  
-  let dieLabel = '';
-  let dice: DieValue[] = [];
-  let saveType = '';
-  let notify: NotificationDialog;
-  let damageDialog: InputDialog<DamageForm>;
-  const damageForm: DamageForm = { damage: '', bypassGrit: false, bypassArmor: false, overflow: true };
-  let itemDialog: InputDialog<ItemForm>;
-  let itemDialogTitle = '';
-  let itemDialogDelete = false;
-  let itemForm: ItemForm = newItemForm();
-
-  let magicDialog: InputDialog<MagicForm>;
-  let magicDialogTitle = '';
-  let magicDialogDelete = false;
-  let magicForm: MagicForm = newMagicForm();
+  let dice: DiceDialog;
+  let damageDialog: DamageDialog;
 
   const character = manager.getSheet(data.id);
 
@@ -68,52 +32,11 @@
     $character = $character;
   }
 
-  function newItemForm(id?: string) {
-    if (id) {
-      const item = $character.equipment.find(x => x.id === id);
-      if (item != null) {
-        return {
-          ...item,
-          damage: item.damage ?? 0,
-          armor: item.armor ? item.armor.toString() : ''
-        } as ItemForm;
-      }
-    }
-    return {
-      name: '',
-      desc: '',
-      damage: 0,
-      blast: false,
-      bulky: false,
-      enableMagic: false,
-      armor: '',
-    } as ItemForm;
-  }
-
-  function newMagicForm(existing?: {id: string, type: MagicType}) {
-    if (existing?.id) {
-      const magic = existing.type === 'spell' ? $character.spells.find(x => x.id === existing.id) : $character.rituals.find(x => x.id === existing.id);
-      if (magic != null) {
-        return {
-          ...magic,
-          damage: magic.damage ?? 0,
-        } as MagicForm;
-      }
-    }
-    return {
-      name: '',
-      desc: '',
-      damage: 0,
-      blast: false,
-    } as MagicForm;
-  }
-  
   function capitalize(word: string) {
     return word[0].toUpperCase() + word.substring(1);
   }
   
   function showRoll(sides: DieValue[], label: string = '') {
-    dice = sides;
     const [first, second] = sides;
     let interim = roll(first);
     if (second) {
@@ -125,8 +48,8 @@
     }
     const dieRoll = interim;
     label = label || `d${sides}`;
-    dieLabel = `${label} = ${dieRoll}`;
-    notify.open();
+    const title = `${label} = ${dieRoll}`;
+    dice.show(title, sides);
     console.log(`${label} =`, dieRoll);
   }
   
@@ -148,142 +71,22 @@
       $character.grit.current = $character.grit.max;
     }
   }
-
-  async function gearForm() {
-    const item = await itemDialog.open();
-    if (item != null) {
-      const proper: Item = {
-        id: item.id || id(),
-        name: item.name,
-        desc: item.desc,
-        bulky: item.bulky,
-        blast: item.blast,
-        enableMagic: item.enableMagic
-      }
-      if (item.damage !== 0) {
-        proper.damage = item.damage;
-      }
-      if (item.armor) {
-        proper.armor = parseInt(item.armor, 10);
-      }
-      return proper;
-    }
-  }
   
-  async function addGear() {
-    itemDialogTitle = 'Add item';
-    itemDialogDelete = false;
-    itemForm = newItemForm();
-    const item = await gearForm();
-    if (item != null) {
-      $character.equipment = [...$character.equipment, item];
-    }
-  }
-
-  async function editGear(ev: CustomEvent<string>) {
-    const id = ev.detail;
-    itemDialogTitle = 'Edit item';
-    itemDialogDelete = true;
-    itemForm = newItemForm(id);
-    const item = await gearForm();
-    if (item != null) {
-      const index = $character.equipment.findIndex(x => x.id === id);
-      if (index >= 0) {
-        $character.equipment = [...$character.equipment.slice(0, index), item, ...$character.equipment.slice(index + 1)];
-      }
-    }
-  }
-
-  function removeGear(ev: CustomEvent<ItemForm>) {
-    const id = ev.detail.id;
-    if (id) {
-      $character.equipment = $character.equipment.filter(e => e.id !== id);
-    }
-  }
-
-  async function arcaneForm(type: MagicType) {
-    const item = await magicDialog.open();
-    if (item != null) {
-      const proper: ArcaneItem = {
-        id: item.id || id(),
-        type,
-        name: item.name,
-        desc: item.desc,
-        blast: item.blast,
-      }
-      if (item.damage !== 0) {
-        proper.damage = item.damage;
-      }
-      return proper;
-    }
-  }
-
-  async function addMagic(ev: CustomEvent<MagicType>) {
-    const type = ev.detail;
-    magicDialogTitle = `Add ${type}`;
-    magicDialogDelete = false;
-    magicForm = newItemForm();
-    const item = await arcaneForm(type);
-    if (item != null) {
-      if (type === 'spell' && item.type === 'spell') {
-        $character.spells = [...$character.spells, item];
-      } else if (type === 'ritual' && item.type === 'ritual') {
-        $character.rituals = [...$character.rituals, item];
-      }
-    }
-  }
-
-  async function editMagic(ev: CustomEvent<{id: string; type: MagicType}>) {
-    const {id, type} = ev.detail;
-    magicDialogTitle = `Edit ${type}`;
-    magicDialogDelete = true;
-    magicForm = newMagicForm({id, type});
-    const item = await arcaneForm(type);
-    if (item != null) {
-      if (type === 'spell' && item.type === 'spell') {
-        const index = $character.spells.findIndex(x => x.id === id);
-        if (index >= 0) {
-          $character.spells = [...$character.spells.slice(0, index), item, ...$character.spells.slice(index + 1)];
-        }
-      } else if (type === 'ritual' && item.type === 'ritual') {
-        const index = $character.rituals.findIndex(x => x.id === id);
-        if (index >= 0) {
-          $character.rituals = [...$character.rituals.slice(0, index), item, ...$character.rituals.slice(index + 1)];
-        }
-      }
-      
-    }
-  }
-
-  function removeMagic(ev: CustomEvent<MagicForm>) {
-    const id = ev.detail.id;
-    const type = ev.detail.type;
-    if (id && type) {
-      if (type === 'spell') {
-        $character.spells = $character.spells.filter(e => e.id !== id);
-      } else {
-        $character.rituals = $character.rituals.filter(e => e.id !== id);
-      }
-    }
-  }
   
   async function takeDamage(ev: CustomEvent<{ type: 'str' | 'dex' | 'wil' }>) {
     const type = ev.detail.type;
-    saveType = type.toUpperCase();
-    const howmuch = await damageDialog.open();
-    const chinfo: CharacterDetails = {
+    const chinfo: DamageDetails = {
       type,
-      equipment: $character.equipment,
+      armor: armor($character.equipment),
       statuses: $character.statuses,
       grit: $character.grit.current,
       die: $character[type].current,
     };
-    const results = calculateDamage(chinfo, howmuch);
+    
+    const results = await damageDialog.getDamage(chinfo);
 
     if (results == null) return;
 
-    dieLabel = results.msg;
-    dice = results.dice;
     if (results.statuses != null) {
       $character.statuses = results.statuses;
     }
@@ -293,7 +96,7 @@
     if (results.die != null) {
       $character[type].current = results.die;
     }
-    notify.open();
+    dice.show(results.msg, results.dice);
   }
   
   function toggleStatus(status: string) {
@@ -306,68 +109,13 @@
   }
   
   $: isDeprived = $character.statuses.has(status.DEPRIVED);
+  $: isBurdened = burdened($character.equipment);
   </script>
   <svelte:head>
     <title>{$character.name || 'Character Sheet'} :: Brighter Worlds Online</title>
   </svelte:head>
-  <NotificationDialog title={dieLabel} {dice} bind:this={notify}/>
-  <InputDialog title="How much potential {saveType} damage?" dice={[]} bind:this={damageDialog} form={damageForm}>
-    <form class="text-center flex flex-col gap-3">
-      <input type="text" inputmode="tel" name="damage" bind:value={damageForm.damage} class="rounded-full dark:bg-gray-900 dark:text-white focus:ring-purple-500 focus:border-purple-500">
-      <div class="flex gap-4 items-center flex-wrap">
-        <div class="flex gap-2 items-center">
-          <Toggle bind:value={damageForm.bypassGrit} /> Bypass Grit 
-        </div>
-        <div class="flex gap-2 items-center">
-          <Toggle bind:value={damageForm.bypassArmor} /> Bypass Armor 
-        </div>
-        <div class="flex gap-2 items-center">
-          <Toggle bind:value={damageForm.overflow} /> Overflow 
-        </div>
-      </div>
-    </form>
-  </InputDialog>
-  <InputDialog title={itemDialogTitle} showDelete={itemDialogDelete} dice={[]} bind:this={itemDialog} form={itemForm} on:delete={removeGear}>
-    <form class="text-center flex flex-col gap-2">
-      <input type="text" name="name" placeholder="Name" bind:value={itemForm.name} class="rounded-full dark:bg-gray-900 dark:text-white focus:ring-purple-500 focus:border-purple-500">
-      <input type="text" name="desc" placeholder="Description" bind:value={itemForm.desc} class="rounded-full dark:bg-gray-900 dark:text-white focus:ring-purple-500 focus:border-purple-500">
-      <div class="flex gap-4 items-center flex-wrap mt-4">
-        <div class="flex gap-2 items-center">
-          <Toggle bind:value={itemForm.bulky} /> Bulky 
-        </div>
-        <div class="flex gap-2 items-center">
-          <Toggle bind:value={itemForm.enableMagic} /> Enable Magic 
-        </div>
-        <div class="flex gap-2 items-center">
-          <input type="text" name="armor" size=5 inputmode="numeric" placeholder="Armor" bind:value={itemForm.armor} class="rounded-full dark:bg-gray-900 dark:text-white focus:ring-purple-500 focus:border-purple-500"> 
-        </div>
-        <div class="flex gap-2 items-center">
-          <DieSelector bind:current={itemForm.damage} /> Damage 
-        </div>
-        {#if itemForm.damage !== 0}
-        <div class="flex gap-2 items-center">
-          <Toggle bind:value={itemForm.blast} /> Blast
-        </div>
-        {/if}
-      </div>
-    </form>
-  </InputDialog>
-  <InputDialog title={magicDialogTitle} showDelete={magicDialogDelete} dice={[]} bind:this={magicDialog} form={magicForm} on:delete={removeMagic}>
-    <form class="text-center flex flex-col gap-2">
-      <input type="text" name="name" placeholder="Name" bind:value={magicForm.name} class="rounded-full dark:bg-gray-900 dark:text-white focus:ring-purple-500 focus:border-purple-500">
-      <input type="text" name="desc" placeholder="Description" bind:value={magicForm.desc} class="rounded-full dark:bg-gray-900 dark:text-white focus:ring-purple-500 focus:border-purple-500">
-      <div class="flex gap-4 items-center flex-wrap mt-4">
-        <div class="flex gap-2 items-center">
-          <DieSelector bind:current={magicForm.damage} /> Damage 
-        </div>
-        {#if magicForm.damage !== 0}
-        <div class="flex gap-2 items-center">
-          <Toggle bind:value={magicForm.blast} /> Blast
-        </div>
-        {/if}
-      </div>
-    </form>
-  </InputDialog>
+  <DiceDialog bind:this={dice} />
+  <DamageDialog bind:this={damageDialog} />
   <div class="relative flex flex-col justify-start overflow-hidden dark:bg-gray-800 pt-6 pb-10 px-4 gap-4">
     <!-- <img src="/img/beams.jpg" alt="" class="absolute top-1/2 left-1/2 max-w-none -translate-x-1/2 -translate-y-1/2" width="1308" /> -->
     <div class="absolute inset-0 bg-[url(/img/grid.svg)] dark:invert bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]"></div>
@@ -379,7 +127,7 @@
       <Name bind:name={$character.name} bind:pronouns={$character.pronouns} />
       <div class="relative rounded-lg bg-white shadow-xl dark:bg-gray-900 dark:shadow-purple-400/20 ring-1 ring-gray-900/5  flex flex-col gap-6">
         <div class="px-4 py-5 sm:px-6 flex flex-col gap-4">
-          <Grit value={$character.grit} on:rest={rest} on:input={persist}/>
+          <Grit bind:value={$character.grit} {isDeprived} {isBurdened} />
           <Attribute name="STR" value={$character.str} on:roll={(ev) => save(ev, 'STR')} on:damage={takeDamage} on:change={persist}/>
           <Attribute name="DEX" value={$character.dex} on:roll={(ev) => save(ev, 'DEX')} on:damage={takeDamage} on:change={persist}/>
           <Attribute name="WIL" value={$character.wil} on:roll={(ev) => save(ev, 'WIL')} on:damage={takeDamage} on:change={persist}/>
@@ -402,7 +150,7 @@
         </div>
       </div>
       
-      <Equipment equipment={$character.equipment} on:roll={damage} on:add={addGear} on:edit={editGear} />
+      <Equipment bind:equipment={$character.equipment} on:roll={damage} />
   
       <Card>
         <div class="flex items-center gap-2" slot="header">
@@ -421,8 +169,8 @@
         </ul>
       </Card>
       <EulogyNotes bind:notes={$character.notes} bind:eulogy={$character.eulogy} />
-      <Magic title="Spells" magic={$character.spells} on:roll={damage} type={'spell'} on:add={addMagic} on:edit={editMagic} />
-      <Magic title="Rituals" magic={$character.rituals} on:roll={damage} type={'ritual'} on:add={addMagic} on:edit={editMagic} />
+      <Magic title="Spells" bind:magicList={$character.spells} on:roll={damage} type={'spell'} />
+      <Magic title="Rituals" bind:magicList={$character.rituals} on:roll={damage} type={'ritual'} />
 
     </div>
   </div>

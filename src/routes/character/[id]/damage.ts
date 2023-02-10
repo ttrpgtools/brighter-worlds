@@ -1,6 +1,6 @@
 import { stepDown } from "$lib/dice";
 import { roll } from "$lib/rolling/roll";
-import type { DamageForm, DieValue, CharacterDetails, DamageResults } from "$lib/types";
+import type { DamageForm, DieValue, DamageDetails, DamageResults } from "$lib/types";
 import { status } from '$lib/const';
 
 const ENDGAME = {
@@ -9,15 +9,14 @@ const ENDGAME = {
   wil: { msg: 'You are catatonic.', status: status.CATATONIC },
 };
 
-export function calculateDamage(character: CharacterDetails, howmuch: DamageForm | undefined) {
+export function calculateDamage(character: DamageDetails, howmuch: DamageForm | undefined) {
   if (howmuch == null || howmuch.damage === '') return;
   const allDmg = howmuch.damage.split(/[#*,\s]+/);
   const allAmt = allDmg.map(x => parseInt(x, 10)).filter(x => !Number.isNaN(x) && x !== 0);
   if (allAmt.length === 0) return;
   let unmitigated = 0;
   if (!howmuch.bypassArmor) {
-    const totalArmor = character.equipment.reduce((p, c) => p + (c.armor ? c.armor : 0), 0);
-    unmitigated = allAmt.reduce((p, c) => p + Math.max(c - totalArmor, 0), 0);
+    unmitigated = allAmt.reduce((p, c) => p + Math.max(c - character.armor, 0), 0);
     if (unmitigated <= 0) {
       return { msg: 'Your armor protected you from the damage.', dice: [] };
     }

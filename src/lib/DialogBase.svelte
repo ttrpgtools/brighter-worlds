@@ -1,6 +1,7 @@
 <script lang="ts">
   import { createDialog } from 'svelte-headlessui';
   import { blur, scale } from 'svelte/transition';
+  import { portal } from './util/portal';
 
   export let title = '';
   type T = $$Generic;
@@ -33,7 +34,7 @@
   });
 </script>
 
-<div class="relative z-10">
+<div class="relative z-10 contents" use:portal hidden>
   {#if $dialog.expanded}
     
     <div class="fixed inset-0 bg-purple-500 bg-opacity-20" on:click={() => close()} transition:blur />

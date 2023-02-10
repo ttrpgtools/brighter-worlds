@@ -90,6 +90,7 @@ class Manager {
     sheet.subscribe(char => {
       this.list.update(current => {
         const index = current.findIndex(x => x.id === id);
+        if (index < 0) return current;
         return [...current.slice(0, index), {...current[index], name: char.name, calling: char.calling?.name, str: char.str.max, dex: char.dex.max, wil: char.wil.max}, ...current.slice(index + 1)];
       });
     });

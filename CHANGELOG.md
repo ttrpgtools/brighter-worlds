@@ -1,5 +1,14 @@
 # Changes
 
+## v0.1.17
+
+- Massive refactor of dialogs
+- Added portal action
+- Added array helpers
+- Eulogies now act like other things
+  - Editing and deletion included
+- Some dice icon explainer text added to about page
+
 ## v0.1.16
 
 - Notes can be added and are persisted.
