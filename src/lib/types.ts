@@ -10,6 +10,7 @@ export interface Attribute<T = number, T2 = T> {
 }
 
 export type Identifiable = { id: string };
+export type Named = { name: string };
 
 export interface Entity {
   id: string;

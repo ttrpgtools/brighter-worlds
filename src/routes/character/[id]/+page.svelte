@@ -16,6 +16,7 @@
   import Magic from '$lib/sheet/Magic.svelte';
   import { armor, burdened } from '$lib/util/character';
   import DamageDialog from './DamageDialog.svelte';
+  import Calling from '$lib/sheet/Calling.svelte';
 
   export let data: {id: string;}
 
@@ -46,11 +47,9 @@
         interim = secondValue;
       }
     }
-    const dieRoll = interim;
     label = label || `d${sides}`;
-    const title = `${label} = ${dieRoll}`;
-    dice.show(title, sides);
-    console.log(`${label} =`, dieRoll);
+    dice.show(`${interim}`, sides, label);
+    console.log(`${label} =`, interim);
   }
   
   function save(ev: CustomEvent<{ dice: DieValue[] }>, stat: string) {
@@ -62,8 +61,7 @@
   function damage(ev: CustomEvent<{ dice: DieValue[], name: string }>) {
     const dice = ev.detail.dice;
     const name = ev.detail.name;
-    const label = `Damage from ${name}`;
-    showRoll(dice, label);
+    showRoll(dice, name);
   }
   
   function rest() {
@@ -96,7 +94,7 @@
     if (results.die != null) {
       $character[type].current = results.die;
     }
-    dice.show(results.msg, results.dice);
+    dice.show('Damage', results.dice, results.msg);
   }
   
   function toggleStatus(status: string) {
@@ -151,27 +149,10 @@
       </div>
       
       <Equipment bind:equipment={$character.equipment} on:roll={damage} />
-  
-      <Card>
-        <div class="flex items-center gap-2" slot="header">
-          <h3 class="text-xl font-subtitle leading-6 flex-1">{$character.calling.name}</h3>
-          <p class="text-gray-500 relative -top-1">(Calling)</p>
-        </div>
-        {#if $character.calling.desc}
-        <div>
-          {$character.calling.desc}
-        </div>
-        {/if}
-        <ul>
-          {#each $character.abilities as ability}
-          <li><span><strong>{ability.name}</strong> {ability.desc}</span><div>{@html renderUnsafe(ability.details ?? '')}</div></li>
-          {/each}
-        </ul>
-      </Card>
+      <Calling calling={$character.calling} bind:abilities={$character.abilities} />
       <EulogyNotes bind:notes={$character.notes} bind:eulogy={$character.eulogy} />
       <Magic title="Spells" bind:magicList={$character.spells} on:roll={damage} type={'spell'} />
       <Magic title="Rituals" bind:magicList={$character.rituals} on:roll={damage} type={'ritual'} />
-
     </div>
   </div>
   <div class="text-center my-6">

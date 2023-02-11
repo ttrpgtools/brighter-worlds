@@ -11,7 +11,7 @@ export async function open() {
   return comp.open<undefined>();
 }
 </script>
-<DialogBase {title} let:open let:close bind:this={comp}>
+<DialogBase let:open let:close bind:this={comp}>
   <div slot="pretitle">
     {#if dice.length > 0}
     <div class="flex gap-4 justify-center items-center mb-3 sm:mb-5">
@@ -22,10 +22,11 @@ export async function open() {
       {/each}
     </div>
     {/if}
+    <h3 class="text-xl font-medium leading-6 text-center">{title}</h3>
   </div>
   {#if !!msg}
   <div class="mt-2">
-    <p class="text-sm text-gray-500">
+    <p class="text-gray-700 dark:text-gray-300 text-center">
       {msg}
     </p>
   </div>

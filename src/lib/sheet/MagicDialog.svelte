@@ -2,10 +2,11 @@
   import InputDialog from "$lib/InputDialog.svelte";
   import { id } from "$lib/rolling/id";
   import Toggle from "$lib/Toggle.svelte";
-  import type { DieValue, Magic } from "$lib/types";
+  import type { DieValue, Magic, Named, Ritual } from "$lib/types";
   import DieSelector from "./DieSelector.svelte";
   import { magicManager } from "$lib/data/magic-manager";
   import { append, remove, update } from "$lib/util/array";
+  import Combobox from "$lib/Combobox.svelte";
 
   type T = $$Generic<Magic>
   export let magicList: T[] = [];
@@ -44,10 +45,11 @@
   let magicDialogTitle = '';
   let magicDialogDelete = false;
   let magicForm: MagicForm = newMagicForm();
+  let descField: HTMLInputElement;
 
   async function arcaneForm() {
     const item = await magicDialog.open();
-    if (item != null) {
+    if (item != null && item.name !== '') {
       const proper: T = {
         id: item.id || id(),
         type,
@@ -89,14 +91,23 @@
     }
   }
 
+  function pickMagic(ev: Event) {
+    const {name, desc, damage, blast} = (ev as CustomEvent<{selected: T}>).detail.selected;
+    magicForm.desc = desc ?? '';
+    magicForm.name = name;
+    magicForm.damage = damage ?? 0;
+    magicForm.blast = blast ?? false;
+  }
+
+  let bwmagic = $builtin as Ritual[]; // Weird thing to keep TypeScript happy.
 </script>
 <InputDialog title={magicDialogTitle} showDelete={magicDialogDelete} dice={[]} bind:this={magicDialog} form={magicForm} on:delete={removeMagic}>
   <form class="text-center flex flex-col gap-2">
-    <input type="text" name="name" placeholder="Name" bind:value={magicForm.name} class="rounded-full dark:bg-gray-900 dark:text-white focus:ring-purple-500 focus:border-purple-500">
-    <input type="text" name="desc" placeholder="Description" bind:value={magicForm.desc} class="rounded-full dark:bg-gray-900 dark:text-white focus:ring-purple-500 focus:border-purple-500">
+    <Combobox options={bwmagic} bind:textValue={magicForm.name} placeholder="Name" on:select={pickMagic} />
+    <input type="text" name="desc" placeholder="Description" bind:value={magicForm.desc} bind:this={descField} class="rounded-full dark:bg-gray-900 dark:text-white focus:ring-purple-500 focus:border-purple-500">
     <div class="flex gap-4 items-center flex-wrap mt-4">
       <div class="flex gap-2 items-center">
-        <DieSelector bind:current={magicForm.damage} /> Damage 
+        <DieSelector bind:current={magicForm.damage} nullable /> Damage 
       </div>
       {#if magicForm.damage !== 0}
       <div class="flex gap-2 items-center">
@@ -104,10 +115,6 @@
       </div>
       {/if}
     </div>
-    <select name="existing" class="rounded-full dark:bg-gray-900 dark:text-white focus:ring-purple-500 focus:border-purple-500">
-      {#each $builtin as item}
-        <option value={item}>{item.name}</option>
-      {/each}
-    </select>
+    
   </form>
 </InputDialog>

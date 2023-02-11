@@ -1,5 +1,13 @@
 # Changes
 
+## v0.1.18
+
+- You can select from the list of official BW spells and rituals
+  - Added 'damage' dice to most that call for it
+- Added a combobox component
+- Improved the dice and notification dialog
+- Refactored Calling component from sheet for future work
+
 ## v0.1.17
 
 - Massive refactor of dialogs

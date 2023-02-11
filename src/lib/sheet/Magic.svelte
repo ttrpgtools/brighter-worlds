@@ -49,15 +49,16 @@ function editMagic(id: string) {
       <ul class="-my-5 divide-y divide-gray-200 dark:divide-gray-600">
         {#each magicList as arcana (arcana.id)}
         <li class="py-3">
-          <div class="flex items-center space-x-4">
+          <div class="flex items-center space-x-4 h-6">
             <div class="min-w-0 flex-1 flex gap-4">
               <p class="truncate text-sm font-medium cursor-pointer" title={arcana.name} on:click={() => editMagic(arcana.id)} on:keydown={onEnter(() => editMagic(arcana.id))}>{arcana.name}</p>
-              {#if arcana.desc}<p class="text-sm truncate text-gray-500" title={arcana.desc}>{arcana.desc}</p>{/if}
+              
             </div>
             <div class="flex gap-2 items-center">
               {#if arcana.damage}<button on:click={(ev) => rollDamage(ev, arcana)} class="inline-flex items-center text-sm font-medium leading-5"><Die which={arcana.damage}/></button>{/if}
             </div>
           </div>
+          {#if arcana.desc}<p class="text-sm text-gray-500" title={arcana.desc}>{arcana.desc}</p>{/if}
         </li>
         {:else}
         <li class="py-3 italic text-gray-600 dark:text-gray-400">No magic here.</li>
