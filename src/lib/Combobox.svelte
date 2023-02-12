@@ -26,7 +26,7 @@
         {@const active = $combobox.active === value}
         <li use:combobox.item={{ value }} class="relative cursor-default select-none py-2 px-3 {active ? 'bg-purple-700 dark:bg-purple-300 text-white dark:text-gray-900' : 'text-gray-900 dark:text-white'}">
           <div class="flex">
-            <slot {value}>{value.name}</slot>
+            <slot {value} {active}>{value.name}</slot>
           </div>
         </li>
       {:else}

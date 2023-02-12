@@ -2,11 +2,9 @@
   import DiceDialog from './DiceDialog.svelte';
   import { roll } from '$lib/rolling/roll';
   import Name from "$lib/sheet/Name.svelte";
-  import Card from "$lib/Card.svelte";
   import type { DamageDetails, DieValue } from '$lib/types';
   import Attribute from '$lib/sheet/Attribute.svelte';
   import Equipment from '$lib/sheet/Equipment.svelte';
-  import { renderUnsafe } from '$lib/md/render';
   import Grit from '$lib/sheet/Grit.svelte';
   import EulogyNotes from '$lib/sheet/EulogyNotes.svelte';
   import MenuLink from "$lib/MenuLink.svelte";
@@ -17,6 +15,7 @@
   import { armor, burdened } from '$lib/util/character';
   import DamageDialog from './DamageDialog.svelte';
   import Calling from '$lib/sheet/Calling.svelte';
+  import Statuses from '$lib/sheet/Statuses.svelte';
 
   export let data: {id: string;}
 
@@ -31,10 +30,6 @@
   
   function persist() {
     $character = $character;
-  }
-
-  function capitalize(word: string) {
-    return word[0].toUpperCase() + word.substring(1);
   }
   
   function showRoll(sides: DieValue[], label: string = '') {
@@ -63,14 +58,7 @@
     const name = ev.detail.name;
     showRoll(dice, name);
   }
-  
-  function rest() {
-    if (!$character.statuses.has(status.DEPRIVED)) {
-      $character.grit.current = $character.grit.max;
-    }
-  }
-  
-  
+
   async function takeDamage(ev: CustomEvent<{ type: 'str' | 'dex' | 'wil' }>) {
     const type = ev.detail.type;
     const chinfo: DamageDetails = {
@@ -97,15 +85,6 @@
     dice.show('Damage', results.dice, results.msg);
   }
   
-  function toggleStatus(status: string) {
-    if ($character.statuses.has(status)) {
-      $character.statuses.delete(status);
-    } else {
-      $character.statuses.add(status);
-    }
-    $character.statuses = $character.statuses;
-  }
-  
   $: isDeprived = $character.statuses.has(status.DEPRIVED);
   $: isBurdened = burdened($character.equipment);
   </script>
@@ -129,22 +108,7 @@
           <Attribute name="STR" value={$character.str} on:roll={(ev) => save(ev, 'STR')} on:damage={takeDamage} on:change={persist}/>
           <Attribute name="DEX" value={$character.dex} on:roll={(ev) => save(ev, 'DEX')} on:damage={takeDamage} on:change={persist}/>
           <Attribute name="WIL" value={$character.wil} on:roll={(ev) => save(ev, 'WIL')} on:damage={takeDamage} on:change={persist}/>
-          
-          <div>
-            <div class="flex items-center gap-2">
-              <button type="button" on:click={() => toggleStatus(status.DEPRIVED)} class="inline-flex items-center rounded border border-gray-300 bg-white dark:bg-gray-900 dark:border-gray-600 px-2.5 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2" class:bg-purple-200={isDeprived} class:border-purple-800={isDeprived} class:dark:bg-purple-800={isDeprived} class:dark:border-purple-200={isDeprived}>
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="-ml-0.5 mr-2 h-4 w-4 text-gray-400 dark:text-gray-500" class:!text-purple-800={isDeprived} class:dark:!text-purple-100={isDeprived}><path fill="currentColor" d="M35.2 126.3c4.1 1.1 8.4 1.7 12.8 1.7c26.5 0 48-21 48-47c0-5-1.8-11.3-4.6-18.1c-.3-.7-.6-1.4-.9-2.1c-8.9-20.2-26.5-44.9-36-57.5c-3.2-4.4-9.6-4.4-12.8 0C28.6 20.6 0 61 0 81c0 21.7 14.9 39.8 35.2 45.3zM256 0c-51.4 0-99.3 15.2-139.4 41.2c1.5 3.1 3 6.2 4.3 9.3c3.4 8 7.1 19 7.1 30.5c0 44.3-36.6 79-80 79c-9.6 0-18.8-1.7-27.4-4.8C7.3 186.2 0 220.2 0 256C0 397.4 114.6 512 256 512s256-114.6 256-256S397.4 0 256 0zM195.9 410.7c-5.9 6.6-16 7.1-22.6 1.2s-7.1-16-1.2-22.6C188.2 371.4 216.3 352 256 352s67.8 19.4 83.9 37.3c5.9 6.6 5.4 16.7-1.2 22.6s-16.7 5.4-22.6-1.2c-11.7-13-31.6-26.7-60.1-26.7s-48.4 13.7-60.1 26.7zM96 272c0-8.8 7.2-16 16-16h96c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16zm208-16h96c8.8 0 16 7.2 16 16s-7.2 16-16 16H304c-8.8 0-16-7.2-16-16s7.2-16 16-16z"/></svg>
-                Deprived
-              </button>
-              {#each Array.from($character.statuses.values()) as stat}
-                {#if stat !== status.DEPRIVED}
-                <button type="button" on:click={() => toggleStatus(stat)} class="inline-flex items-center rounded border border-purple-800 bg-purple-200 dark:bg-purple-800 dark:border-purple-200 px-2.5 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2">
-                  {capitalize(stat)}
-                </button>
-                {/if}
-              {/each}
-            </div>
-          </div>
+          <Statuses bind:statuses={$character.statuses} />
         </div>
       </div>
       

@@ -20,6 +20,10 @@ export async function open() {
   return comp.open<T>();
 }
 
+export function close(value?: T) {
+  comp.close(value);
+}
+
 function handleKeys() {
   comp.close(form);
 }
