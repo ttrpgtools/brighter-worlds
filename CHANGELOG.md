@@ -1,5 +1,12 @@
 # Changes
 
+## v0.1.19
+
+- Tidy equipment header
+- Creating a new character now gets the starting equipment from the chosen Calling
+- Statuses can be added manually
+- Custom statuses can be added
+
 ## v0.1.18
 
 - You can select from the list of official BW spells and rituals
