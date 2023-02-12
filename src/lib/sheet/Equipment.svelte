@@ -34,15 +34,14 @@ function editGear(id: string) {
   <svelte:fragment slot="header">
     <div class="">
       <h3 class="text-xl font-subtitle leading-6">Equipment</h3>
-      <p class="mt-1 text-sm text-gray-500">More than two bulky items sets your Grit to 0.</p>
     </div>
     <div class="flex-shrink-0">
       <div class="flex gap-4 items-center">
         <div class="relative">
-          <div class="absolute w-full text-center text-2xl top-1/2 -translate-y-1/2 leading-none">{totalArmor}</div>
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="w-12"><path fill="currentColor" d="M231 7.838C247 1.065 265.1 1.066 281 7.84L457.7 82.79C479.7 92.12 496.2 113.8 496 139.1C495.5 239.2 454.7 420.7 282.4 503.2C265.7 511.1 246.3 511.1 229.6 503.2C57.26 420.7 16.49 239.2 16 139.1C15.87 113.8 32.32 92.12 54.3 82.79L231 7.838zM268.5 37.3C260.5 33.91 251.5 33.91 243.5 37.3L66.79 112.3C55.51 117 47.94 127.7 48 139.8C48.46 233.8 87.33 399.6 243.4 474.3C251.4 478.1 260.6 478.1 268.6 474.3C424.7 399.6 463.6 233.8 464 139.8C464.1 127.7 456.5 117 445.2 112.3L268.5 37.3z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="w-6"><path fill="currentColor" d="M256 0c4.6 0 9.2 1 13.4 2.9L457.7 82.8c22 9.3 38.4 31 38.3 57.2c-.5 99.2-41.3 280.7-213.7 363.2c-16.7 8-36.1 8-52.8 0C57.3 420.7 16.5 239.2 16 140c-.1-26.2 16.3-47.9 38.3-57.2L242.7 2.9C246.8 1 251.4 0 256 0z"/></svg>
+          <div class="absolute w-full text-center text-lg top-1/2 -translate-y-1/2 leading-none text-white dark:text-gray-900">{totalArmor}</div>
         </div>
-        <div><button type="button" on:click={addGear} class="relative inline-flex items-center rounded-full border border-transparent bg-purple-300 dark:bg-purple-700 px-2 py-2 text-sm font-medium shadow-sm hover:bg-purple-200 dark:hover:bg-purple-800 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-900"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="w-6"><path fill="currentColor" d="M272 240H496C504.8 240 512 247.2 512 256C512 264.8 504.8 272 496 272H272V496C272 504.8 264.8 512 255.1 512C247.2 512 239.1 504.8 239.1 496V272H16C7.164 272 0 264.8 0 256C0 247.2 7.164 240 16 240H239.1V16C239.1 7.164 247.2 0 255.1 0C264.8 0 272 7.164 272 16V240z"/></svg></button></div>
+        <button type="button" on:click={addGear} class="relative inline-flex items-center rounded-full bg-purple-300 dark:bg-purple-700 p-1 font-medium shadow-sm hover:bg-purple-200 dark:hover:bg-purple-800 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-900"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="h-4 w-4"><path fill="currentColor" d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z"/></svg></button>
       </div>
     </div>
   </svelte:fragment>
