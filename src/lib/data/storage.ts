@@ -25,6 +25,7 @@ export function factory<T>(key: string, defaultValue: T) {
 
 export interface LazyWritable<T> extends Writable<T> {
   load: () => void
+  init: boolean
 }
 
 export interface FactoryOpts {
@@ -35,7 +36,7 @@ export interface FactoryOpts {
 export function lazyFactory<T>(key: string, defaultValue: T, opts?: FactoryOpts) {
   const wstore = writable<T>(defaultValue) as LazyWritable<T>;
   let loading = false;
-  let init = false;
+  wstore.init = false;
   wstore.load = () => {
     loading = true;
     const saved = getter<T>(key, opts?.reviver);
@@ -43,10 +44,10 @@ export function lazyFactory<T>(key: string, defaultValue: T, opts?: FactoryOpts)
       wstore.set(saved);
     }
     loading = false;
-    init = true;
+    wstore.init = true;
   };
   wstore.subscribe(value => {
-    if (!loading && init) {
+    if (!loading && wstore.init) {
       setter(key, value, opts?.replacer);
     }
   });

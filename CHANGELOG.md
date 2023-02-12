@@ -1,5 +1,10 @@
 # Changes
 
+## v0.1.21
+
+- Remembers which tabs you had active
+- Note field will fill the card size
+
 ## v0.1.20
 
 - Roll arbitrary dice

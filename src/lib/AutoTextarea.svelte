@@ -7,7 +7,7 @@
 	$: maxHeight = maxRows ? `${1 + maxRows * 1.25}em` : `auto`;
 </script>
 
-<div class="relative">
+<div class="relative h-full">
 	<pre class="-mx-2 p-2 leading-tight overflow-hidden border-transparent text-transparent"
 		aria-hidden="true"
 		style="min-height: {minHeight}; max-height: {maxHeight}"
