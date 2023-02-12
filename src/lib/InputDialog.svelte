@@ -24,7 +24,8 @@ export function close(value?: T) {
   comp.close(value);
 }
 
-function handleKeys() {
+function handleKeys(ev: KeyboardEvent) {
+  ev.preventDefault();
   comp.close(form);
 }
 

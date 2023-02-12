@@ -1,5 +1,9 @@
 # Changes
 
+## v0.1.20
+
+- Roll arbitrary dice
+
 ## v0.1.19
 
 - Tidy equipment header

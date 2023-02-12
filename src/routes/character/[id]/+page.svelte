@@ -16,6 +16,7 @@
   import DamageDialog from './DamageDialog.svelte';
   import Calling from '$lib/sheet/Calling.svelte';
   import Statuses from '$lib/sheet/Statuses.svelte';
+  import Roller from '$lib/sheet/Roller.svelte';
 
   export let data: {id: string;}
 
@@ -93,6 +94,7 @@
   </svelte:head>
   <DiceDialog bind:this={dice} />
   <DamageDialog bind:this={damageDialog} />
+  <Roller on:roll={(ev) => showRoll([ev.detail])} />
   <div class="relative flex flex-col justify-start overflow-hidden dark:bg-gray-800 pt-6 pb-10 px-4 gap-4">
     <!-- <img src="/img/beams.jpg" alt="" class="absolute top-1/2 left-1/2 max-w-none -translate-x-1/2 -translate-y-1/2" width="1308" /> -->
     <div class="absolute inset-0 bg-[url(/img/grid.svg)] dark:invert bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]"></div>
