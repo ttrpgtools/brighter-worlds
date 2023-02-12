@@ -67,7 +67,7 @@ class Manager {
     const sheet = this.getSheet(newId);
     sheet.load();
     // TODO load more of the calling.
-    sheet.update((current) => ({...current, name, calling: { id: calling.id, name: calling.name, desc: calling.tagline }}));
+    sheet.update((current) => ({...current, name, calling: { id: calling.id, name: calling.name, desc: calling.tagline }, equipment: calling.equipment }));
     return [newId, sheet];
   }
 
