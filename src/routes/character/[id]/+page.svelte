@@ -17,6 +17,7 @@
   import Calling from '$lib/sheet/Calling.svelte';
   import Statuses from '$lib/sheet/Statuses.svelte';
   import Roller from '$lib/sheet/Roller.svelte';
+  import { broadcast } from '$lib/data/channel-child';
 
   export let data: {id: string;}
 
@@ -27,6 +28,8 @@
 
   onMount(() => {
     character.load();
+    const unlisten = broadcast.addListener((msg) => console.log(`[Sheet] Broadcast received`, msg));
+    return () => { unlisten(); }
   });
   
   function persist() {
@@ -45,6 +48,7 @@
     }
     label = label || `d${sides}`;
     dice.show(`${interim}`, sides, label);
+    broadcast.send({id: `${label} = ${interim}`, name: $character.name, type: 'intro'});
     console.log(`${label} =`, interim);
   }
   

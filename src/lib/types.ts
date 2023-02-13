@@ -127,3 +127,13 @@ export interface DamageResults {
   die?: DieValue | 0;
   statuses?: Set<string>;
 }
+
+export type RemoteMessageType = 'roll' | 'intro';
+
+export interface RemoteMessage {
+  type: RemoteMessageType;
+  id: string;
+  name: string;
+}
+
+export type HandlerFn = (msg: RemoteMessage) => void;
