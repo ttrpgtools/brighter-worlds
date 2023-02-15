@@ -137,3 +137,8 @@ export interface RemoteMessage {
 }
 
 export type HandlerFn = (msg: RemoteMessage) => void;
+
+export interface TableRoll<T> {
+  roll: number;
+  value: T;
+}

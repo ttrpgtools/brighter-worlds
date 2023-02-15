@@ -1,5 +1,5 @@
 <script lang="ts">
-  import DiceDialog from './DiceDialog.svelte';
+  import DiceDialog from '$lib/DiceDialog.svelte';
   import { roll } from '$lib/rolling/roll';
   import Name from "$lib/sheet/Name.svelte";
   import type { DamageDetails, DieValue } from '$lib/types';
