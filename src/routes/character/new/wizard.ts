@@ -18,6 +18,9 @@ export const STEP = {
 
 export const wizard = fsm(STEP.CALLING, {
   [STEP.CALLING]: {
+    _enter() {
+      // NOOP
+    },
     setCalling(calling: Calling) {
       builder.update(b => ({
         ...b,
@@ -40,7 +43,7 @@ export const wizard = fsm(STEP.CALLING, {
         dex: { current: attrs.dex, max: attrs.dex },
         wil: { current: attrs.wil, max: attrs.wil },
       }))
-      return STEP.DONE;
+      return STEP.EQUIPMENT;
     }
   },
   [STEP.ABILITIES]: {
@@ -80,7 +83,10 @@ export const wizard = fsm(STEP.CALLING, {
     reset() {
       builder.set({});
       return STEP.CALLING;
-    }
+    },
+    _enter({to}) {
+        goto(`/character/new/${String(to)}`);
+    },
   }
 });
 

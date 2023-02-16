@@ -12,7 +12,6 @@
 
   function forward() {
     wizard.setAttrs(attrs);
-    //goto(`/character/new/abilities`);
   }
 
   const dice: DieValue[] = [4, 6, 8];

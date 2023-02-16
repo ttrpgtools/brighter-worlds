@@ -1,11 +1,5 @@
 <script lang="ts">
   import MenuLink from "$lib/MenuLink.svelte";
-  import RollableTable from "$lib/RollableTable.svelte";
-  import type { TableRoll } from "$lib/types";
-  const opts = ['Sword', 'Axe', 'Spear', 'Glaive', 'Dagger', 'Whip', 'Hammer'];
-  function show(ev: CustomEvent<TableRoll<string>>) {
-    alert(ev.detail.value);
-  }
 </script>
 <svelte:head>
   <title>Dream Academy :: Brighter Worlds Online</title>

@@ -46,8 +46,10 @@
     "for": "For players who like to keep notes and read lore.",
     "desc": "You’ve always liked knowing things. Collecting information and stories like a squirrel collecting nuts for the winter. Frustrated with incomplete, inconsistent, and obviously biased records you’ve emerged from your study to do first hand research and correct the record.",
     "equipment": [
-      { "name": "Your Archive", "desc": "Acts as a Grimoire that also stores your Topics. Starts with one Topic of information based on your prior studies and one ritual of your choice.", "bulky": true },
-      { "name": "An extra piece of WIL starting gear", "desc": "Rolled with d10s", "bulky": false }
+      { "name": "Your Archive", "desc": "Acts as a Grimoire that also stores your Topics. Starts with one Topic of information based on your prior studies and one ritual of your choice.", "bulky": true, "enableMagic": true }
+    ],
+    "choices": [
+      { "choose": "equipment", "type": "wil", "die": 10 }
     ],
     "abilities": [
       { "name": "", "desc": "", "type": "core" },

@@ -13,7 +13,6 @@
 
   function startWizard(calling: CallingType) {
     wizard.setCalling(calling);
-    goto(`/character/new/attributes`);
   }
 </script>
 
