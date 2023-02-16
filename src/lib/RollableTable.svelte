@@ -1,7 +1,7 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
   import Card from "./Card.svelte";
-  import Die, {knownDie} from "./dice/Die.svelte";
+  import Die, { knownDie } from "./dice/Die.svelte";
   import { roll } from "./rolling/roll";
   import type { TableRoll, DieValue } from "./types";
 

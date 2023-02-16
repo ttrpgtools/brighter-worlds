@@ -1,43 +1,40 @@
 <script lang="ts">
-  import fsm from 'svelte-fsm';
   import type { Calling as CallingType } from "$lib/types";
   import MenuLink from "$lib/MenuLink.svelte";
   import Calling from "./Calling.svelte";
-  import { manager } from "$lib/data/sheet-manager";
-  import { goto } from "$app/navigation";
+  import { STEP, wizard } from "./wizard";
   import { callingManager } from "$lib/data/calling-manager";
+  import { goto } from "$app/navigation";
   const callingList = callingManager.list;
 
+  if ($wizard !== STEP.CALLING) {
+    wizard.reset();
+  }
+
   function startWizard(calling: CallingType) {
-    const [newId] = manager.create('', calling);
-    goto(`/character/${newId}/`);
+    wizard.setCalling(calling);
+    goto(`/character/new/attributes`);
   }
 </script>
-<svelte:head>
-  <title>New Character :: Brighter Worlds Online</title>
-</svelte:head>
-<main class="p-8 flex flex-col items-center gap-2">
-  <h2 class="font-title text-4xl text-center">Create a Brighter Worlds Character</h2>
-  <div class="font-symbol text-6xl">A</div>
-  <div class="max-w-prose text-center mb-6 text-lg">
-    Find your calling adventurer! What drives you forward?
-  </div>
-  <div class="rounded-md bg-yellow-100 dark:bg-amber-800 p-4 mb-6 max-w-prose">
-    <div class="flex">
-      <div class="flex-shrink-0">
-        <svg class="h-5 w-5 text-yellow-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-          <path fill-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
-        </svg>
-      </div>
-      <div class="ml-3 text-sm text-yellow-800 dark:text-yellow-100">
-        <p>Note that for the moment, any characters created here are saved locally on this device. They will not be available on another device. Also note that the character builder and sheet are not complete. This is a work in progress.</p>
-      </div>
+
+<div class="max-w-prose text-center mb-6 text-lg">
+  Find your calling adventurer! What drives you forward?
+</div>
+<div class="rounded-md bg-yellow-100 dark:bg-amber-800 p-4 mb-6 max-w-prose">
+  <div class="flex">
+    <div class="flex-shrink-0">
+      <svg class="h-5 w-5 text-yellow-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+        <path fill-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
+      </svg>
+    </div>
+    <div class="ml-3 text-sm text-yellow-800 dark:text-yellow-100">
+      <p>Note that for the moment, any characters created here are saved locally on this device. They will not be available on another device. Also note that the character builder and sheet are not complete. This is a work in progress.</p>
     </div>
   </div>
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-    {#each $callingList as calling}
-      <Calling calling={calling} on:click={() => startWizard(calling)} />
-    {/each}
-  </div>
-  <MenuLink href="/">Home</MenuLink>
-</main>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+  {#each $callingList as calling}
+    <Calling calling={calling} on:click={() => startWizard(calling)} />
+  {/each}
+</div>
+<MenuLink href="/">Home</MenuLink>

@@ -7,8 +7,7 @@ import { createEventDispatcher } from "svelte";
 export let current: DieValue | 0;
 export let nullable = false;
 export let invalid = false;
-
-const dice: DieValue[] = [4, 6, 8, 10, 12];
+export let dice: DieValue[] = [4, 6, 8, 10, 12];
 
 const dispatch = createEventDispatcher();
 

@@ -1,5 +1,11 @@
 # Changes
 
+## v0.1.22
+
+- Working toward a functional character creation wizard
+  - You can now set your attributes
+- Rollable Tables exist as a component
+
 ## v0.1.21
 
 - Remembers which tabs you had active

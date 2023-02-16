@@ -46,9 +46,9 @@
         interim = secondValue;
       }
     }
+    broadcast.send({id: $character.id, name: $character.name, type: 'roll', dice: sides, result: interim, label});
     label = label || `d${sides}`;
     dice.show(`${interim}`, sides, label);
-    broadcast.send({id: `${label} = ${interim}`, name: $character.name, type: 'intro'});
     console.log(`${label} =`, interim);
   }
   

@@ -49,6 +49,29 @@ export interface Ability extends UsableEntity {
   type: AbilityType;
 }
 
+export interface EquipmentChoice {
+  choose: 'equipment';
+  type: Attr;
+  die: DieValue;
+}
+
+export interface MagicChoice {
+  choose: 'magic';
+  type: MagicType;
+  random: boolean;
+}
+
+export interface LinkedSheetChoice {
+  choose: 'linked';
+  name: string;
+}
+
+export type CharacterChoice = EquipmentChoice | MagicChoice | LinkedSheetChoice;
+
+export interface HasChoices {
+  choices?: CharacterChoice[];
+}
+
 export interface EulogyStanza {
   id: string;
   message: string;
@@ -73,13 +96,13 @@ export interface Character {
   rituals: Ritual[];
   notes?: string;
 }
-export interface CharacterSummary {
+
+export interface Attrs { str: DieValue; dex: DieValue; wil: DieValue; };
+
+export interface CharacterSummary extends Attrs {
   id: string;
   name: string;
   calling: string;
-  str: DieValue;
-  dex: DieValue;
-  wil: DieValue;
 }
 
 export interface NpcStats {
@@ -95,12 +118,15 @@ export interface NpcStats {
   found?: string,
 }
 
-export interface Calling extends Entity {
+export interface Calling extends Entity, HasChoices {
   tagline: string;
   for: string;
   equipment: Item[];
-  abilities: Ability[];
+  abilities: (Ability & HasChoices)[];
+  spells: string[],
+  rituals: string[],
   info: string;
+  linked: string[],
 }
 
 export interface DamageForm {
@@ -130,15 +156,41 @@ export interface DamageResults {
 
 export type RemoteMessageType = 'roll' | 'intro';
 
-export interface RemoteMessage {
-  type: RemoteMessageType;
+export interface BaseRemoteMessage {
   id: string;
   name: string;
 }
+
+export interface RemoteRollMessage extends BaseRemoteMessage {
+  type: 'roll';
+  dice: DieValue[];
+  result: number;
+  label?: string;
+}
+
+export interface RemoteTextMessage extends BaseRemoteMessage {
+  type: 'text';
+  message: string;
+}
+
+export type RemoteMessage = RemoteRollMessage | RemoteTextMessage;
+
 
 export type HandlerFn = (msg: RemoteMessage) => void;
 
 export interface TableRoll<T> {
   roll: number;
   value: T;
+}
+
+export interface StartingGearOptions {
+  name: string;
+  flair: string[];
+  items: Item[];
+}
+
+export interface StartingGear {
+  str: StartingGearOptions;
+  dex: StartingGearOptions;
+  wil: StartingGearOptions;
 }

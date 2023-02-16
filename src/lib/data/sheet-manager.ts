@@ -1,5 +1,5 @@
 import { id } from "$lib/rolling/id";
-import type { Calling, Character, CharacterSummary } from "$lib/types";
+import type { Character, CharacterSummary } from "$lib/types";
 import type { Writable } from "svelte/store";
 import { clear, lazyFactory, type LazyWritable } from "./storage";
 
@@ -58,16 +58,23 @@ class Manager {
     this.loaded = true;
   }
 
-  create(name: string, calling: Calling): [string, Writable<Character>]{
+  create(char: Partial<Character>): [string, Writable<Character>]{
     const newId = id();
     if (!this.loaded) {
       this.loadList();
     }
-    this.list.update((current) => ([...current, { id: newId, name, calling: calling.name, str: 4, dex: 4, wil: 4 }]));
+    this.list.update((current) => ([...current, {
+      id: newId,
+      name: char.name ?? '',
+      calling: char.calling?.name ?? '',
+      str: char.str?.max ?? 4,
+      dex: char.dex?.max ?? 4,
+      wil: char.wil?.max ?? 4,
+    }]));
     const sheet = this.getSheet(newId);
     sheet.load();
     // TODO load more of the calling.
-    sheet.update((current) => ({...current, name, calling: { id: calling.id, name: calling.name, desc: calling.tagline }, equipment: calling.equipment }));
+    sheet.update(c => ({...c, ...char}));
     return [newId, sheet];
   }
 
