@@ -50,7 +50,7 @@
     <div class="grid grid-cols-2 gap-3">
       {#each statusList as stat}
         {#if stat.name !== status.DEPRIVED && !statuses.has(stat.name)}
-        <StatusButton status={stat.name} enabled={false} size="1.5rem" gap="3" on:click={() => pick(stat.name)} />
+        <StatusButton status={stat.name} enabled={false} size="1.5rem" gap="gap-3" on:click={() => pick(stat.name)} />
         {/if}
       {/each}
     </div>
