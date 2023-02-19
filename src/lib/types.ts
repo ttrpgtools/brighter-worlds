@@ -123,10 +123,10 @@ export interface Calling extends Entity, HasChoices {
   for: string;
   equipment: Item[];
   abilities: (Ability & HasChoices)[];
-  spells: string[],
-  rituals: string[],
+  spells?: string[],
+  rituals?: string[],
   info: string;
-  linked: string[],
+  linked?: string[],
 }
 
 export interface DamageForm {

@@ -18,8 +18,9 @@
   import Statuses from '$lib/sheet/Statuses.svelte';
   import Roller from '$lib/sheet/Roller.svelte';
   import { broadcast } from '$lib/data/channel-child';
+  import type { PageData } from './$types';
 
-  export let data: {id: string;}
+  export let data: PageData;
 
   let dice: DiceDialog;
   let damageDialog: DamageDialog;
@@ -119,7 +120,7 @@
       </div>
       
       <Equipment bind:equipment={$character.equipment} on:roll={damage} />
-      <Calling calling={$character.calling} bind:abilities={$character.abilities} />
+      <Calling calling={$character.calling} bind:abilities={$character.abilities} callingList={data.callings} />
       <EulogyNotes bind:notes={$character.notes} bind:eulogy={$character.eulogy} />
       <Magic title="Spells" bind:magicList={$character.spells} on:roll={damage} type={'spell'} />
       <Magic title="Rituals" bind:magicList={$character.rituals} on:roll={damage} type={'ritual'} />

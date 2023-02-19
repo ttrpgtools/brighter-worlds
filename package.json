@@ -1,6 +1,6 @@
 {
 	"name": "brighter-worlds",
-	"version": "0.1.22",
+	"version": "0.1.23",
 	"private": true,
 	"scripts": {
 		"dev": "vite dev",
@@ -30,7 +30,6 @@
 		"postcss-load-config": "^4.0.1",
 		"prettier": "^2.8.0",
 		"prettier-plugin-svelte": "^2.8.1",
-		"snarkdown": "^2.0.0",
 		"svelte": "^3.54.0",
 		"svelte-check": "^3.0.1",
 		"svelte-fsm": "^1.2.0",
@@ -43,5 +42,8 @@
 		"vite": "^4.0.0",
 		"vitest": "^0.25.3"
 	},
-	"type": "module"
+	"type": "module",
+	"dependencies": {
+		"micromark": "^3.1.0"
+	}
 }

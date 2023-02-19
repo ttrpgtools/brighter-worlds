@@ -12,11 +12,31 @@
       { "name": "Complete Potion 2", "desc": "Edit this to your second potion", "bulky": false }
     ],
     "abilities": [
-      { "name": "", "desc": "", "type": "core" },
-      { "name": "", "desc": "", "type": "advanced" },
-      { "name": "", "desc": "", "type": "advanced" },
-      { "name": "", "desc": "", "type": "advanced" },
-      { "name": "", "desc": "", "type": "advanced" }
+      {
+        "type": "core",
+        "name": "Branch and Bone",
+        "desc": "You can distill plants, minerals, animal parts, and other ingredients into potion components. With the necessary components, you can brew doses of any potion whose recipe you know."
+      },
+      {
+        "type": "advanced",
+        "name": "Dungeon Delicatessen",
+        "desc": "You always know the best way to break down and prepare any creature for the safest and tastiest dining experience. When you cook and eat a monster organ temporarily gain a lessened version of an associated trait or ability. Lasts until you eat your next meal."
+      },
+      {
+        "type": "advanced",
+        "name": "Fine Palate",
+        "desc": "You are (optionally) immune to the effects of anything you imbibe, and can identify all ingredients it contains."
+      },
+      {
+        "type": "advanced",
+        "name": "Homebrewer",
+        "desc": "You can brew alcoholic beverages with mild potion effects. Beverage recipes require only one component plus a fermentable (grain, fruit, sugar, etc.)."
+      },
+      {
+        "type": "advanced",
+        "name": "Topical Treatment",
+        "desc": "You can produce potions that are applied in ways other than drinking, such as breathable fumes, topical ointments, or smeared onto weapons."
+      }
     ],
     "info": ""
   },
@@ -31,11 +51,31 @@
       { "name": "Bag of Snacks", "desc": "Something your companion loves.", "bulky": false }
     ],
     "abilities": [
-      { "name": "", "desc": "", "type": "core" },
-      { "name": "", "desc": "", "type": "advanced" },
-      { "name": "", "desc": "", "type": "advanced" },
-      { "name": "", "desc": "", "type": "advanced" },
-      { "name": "", "desc": "", "type": "advanced" }
+      {
+        "type": "core",
+        "name": "Animal Companion",
+        "desc": "You have formed a special bond with a creature. It will follow your commands and is unfailingly loyal. Should the worst happen, your companion will return to your side from beyond the Black River as a ghost. You can spend your own XP on your companion as you would on yourself."
+      },
+      {
+        "type": "advanced",
+        "name": "Level Up",
+        "desc": "Through training, special diet, or ritual your companion has learned some new tricks. Pick two more abilities from the Animal Companion list."
+      },
+      {
+        "type": "advanced",
+        "name": "Tag Team",
+        "desc": "When fighting the same enemy, you and your Animal Companion may make a maneuver alongside your attacks (tripping, disarming, etc.)."
+      },
+      {
+        "type": "advanced",
+        "name": "Mind Meld",
+        "desc": "You can share thoughts and senses with your Animal Companion from any distance."
+      },
+      {
+        "type": "advanced",
+        "name": "Blink Bud",
+        "desc": "You can teleport to your Animal Companion, teleport your Animal Companion to you, or swap places no matter the distance."
+      }
     ],
     "info": ""
   },
@@ -52,11 +92,36 @@
       { "choose": "equipment", "type": "wil", "die": 10 }
     ],
     "abilities": [
-      { "name": "", "desc": "", "type": "core" },
-      { "name": "", "desc": "", "type": "advanced" },
-      { "name": "", "desc": "", "type": "advanced" },
-      { "name": "", "desc": "", "type": "advanced" },
-      { "name": "", "desc": "", "type": "advanced" }
+      {
+      "type": "core",
+      "name": "Expert Reader",
+        "desc": "No matter the language, culture, code, cypher, or style you can always quickly discern the intent and meaning of any written language."
+      },
+      {
+      "type": "core",
+      "name": "Deep Lore",
+        "desc": "You are a master at collecting and collating information. Any Topic stored within your Archive is always at your fingertips. The first time you encounter something that falls within a Topic recorded in your Archive, you may ask the GM a single question about it. Further questions will take time to look up, or require further research. It takes six hours to record a new Topic of information into your Archive from any source of knowledge."
+      },
+      {
+        "type": "advanced",
+        "name": "Office Assistant",
+        "desc": "Whether due to accumulated knowledge or through some arcane rite, your Archive has awoken into a sentient, floating being. Casting spells still requires you to hold the Archive to read from it."
+      },
+      {
+        "type": "advanced",
+        "name": "Monster Manual",
+        "desc": "Thoroughly examine a creature to record it as a Topic in your Archive. When you take the time to lecture from your notes, you and any who listen gain +1 armor against those creatures during the next combat, and can easily identify weaknesses."
+      },
+      {
+        "type": "advanced",
+        "name": "Psychometry",
+        "desc": "You can read an object’s history just by touching it. When you handle an object you can sense events that have happened to it. Emotionally charged and recent events take precedence, but with careful study you may ask specific questions."
+      },
+      {
+        "type": "advanced",
+        "name": "Leap of Logic",
+        "desc": "Your years of study have developed into a startlingly accurate intuition. The first time you encounter a situation (or person), you may ask the GM a single yes or no question about it (or them)."
+      }
     ],
     "info": ""
   },
@@ -74,11 +139,31 @@
       { "name": "Three additional improvements", "desc": "", "bulky": false }
     ],
     "abilities": [
-      { "name": "", "desc": "", "type": "core" },
-      { "name": "", "desc": "", "type": "advanced" },
-      { "name": "", "desc": "", "type": "advanced" },
-      { "name": "", "desc": "", "type": "advanced" },
-      { "name": "", "desc": "", "type": "advanced" }
+      {
+        "type": "core",
+        "name": "Walking Workshop",
+        "desc": "You can upgrade mundane objects or create new ones with a single improvement. They are fragile, unless significant time and effort is put into their production.\n\nWhen a fragile item is used, roll a d6 (for weapons and armor roll on Direct Damage):\n\n**1:** It breaks immediately (and likely violently). **2-3:** It’s damaged, and will break next time. **4-6:** It’s fine for now."
+      },
+      {
+        "type": "advanced",
+        "name": "Mystical Graft",
+        "desc": "You can graft enchantments and effects from magic items, weapons or armor onto something else. This destroys the original item."
+      },
+      {
+        "type": "advanced",
+        "name": "An Eye for Engineering",
+        "desc": "With careful study you can always discern the purpose and function of a mechanism, as well as the best way to break or repair it."
+      },
+      {
+        "type": "advanced",
+        "name": "Efficient Artificing",
+        "desc": "You can use Walking Workshop to create fragile objects with two improvements, or non-fragile ones with one improvement."
+      },
+      {
+        "type": "advanced",
+        "name": "Mule",
+        "desc": "You can carry up to four *bulky* items without penalty."
+      }
     ],
     "info": ""
   },
@@ -89,15 +174,35 @@
     "for": "For players who don’t want to be at risk of dying easily, and would like to play a living cartoon.",
     "desc": "You’re a walking, talking skeleton. Devoid of life and yet alive. Perhaps your state is the result of a run-in with a grumpy necromancer. Or maybe a ritual for lichdom went badly. Or did you get bored of guarding a dungeon, and decide to try your luck with a life of adventure? Your status as a bag of bones means you’re harder to kill (a second time) but making friends is perhaps a bit more difficult now.",
     "equipment": [
-      { "name": "A Lack of Flesh", "desc": "Add URL to separate sheet.", "bulky": false, "armor": 1 },
+      { "name": "A Lack of Flesh", "desc": "", "bulky": false, "armor": 1 },
       { "name": "A Fearsome Visage", "desc": "Whoa, that's frightening.", "bulky": false }
     ],
     "abilities": [
-      { "name": "", "desc": "", "type": "core" },
-      { "name": "", "desc": "", "type": "advanced" },
-      { "name": "", "desc": "", "type": "advanced" },
-      { "name": "", "desc": "", "type": "advanced" },
-      { "name": "", "desc": "", "type": "advanced" }
+      {
+        "type": "core",
+        "name": "Living Death",
+        "desc": "You're a skeleton. You're made of bones and animated by some supernatural force. You’re hard to kill, and don’t stay down for long. You do not require food, water, or sleep. As long as your skull remains intact, you cannot fully die. Direct Damage you suffer never overflows your current STR die. When you take Critical Damage, parts of your body are knocked off. You don’t restore STR by resting, but instead by replacing lost or damaged bones. You may temporarily step down your STR to detach parts of your body which you retain control of."
+      },
+      {
+        "type": "advanced",
+        "name": "No Bones About It",
+        "desc": "You can incorporate other bones into your body to grant yourself an innate ability of the original creature. Unless extreme measures are taken the grafted bones are fragile and risk breaking after activating the borrowed ability."
+      },
+      {
+        "type": "advanced",
+        "name": "Your Bones Are Your Money",
+        "desc": "You can remove bones from your body to offer in trade (causing a loss of STR). The person receiving your bones will believe they are valuable and greatly desirable. This lasts until midnight at which point the glamour is removed and they become aware they received nothing more than old bones."
+      },
+      {
+        "type": "advanced",
+        "name": "Humerus Presence",
+        "desc": "You've developed a way of walking and talking that changes you from frightening to funny. Rather than an initial reaction of fear, you can choose for you first impression to be that of a harmless and hilarious bony jester."
+      },
+      {
+        "type": "advanced",
+        "name": "Skeleton Crew",
+        "desc": "Animate a dead creature's skeleton as a mount, minion, or pet. It has stats as it did in life, but falls apart and must be reanimated upon taking Critical Damage. Follows orders but otherwise has the intelligence of a moderately bright dog. You can maintain a number of animated skeletons equal to the number of Advanced Abilities you have."
+      }
     ],
     "info": ""
   },
@@ -112,11 +217,31 @@
       { "name": "A small, impossible token from your Patron", "desc": "", "bulky": false }
     ],
     "abilities": [
-      { "name": "", "desc": "", "type": "core" },
-      { "name": "", "desc": "", "type": "advanced" },
-      { "name": "", "desc": "", "type": "advanced" },
-      { "name": "", "desc": "", "type": "advanced" },
-      { "name": "", "desc": "", "type": "advanced" }
+      {
+        "type": "core",
+        "name": "One With The Water",
+        "desc": "You are equally at home in water as you are on land. You can freely control a volume of water about the same size as yourself, if employed as a weapon it deals d6 damage."
+      },
+      {
+        "type": "advanced",
+        "name": "Twice Blessed",
+        "desc": "Choose a second Water Blessing your Patron grants you."
+      },
+      {
+        "type": "advanced",
+        "name": "Liquid Construction",
+        "desc": "You can shape water into tools and equipment. Weapons deal d8 damage, and armor provides 1 Armor. You can maintain a number of items equal to twice the number of Advanced Abilities you have. Additionally, step up the damage your water does while using One With the Water offensively."
+      },
+      {
+        "type": "advanced",
+        "name": "Watery Tongue",
+        "desc": "You can communicate with any creature that claims water as its home."
+      },
+      {
+        "type": "advanced",
+        "name": "Water Walk",
+        "desc": "You (and any companions you choose to bring with you) may leap into a body of water, and emerge from the most recent body of water you were fully submerged in."
+      }
     ],
     "info": ""
   },
@@ -132,11 +257,31 @@
       { "name": "Holy Vestments", "desc": "", "bulky": false }
     ],
     "abilities": [
-      { "name": "", "desc": "", "type": "core" },
-      { "name": "", "desc": "", "type": "advanced" },
-      { "name": "", "desc": "", "type": "advanced" },
-      { "name": "", "desc": "", "type": "advanced" },
-      { "name": "", "desc": "", "type": "advanced" }
+      {
+        "type": "core",
+        "name": "Words of God",
+        "desc": "Gods can speak only truth. When you speak with the words of your god if the words are not true, your god’s power will attempt to make it true. Define the Domain of your god."
+      },
+      {
+        "type": "advanced",
+        "name": "Gemini",
+        "desc": "Your god has a second Domain, complementary in some way to the first."
+      },
+      {
+        "type": "advanced",
+        "name": "Holy Site",
+        "desc": "Spend a week and give a suitably impressive offering to create a holy site for your god. It shields those within from outside influence, and you may teleport yourself and your companions between holy sites."
+      },
+      {
+        "type": "advanced",
+        "name": "Offerings",
+        "desc": "Make offerings to step up the Domain Die. Minor offerings last for a single statement, significant ones last for a day, and major offerings like establishing a church and congregation last indefinitely."
+      },
+      {
+        "type": "advanced",
+        "name": "Divine Colleagues",
+        "desc": "Your god can always tell you which (if any) god or spirit claims an area, as well as how to contact them."
+      }
     ],
     "info": ""
   },
@@ -150,12 +295,37 @@
       { "name": "Crystal Grimoire", "desc": "Choose one spell and two rituals.", "bulky": false, "enableMagic": true },
       { "name": "Arcane Storage Crystal", "desc": "Attuned to one of your rituals.", "bulky": false }
     ],
+    "choices": [
+      { "choose": "magic", "type": "spell", "random": false },
+      { "choose": "magic", "type": "ritual", "random": false },
+      { "choose": "magic", "type": "ritual", "random": false }
+    ],
     "abilities": [
-      { "name": "", "desc": "", "type": "core" },
-      { "name": "", "desc": "", "type": "advanced" },
-      { "name": "", "desc": "", "type": "advanced" },
-      { "name": "", "desc": "", "type": "advanced" },
-      { "name": "", "desc": "", "type": "advanced" }
+      {
+        "type": "core",
+        "name": "Crystal Wizardry",
+        "desc": "You have harnessed the mystically resonant nature of crystals to enhance your magic. You can condense your rituals into Storage Crystals to perform them without effort, store your Grimoire within a crystal, and learn new magics by attuning to the crystal frequencies of the universe.\n\n### Arcane Storage Crystals\n\nYou may attune your Storage Crystals with a ritual from your Grimoire. Attuning a crystal this way takes 6 hours, but does not require your constant attention. You can still perform attuned rituals out of your Grimoire as usual. Discharge a Storage Crystal to perform the attuned ritual immediately (a single combat round rather than 10 minutes), and without needing to sacrifice any components. Once discharged, a crystal must be attuned to a ritual to be used again. Creating a new Arcane Storage Crystal costs 1 permanent Max Grit. Each crystal is bound to you (either physically or magically) and cannot be lost or stolen.\n\n### Crystal Grimoire\n\nYour Grimoire is mystically bonded to a crystal embedded somewhere on your body. When not in use, the Grimoire is stored within the crystal, and if destroyed or lost it will reform within that crystal in an hour.\n\n### Crystal Research\n\nAny time you spend XP choose a new ritual to add to your Grimoire."
+      },
+      {
+        "type": "advanced",
+        "name": "Crystal Sight",
+        "desc": "Embed a “third eye” crystal onto your body, allowing you to see mystical, spiritual, and other non-physical entities and effects."
+      },
+      {
+        "type": "advanced",
+        "name": "Soul Cage",
+        "desc": "Store your soul in your Crystal Grimoire. You cannot die as long as it’s intact. If your body is destroyed transferring the crystal into a new body allows you to inhabit it."
+      },
+      {
+        "type": "advanced",
+        "name": "Telegraphic Crystals",
+        "desc": "You can pair crystals such that things which effect one will effect the other. Sound, sight, and magic or other mystical effects are transmitted."
+      },
+      {
+        "type": "advanced",
+        "name": "Capture Crystals",
+        "desc": "Create special Capture Crystals by spending 1 permanent Max Grit. Use these crystals to capture the souls of recently killed creatures, or weakened or subservient spirits. Summon the captured creatures as you would cast a spell (setting your Grit to 0 or making a WIL Save). You are deprived as long as you maintain the summon. Particularly powerful souls and spirits may take additional resources or incentive to capture, or be difficult to control."
+      }
     ],
     "info": ""
   },
@@ -169,12 +339,38 @@
       { "name": "Demon in your brain", "desc": "One random spell and ritual plus one chosen spell and ritual.", "bulky": false, "enableMagic": true },
       { "name": "Unusual choice of clothing", "desc": "Your demon insists on it.", "bulky": false }
     ],
+    "choices": [
+      { "choose": "magic", "type": "spell", "random": true },
+      { "choose": "magic", "type": "spell", "random": false },
+      { "choose": "magic", "type": "ritual", "random": true },
+      { "choose": "magic", "type": "ritual", "random": false }
+    ],
     "abilities": [
-      { "name": "", "desc": "", "type": "core" },
-      { "name": "", "desc": "", "type": "advanced" },
-      { "name": "", "desc": "", "type": "advanced" },
-      { "name": "", "desc": "", "type": "advanced" },
-      { "name": "", "desc": "", "type": "advanced" }
+      {
+        "type": "core",
+        "name": "Demonic Passenger",
+        "desc": "You have a demon in your brain which acts as a hands free Grimoire, a magical tutor, and a repository of ancient knowledge. As a being of pure spirit it cannot exist or interact with the material world on its own, and requires your body to do either.\n\n**Inherited Knowledge:** Choose a Topic based on your Demon’s prior host. You may ask questions about that Topic as per the Archivist’s Deep Lore ability.\n\nAnytime you spend XP, your Demon recalls a random spell or ritual (choose which) from a prior host.\n\n**Magical Storage:** Your Demon stores spells and rituals as though it were a Grimoire. Transferring spells or rituals into it removes them from the original source as usual.\n\n**Hands Free Spellcasting:** Using your Demon’s power you can cast spells while keeping your hands free for other activities.\n\nYou can have your Demon cast spells for you by stepping your WIL down instead of the usual costs (setting your Grit to zero or making a WIL Save)."
+      },
+      {
+        "type": "advanced",
+        "name": "Demonic Sight",
+        "desc": "Your Demon has learned to share its spiritual senses with you, allowing you to sense the presence and nature of nearby magical or supernatural energies."
+      },
+      {
+        "type": "advanced",
+        "name": "Backseat Driver",
+        "desc": "If you are ever knocked unconscious or have your mind impaired in any way, you can choose to have your Demon take over and control your body instead."
+      },
+      {
+        "type": "advanced",
+        "name": "Primal Chaos",
+        "desc": "Set your Grit to zero, or destroy a delicate, fragile, or complex object in your possession, to hurl a d10 damage orb of pure chaos which will rust metal, rot wood, or decay what it touches."
+      },
+      {
+        "type": "advanced",
+        "name": "Demonic Expression",
+        "desc": "Ongoing exposure to otherworldly energies has induced a unique mutation. For example: a demonic eye that sees true names, a scaled arm that steals secrets, or translucent skin that let's you sink into shadows."
+      }
     ],
     "info": ""
   },
@@ -191,11 +387,31 @@
       { "choose": "equipment", "type": "str", "die": 10 }
     ],
     "abilities": [
-      { "name": "", "desc": "", "type": "core" },
-      { "name": "", "desc": "", "type": "advanced" },
-      { "name": "", "desc": "", "type": "advanced" },
-      { "name": "", "desc": "", "type": "advanced" },
-      { "name": "", "desc": "", "type": "advanced" }
+      {
+        "type": "core",
+        "name": "Devoted Oath",
+        "desc": "Choose a vow you must live by, and two boons your devotion grants you. If you break your vow, you lose your boons for a year and a day, or until you make amends."
+      },
+      {
+        "type": "advanced",
+        "name": "Doubly Devoted",
+        "desc": "Take a second Vow, and gain two additional Boons."
+      },
+      {
+        "type": "advanced",
+        "name": "Living Legend",
+        "desc": "Choose your name, Oath, or a Eulogy Entry you haven't previously chosen and put a tick next to it. Based on the chosen element, force a strong reaction from an NPC: pick two from Fear, Hate, Respect, and Adoration. The GM will pick one of those two to be true."
+      },
+      {
+        "type": "advanced",
+        "name": "Constant Vigilance",
+        "desc": "You are never taken by surprise. If there’s a question as to who acts first in a situation, the answer is you."
+      },
+      {
+        "type": "advanced",
+        "name": "Always Prepared",
+        "desc": "You carry a bag which can be opened at any time to reveal a useful, mundane item of your choice. You can do so again once you’ve been somewhere you could have restocked it."
+      }
     ],
     "info": ""
   },
@@ -213,11 +429,31 @@
       { "choose": "magic", "type": "spell", "random": false }
     ],
     "abilities": [
-      { "name": "", "desc": "", "type": "core" },
-      { "name": "", "desc": "", "type": "advanced" },
-      { "name": "", "desc": "", "type": "advanced" },
-      { "name": "", "desc": "", "type": "advanced" },
-      { "name": "", "desc": "", "type": "advanced" }
+      {
+        "type": "core",
+        "name": "Grimblade",
+        "desc": "You have a mystical weapon capable of storing spells (but not rituals) as though it were a Grimoire. It is any type of melee weapon, made of some unusual material. Your Grimblade is indestructible and you always know where it is.\n\n### Grimblade\n\nYour Grimblade acts as a Grimoire which can only store spells. It can take the form of engraving arcane words onto the flat of a great two handed blade, embedding mystic energy into the crystalline head of a massive hammer, or simply bashing people about the head with a very large book.\n\n###Kinetic Spellcasting\n\nIf you deal Direct Damage (this does not require Critical Damage) with your Grimblade you may immediately cast a spell ignoring the usual costs. You do not set your Grit to zero or make a Save. You can still cast spells from it as usual, but if you cast a spell while at zero Grit you roll the Save with your STR rather than your WIL."
+      },
+      {
+        "type": "advanced",
+        "name": "Hammerspace",
+        "desc": "You can store your Grimblade in a sub dimensional space (a Mary Poppins bag, a small portal, a tattoo, etc.) where it can be retrieved instantly."
+      },
+      {
+        "type": "advanced",
+        "name": "Spell Disruption",
+        "desc": "You can destroy weak (and disrupt powerful) ongoing spells and enchantments with your Grimblade. If there is risk of magical backlash, make a STR Save to avoid it."
+      },
+      {
+        "type": "advanced",
+        "name": "Mystic Strike",
+        "desc": "Set your Grit to zero to deal max damage on an attack. You can only do this if you’re not already at zero Grit."
+      },
+      {
+        "type": "advanced",
+        "name": "I, Grimblade",
+        "desc": "Whether through the magic stored within it or from some other means, your Grimblade has become sentient and ambulatory. It can float, act, and attack on its own. Kinetic Spellcasting still requires you to be wielding the blade yourself to function."
+      }
     ],
     "info": ""
   },
@@ -233,11 +469,31 @@
       { "name": "Flawless handwriting", "desc": "", "bulky": false }
     ],
     "abilities": [
-      { "name": "", "desc": "", "type": "core" },
-      { "name": "", "desc": "", "type": "advanced" },
-      { "name": "", "desc": "", "type": "advanced" },
-      { "name": "", "desc": "", "type": "advanced" },
-      { "name": "", "desc": "", "type": "advanced" }
+      {
+        "type": "core",
+        "name": "Runic Magic",
+        "desc": "You can inscribe runes that incorporate one Element, one Verb, and one Subject. Activate an inscribed rune with a fresh drop of your blood and reducing your Max Grit by 1. You can deactivate a rune at will to recover the spent Max Grit."
+      },
+      {
+        "type": "advanced",
+        "name": "Expansive Research",
+        "desc": "Learn the remaining Elements, Verbs and Subjects from the standard lists."
+      },
+      {
+        "type": "advanced",
+        "name": "Rune Logic",
+        "desc": "You’ve learned to add Modifiers as a fourth component of a rune:\n\n-**If**: Set a condition under which an empowered run will activate.\n- **Not**: Invert the effects of the Verb or Element used in a rune."
+      },
+      {
+        "type": "advanced",
+        "name": "Synergistic Conjunctions",
+        "desc": "You’ve learned the **And** component which lets you write runes that incorporate two Elements, two Verbs, or two Subjects."
+      },
+      {
+        "type": "advanced",
+        "name": "Esoteric Elements",
+        "desc": "You’ve learned to manipulate the following two elements in your runes:\n\n- **Time**: dealing with speedy or slowing things.\n- **Space**: dealing with locations and distances."
+      }
     ],
     "info": ""
   },
@@ -253,11 +509,31 @@
       { "name": "Dramatic looking Cloak", "desc": "Stylish", "bulky": false }
     ],
     "abilities": [
-      { "name": "", "desc": "", "type": "core" },
-      { "name": "", "desc": "", "type": "advanced" },
-      { "name": "", "desc": "", "type": "advanced" },
-      { "name": "", "desc": "", "type": "advanced" },
-      { "name": "", "desc": "", "type": "advanced" }
+      {
+        "type": "core",
+        "name": "Self Cloning Technique",
+        "desc": "You have the ability to split apart or create copies of yourself. Choose the style of cloning you use:\n\n### Split Self\n\nDivide yourself in two. Your split starts with your Grit and a d4 in all Attributes. You may step down your own Attributes to step up the corresponding Attribute of your clone. If either half dies the missing Attributes are lost, although you may heal back to your maximums as usual. You are both halves of yourself at all times and you both have access to your inventory, although only one half may use a specific item at any given time.\n\n### Shadow Clone\n\nYou can separate your shadow from your physical self. Your shadow is insubstantial and immaterial, but cannot pass through opaque objects. It is immune to physical damage, but vulnerable to magic and bright lights. Your shadow can hide in the shadow of another creature, and while there you can read their surface thoughts, and communicate to them mentally.\n\n### Illusory\n\nCreate a number of illusory clones up to the number of advanced abilities you have. Your clones are insubstantial and intangible but are otherwise indistinguishable from your real self. You do not have to declare which of you is real until it matters, and you share the senses of all clones simultaneously. When attacking with clones if you would deal Direct Damage you must either declare the clone is actually you or reveal it as an illusion."
+      },
+      {
+        "type": "advanced",
+        "name": "Multifarious Copies",
+        "desc": "When you create your clone you may freely change its physical appearance."
+      },
+      {
+        "type": "advanced",
+        "name": "For He Can Creep",
+        "desc": "Your footsteps make no sound, and you are impossible to see by mundane means while you are motionless in shadow. You may extend this effect to anyone you choose within 10 feet of you."
+      },
+      {
+        "type": "advanced",
+        "name": "Snap",
+        "desc": "Recall your clone to yourself, or yourself to your clone from any distance. Anyone touching you while you do so is carried along."
+      },
+      {
+        "type": "advanced",
+        "name": "Pick Pocket",
+        "desc": "While a creature is totally unaware of your presence (discounting clones) you may swap an object they carry with an object of similar size and heft."
+      }
     ],
     "info": ""
   },
@@ -273,11 +549,31 @@
       { "name": "Inconvenient trait", "desc": "Something from your soul animal.", "bulky": false }
     ],
     "abilities": [
-      { "name": "", "desc": "", "type": "core" },
-      { "name": "", "desc": "", "type": "advanced" },
-      { "name": "", "desc": "", "type": "advanced" },
-      { "name": "", "desc": "", "type": "advanced" },
-      { "name": "", "desc": "", "type": "advanced" }
+      {
+        "type": "core",
+        "name": "Great Soul",
+        "desc": "An unusually dense and powerful soul from some animal has been ritualistically implanted into you. This grants you some measure of that animal’s skills as well as the ability to freely transform into it."
+      },
+      {
+        "type": "advanced",
+        "name": "Soul Sight",
+        "desc": "Temporarily blind yourself to the material world to see creature’s souls. You can see, through all but the most powerful of illusions, what sort of creature they are as well as their current mood."
+      },
+      {
+        "type": "advanced",
+        "name": "Spiritual Resistance",
+        "desc": "Your Great Soul gives you a spiritual density and fullness that makes it difficult for outside forces to influence you. You are immune to charm, sleep, fear, mind control, and other similar supernatural effects."
+      },
+      {
+        "type": "advanced",
+        "name": "Speaker to the Dead",
+        "desc": "You can consult with the lingering souls and spirits of those who died nearby. Recalcitrant spirits may require offerings or favors before being willing to assist."
+      },
+      {
+        "type": "advanced",
+        "name": "Psychopomp",
+        "desc": "When you are attendant to the death of a creature (whether caused by you or not) you may take temporary custody of its soul. You can use your Great Soul ability to take that creature’s form once, but afterwards the soul passes beyond the Black River."
+      }
     ],
     "info": ""
   },
@@ -299,11 +595,31 @@
       { "choose": "linked", "name": "Your Familiar" }
     ],
     "abilities": [
-      { "name": "", "desc": "", "type": "core" },
-      { "name": "", "desc": "", "type": "advanced" },
-      { "name": "", "desc": "", "type": "advanced" },
-      { "name": "", "desc": "", "type": "advanced" },
-      { "name": "", "desc": "", "type": "advanced" }
+      {
+        "type": "core",
+        "name": "Familiar Bond",
+        "desc": "You have magically bonded to a small creature. This bond allows you to channel magic through the Familiar, letting it cast spells for you."
+      },
+      {
+        "type": "advanced",
+        "name": "Wild Spellcapture",
+        "desc": "You know the ancient secrets of binding wild magic into spells and rituals. By disintegrating your familiar into raw magic while it interacts with a natural magical phenomenon, your Familiar Bond creates a direct link to the magic allowing you to bind it into your Grimoire (you'll have to re-summon your Familiar afterwards). Work with the GM to determine the details of the spell or ritual you create."
+      },
+      {
+        "type": "advanced",
+        "name": "Familiar Sights",
+        "desc": "You can borrow the senses of your familiar and guide them remotely."
+      },
+      {
+        "type": "advanced",
+        "name": "Unfamiliar Familiar",
+        "desc": "Each time you re-summon your Familiar you can choose a new form for it to take (adjusting the Animal’s Companion options as needed)."
+      },
+      {
+        "type": "advanced",
+        "name": "Witch Steed",
+        "desc": "In your hands a broom, cauldron, or other household object becomes a flying steed."
+      }
     ],
     "info": ""
   }

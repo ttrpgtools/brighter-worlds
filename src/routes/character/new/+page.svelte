@@ -1,17 +1,16 @@
 <script lang="ts">
-  import type { Calling as CallingType } from "$lib/types";
+  import type { Calling } from "$lib/types";
   import MenuLink from "$lib/MenuLink.svelte";
-  import Calling from "./Calling.svelte";
+  import CallingSummary from "./CallingSummary.svelte";
   import { STEP, wizard } from "./wizard";
-  import { callingManager } from "$lib/data/calling-manager";
-  import { goto } from "$app/navigation";
-  const callingList = callingManager.list;
+  import type { PageData } from "./$types";
+  export let data: PageData;
 
   if ($wizard !== STEP.CALLING) {
     wizard.reset();
   }
 
-  function startWizard(calling: CallingType) {
+  function startWizard(calling: Calling) {
     wizard.setCalling(calling);
   }
 </script>
@@ -31,9 +30,9 @@
     </div>
   </div>
 </div>
-<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-  {#each $callingList as calling}
-    <Calling calling={calling} on:click={() => startWizard(calling)} />
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6 max-w-7xl">
+  {#each data.list as calling}
+    <CallingSummary calling={calling} on:click={() => startWizard(calling)} />
   {/each}
 </div>
 <MenuLink href="/">Home</MenuLink>

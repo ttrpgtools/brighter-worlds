@@ -31,6 +31,7 @@ export const wizard = fsm(STEP.CALLING, {
           desc: calling.tagline
         },
         equipment: calling.equipment,
+        abilities: calling.abilities.filter(x => x.type === 'core'),
       }));
       return STEP.ATTRIBUTES;
     }
@@ -43,7 +44,7 @@ export const wizard = fsm(STEP.CALLING, {
         dex: { current: attrs.dex, max: attrs.dex },
         wil: { current: attrs.wil, max: attrs.wil },
       }))
-      return STEP.EQUIPMENT;
+      return STEP.ABILITIES;
     }
   },
   [STEP.ABILITIES]: {
@@ -55,7 +56,7 @@ export const wizard = fsm(STEP.CALLING, {
       builder.update(b => ({
         ...b,
         choices: (b.choices ?? []).concat(abilityChoices),
-        abilities
+        abilities: [...(b.abilities ?? []), ...abilities],
       }));
       return STEP.EQUIPMENT;
     }

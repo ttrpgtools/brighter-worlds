@@ -10,17 +10,13 @@
   export let labelSelect = (opt: T) => opt as string;
   export let title: string;
   export let die: DieValue | undefined = undefined;
-  export let rolled: number = 0;
   export let once = false;
-  export let selected: T | undefined = undefined;
+
+  let rolled: number = 0;
   
   const dispatch = createEventDispatcher<{roll: TableRoll<T>}>();
 
   $: sides = Math.min(die ?? options.length, options.length);
-  $: {
-    rolled = snap(rolled);
-    if (rolled > 0) selected = options[rolled - 1];
-  }
 
   function alt(i: number) {
     const last = i === options.length -1 ? 'rounded-b-lg' : '';
@@ -29,14 +25,13 @@
 
   function snap(r: number) {
     if (r < 0) return 0;
-    if (r > sides) return sides;
-    return r; 
+    if (r > sides || r > options.length) return Math.min(sides, options.length);
+    return r;
   }
 
   export async function rollTable(preRoll?: number) {
-    if (once && rolled > 0) return;
     rolled = preRoll != null ? snap(preRoll) : roll(sides);
-    await tick();
+    const selected = options[rolled - 1];
     if (selected != null) {
       const tRoll = { roll: rolled, value: selected };
       dispatch('roll', tRoll);
@@ -50,7 +45,7 @@
     </div>
     <div class="flex-shrink-0">
       <div class="flex gap-4 items-center">
-        <button type="button" on:click={() => rollTable()} disabled={once && rolled > 0} class="relative inline-flex items-center rounded-full disabled:cursor-not-allowed bg-purple-300 dark:bg-purple-700 p-1 font-medium shadow-sm hover:bg-purple-200 dark:hover:bg-purple-800 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-900">{#if knownDie(sides)}<Die which={sides} />{:else}Roll{/if}</button>
+        <button type="button" on:click={() => (!once || rolled === 0) && rollTable()} disabled={once && rolled > 0} class="relative inline-flex items-center rounded-full disabled:cursor-not-allowed bg-purple-300 dark:bg-purple-700 p-1 font-medium shadow-sm hover:bg-purple-200 dark:hover:bg-purple-800 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-900">{#if knownDie(sides)}<Die which={sides} />{:else}Roll{/if}</button>
       </div>
     </div>
   </svelte:fragment>

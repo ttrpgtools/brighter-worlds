@@ -1,5 +1,11 @@
 # Changes
 
+## v0.1.23
+
+- Starting equipment and a start on abilities
+- Better handling of static data
+- Safe markdown parser and keeping it on the server
+
 ## v0.1.22
 
 - Working toward a functional character creation wizard

@@ -15,3 +15,11 @@ export function update<T extends Identifiable>(arr: T[], item: T) {
   }
   return arr;
 }
+
+export function defined<T>(x: T): x is (T extends undefined ? never : T) {
+  return x != null;
+}
+
+export function filterEmpty<T>(arr: T[]) {
+  return arr.filter(defined);
+}
