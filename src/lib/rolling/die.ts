@@ -11,7 +11,7 @@ export function integer(min: number, max: number): Distribution {
   max = Math.floor(max);
 
   const range = max - min;
-    return add(downscaleToRange(range), min);
+  return add(downscaleToRange(range), min);
 }
 
 /**

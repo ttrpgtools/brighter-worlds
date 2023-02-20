@@ -2,7 +2,7 @@
   import { createEventDispatcher, tick } from "svelte";
   import Card from "./Card.svelte";
   import Die, { knownDie } from "./dice/Die.svelte";
-  import { roll } from "./rolling/roll";
+  import { rolls } from "./rolling/roll";
   import type { TableRoll, DieValue } from "./types";
 
   type T = $$Generic;
@@ -19,8 +19,10 @@
   $: sides = Math.min(die ?? options.length, options.length);
 
   function alt(i: number) {
-    const last = i === options.length -1 ? 'rounded-b-lg' : '';
-    return i % 2 !== 0 ? `bg-gray-200 dark:bg-gray-800 ${last}` : last;
+    const last = i === (options.length - 1) ? 'rounded-b-lg' : '';
+    return (i + 1) === rolled
+      ? `bg-purple-700 text-white dark:bg-purple-300 dark:text-gray-900 ${last}`
+      : (i % 2 !== 0 ? `bg-gray-200 dark:bg-gray-800 ${last}` : last);
   }
 
   function snap(r: number) {
@@ -29,8 +31,37 @@
     return r;
   }
 
+  const SHUFFLE_DELAY = 90;
+  function waitFor(spot: number) {
+    return new Promise<number>(res => setTimeout(() => res(spot), SHUFFLE_DELAY));
+  }
+
+  function* waitOn(spots: number[]) {
+    while (spots.length) {
+      yield waitFor(spots.pop() ?? 0);
+    }
+  }
+
+  async function doShuffle(spots: number[]) {
+    for await (const offset of waitOn(spots)) {
+      shuffle = offset;
+    }
+  }
+
+  const SHUFFLE_COUNT = 10;
+  let shuffle = 0;
   export async function rollTable(preRoll?: number) {
-    rolled = preRoll != null ? snap(preRoll) : roll(sides);
+    shuffle = 0;
+    if (preRoll != null) {
+      rolled = snap(preRoll);
+    } else {
+      rolled = 0;
+      const shuffles = rolls(sides, SHUFFLE_COUNT);
+      const final = shuffles[0];
+      // Await Animation
+      await doShuffle(shuffles);
+      rolled = final;
+    }
     const selected = options[rolled - 1];
     if (selected != null) {
       const tRoll = { roll: rolled, value: selected };
@@ -49,9 +80,10 @@
       </div>
     </div>
   </svelte:fragment>
-  <ul class="-mx-4 -my-5 sm:-m-6 rounded-b-lg">
+  <ul class="-mx-4 -my-5 sm:-m-6 rounded-b-lg relative">
+    <div class="absolute py-2 px-4 sm:px-6 border-2 border-purple-400 dark:border-purple-600 w-full" class:rounded-b-lg={shuffle === options.length} class:hidden={shuffle === 0} style:transform={`translateY(${(shuffle - 1) * 100}%)`}>&nbsp;</div>
     {#each options as opt, oi}
-    <li class="py-2 px-4 sm:px-6 {alt(oi)} {rolled === (oi + 1) ? 'bg-purple-700 text-white dark:bg-purple-300 dark:text-gray-900' : ''}">{labelSelect(opt)}</li>
+    <li class="py-2 px-4 sm:px-6 border-2 border-transparent {alt(oi)} {rolled === (oi + 1) ? 'bg-purple-700 text-white dark:bg-purple-300 dark:text-gray-900' : ''}">{labelSelect(opt)}</li>
     {/each}
   </ul>
 </Card>

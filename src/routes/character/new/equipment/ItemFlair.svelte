@@ -44,16 +44,16 @@
     itemRoll = ev.detail.roll;
   }
 </script>
-<div class="flex flex-col gap-2 mb-4">
+<div class="flex flex-col gap-2 mb-4 w-full">
   <div class="flex gap-4 items-center justify-center">
     <span class="text-2xl">{gear.name}</span>
     <Button on:click={swap} disabled={!both}>Swap</Button>
   </div>
-  <div class="flex justify-center gap-4 mb-6">
-    <div class="w-96">
+  <div class="flex justify-center gap-4 mb-6 flex-wrap">
+    <div class="w-full max-w-sm">
       <RollableTable options={gear.flair} title="Flair" once {die} on:roll={handleFlair} bind:this={flairTable} />
     </div>
-    <div class="w-96">
+    <div class="w-full max-w-sm">
       <RollableTable options={gear.items} title="Item" once labelSelect={x => x.name} {die} on:roll={handleItem} bind:this={itemTable} />
     </div>
   </div>

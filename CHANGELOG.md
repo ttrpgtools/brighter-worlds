@@ -1,5 +1,10 @@
 # Changes
 
+## v0.1.24
+
+- Equipment selection mobile friendly now
+- Rollable tables have a fun little animation now
+
 ## v0.1.23
 
 - Starting equipment and a start on abilities
