@@ -6,16 +6,20 @@
 
   let comp: DialogBase<undefined>;
   export async function open() {
+    Object.assign(document.body.style, {
+      'padding-right': `${window.innerWidth - document.documentElement.clientWidth}px`,
+    });
     document.body.classList.add('overflow-hidden');
     await comp.open<undefined>();
+    document.body.removeAttribute('style');
     document.body.classList.remove('overflow-hidden');
   }
 
   $: coreAbility = calling.abilities.filter(x => x.type === 'core');
   $: advancedAbilities = calling.abilities.filter(x => x.type === 'advanced');
 </script>
-<DialogBase let:close bind:this={comp} maxWidth="max-w-[66ch]">
-  <div class="flex flex-col prose dark:prose-invert prose-purple max-h-[calc(100vh-10rem)] overflow-y-scroll">
+<DialogBase let:close bind:this={comp} maxWidth="max-w-[65ch]">
+  <div class="flex flex-col prose dark:prose-invert prose-purple max-h-[calc(100vh-10rem)] overflow-y-scroll -mx-6 px-6">
     <h2 class="text-3xl mb-2 font-subtitle text-purple-500">{calling.name}</h2>
     <p class="italic">
       {calling.desc}

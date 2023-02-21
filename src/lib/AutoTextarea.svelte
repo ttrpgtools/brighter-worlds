@@ -13,7 +13,7 @@
 		style="min-height: {minHeight}; max-height: {maxHeight}"
 	>{value + '\n'}</pre>
 
-	<textarea bind:value class="absolute rounded-lg inset-0 bg-white dark:bg-gray-900 focus:ring-purple-500 focus:border-purple-500 resize-none leading-tight -mx-2 p-2"></textarea>	
+	<textarea bind:value class="absolute rounded-lg inset-0 bg-white dark:bg-gray-900 caret-purple-500 focus:ring-purple-500 focus:border-purple-500 resize-none leading-tight -mx-2 p-2"></textarea>	
 </div>
 
 <style>
