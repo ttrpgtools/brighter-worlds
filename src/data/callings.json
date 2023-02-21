@@ -50,8 +50,10 @@
     "for": "For players who want a cool pet or to ride a bear.",
     "desc": "Ranger, beastmaster, wildspeaker, hunter… the labels don’t matter, what’s important is that your companion is by your side. Your bond extends to the ends of the world and beyond.",
     "equipment": [
-      { "name": "Your Companion", "desc": "Add URL to separate sheet.", "bulky": false },
       { "name": "Bag of Snacks", "desc": "Something your companion loves.", "bulky": false }
+    ],
+    "choices": [
+      { "choose": "linked", "name": "Your Companion", "id": "calling-animal" }
     ],
     "abilities": [
       {
@@ -97,13 +99,13 @@
     ],
     "abilities": [
       {
-      "type": "core",
-      "name": "Expert Reader",
+        "type": "core",
+        "name": "Expert Reader",
         "desc": "No matter the language, culture, code, cypher, or style you can always quickly discern the intent and meaning of any written language."
       },
       {
-      "type": "core",
-      "name": "Deep Lore",
+        "type": "core",
+        "name": "Deep Lore",
         "desc": "You are a master at collecting and collating information. Any Topic stored within your Archive is always at your fingertips. The first time you encounter something that falls within a Topic recorded in your Archive, you may ask the GM a single question about it. Further questions will take time to look up, or require further research. It takes six hours to record a new Topic of information into your Archive from any source of knowledge."
       },
       {
@@ -596,7 +598,7 @@
       { "choose": "magic", "type": "spell", "random": false },
       { "choose": "magic", "type": "spell", "random": false },
       { "choose": "magic", "type": "ritual", "random": false },
-      { "choose": "linked", "name": "Your Familiar" }
+      { "choose": "linked", "name": "Your Familiar", "id": "calling-witch-familiar" }
     ],
     "abilities": [
       {
@@ -624,6 +626,47 @@
         "name": "Witch Steed",
         "desc": "In your hands a broom, cauldron, or other household object becomes a flying steed."
       }
+    ],
+    "info": ""
+  },
+  {
+    "id": "calling-witch-familiar",
+    "hidden": true,
+    "grit": 1,
+    "attrs": { "str": 4, "dex": 4, "wil": 4 },
+    "name": "Familiar",
+    "tagline": "A magical companion.",
+    "for": "",
+    "desc": "Casting a spell through your Familiar works the same as you casting a spell, except the Familiar pays the costs: its Grit is set to zero, or it must make a WIL Save. You can have your Familiar concentrate on a spell cast through it to maintain it, and remain deprived, in your place. This allows you to keep two spells maintained simultaneously.\n\nSo long as you are alive, your Familiar Bond prevents your Familiar from being permanently destroyed. If killed you can always re-summon your Familiar through an hour long ritual unique to you.",
+    "equipment": [
+      { "name": "Attack", "desc": "Bites, claws, pecks...", "bulky": false, "damage": 4 }
+    ],
+    "choices": [
+      { "choose": "enhancement", "table": "rt-animal-companion" },
+      { "choose": "enhancement", "table": "rt-animal-companion" }
+    ],
+    "abilities": [
+    ],
+    "info": ""
+  },
+  {
+    "id": "calling-animal",
+    "hidden": true,
+    "grit": 3,
+    "attrs": { "str": 6, "dex": 6, "wil": 6 },
+    "name": "Companion",
+    "tagline": "A loyal companion.",
+    "for": "",
+    "desc": "",
+    "equipment": [
+      { "name": "Attack", "desc": "Bites, claws, pecks...", "bulky": false, "damage": 6 }
+    ],
+    "choices": [
+      { "choose": "enhancement", "table": "rt-animal-companion" },
+      { "choose": "enhancement", "table": "rt-animal-companion" },
+      { "choose": "enhancement", "table": "rt-animal-companion" }
+    ],
+    "abilities": [
     ],
     "info": ""
   }

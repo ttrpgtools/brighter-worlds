@@ -3,6 +3,7 @@
     "id": "rt-animal-companion",
     "name": "Animal Companion Abilities",
     "desc": "Enhance your companion with the following abilities.",
+    "type": "ability",
     "options": [
       { "name": "Big", "desc": "Step up STR and Attack." },
       { "name": "Fast", "desc": "Step up DEX and gain +2 Grit" },
@@ -22,6 +23,7 @@
     "id": "rt-artifice-improvements",
     "name": "Artifice Improvements",
     "desc": "Enhance your equipment with the following abilities.",
+    "type": "improvement",
     "options": [
       { "name": "Deadly", "desc": "Step up damage die." },
       { "name": "Heavy", "desc": "Step up damage die, add bulky. Effective at damaging structures." },
@@ -45,6 +47,7 @@
     "id": "rt-water-blessing",
     "name": "Water Blessing",
     "desc": "Choose the blessing your Patron grants you.",
+    "type": "blessing",
     "options": [
       { "name": "Fluid Form", "desc": "Freely turn into water and back into your normal state." },
       { "name": "Font of Self", "desc": "You can produce water at will, the same volume you can control per hour." },
@@ -57,8 +60,9 @@
   },
   {
     "id": "rt-devoted-vows",
-    "name": "Vows",
+    "name": "Devoted Vows",
     "desc": "These apply only to you, not your companions.",
+    "type": "vow",
     "options": [
       { "name": "Honesty", "desc": "You may not tell a lie, or engage in dishonest tactics." },
       { "name": "Poverty", "desc": "You may not own money, gold, or gems." },
@@ -70,8 +74,9 @@
   },
   {
     "id": "rt-devoted-boons",
-    "name": "Boons",
+    "name": "Devoted Boons",
     "desc": "Granted by devotion.",
+    "type": "boon",
     "options": [
       { "name": "By Will Sustained", "desc": "You do not need to eat, drink, breathe, or sleep." },
       { "name": "Unsullied Truth", "desc": "You always know if someone is lying, or if something is hidden by illusion or glamour in your presence." },
@@ -83,8 +88,9 @@
   },
   {
     "id": "rt-ruins-elements",
-    "name": "Elements",
+    "name": "Ruinic Elements",
     "desc": "",
+    "type": "element",
     "options": [
       { "name": "Air", "desc": "breath, wind" },
       { "name": "Fire", "desc": "burning, heat" },
@@ -94,8 +100,9 @@
   },
   {
     "id": "rt-ruins-verbs",
-    "name": "Verbs",
+    "name": "Ruinic Verbs",
     "desc": "",
+    "type": "verb",
     "options": [
       { "name": "Enhance", "desc": "addition, amplification" },
       { "name": "Impair", "desc": "reduction, suppression" },
@@ -106,8 +113,9 @@
   },
   {
     "id": "rt-ruins-subjects",
-    "name": "Subjects",
+    "name": "Ruinic Subjects",
     "desc": "",
+    "type": "subject",
     "options": [
       { "name": "Self", "desc": "the element itself" },
       { "name": "Object", "desc": "an inanimate object" },

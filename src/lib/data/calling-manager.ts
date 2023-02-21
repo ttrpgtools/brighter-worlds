@@ -11,7 +11,9 @@ const callingList = callings.map(c => ({
 })) as Calling[];
 
 class CallingManager extends JsonDataManager<Calling> {
-
+  getAll() {
+    return Array.from(this.table.values()).filter(x => !x.hidden);
+  }
 }
 
 export const callingManager = new CallingManager(callingList);
