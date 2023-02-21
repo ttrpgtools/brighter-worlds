@@ -58,7 +58,7 @@ function editMagic(id: string) {
               {#if arcana.damage}<button on:click={(ev) => rollDamage(ev, arcana)} class="inline-flex items-center text-sm font-medium leading-5"><Die which={arcana.damage}/></button>{/if}
             </div>
           </div>
-          {#if arcana.desc}<p class="text-sm text-gray-500" title={arcana.desc}>{arcana.desc}</p>{/if}
+          {#if arcana.desc}<p class="text-sm text-gray-600 dark:text-gray-400 truncate" title={arcana.desc}>{arcana.desc}</p>{/if}
         </li>
         {:else}
         <li class="py-3 italic text-gray-600 dark:text-gray-400">No magic here.</li>

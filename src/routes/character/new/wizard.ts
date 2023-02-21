@@ -6,6 +6,10 @@ import { goto } from '$app/navigation';
 
 export const builder = writable<Partial<Character> & HasChoices>({});
 
+const intern: HasChoices = {
+  choices: []
+};
+
 export const STEP = {
   CALLING: 'calling',
   ATTRIBUTES: 'attributes',
@@ -22,9 +26,10 @@ export const wizard = fsm(STEP.CALLING, {
       // NOOP
     },
     setCalling(calling: Calling) {
+      const allChoices = (calling.choices ?? []).concat(calling.abilities.flatMap(x => x.choices ?? []))
       builder.update(b => ({
         ...b,
-        choices: calling.choices,
+        choices: allChoices,
         calling: {
           id: calling.id,
           name: calling.name,
@@ -33,6 +38,7 @@ export const wizard = fsm(STEP.CALLING, {
         equipment: calling.equipment,
         abilities: calling.abilities.filter(x => x.type === 'core'),
       }));
+      intern.choices = allChoices;
       return STEP.ATTRIBUTES;
     }
   },
@@ -52,21 +58,26 @@ export const wizard = fsm(STEP.CALLING, {
       const [abilityChoices, abilities] = abils.reduce((p, {choices, ...rest}) => ([
         [...p[0], ...(choices ?? [])],
         [...p[1], rest as Ability]
-      ]), [[] as CharacterChoice[], [] as Ability[]])
+      ]), [[] as CharacterChoice[], [] as Ability[]]);
+      const allChoices = (intern.choices ?? []).concat(abilityChoices);
       builder.update(b => ({
         ...b,
-        choices: (b.choices ?? []).concat(abilityChoices),
+        choices: allChoices,
         abilities: [...(b.abilities ?? []), ...abilities],
       }));
+      intern.choices = allChoices;
       return STEP.EQUIPMENT;
     }
   },
   [STEP.EQUIPMENT]: {
     setEquipment(eq: Item[]) {
+      const remainingChoices = (intern.choices ?? []).filter(x => x.choose !== 'equipment');
       builder.update(b => ({
         ...b,
-        equipment: (b.equipment ?? []).concat(eq)
+        equipment: (b.equipment ?? []).concat(eq),
+        choices: remainingChoices,
       }));
+      intern.choices = remainingChoices;
       return STEP.DONE;
     }
   },

@@ -2,9 +2,9 @@
   import InputDialog from "$lib/InputDialog.svelte";
   import { id } from "$lib/rolling/id";
   import Toggle from "$lib/Toggle.svelte";
-  import type { DieValue, Magic, Named, Ritual } from "$lib/types";
+  import type { DieValue, Magic, Ritual } from "$lib/types";
   import DieSelector from "./DieSelector.svelte";
-  import { magicManager } from "$lib/data/magic-manager";
+  import { spellManager, ritualManager } from "$lib/data/magic-manager";
   import { append, remove, update } from "$lib/util/array";
   import Combobox from "$lib/Combobox.svelte";
 
@@ -13,7 +13,7 @@
   type TType = T["type"]
   export let type: TType;
   
-  const builtin = magicManager.getList<T>(type);
+  const builtin = type === 'spell' ? spellManager.getAll() : ritualManager.getAll();
 
   interface MagicForm {
     id?: string;
@@ -99,7 +99,7 @@
     magicForm.blast = blast ?? false;
   }
 
-  let bwmagic = $builtin as Ritual[]; // Weird thing to keep TypeScript happy.
+  let bwmagic = builtin as Ritual[]; // Weird thing to keep TypeScript happy.
 </script>
 <InputDialog title={magicDialogTitle} showDelete={magicDialogDelete} dice={[]} bind:this={magicDialog} form={magicForm} on:delete={removeMagic}>
   <form class="text-center flex flex-col gap-2">

@@ -29,6 +29,7 @@ export type MagicType = 'spell' | 'ritual';
 export interface Item extends UsableEntity {
   bulky: boolean;
   armor?: number;
+  fragile?: boolean;
   enableMagic?: boolean | { type: MagicType | 'all', count?: number }
 }
 
@@ -193,4 +194,8 @@ export interface StartingGear {
   str: StartingGearOptions;
   dex: StartingGearOptions;
   wil: StartingGearOptions;
+}
+
+export interface CallingEnhancements extends Entity {
+  options: {name: string; desc: string}[];
 }

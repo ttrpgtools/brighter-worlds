@@ -38,6 +38,9 @@
         "desc": "You can produce potions that are applied in ways other than drinking, such as breathable fumes, topical ointments, or smeared onto weapons."
       }
     ],
+    "rituals": [
+      "ritual-bi-21"
+    ],
     "info": ""
   },
   {
@@ -89,7 +92,8 @@
       { "name": "Your Archive", "desc": "Acts as a Grimoire that also stores your Topics. Starts with one Topic of information based on your prior studies and one ritual of your choice.", "bulky": true, "enableMagic": true }
     ],
     "choices": [
-      { "choose": "equipment", "type": "wil", "die": 10 }
+      { "choose": "equipment", "type": "wil", "die": 10 },
+      { "choose": "magic", "type": "ritual", "random": false }
     ],
     "abilities": [
       {

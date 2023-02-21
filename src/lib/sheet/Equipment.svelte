@@ -54,13 +54,13 @@ function editGear(id: string) {
           <div class="flex items-center space-x-4">
             <div class="min-w-0 flex-1 flex gap-4">
               <p class="truncate text-sm font-medium cursor-pointer" title={item.name} on:click={() => editGear(item.id)} on:keydown={onEnter(() => editGear(item.id))}>{item.name}</p>
-              {#if item.desc}<p class="text-sm truncate text-gray-500" title={item.desc}>{item.desc}</p>{/if}
             </div>
             <div class="flex gap-2 items-center">
               {#if item.bulky}<span class="inline-flex items-center rounded-full dark:bg-purple-100 px-2.5 py-0.5 text-xs font-medium dark:text-purple-800 bg-purple-800 text-purple-100">Bulky</span>{/if}
               {#if item.damage}<button on:click={(ev) => rollDamage(ev, item)} class="inline-flex items-center text-sm font-medium leading-5"><Die which={item.damage}/></button>{/if}
             </div>
           </div>
+          {#if item.desc}<p class="text-sm text-gray-600 dark:text-gray-400 truncate" title={item.desc}>{item.desc}</p>{/if}
         </li>
         {/each}
       </ul>
