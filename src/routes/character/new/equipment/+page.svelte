@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Item, EquipmentChoice, CharacterChoice } from "$lib/types";
+  import type { Item, EquipmentChoice } from "$lib/types";
   import { STEP, wizard, builder } from "../wizard";
   import { goto } from "$app/navigation";
   import { browser } from "$app/environment";
@@ -13,7 +13,6 @@
     goto(`/character/new`);
   }
 
-  
   function forward() {
     const startingGear = filterEmpty(allPairs.map(combine));
     wizard.setEquipment(startingGear);

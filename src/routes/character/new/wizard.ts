@@ -1,9 +1,11 @@
-import type { Ability, Attrs, Calling, CallingEnhancement, Character, CharacterChoice, Entity, HasChoices, Item } from '$lib/types';
+import type { Ability, Attrs, Calling, CallingEnhancement, Character, CharacterChoice, HasChoices, Item, Spell, Ritual } from '$lib/types';
 import fsm from 'svelte-fsm';
 import { manager } from '$lib/data/sheet-manager';
 import { get, writable } from 'svelte/store';
 import { goto } from '$app/navigation';
 import { id } from '$lib/rolling/id';
+import { roll } from '$lib/rolling/roll';
+import { defined } from '$lib/util/array';
 
 export const builder = writable<Partial<Character> & HasChoices>({});
 
@@ -23,12 +25,17 @@ export const STEP = {
   DONE: 'done',
 } as const;
 
+function pickRandom<T>(arr: T[]) {
+  const which = roll(arr.length) - 1;
+  return arr[which];
+}
+
 export const wizard = fsm(STEP.CALLING, {
   [STEP.CALLING]: {
     _enter() {
       // NOOP
     },
-    setCalling(calling: Calling) {
+    setCalling(calling: Calling, spells: Spell[], rituals: Ritual[]) {
       const core = calling.abilities.filter(x => x.type === 'core');
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const staticCompanions = calling.abilities.filter(x => x.type === 'companion').map(({choices, ...ab}) => ab as Ability);
@@ -44,6 +51,8 @@ export const wizard = fsm(STEP.CALLING, {
         equipment: calling.equipment,
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         abilities: staticCompanions.concat(core.map(({choices, ...ab}) => ab)),
+        spells: (calling.spells ?? []).map(x => x === '?' ? pickRandom(spells) : spells.find(y => y.id === x)).filter(defined),
+        rituals: (calling.rituals ?? []).map(x => x === '?' ? pickRandom(rituals) : rituals.find(y => y.id === x)).filter(defined),
       }));
       intern.choices = allChoices;
       return STEP.ATTRIBUTES;
@@ -114,6 +123,22 @@ export const wizard = fsm(STEP.CALLING, {
         ...b,
         equipment: (b.equipment ?? []).concat(eq),
         choices: remainingChoices,
+      }));
+      intern.choices = remainingChoices;
+      if (intern.choices?.some(x => x.choose === 'magic')) {
+        return STEP.MAGIC;
+      }
+      return STEP.DONE;
+    }
+  },
+  [STEP.MAGIC]: {
+    setMagic(spells: Spell[], rituals: Ritual[]) {
+      const remainingChoices = (intern.choices ?? []).filter(x => x.choose !== 'magic');
+      builder.update(b => ({
+        ...b,
+        choices: remainingChoices,
+        spells: (b.spells || []).concat(spells),
+        rituals: (b.rituals || []).concat(rituals),
       }));
       intern.choices = remainingChoices;
       return STEP.DONE;

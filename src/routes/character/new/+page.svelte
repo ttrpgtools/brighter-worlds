@@ -11,7 +11,7 @@
   }
 
   function startWizard(calling: Calling) {
-    wizard.setCalling(calling);
+    wizard.setCalling(calling, data.spells, data.rituals);
   }
 </script>
 

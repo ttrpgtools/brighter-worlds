@@ -368,9 +368,7 @@
       { "name": "Unusual choice of clothing", "desc": "Your demon insists on it.", "bulky": false }
     ],
     "choices": [
-      { "choose": "magic", "type": "spell", "random": true },
       { "choose": "magic", "type": "spell", "random": false },
-      { "choose": "magic", "type": "ritual", "random": true },
       { "choose": "magic", "type": "ritual", "random": false }
     ],
     "abilities": [
@@ -406,6 +404,8 @@
         "desc": "Ongoing exposure to otherworldly energies has induced a unique mutation. For example: a demonic eye that sees true names, a scaled arm that steals secrets, or translucent skin that let's you sink into shadows."
       }
     ],
+    "spells": ["?"],
+    "rituals": ["?"],
     "info": ""
   },
   {

@@ -3,7 +3,7 @@
   import { goto } from "$app/navigation";
   import { browser } from "$app/environment";
   import Button from "$lib/Button.svelte";
-  import type { EnhancementChoice, CallingEnhancement } from "$lib/types";
+  import type { CallingEnhancement } from "$lib/types";
   import type { PageData } from "./$types";
   import { onlyEnhancement } from "$lib/util/guards";
   import { defined } from "$lib/util/array";
