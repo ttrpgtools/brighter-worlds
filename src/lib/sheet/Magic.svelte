@@ -32,7 +32,7 @@ function editMagic(id: string) {
 }
 </script>
 <MagicDialog bind:magicList {type} bind:this={dialog} />
-<Card>
+<Card class="md:h-[25rem]">
   <svelte:fragment slot="header">
     <div class="">
       <h3 class="text-xl font-subtitle leading-6">{title}</h3>

@@ -26,7 +26,7 @@
 {#if callingData != null}
   <CallingDetailDialog calling={callingData} bind:this={callingDialog} />
 {/if}
-<Card>
+<Card class="md:h-[25rem]">
   <div class="flex items-center gap-2 w-full" slot="header">
     <h3 class="text-xl font-subtitle leading-6">{calling.name}</h3>
     <p class="text-gray-500 relative -top-1">(Calling)</p>
@@ -52,7 +52,7 @@
             <p class="truncate text-sm font-medium cursor-pointer" title={ability.name}>{ability.name}</p>
           </div>
           <div class="flex gap-2 items-center">
-            <span class="inline-flex items-center rounded-full dark:bg-purple-100 px-2.5 py-0.5 text-xs font-medium dark:text-purple-800 bg-purple-800 text-purple-100">{capitalize(ability.type === 'enhance' ? (ability.details ?? 'xxx') : ability.type)}</span>
+            <span class="inline-flex items-center rounded-full dark:bg-purple-100 px-2.5 py-0.5 text-xs font-medium dark:text-purple-800 bg-purple-800 text-purple-100">{capitalize(ability.type === 'enhance' || ability.type === 'companion' ? (ability.details ?? 'xxx') : ability.type)}</span>
             {#if ability.damage}<button on:click={(ev) => rollDamage(ev, ability)} class="inline-flex items-center text-sm font-medium leading-5"><Die which={ability.damage}/></button>{/if}
           </div>
         </div>

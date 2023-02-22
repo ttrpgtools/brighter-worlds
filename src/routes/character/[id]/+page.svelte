@@ -109,8 +109,8 @@
         <span class="block font-symbol text-6xl h-4 relative -top-6 text-purple-500">j</span>
       </div>
       <Name bind:name={$character.name} bind:pronouns={$character.pronouns} />
-      <div class="relative rounded-lg bg-white shadow-xl dark:bg-gray-900 dark:shadow-purple-400/20 ring-1 ring-gray-900/5  flex flex-col gap-6">
-        <div class="px-4 py-5 sm:px-6 flex flex-col gap-4">
+      <div class="relative rounded-lg bg-white shadow-xl dark:bg-gray-900 dark:shadow-purple-400/20 ring-1 ring-gray-900/5 md:h-[25rem] flex flex-col gap-6">
+        <div class="px-4 py-5 sm:px-6 flex flex-col gap-4 h-full">
           <Grit bind:value={$character.grit} {isDeprived} {isBurdened} />
           <Attribute name="STR" value={$character.str} on:roll={(ev) => save(ev, 'STR')} on:damage={takeDamage} on:change={persist}/>
           <Attribute name="DEX" value={$character.dex} on:roll={(ev) => save(ev, 'DEX')} on:damage={takeDamage} on:change={persist}/>

@@ -29,7 +29,7 @@ function editGear(id: string) {
   dialog.editGear(id);
 }
 </script>
-<Card>
+<Card class="md:h-[25rem]">
   <EquipmentDialog bind:equipment bind:this={dialog} />
   <svelte:fragment slot="header">
     <div class="">

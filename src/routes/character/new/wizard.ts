@@ -30,6 +30,8 @@ export const wizard = fsm(STEP.CALLING, {
     },
     setCalling(calling: Calling) {
       const core = calling.abilities.filter(x => x.type === 'core');
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const staticCompanions = calling.abilities.filter(x => x.type === 'companion').map(({choices, ...ab}) => ab as Ability);
       const allChoices = (calling.choices ?? []).concat(core.flatMap(x => x.choices ?? []))
       builder.update(b => ({
         ...b,
@@ -40,7 +42,8 @@ export const wizard = fsm(STEP.CALLING, {
           desc: calling.tagline
         },
         equipment: calling.equipment,
-        abilities: core,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        abilities: staticCompanions.concat(core.map(({choices, ...ab}) => ab)),
       }));
       intern.choices = allChoices;
       return STEP.ATTRIBUTES;
