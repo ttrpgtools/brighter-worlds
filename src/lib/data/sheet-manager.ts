@@ -58,19 +58,21 @@ class Manager {
     this.loaded = true;
   }
 
-  create(char: Partial<Character>): [string, Writable<Character>]{
+  create(char: Partial<Character>, unlisted = false): [string, Writable<Character>]{
     const newId = id();
     if (!this.loaded) {
       this.loadList();
     }
-    this.list.update((current) => ([...current, {
-      id: newId,
-      name: char.name ?? '',
-      calling: char.calling?.name ?? '',
-      str: char.str?.max ?? 4,
-      dex: char.dex?.max ?? 4,
-      wil: char.wil?.max ?? 4,
-    }]));
+    if (!unlisted) {
+      this.list.update((current) => ([...current, {
+        id: newId,
+        name: char.name ?? '',
+        calling: char.calling?.name ?? '',
+        str: char.str?.max ?? 4,
+        dex: char.dex?.max ?? 4,
+        wil: char.wil?.max ?? 4,
+      }]));
+    }
     const sheet = this.getSheet(newId);
     sheet.load();
     // TODO load more of the calling.
@@ -101,6 +103,7 @@ class Manager {
         return [...current.slice(0, index), {...current[index], name: char.name, calling: char.calling?.name, str: char.str.max, dex: char.dex.max, wil: char.wil.max}, ...current.slice(index + 1)];
       });
     });
+    this.sheetCache.set(id, sheet);
     return sheet;
   }
 }

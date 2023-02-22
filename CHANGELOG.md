@@ -1,5 +1,11 @@
 # Changes
 
+## v0.1.25
+
+- Characters with companions supported
+  - Creates a separate sheet for the companion
+- Characters with extra enhancements (eg. vows, blessings) are supported
+
 ## v0.1.24
 
 - Equipment selection mobile friendly now

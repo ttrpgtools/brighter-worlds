@@ -14,6 +14,9 @@ class CallingManager extends JsonDataManager<Calling> {
   getAll() {
     return Array.from(this.table.values()).filter(x => !x.hidden);
   }
+  getHidden() {
+    return Array.from(this.table.values()).filter(x => x.hidden);
+  }
 }
 
 export const callingManager = new CallingManager(callingList);

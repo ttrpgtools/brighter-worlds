@@ -52,11 +52,11 @@
             <p class="truncate text-sm font-medium cursor-pointer" title={ability.name}>{ability.name}</p>
           </div>
           <div class="flex gap-2 items-center">
-            <span class="inline-flex items-center rounded-full dark:bg-purple-100 px-2.5 py-0.5 text-xs font-medium dark:text-purple-800 bg-purple-800 text-purple-100">{capitalize(ability.type)}</span>
+            <span class="inline-flex items-center rounded-full dark:bg-purple-100 px-2.5 py-0.5 text-xs font-medium dark:text-purple-800 bg-purple-800 text-purple-100">{capitalize(ability.type === 'enhance' ? (ability.details ?? 'xxx') : ability.type)}</span>
             {#if ability.damage}<button on:click={(ev) => rollDamage(ev, ability)} class="inline-flex items-center text-sm font-medium leading-5"><Die which={ability.damage}/></button>{/if}
           </div>
         </div>
-        {#if ability.desc}<p class="text-sm text-gray-600 dark:text-gray-400 h-[3.75rem] overflow-hidden">{@html ability.desc}</p>{/if}
+        {#if ability.desc}<p class="text-sm text-gray-600 dark:text-gray-400 max-h-[3.75rem] overflow-hidden">{@html ability.desc}</p>{/if}
       </li>
       {:else}
       <li class="py-3 italic text-gray-600 dark:text-gray-400">No abilities found... odd.</li>

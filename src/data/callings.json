@@ -141,8 +141,12 @@
       { "name": "Your Artificing Tools", "desc": "", "bulky": false },
       { "name": "Masterwork Weapon", "desc": "", "bulky": false, "damage": "6" },
       { "name": "Masterwork Armor", "desc": "", "bulky": false, "armor": 1 },
-      { "name": "Masterwork Item", "desc": "", "bulky": false },
-      { "name": "Three additional improvements", "desc": "", "bulky": false }
+      { "name": "Masterwork Item", "desc": "", "bulky": false }
+    ],
+    "choices": [
+      { "choose": "enhancement", "table": "rt-artifice-improvements" },
+      { "choose": "enhancement", "table": "rt-artifice-improvements" },
+      { "choose": "enhancement", "table": "rt-artifice-improvements" }
     ],
     "abilities": [
       {
@@ -222,6 +226,9 @@
       { "name": "Waterskin", "desc": "", "bulky": false },
       { "name": "A small, impossible token from your Patron", "desc": "", "bulky": false }
     ],
+    "choices": [
+      { "choose": "enhancement", "table": "rt-water-blessing" }
+    ],
     "abilities": [
       {
         "type": "core",
@@ -229,9 +236,18 @@
         "desc": "You are equally at home in water as you are on land. You can freely control a volume of water about the same size as yourself, if employed as a weapon it deals d6 damage."
       },
       {
+        "type": "companion",
+        "name": "Patron",
+        "desc": "",
+        "details": "Patron"
+      },
+      {
         "type": "advanced",
         "name": "Twice Blessed",
-        "desc": "Choose a second Water Blessing your Patron grants you."
+        "desc": "Choose a second Water Blessing your Patron grants you.",
+        "choices": [
+          { "choose": "enhancement", "table": "rt-water-blessing" }
+        ]
       },
       {
         "type": "advanced",
@@ -267,6 +283,12 @@
         "type": "core",
         "name": "Words of God",
         "desc": "Gods can speak only truth. When you speak with the words of your god if the words are not true, your god’s power will attempt to make it true. Define the Domain of your god."
+      },
+      {
+        "type": "companion",
+        "name": "Small God",
+        "desc": "",
+        "details": "God"
       },
       {
         "type": "advanced",
@@ -358,6 +380,12 @@
         "desc": "You have a demon in your brain which acts as a hands free Grimoire, a magical tutor, and a repository of ancient knowledge. As a being of pure spirit it cannot exist or interact with the material world on its own, and requires your body to do either.\n\n**Inherited Knowledge:** Choose a Topic based on your Demon’s prior host. You may ask questions about that Topic as per the Archivist’s Deep Lore ability.\n\nAnytime you spend XP, your Demon recalls a random spell or ritual (choose which) from a prior host.\n\n**Magical Storage:** Your Demon stores spells and rituals as though it were a Grimoire. Transferring spells or rituals into it removes them from the original source as usual.\n\n**Hands Free Spellcasting:** Using your Demon’s power you can cast spells while keeping your hands free for other activities.\n\nYou can have your Demon cast spells for you by stepping your WIL down instead of the usual costs (setting your Grit to zero or making a WIL Save)."
       },
       {
+        "type": "companion",
+        "name": "Demon",
+        "desc": "",
+        "details": "Demon"
+      },
+      {
         "type": "advanced",
         "name": "Demonic Sight",
         "desc": "Your Demon has learned to share its spiritual senses with you, allowing you to sense the presence and nature of nearby magical or supernatural energies."
@@ -390,7 +418,10 @@
       { "name": "Decorated Armor", "desc": "", "bulky": false, "armor": 1 }
     ],
     "choices": [
-      { "choose": "equipment", "type": "str", "die": 10 }
+      { "choose": "equipment", "type": "str", "die": 10 },
+      { "choose": "enhancement", "table": "rt-devoted-vows" },
+      { "choose": "enhancement", "table": "rt-devoted-boons" },
+      { "choose": "enhancement", "table": "rt-devoted-boons" }
     ],
     "abilities": [
       {
@@ -399,9 +430,20 @@
         "desc": "Choose a vow you must live by, and two boons your devotion grants you. If you break your vow, you lose your boons for a year and a day, or until you make amends."
       },
       {
+        "type": "companion",
+        "name": "Idol",
+        "desc": "",
+        "details": "Idol"
+      },
+      {
         "type": "advanced",
         "name": "Doubly Devoted",
-        "desc": "Take a second Vow, and gain two additional Boons."
+        "desc": "Take a second Vow, and gain two additional Boons.",
+        "choices": [
+          { "choose": "enhancement", "table": "rt-devoted-vows" },
+          { "choose": "enhancement", "table": "rt-devoted-boons" },
+          { "choose": "enhancement", "table": "rt-devoted-boons" }
+        ]
       },
       {
         "type": "advanced",
@@ -474,6 +516,14 @@
       { "name": "Etching or Drawing tools", "desc": "", "bulky": false },
       { "name": "Flawless handwriting", "desc": "", "bulky": false }
     ],
+    "choices": [
+      { "choose": "enhancement", "table": "rt-ruins-elements" },
+      { "choose": "enhancement", "table": "rt-ruins-elements" },
+      { "choose": "enhancement", "table": "rt-ruins-verbs" },
+      { "choose": "enhancement", "table": "rt-ruins-verbs" },
+      { "choose": "enhancement", "table": "rt-ruins-subjects" },
+      { "choose": "enhancement", "table": "rt-ruins-subjects" }
+    ],
     "abilities": [
       {
         "type": "core",
@@ -498,7 +548,7 @@
       {
         "type": "advanced",
         "name": "Esoteric Elements",
-        "desc": "You’ve learned to manipulate the following two elements in your runes:\n\n- **Time**: dealing with speedy or slowing things.\n- **Space**: dealing with locations and distances."
+        "desc": "You’ve learned to manipulate the following two elements in your runes:\n\n- **Time**: dealing with speeding or slowing things.\n- **Space**: dealing with locations and distances."
       }
     ],
     "info": ""
@@ -553,6 +603,11 @@
       { "name": "Your Great Soul", "desc": "You may want to maintain a separate sheet for your animal shape.", "bulky": false },
       { "name": "Beneficial trait", "desc": "Something from your soul animal.", "bulky": false },
       { "name": "Inconvenient trait", "desc": "Something from your soul animal.", "bulky": false }
+    ],
+    "choices": [
+      { "choose": "enhancement", "table": "rt-animal-companion" },
+      { "choose": "enhancement", "table": "rt-animal-companion" },
+      { "choose": "enhancement", "table": "rt-animal-companion" }
     ],
     "abilities": [
       {

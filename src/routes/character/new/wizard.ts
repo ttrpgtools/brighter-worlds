@@ -1,8 +1,9 @@
-import type { Ability, Attrs, Calling, Character, CharacterChoice, HasChoices, Item } from '$lib/types';
+import type { Ability, Attrs, Calling, CallingEnhancement, Character, CharacterChoice, Entity, HasChoices, Item } from '$lib/types';
 import fsm from 'svelte-fsm';
 import { manager } from '$lib/data/sheet-manager';
 import { get, writable } from 'svelte/store';
 import { goto } from '$app/navigation';
+import { id } from '$lib/rolling/id';
 
 export const builder = writable<Partial<Character> & HasChoices>({});
 
@@ -14,6 +15,8 @@ export const STEP = {
   CALLING: 'calling',
   ATTRIBUTES: 'attributes',
   ABILITIES: 'abilities',
+  ENHANCEMENTS: `enhancements`,
+  COMPANION: 'companion',
   EQUIPMENT: 'equipment',
   MAGIC: 'magic',
   EULOGY: 'eulogy',
@@ -26,7 +29,8 @@ export const wizard = fsm(STEP.CALLING, {
       // NOOP
     },
     setCalling(calling: Calling) {
-      const allChoices = (calling.choices ?? []).concat(calling.abilities.flatMap(x => x.choices ?? []))
+      const core = calling.abilities.filter(x => x.type === 'core');
+      const allChoices = (calling.choices ?? []).concat(core.flatMap(x => x.choices ?? []))
       builder.update(b => ({
         ...b,
         choices: allChoices,
@@ -36,7 +40,7 @@ export const wizard = fsm(STEP.CALLING, {
           desc: calling.tagline
         },
         equipment: calling.equipment,
-        abilities: calling.abilities.filter(x => x.type === 'core'),
+        abilities: core,
       }));
       intern.choices = allChoices;
       return STEP.ATTRIBUTES;
@@ -66,6 +70,37 @@ export const wizard = fsm(STEP.CALLING, {
         abilities: [...(b.abilities ?? []), ...abilities],
       }));
       intern.choices = allChoices;
+      if (allChoices.some(x => x.choose === 'enhancement')) {
+        return STEP.ENHANCEMENTS;
+      }
+      if (allChoices.some(x => x.choose === 'linked')) {
+        return STEP.COMPANION;
+      }
+      return STEP.EQUIPMENT;
+    }
+  },
+  [STEP.ENHANCEMENTS]: {
+    setEnhancements(enhancements: CallingEnhancement[]) {
+      const newAbilities = enhancements.map(x => ({id: id(), name: x.name, desc: x.desc, type: 'enhance', details: x.type} as Ability));
+      intern.choices = intern.choices?.filter(x => x.choose !== 'enhancement');
+      builder.update(b => ({
+        ...b,
+        abilities: newAbilities.concat(b.abilities ?? []),
+        choices: intern.choices,
+      }));
+      if (intern.choices?.some(x => x.choose === 'linked')) {
+        return STEP.COMPANION;
+      }
+      return STEP.EQUIPMENT;
+    }
+  },
+  [STEP.COMPANION]: {
+    setCompanion(companion: Partial<Character>) {
+      const [compId] = manager.create(companion);
+      builder.update(b => ({
+        ...b,
+        abilities: [{id: id(), name: companion.name ?? '', desc: `<a href="/character/${compId}" target="_blank">${companion.name}'s Sheet</a>`, type: 'companion', details: companion.calling?.name ?? ''}, ...(b.abilities ?? [])]
+      }));
       return STEP.EQUIPMENT;
     }
   },

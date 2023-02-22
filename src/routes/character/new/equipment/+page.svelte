@@ -7,6 +7,7 @@
   import { gearManager } from '$lib/data/gear-manager';
   import ItemFlair from "./ItemFlair.svelte";
   import { filterEmpty } from "$lib/util/array";
+  import { onlyEquipment } from "$lib/util/guards";
 
   if ($wizard !== STEP.EQUIPMENT && browser) {
     goto(`/character/new`);
@@ -27,8 +28,6 @@
   type Pair = [string | undefined, Item | undefined];
   let allPairs: Pair[] = [];
   let extras: EquipmentChoice[];
-
-  const onlyEquipment = (choice: CharacterChoice): choice is EquipmentChoice => choice.choose === 'equipment';
 
   $: {
     extras = ($builder.choices ?? []).filter(onlyEquipment);

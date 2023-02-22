@@ -43,7 +43,7 @@ export interface Spell extends UsableEntity {
 
 export type Magic = Spell | Ritual;
 
-export type AbilityType = 'core' | 'advanced';
+export type AbilityType = 'core' | 'advanced' | 'companion' | 'enhance';
 
 export interface Ability extends UsableEntity {
   details?: string;
@@ -65,9 +65,15 @@ export interface MagicChoice {
 export interface LinkedSheetChoice {
   choose: 'linked';
   name: string;
+  id: string;
 }
 
-export type CharacterChoice = EquipmentChoice | MagicChoice | LinkedSheetChoice;
+export interface EnhancementChoice {
+  choose: 'enhancement';
+  table: string;
+}
+
+export type CharacterChoice = EquipmentChoice | MagicChoice | LinkedSheetChoice | EnhancementChoice;
 
 export interface HasChoices {
   choices?: CharacterChoice[];
@@ -124,10 +130,12 @@ export interface Calling extends Entity, HasChoices {
   for: string;
   equipment: Item[];
   abilities: (Ability & HasChoices)[];
-  spells?: string[],
-  rituals?: string[],
+  spells?: string[];
+  rituals?: string[];
   info: string;
-  linked?: string[],
+  hidden?: boolean;
+  grit?: number;
+  attrs?: Attrs;
 }
 
 export interface DamageForm {
@@ -197,5 +205,12 @@ export interface StartingGear {
 }
 
 export interface CallingEnhancements extends Entity {
+  type: string;
   options: {name: string; desc: string}[];
+}
+
+export interface CallingEnhancement {
+  name: string;
+  desc: string;
+  type: string;
 }
