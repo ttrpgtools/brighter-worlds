@@ -113,6 +113,7 @@ export interface CharacterSummary extends Attrs {
 }
 
 export interface NpcStats {
+  id: string;
   name: string;
   grit: number;
   str: DieValue;

@@ -1,10 +1,9 @@
 <script lang="ts">
-import Card from "$lib/Card.svelte";
+  import Card from "$lib/Card.svelte";
   import { Die } from "$lib/dice";
-import type { NpcStats } from "$lib/types";
-export let stats: NpcStats
-$: hasAttacks = Array.isArray(stats.attacks) && stats.attacks.length > 0;
-const last = (a: unknown[], i: number) => i === a.length - 1;
+  import type { NpcStats } from "$lib/types";
+  export let stats: NpcStats
+  $: hasAttacks = Array.isArray(stats.attacks) && stats.attacks.length > 0;
 </script>
 <Card>
   <div class="text-left">

@@ -11,15 +11,15 @@
   <MenuLink href="/character/new">Create A Character</MenuLink>
   <MenuLink href="/character">Characters</MenuLink>
   <MenuLink href="/bestiary">Bestiary</MenuLink>
-  <MenuLink href="/reliquary">Reliquary</MenuLink>
+  <!-- <MenuLink href="/reliquary">Reliquary</MenuLink> -->
   <MenuLink href="/arcana">Magna Arcana</MenuLink>
-  <MenuLink href="/academy">Dream Academy</MenuLink>
+  <!-- <MenuLink href="/academy">Dream Academy</MenuLink> -->
   <div class="font-subtitle text-center text-2xl p-4 caution shadow-xl dark:shadow-purple-400/20 rotate-6 translate-y-4">
     <div class="bg-white dark:bg-gray-900 p-2">
       <div>Caution</div>
       <div>Work in progress</div>
       <div>
-        v0.1.25
+        v0.1.26
       </div>
     </div>
   </div>

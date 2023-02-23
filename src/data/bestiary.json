@@ -1,0 +1,207 @@
+[
+  {
+    "id": "beast-alligator",
+    "name": "Alligator",
+    "grit": 3,
+    "str": 8,
+    "dex": 6,
+    "wil": 6,
+    "attacks": [
+      {
+        "id": "beastattack-thoaiwndtahowdgin",
+        "name": "Bite",
+        "damage": 8
+      }
+    ],
+    "notes": [
+      "Strange aquatic, reptilian predators.",
+      "Seem to know more than they should. Hate falsehoods."
+    ],
+    "wants": "To be left alone and to eat anyone who doesn’t respect that.",
+    "found": "1d6 (1: Basking, 2: Napping, 3: Hissing, 4-5: Lying in Ambush, 6: Aggressing)"
+  },
+  {
+    "id": "beast-fire-gods-shame",
+    "name": "Fire God's Shame",
+    "grit": 3,
+    "str": 4,
+    "dex": 8,
+    "wil": 6,
+    "attacks": [
+      {
+        "id": "beastattack-uniubdfurspetawdg",
+        "name": "Peck",
+        "damage": 6,
+        "desc": "sets cloth smoldering on Direct Damage."
+      },
+      {
+        "id": "beastattack-lruawdnv98an3tawd",
+        "name": "Death Flare",
+        "damage": 8,
+        "blast": true,
+        "desc": "releases a blast of flame when killed."
+      }
+    ],
+    "notes": [
+      "Constantly ornery and aggressive, goose-like creature.",
+      "Popular with travelers as its death flare cooks its meat perfectly."
+    ],
+    "wants": "Respect and bread crumbs.",
+    "found": "Harassing random passersby."
+  },
+  {
+    "id": "beast-screaming-ghost",
+    "name": "Screaming Ghost",
+    "grit": 4,
+    "str": 4,
+    "dex": 6,
+    "wil": 8,
+    "attacks": [
+      {
+        "id": "beastattack-hngaswdtrlmvzsoei",
+        "name": "Scream",
+        "damage": 6,
+        "desc": "sonic damage, also roll a WIL save against fear."
+      }
+    ],
+    "notes": [
+      "Weak to salt. While within a few feet of salt, attacks against are enhanced and its attacks are impaired.",
+      "Can enter another creature's body, causing that creature to freeze up for ~10 seconds if that creature has lower WIL. Doing this releases the ghost into its proper afterlife."
+    ],
+    "wants": "To move on.",
+    "found": "Wherever people were killed in brutal ways."
+  },
+  {
+    "id": "beast-",
+    "name": "Fourteen Eyed Watcher",
+    "grit": 6,
+    "armor": 1,
+    "str": 8,
+    "dex": 10,
+    "wil": 8,
+    "attacks": [
+      { "id": "beastattack-ohsgietngsoheitgn", "name": "Claws", "damage": 8, "extra": 8, "desc": ""},
+      { "id": "beastattack-oasiengseohtignmh", "name": "Bite", "damage": 10, "desc": ""}
+    ],
+    "notes": [
+      "Long limbs carry it disturbingly quickly across any surface.",
+      "Arrives at locations prior to momentous events, which has garnered it a reputation as a harbinger of doom.",
+      "If killed, a new Watcher reappears at the next new moon."
+    ],
+    "wants": "To witness change.",
+    "found": "Eyes glinting in the night, peering unsettlingly at whatever has attracted its attention."
+  },
+  {
+    "id": "beast-half-dead-cat",
+    "name": "Half-Dead Cat",
+    "grit": 3,
+    "str": 4,
+    "dex": 8,
+    "wil": 8,
+    "attacks": [
+      { "id": "beastattack-seotignlrfdmg", "name": "Claws", "damage": 6, "desc": ""},
+      { "id": "beastattack-oiftmgbosetim", "name": "Bite", "damage": 6, "desc": "deals Direct Damage to WIL on odd damage rolls."}
+    ],
+    "notes": [
+      "A cat who lost all nine of its lives, then somehow one more.",
+      "Half ethereal, unaffected by physical things unless it wants to be.",
+      "Having a Half-Dead Cat cross your path is considered to be good luck."
+    ],
+    "wants": "All the things a normal cat wants, if a normal cat was capable of sharpening its claws on your soul.",
+    "found": "Hunting mice, then toying with their souls."
+  },
+  {
+    "id": "beast-incubus-butterfly",
+    "name": "Incubus Butterfly",
+    "grit": 2,
+    "str": 4,
+    "dex": 8,
+    "wil": 10,
+    "attacks": [
+      { "id": "beastattack-soeitgnsoheimsh", "name": "Somnolescent Dust", "damage": 6, "blast": true, "desc": "deals Direct Damage to WIL. Enhanced if target is tricked by illusions."}
+    ],
+    "notes": [
+      "Hides itself while projecting an illusion of a trustworthy figure.",
+      "If an illusion is suspected, it can be broken with a WIL save versus the Butterfly.",
+      "Sustains itself by drinking sleepers’ dreams by extending its proboscis through their ear."
+    ],
+    "wants": "To sup upon your dreams.",
+    "found": "Luring unsuspecting travelers to an area already saturated with its Dust."
+  },
+  {
+    "id": "beast-notiavore",
+    "name": "Notiavore",
+    "grit": 6,
+    "armor": 2,
+    "str": 10,
+    "dex": 6,
+    "wil": 8,
+    "attacks": [
+      { "id": "beastattack-ohlorionwdrmaaec", "name": "Bite", "damage": 10, "desc": "consumes a memory and restores d6 Grit on Critical Damage"}
+    ],
+    "notes": [
+      "Hulking mass of scrolls and books, an incredible if deadly repository of knowledge.",
+      "Bladed weapons and fire bypass Armor.",
+      "Able to teleport between libraries.",
+      "Summon copies of things from consumed books and memories with its quill."
+    ],
+    "wants": "Your most cherished memory.",
+    "found": "Lurking in the dark corners of libraries and scriptoriums."
+  },
+  {
+    "id": "beast-snackoon",
+    "name": "Snackoon",
+    "grit": 3,
+    "str": 4,
+    "dex": 8,
+    "wil": 6,
+    "attacks": [
+      { "id": "beastattack-qwdtqwvseciohn", "name": "Grabby Paws", "damage": 6, "desc": ""}
+    ],
+    "notes": [
+      "Six legged raccoon-like creature.",
+      "Hunted nearly to extinction due to their incredible tasting meat.",
+      "Very clever, good at sneaking around to steal your trash."
+    ],
+    "wants": "To eat your trash but not be eaten in turn.",
+    "found": "Hiding in populated places searching for snacks."
+  },
+  {
+    "id": "beast-styrge-sphynx",
+    "name": "Styrge Sphynx",
+    "grit": 4,
+    "str": 6,
+    "dex": 6,
+    "wil": 8,
+    "attacks": [
+      { "id": "beastattack-iomsetrosmhmse", "name": "Blood Sucking Proboscis", "damage": 8, "desc": "steps up STR on Critical Damage"}
+    ],
+    "notes": [
+      "A mosquito-cat hybrid the size of a cow.",
+      "Emulates speech by vibrating its wings, which it uses to ask riddles.",
+      "Once a riddle is posed, its attacked are enhanced against anyone who hasn’t answered.",
+      "Anyone who answers a riddle incorrectly has all of their attributes impaired until they answer another riddle correctly."
+    ],
+    "wants": "To absolutely stump someone with a cracker of a riddle, then drain them of blood.",
+    "found": "Raiding book stores looking for new books of riddles."
+  },
+  {
+    "id": "beast-vulture-hydra",
+    "name": "Vulture Hydra",
+    "grit": 8,
+    "str": 8,
+    "dex": 8,
+    "wil": 6,
+    "attacks": [
+      { "id": "beastattack-horhrmhormohimase", "name": "Bite", "damage": 6, "desc": "for each head"}
+    ],
+    "notes": [
+      "Smells strongly of rotting flesh.",
+      "Not a predator, but highly territorial of scavenged kills.",
+      "Has d10 heads, and can regenerate lost heads by consuming a creature’s heart.",
+      "Special: On Critical Damage loses a head instead of losing STR. Dies only when all heads are removed."
+    ],
+    "wants": "Some tasty, sun warmed organ meat. As a snack.",
+    "found": "Fiercely defending a found corpse from threats (real or imagined)."
+  }
+]

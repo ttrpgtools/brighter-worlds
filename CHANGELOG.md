@@ -1,5 +1,11 @@
 # Changes
 
+## v0.1.26
+
+- Characters with patrons, etc have that added
+- Characters with magic provided by their Calling can select that during creation
+- Bestiary moved to data file for future use, all official beasts added
+
 ## v0.1.25
 
 - Characters with companions supported
