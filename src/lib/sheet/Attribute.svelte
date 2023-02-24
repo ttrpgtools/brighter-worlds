@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { getEnhanced, getImpaired, getModifiedDice } from "$lib/rolling/modifier";
 import type { Attribute, DieValue } from "$lib/types";
 import { createEventDispatcher } from "svelte";
 import DieSelector from "./DieSelector.svelte";
@@ -8,20 +9,42 @@ const dispatch = createEventDispatcher();
 
 function rollSave(ev: MouseEvent) {
   if (value.current <= 0) return;
-  const dice = [ev.altKey ? 4 : value.current];
-  if (!ev.altKey && ev.shiftKey) {
-    dice.push(12);
-  }
+  const dice = getModifiedDice(ev, value.current as DieValue);
   dispatch('roll', { dice });
 }
 
+function cc(ev: Event) {
+  if (ev.type === 'contextmenu') {
+    ev.preventDefault();
+    modMenu = true;
+  }
+}
+function rollEnhance() {
+  if (value.current <= 0) return;
+  const dice = getEnhanced(value.current as DieValue);
+  modMenu = false;
+  dispatch('roll', { dice });
+}
+function rollImpair() {
+  if (value.current <= 0) return;
+  const dice = getImpaired();
+  modMenu = false;
+  dispatch('roll', { dice });
+}
+let modMenu = false;
 function takeDamage() {
   dispatch('damage', {type: name.toLowerCase()});
 }
 </script>
 <div class="grid grid-cols-5 items-center">
-  <div>
-    <button type="button" on:click={rollSave} title="Roll {name} Save" class="font-subtitle text-xl bg-purple-300 dark:bg-purple-700 hover:bg-purple-200 dark:hover:bg-purple-800 rounded-full px-2 pt-2 pb-1 w-16 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-900">{name}</button>
+  <div class="relative">
+    {#if modMenu}
+    <div class="absolute z-10 -right-8 flex flex-col gap-2 top-1/2 -translate-y-1/2">
+      <button type="button" on:click={rollEnhance} class="bg-emerald-500 text-white rounded-full p-2 flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="h-8 w-8"><path fill="currentColor" d="M240 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H32c-17.7 0-32 14.3-32 32s14.3 32 32 32H176V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H384c17.7 0 32-14.3 32-32s-14.3-32-32-32H240V80z"/></svg></button>
+      <button type="button" on:click={rollImpair} class="bg-rose-500 text-white rounded-full p-2 flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="h-8 w-8"><path fill="currentColor" d="M416 256c0 17.7-14.3 32-32 32L32 288c-17.7 0-32-14.3-32-32s14.3-32 32-32l352 0c17.7 0 32 14.3 32 32z"/></svg></button>
+    </div>
+    {/if}
+    <button type="button" on:click={rollSave} on:contextmenu={cc} title="Roll {name} Save" class="font-subtitle text-xl bg-purple-300 dark:bg-purple-700 hover:bg-purple-200 dark:hover:bg-purple-800 rounded-full px-2 pt-2 pb-1 w-16 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-900">{name}</button>
   </div>
   <div class="col-span-3 flex gap-1 items-center">
     <div class="relative">

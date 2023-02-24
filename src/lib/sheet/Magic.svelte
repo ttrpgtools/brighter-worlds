@@ -1,5 +1,6 @@
 <script lang="ts">
 import { Die } from "$lib/dice";
+  import { getModifiedDice } from "$lib/rolling/modifier";
 import type { Magic } from "$lib/types";
 import { onEnter } from "$lib/util/handlers";
 import { createEventDispatcher } from "svelte";
@@ -16,10 +17,7 @@ let dialog: MagicDialog<T>;
 const dispatch = createEventDispatcher();
 function rollDamage(ev: MouseEvent, item: Magic) {
   if (item.damage == null) return;
-  const dice = [ev.altKey ? 4 : item.damage];
-  if (!ev.altKey && ev.metaKey) {
-    dice.push(12);
-  }
+  const dice = getModifiedDice(ev, item.damage);
   dispatch('roll', { dice, name: item.name });
 }
 

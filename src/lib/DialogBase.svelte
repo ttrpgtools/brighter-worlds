@@ -38,6 +38,7 @@
 <div class="relative z-10 contents" use:portal hidden>
   {#if $dialog.expanded}
     
+    <!-- svelte-ignore a11y-click-events-have-key-events -->
     <div class="fixed inset-0 bg-purple-500 bg-opacity-20" on:click={() => close()} transition:blur />
 
     <div class="fixed inset-0 overflow-y-auto">

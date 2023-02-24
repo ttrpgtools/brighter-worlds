@@ -1,6 +1,7 @@
 <script lang="ts">
 import { Die } from "$lib/dice";
-import type { Item } from "$lib/types";
+  import { getModifiedDice } from "$lib/rolling/modifier";
+import type { DieValue, Item } from "$lib/types";
 import { armor } from "$lib/util/character";
 import { onEnter } from "$lib/util/handlers";
 import { createEventDispatcher } from "svelte";
@@ -14,10 +15,7 @@ let dialog: EquipmentDialog;
 const dispatch = createEventDispatcher();
 function rollDamage(ev: MouseEvent, item: Item) {
   if (item.damage == null) return;
-  const dice = [ev.altKey ? 4 : item.damage];
-  if (!ev.altKey && ev.metaKey) {
-    dice.push(12);
-  }
+  const dice = getModifiedDice(ev, item.damage as DieValue);
   dispatch('roll', { dice, name: item.name });
 }
 
