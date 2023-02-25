@@ -7,17 +7,11 @@ import { onEnter } from "$lib/util/handlers";
 import { createEventDispatcher } from "svelte";
 import Card from "../Card.svelte";
 import EquipmentDialog from "./EquipmentDialog.svelte";
+  import RollSelector from "./RollSelector.svelte";
 export let equipment: Item[] = [];
 $: totalArmor = armor(equipment);
 
 let dialog: EquipmentDialog;
-
-const dispatch = createEventDispatcher();
-function rollDamage(ev: MouseEvent, item: Item) {
-  if (item.damage == null) return;
-  const dice = getModifiedDice(ev, item.damage as DieValue);
-  dispatch('roll', { dice, name: item.name });
-}
 
 function addGear() {
   dialog.addGear();
@@ -55,7 +49,7 @@ function editGear(id: string) {
             </div>
             <div class="flex gap-2 items-center">
               {#if item.bulky}<span class="inline-flex items-center rounded-full dark:bg-purple-100 px-2.5 py-0.5 text-xs font-medium dark:text-purple-800 bg-purple-800 text-purple-100">Bulky</span>{/if}
-              {#if item.damage}<button on:click={(ev) => rollDamage(ev, item)} class="inline-flex items-center text-sm font-medium leading-5"><Die which={item.damage}/></button>{/if}
+              {#if item.damage}<RollSelector label={item.name} die={item.damage} direction={-1} posCls="right-8" on:roll let:events><button use:events type="button" class="inline-flex items-center text-sm font-medium leading-5"><Die which={item.damage}/></button></RollSelector>{/if}
             </div>
           </div>
           {#if item.desc}<p class="text-sm text-gray-600 dark:text-gray-400 truncate" title={item.desc}>{item.desc}</p>{/if}

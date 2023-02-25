@@ -7,6 +7,13 @@ declare global {
 		// interface PageData {}
 		// interface Platform {}
 	}
+	namespace svelte.JSX {
+		interface HTMLAttributes {
+			onhold?: (
+				event: CustomEvent
+			) => void;
+		}
+	}
 }
 
 export {};

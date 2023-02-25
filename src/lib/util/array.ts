@@ -23,3 +23,7 @@ export function defined<T>(x: T): x is (T extends undefined ? never : T) {
 export function filterEmpty<T>(arr: T[]) {
   return arr.filter(defined);
 }
+
+export function partition<T>(arr: T[], criteria: (x: T) => boolean) {
+  return arr.reduce((acc, i) => (acc[criteria(i) ? 0 : 1].push(i), acc), [[], []] as [T[], T[]]);
+}

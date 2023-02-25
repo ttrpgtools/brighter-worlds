@@ -7,6 +7,7 @@
   import type { PageData } from "./$types";
   import { onlyMagic } from "$lib/util/guards";
   import GroupInputs from "$lib/GroupInputs.svelte";
+  import { partition } from "$lib/util/array";
 
   export let data: PageData;
 
@@ -20,6 +21,8 @@
   function forward() {
     wizard.setMagic(spells, rituals);
   }
+  $: spellPartition = partition(data.spells, x => !$builder.spells?.some(y => y.id === x.id));
+  $: ritualPartition = partition(data.rituals, x => !$builder.rituals?.some(y => y.id === x.id));
 </script>
 <div class="flex flex-col gap-6 items-center">
   <h3 class="max-w-prose text-lg">Increase Your Arcane Might!</h3>
@@ -27,7 +30,16 @@
   {#if spellsNeeded > 0}
     <div class="flex flex-col gap-2 items-center">
       <h4 class="text-lg">Spells ({spellsNeeded})</h4>
-      <GroupInputs options={data.spells} max={spellsNeeded} bind:selected={spells} let:opt>
+      {#if spellPartition[1].length}
+      <div class="text-gray-600 dark:text-gray-400 text-sm">
+        <p>(Already assigned:
+        {#each spellPartition[1] as chosen, ci}
+          <span class="ml-1">{chosen.name}{#if ci !== spellPartition[1].length - 1}, {:else}){/if}</span>
+        {/each}
+        </p>
+      </div>
+      {/if}
+      <GroupInputs options={spellPartition[0]} max={spellsNeeded} bind:selected={spells} let:opt>
       {opt.desc}
       </GroupInputs>
     </div>
@@ -36,7 +48,14 @@
   {#if ritualsNeeded > 0}
     <div class="flex flex-col gap-2 items-center">
       <h4 class="text-lg">Rituals ({ritualsNeeded})</h4>
-      <GroupInputs options={data.rituals} max={ritualsNeeded} bind:selected={rituals} let:opt>
+      <div class="">
+        <p>(Already assigned:
+        {#each ritualPartition[1] as chosen, ci}
+          <span class="ml-1">{chosen.name}{#if ci !== ritualPartition[1].length - 1}, {:else}){/if}</span>
+        {/each}
+        </p>
+      </div>
+      <GroupInputs options={ritualPartition[0]} max={ritualsNeeded} bind:selected={rituals} let:opt>
       {opt.desc}
       </GroupInputs>
     </div>
