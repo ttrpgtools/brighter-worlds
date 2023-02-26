@@ -1,11 +1,10 @@
 <script lang="ts">
 import { Die } from "$lib/dice";
-  import { getModifiedDice } from "$lib/rolling/modifier";
 import type { Magic } from "$lib/types";
 import { onEnter } from "$lib/util/handlers";
-import { createEventDispatcher } from "svelte";
 import Card from "../Card.svelte";
 import MagicDialog from "./MagicDialog.svelte";
+  import RollSelector from "./RollSelector.svelte";
 type T = $$Generic<Magic>
 export let magicList: T[];
 export let title: string;
@@ -13,13 +12,6 @@ type TType = T["type"]
 export let type: TType;
 
 let dialog: MagicDialog<T>;
-
-const dispatch = createEventDispatcher();
-function rollDamage(ev: MouseEvent, item: Magic) {
-  if (item.damage == null) return;
-  const dice = getModifiedDice(ev, item.damage);
-  dispatch('roll', { dice, name: item.name });
-}
 
 function addMagic() {
   dialog.addMagic();
@@ -53,7 +45,7 @@ function editMagic(id: string) {
               
             </div>
             <div class="flex gap-2 items-center">
-              {#if arcana.damage}<button on:click={(ev) => rollDamage(ev, arcana)} class="inline-flex items-center text-sm font-medium leading-5"><Die which={arcana.damage}/></button>{/if}
+              {#if arcana.damage}<RollSelector label={arcana.name} die={arcana.damage} direction={-1} posCls="right-8" on:roll let:events><button use:events type="button" class="inline-flex items-center text-sm font-medium leading-5"><Die which={arcana.damage}/></button></RollSelector>{/if}
             </div>
           </div>
           {#if arcana.desc}<p class="text-sm text-gray-600 dark:text-gray-400 truncate" title={arcana.desc}>{arcana.desc}</p>{/if}
