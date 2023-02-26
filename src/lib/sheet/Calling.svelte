@@ -18,8 +18,8 @@
 </script>
 {#if callingData != null}
   <CallingDetailDialog calling={callingData} bind:this={callingDialog} />
+  <CallingAbilityDialog bind:abilities bind:this={abilityDialog} {callingData} />
 {/if}
-<CallingAbilityDialog bind:abilities bind:this={abilityDialog} />
 <Card class="md:h-[25rem]">
   <div class="flex items-center gap-2 w-full" slot="header">
     <h3 class="text-xl font-subtitle leading-6">{calling.name}</h3>
