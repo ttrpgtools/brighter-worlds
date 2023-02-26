@@ -7,12 +7,9 @@ declare global {
 		// interface PageData {}
 		// interface Platform {}
 	}
-	namespace svelte.JSX {
-		interface HTMLAttributes {
-			onhold?: (
-				event: CustomEvent
-			) => void;
-		}
+	interface HTMLElementEventMap {
+		'tap': CustomEvent<PointerEvent>;
+		'hold': CustomEvent<PointerEvent>;
 	}
 }
 

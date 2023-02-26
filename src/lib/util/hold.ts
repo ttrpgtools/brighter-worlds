@@ -24,32 +24,35 @@ function close(x: number, y: number, xp: number, yp: number) {
 export function hold(node: HTMLElement) {
   let timer: NodeJS.Timeout | undefined;
   const unsubs: (() => void)[] = [];
+  const DELAY = 600;
 
-  function done(isClose: boolean) {
+  function done(isClose: boolean, time: number, ev: PointerEvent) {
     console.log('DONE');
     timer = undefined;
     runAll(unsubs);
     if (isClose) {
       console.log('IS CLOSE');
-      node.dispatchEvent(new CustomEvent('hold'));
+      setTimeout(() => node.dispatchEvent(new CustomEvent(time > DELAY ? 'hold' : 'tap', {detail: ev})), 2);
     }
-    document.documentElement.addEventListener('click', nope, {capture: true, once: true});
+    //document.documentElement.addEventListener('click', nope, {capture: true, once: true});
   }
   
-  const DELAY = 600;
   function downHandler(ev: PointerEvent) {
+    ev.preventDefault();
     const {clientX, clientY} = ev;
+    const startTime = Date.now();
     let currX = clientX;
     let currY = clientY;
     if (ev.target != null && 'disabled' in ev.target && ev.target.disabled) return;
     console.log('DOWN');
     if (timer) clearTimeout(timer);
-    unsubs.push(add(node, 'pointerup', () => {
+    unsubs.push(add(node, 'pointerup', ev => {
       console.log('UP');
       if (timer) {
         clearTimeout(timer);
         console.log('UP CLEARED');
       }
+      done(close(clientX, clientY, ev.clientX, ev.clientY), Date.now() - startTime, ev);
       runAll(unsubs);
     }));
     unsubs.push(add(node, 'lostpointercapture', () => {
@@ -64,7 +67,7 @@ export function hold(node: HTMLElement) {
       currX = ev.clientX;
       currY = ev.clientY;
     }));
-    timer = setTimeout(() => done(close(clientX, clientY, currX, currY)), DELAY);
+    //timer = setTimeout(() => done(close(clientX, clientY, currX, currY)), DELAY);
   }
 
   const removeDownHandler = add(node, 'pointerdown', downHandler);

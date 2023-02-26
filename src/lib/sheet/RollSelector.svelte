@@ -14,8 +14,10 @@
   export let direction: -1 | 1 = 1;
   export let posCls = '';
 
-  function roll(ev: MouseEvent) {
-    const dice = getModifiedDice(ev, die as DieValue);
+  function roll(ev: CustomEvent<PointerEvent>) {
+    const pev = ev.detail;
+    console.log('CLICK');
+    const dice = getModifiedDice(pev, die as DieValue);
     dispatch('roll', { dice, name: label });
   }
   function rollEnhance() {
@@ -35,12 +37,12 @@
   }
   function events(node: HTMLElement) {
     const holdAction = hold(node);
-    const removeClick = add(node, 'click', roll);
+    const removeTap = add(node, 'tap', roll);
     const removeHold = add(node, 'hold', () => popover.open());
     const removeContext = add(node, 'contextmenu', stopMobileMenu);
     return {
       destroy() {
-        removeClick();
+        removeTap();
         removeHold();
         removeContext();
         holdAction.destroy();
