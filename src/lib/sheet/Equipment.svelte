@@ -49,7 +49,7 @@ function editGear(id: string) {
             </div>
             <div class="flex gap-2 items-center">
               {#if item.bulky}<span class="inline-flex items-center rounded-full dark:bg-purple-100 px-2.5 py-0.5 text-xs font-medium dark:text-purple-800 bg-purple-800 text-purple-100">Bulky</span>{/if}
-              {#if item.damage}<RollSelector label={item.name} die={item.damage} direction={-1} posCls="right-8" on:roll let:events><button use:events type="button" class="inline-flex items-center text-sm font-medium leading-5"><Die which={item.damage}/></button></RollSelector>{/if}
+              {#if item.damage}<RollSelector label={item.name} die={item.damage} direction={-1} on:roll let:events><button use:events type="button" class="inline-flex items-center text-sm font-medium leading-5"><Die which={item.damage}/></button></RollSelector>{/if}
             </div>
           </div>
           {#if item.desc}<p class="text-sm text-gray-600 dark:text-gray-400 truncate" title={item.desc}>{item.desc}</p>{/if}

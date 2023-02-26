@@ -1,8 +1,8 @@
-export function add<T extends keyof HTMLElementEventMap>(node: HTMLElement, evt: T, handler: (ev: HTMLElementEventMap[T]) => void): () => void;
-export function add(node: HTMLElement, evt: string, handler: EventListenerOrEventListenerObject): () => void;
-export function add(node: HTMLElement, evt: string, handler: EventListenerOrEventListenerObject): () => void {
-  node.addEventListener(evt, handler);
-  return () => node.removeEventListener(evt, handler);
+export function add<T extends keyof HTMLElementEventMap>(node: HTMLElement, evt: T, handler: (ev: HTMLElementEventMap[T]) => void, capture?: boolean): () => void;
+export function add(node: HTMLElement, evt: string, handler: EventListenerOrEventListenerObject, capture?: boolean): () => void;
+export function add(node: HTMLElement, evt: string, handler: EventListenerOrEventListenerObject, capture?: boolean): () => void {
+  node.addEventListener(evt, handler, capture);
+  return () => node.removeEventListener(evt, handler, capture);
 }
 
 function runAll(fns: (() => void)[]) {
@@ -32,13 +32,13 @@ export function hold(node: HTMLElement) {
     runAll(unsubs);
     if (isClose) {
       console.log('IS CLOSE');
-      setTimeout(() => node.dispatchEvent(new CustomEvent(time > DELAY ? 'hold' : 'tap', {detail: ev})), 2);
+      setTimeout(() => node.dispatchEvent(new CustomEvent(time > DELAY ? 'hold' : 'tap', {detail: ev})), 250);
     }
     //document.documentElement.addEventListener('click', nope, {capture: true, once: true});
   }
   
   function downHandler(ev: PointerEvent) {
-    ev.preventDefault();
+    //ev.preventDefault();
     const {clientX, clientY} = ev;
     const startTime = Date.now();
     let currX = clientX;

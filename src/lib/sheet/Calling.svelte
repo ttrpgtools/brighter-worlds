@@ -48,7 +48,7 @@
           </div>
           <div class="flex gap-2 items-center">
             <span class="inline-flex items-center rounded-full dark:bg-purple-100 px-2.5 py-0.5 text-xs font-medium dark:text-purple-800 bg-purple-800 text-purple-100">{capitalize(ability.type === 'enhance' || ability.type === 'companion' ? (ability.details ?? 'xxx') : ability.type)}</span>
-            {#if ability.damage}<RollSelector label={ability.name} die={ability.damage} direction={-1} posCls="right-8" on:roll let:events><button use:events type="button" class="inline-flex items-center text-sm font-medium leading-5"><Die which={ability.damage}/></button></RollSelector>{/if}
+            {#if ability.damage}<RollSelector label={ability.name} die={ability.damage} direction={-1} on:roll let:events><button use:events type="button" class="inline-flex items-center text-sm font-medium leading-5"><Die which={ability.damage}/></button></RollSelector>{/if}
           </div>
         </div>
         {#if ability.desc}<p class="text-sm text-gray-600 dark:text-gray-400 max-h-[3.75rem] overflow-hidden">{@html ability.desc}</p>{/if}
