@@ -1,5 +1,12 @@
 # Changes
 
+## v1.0.0-beta.2
+
+- You can download a file of your character
+- You can upload a character file and add it to your local list
+- Updated character creation text
+- Handle Animal's Companion better
+
 ## v1.0.0-beta.1
 
 - Clicking on a roll always launches the modifier menu

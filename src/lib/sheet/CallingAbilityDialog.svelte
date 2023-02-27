@@ -138,7 +138,7 @@
       } else {
         const proper: Ability = {
           ...item,
-          details: item.type === 'companion' ? (item.details || 'Companion') : item.details,
+          details: item.details,
           name: item.name || '[no name]',
           id: item.id || id(),
         }
@@ -204,7 +204,7 @@
           Ability
         </button>
         <button on:click={() => tab('companion')} type="button" class="text-xl font-subtitle leading-6 relative top-px whitespace-nowrap py-5 px-2 border-b-3 {$ui === 'companion' ? 'text-purple-700 dark:text-purple-300 border-purple-500' : 'border-transparent hover:border-gray-500'}">
-          Companion
+          General
         </button>
       </div>
       {/if}
@@ -219,7 +219,7 @@
         <form class="text-center flex flex-col gap-2">
           <input type="text" name="name" placeholder="Name" bind:value={form.name} class="rounded-full dark:bg-gray-900 dark:text-white focus:ring-purple-500 focus:border-purple-500 flex-grow">
           <input type="text" name="desc" placeholder="Description" bind:value={form.desc} class="rounded-full dark:bg-gray-900 dark:text-white focus:ring-purple-500 focus:border-purple-500 flex-grow">
-          <input type="text" name="details" placeholder="Companion Type" bind:value={form.details} class="rounded-full dark:bg-gray-900 dark:text-white focus:ring-purple-500 focus:border-purple-500 flex-grow">
+          <input type="text" name="details" placeholder="Type" bind:value={form.details} class="rounded-full dark:bg-gray-900 dark:text-white focus:ring-purple-500 focus:border-purple-500 flex-grow">
         </form>
       </div>
       {/if}

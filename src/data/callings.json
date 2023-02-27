@@ -576,7 +576,6 @@
     "for": "For players who like to assemble unique effects out of logical or grammatical components.",
     "desc": "You are a runewright, you imbue and channel power through engraved symbols of power. You are no wizard. You’re above running around shooting crude magic from your fingertips, blasting things with fireballs. Runes are sophisticated. Runes are subtler, slower, and longer lasting than spells. Anyone can pick up a spellbook and cast a spell, crafting runes takes refinement. And you are refined.",
     "equipment": [
-      { "name": "Knowledge of 2 Elements, 2 Verbs, 2 Subjects", "desc": "", "bulky": false },
       { "name": "Etching or Drawing tools", "desc": "", "bulky": false },
       { "name": "Flawless handwriting", "desc": "", "bulky": false }
     ],
@@ -605,7 +604,7 @@
         "id": "ability-uCW7oACqPu7",
         "type": "advanced",
         "name": "Rune Logic",
-        "desc": "You’ve learned to add Modifiers as a fourth component of a rune:\n\n-**If**: Set a condition under which an empowered run will activate.\n- **Not**: Invert the effects of the Verb or Element used in a rune."
+        "desc": "You’ve learned to add Modifiers as a fourth component of a rune:\n\n- **If**: Set a condition under which an empowered run will activate.\n- **Not**: Invert the effects of the Verb or Element used in a rune."
       },
       {
         "id": "ability-UNkzs6E2",
