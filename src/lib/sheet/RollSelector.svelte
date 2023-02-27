@@ -43,8 +43,9 @@
     //const removeTap = add(node, 'tap', roll);
     //const removeHold = add(node, 'hold', () => popover.open());
     const removeClick = add(node, 'click', ev => {
-      if ($popover.expanded) {
+      if ($popover.expanded || ev.altKey || ev.ctrlKey || ev.shiftKey || ev.metaKey) {
         roll(ev);
+        ev.preventDefault();
       } else {
         popover.open();
       }

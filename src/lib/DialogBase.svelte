@@ -10,9 +10,22 @@
   const dialog = createDialog({ label: title });
   let resolve: ((value?: any) => void) | undefined;
 
+  function lock() {
+    Object.assign(document.body.style, {
+      'padding-right': `${window.innerWidth - document.documentElement.clientWidth}px`,
+    });
+    document.body.classList.add('overflow-hidden');
+  }
+
+  function unlock() {
+    document.body.removeAttribute('style');
+    document.body.classList.remove('overflow-hidden');
+  }
+
   export async function open<T>() {
     return new Promise<T | undefined>((res) => {
       resolve = res;
+      lock();
       dialog.open();
     });
   }
@@ -23,12 +36,14 @@
       resolve = undefined;
     }
     dialog.close();
+    unlock();
   }
 
   dialog.subscribe(({expanded}) => {
     if (!expanded) {
       if (resolve != null) {
         resolve();
+        unlock();
         resolve = undefined;
       }
     }
@@ -43,10 +58,15 @@
 
     <div class="fixed inset-0 overflow-y-auto">
       <div class="flex min-h-full items-center justify-center p-4 text-center">
-        <div class="w-full {maxWidth} transform rounded-2xl bg-white dark:bg-gray-900 p-6 text-left align-middle shadow-xl transition-all" use:dialog.modal transition:scale={{start: 0.5}}>
-          <slot name="pretitle"></slot>
-          {#if !!title}<h3 class="text-lg font-medium leading-6 text-center">{title}</h3>{/if}
-          <slot {close} {open}></slot>
+        <div class="w-full {maxWidth} max-h-[calc(100vh-2rem)] transform rounded-2xl bg-white dark:bg-gray-900 p-6 text-left align-middle shadow-xl transition-all flex flex-col" use:dialog.modal transition:scale={{start: 0.5}}>
+          <div class="overflow-y-auto h-full -mx-6 px-6 pb-6">
+            <slot name="pretitle"></slot>
+            {#if !!title}<h3 class="text-lg font-medium leading-6 text-center">{title}</h3>{/if}
+            <slot {close} {open}></slot>
+          </div>
+          <div>
+            <slot name="footer"></slot>
+          </div>
         </div>
       </div>
     </div>

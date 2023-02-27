@@ -120,7 +120,7 @@
       </div>
       
       <Equipment bind:equipment={$character.equipment} on:roll={damage} />
-      <Calling calling={$character.calling} bind:abilities={$character.abilities} callingList={data.callings} />
+      <Calling calling={$character.calling} bind:abilities={$character.abilities} callingList={data.callings} enhancements={data.enhancements} />
       <EulogyNotes bind:notes={$character.notes} bind:eulogy={$character.eulogy} />
       <Magic title="Spells" bind:magicList={$character.spells} on:roll={damage} type={'spell'} />
       <Magic title="Rituals" bind:magicList={$character.rituals} on:roll={damage} type={'ritual'} />

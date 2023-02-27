@@ -17,9 +17,9 @@
   <div class="font-subtitle text-center text-2xl p-4 caution shadow-xl dark:shadow-purple-400/20 rotate-6 translate-y-4">
     <div class="bg-white dark:bg-gray-900 p-2">
       <div>Caution</div>
-      <div>Work in progress</div>
+      <div>Work in progress. Getting close.</div>
       <div>
-        v0.1.26
+        v1.0.0-beta.1
       </div>
     </div>
   </div>

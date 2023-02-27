@@ -31,7 +31,7 @@ export async function open() {
     </p>
   </div>
   {/if}
-  <div class="mt-5 sm:mt-6 text-center">
+  <div class="mt-5 sm:mt-6 text-center" slot="footer">
     <Button on:click={() => close()}>Close</Button>
   </div>
 </DialogBase>

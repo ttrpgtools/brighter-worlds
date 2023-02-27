@@ -1,5 +1,11 @@
 # Changes
 
+## v1.0.0-beta.1
+
+- Clicking on a roll always launches the modifier menu
+  - That exists now and looks cool
+- You can add and edit abilities
+
 ## v0.1.26
 
 - Characters with patrons, etc have that added

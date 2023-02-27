@@ -6,13 +6,7 @@
 
   let comp: DialogBase<undefined>;
   export async function open() {
-    Object.assign(document.body.style, {
-      'padding-right': `${window.innerWidth - document.documentElement.clientWidth}px`,
-    });
-    document.body.classList.add('overflow-hidden');
     await comp.open<undefined>();
-    document.body.removeAttribute('style');
-    document.body.classList.remove('overflow-hidden');
   }
 
   $: coreAbility = calling.abilities.filter(x => x.type === 'core');

@@ -4,8 +4,10 @@ export function remove<T extends Identifiable>(arr: T[], id: string) {
   return arr.filter(x => x.id !== id);
 }
 
-export function append<T extends Identifiable>(arr: T[], item: T) {
-  return [...arr, item];
+export function append<T extends Identifiable>(arr: T[], items: T[]): T[];
+export function append<T extends Identifiable>(arr: T[], item: T): T[];
+export function append<T extends Identifiable>(arr: T[], item: T | T[]): T[] {
+  return [...arr, ...(Array.isArray(item) ? item : [item])];
 }
 
 export function update<T extends Identifiable>(arr: T[], item: T) {

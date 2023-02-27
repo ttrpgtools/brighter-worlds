@@ -1,7 +1,7 @@
 <script lang="ts">
   import Card from "$lib/Card.svelte";
   import { Die } from "$lib/dice";
-  import type { Ability, Calling, Entity } from "$lib/types";
+  import type { Ability, Calling, CallingEnhancements, CharacterChoice, Entity, HasChoices } from "$lib/types";
   import { onEnter } from "$lib/util/handlers";
   import { capitalize } from "$lib/util/string";
   import CallingAbilityDialog from "./CallingAbilityDialog.svelte";
@@ -11,14 +11,25 @@
   export let calling: Entity;
   export let abilities: Ability[];
   export let callingList: Calling[];
+  export let enhancements: CallingEnhancements[];
 
   let callingDialog: CallingDetailDialog;
   let abilityDialog: CallingAbilityDialog;
-  $: callingData = callingList.find(x => x.id === calling.id);
+
+  let callingData: Calling | undefined;
+  let advancedAbilities: (Ability & HasChoices)[];
+  let availableAbilities: (Ability & HasChoices)[];
+  $: {
+    callingData = callingList.find(x => x.id === calling.id);
+    advancedAbilities = (callingData?.abilities ?? []).filter(x => x.type === 'advanced');
+  }
+  $: {
+    availableAbilities = advancedAbilities.filter(x => !abilities.some(y => y.id === x.id));
+  }
 </script>
 {#if callingData != null}
   <CallingDetailDialog calling={callingData} bind:this={callingDialog} />
-  <CallingAbilityDialog bind:abilities bind:this={abilityDialog} {callingData} />
+  <CallingAbilityDialog bind:abilities bind:this={abilityDialog} {availableAbilities} {enhancements} />
 {/if}
 <Card class="md:h-[25rem]">
   <div class="flex items-center gap-2 w-full" slot="header">

@@ -12,6 +12,8 @@ export let title = '';
 export let showDelete = false;
 type T = $$Generic;
 export let form: T;
+export let okBtnLabel = 'OK';
+export let okBtnAction = () => close(form);
 let comp: DialogBase<T>;
 
 const dispatch = createEventDispatcher();
@@ -26,7 +28,7 @@ export function close(value?: T) {
 
 function handleKeys(ev: KeyboardEvent) {
   ev.preventDefault();
-  comp.close(form);
+  okBtnAction();
 }
 
 function handleDelete() {
@@ -49,8 +51,8 @@ function handleDelete() {
   <div class="mt-5" use:focusFirst on:keydown={onEnter(handleKeys)}>
     <slot></slot>
   </div>
-  <div class="mt-5 sm:mt-6 text-center flex gap-2 justify-start">
-    <Button on:click={() => close(form)}>OK</Button>
+  <div class="mt-5 text-center flex gap-2 justify-start" slot="footer">
+    <Button on:click={okBtnAction}>{okBtnLabel}</Button>
     <Button plain on:click={() => close()}>Cancel</Button>
     {#if showDelete}
       <div class="flex-grow"></div>
