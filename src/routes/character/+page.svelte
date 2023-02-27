@@ -6,6 +6,7 @@
   import { Die } from "$lib/dice/";
   import DeleteButton from "$lib/DeleteButton.svelte";
   import ButtonLink from "$lib/ButtonLink.svelte";
+  import IconButton from "$lib/IconButton.svelte";
 
   const list = manager.list;
   onMount(() => {
@@ -14,6 +15,29 @@
 
   function deleteCharacter(id: string) {
     manager.deleteSheet(id);
+  }
+
+  let files: FileList;
+  let uploader: HTMLInputElement;
+  function startUpload() {
+    if (uploader) uploader.click();
+  }
+  function handOff(ev: ProgressEvent<FileReader>) {
+    const content = ev.target?.result;
+    if (typeof content === 'string') {
+      manager.upload(content);
+    }
+  }
+  function gotFiles() {
+    for (let fi = 0; fi < files.length; fi += 1) {
+      const file = files[fi];
+      if (file.type !== 'application/json') {
+        continue;
+      }
+      const reader = new FileReader();
+      reader.addEventListener('load', handOff, {once: true});
+      reader.readAsText(file);
+    }
   }
 </script>
 <svelte:head>
@@ -47,7 +71,12 @@
             </div>
           </div>
           <div class="flex justify-between w-full">
-            <ButtonLink href={`/character/${sheet.id}`}>View</ButtonLink>
+            <div class="flex flex-row gap-4 items-center">
+              <ButtonLink href={`/character/${sheet.id}`}>View</ButtonLink>
+              <div>
+                <IconButton icon="download" title="Download {sheet.name || '?'} (JSON)" on:click={() => manager.download(sheet.id)} />
+              </div>
+            </div>
             <DeleteButton on:confirm={() => deleteCharacter(sheet.id)}></DeleteButton>
           </div>
         </div>
@@ -57,6 +86,12 @@
     {/each}
   </div>
   <div class="font-symbol text-5xl">P</div>
-  <MenuLink href="/character/new">Create A New Character</MenuLink>
+  <div class="flex gap-4 items-center">
+    <MenuLink href="/character/new">Create A New Character</MenuLink>
+    <div>
+      <IconButton icon="upload" title="Upload character from JSON file" on:click={startUpload} />
+      <input type="file" class="sr-only" bind:files bind:this={uploader} on:change={gotFiles}>
+    </div>
+  </div>
   <MenuLink href="/">Home</MenuLink>
 </main>

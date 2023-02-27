@@ -1,7 +1,9 @@
 import { id } from "$lib/rolling/id";
 import type { Character, CharacterSummary } from "$lib/types";
 import type { Writable } from "svelte/store";
+import { get } from 'svelte/store';
 import { clear, lazyFactory, type LazyWritable } from "./storage";
+import { download } from "$lib/util/download";
 
 const LIST_KEY = 'bw-sheet-list';
 const SHEET_KEY_PREFIX = 'bw-sheet-';
@@ -75,7 +77,6 @@ class Manager {
     }
     const sheet = this.getSheet(newId);
     sheet.load();
-    // TODO load more of the calling.
     sheet.update(c => ({...c, ...char}));
     return [newId, sheet];
   }
@@ -83,6 +84,33 @@ class Manager {
   deleteSheet(id: string) {
     clear(`${SHEET_KEY_PREFIX}${id}`);
     this.list.update((current) => current.filter(x => x.id !== id));
+  }
+
+  download(id: string) {
+    const sheet = this.getSheet(id);
+    if (!sheet.init) sheet.load();
+    const char = get(sheet);
+    const payload = JSON.stringify(char, replaceSheet, 2);
+    download(payload, `bwo-${char.name || 'Unnamed'}.json`);
+  }
+
+  upload(json: string) {
+    try {
+      const parsed = JSON.parse(json, reviveSheet);
+      if ('id' in parsed) {
+        delete parsed.id;
+      }
+      if (!('name' in parsed) || !('grit' in parsed) || !('str' in parsed)) {
+        // Fail quietly for now
+        return;
+      }
+      const ok = confirm(`Import character named ${parsed.name || '?'}?`);
+      if (ok) {
+        this.create(parsed);
+      }
+    } catch {
+      // Fail quietly for now
+    }
   }
 
   getSheet(id: string) {
