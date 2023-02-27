@@ -1,5 +1,5 @@
 import { callingManager } from "$lib/data/calling-manager";
-const callingList = callingManager.getAll();
+const callingList = [...callingManager.getAll(), ...callingManager.getHidden()];
 import { enhancementManager } from "$lib/data/table-manager";
 import type { PageServerLoad } from './$types';
 

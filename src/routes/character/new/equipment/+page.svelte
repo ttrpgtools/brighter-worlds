@@ -47,14 +47,21 @@
     return item;
   }
 </script>
-<h3 class="max-w-prose text-center mb-4 text-lg">Choose your starting equipment</h3>
-<ItemFlair gear={$gearTables.str} die={$builder.str?.max ?? 4} on:roll={setPair} index={0} />
-<ItemFlair gear={$gearTables.dex} die={$builder.dex?.max ?? 4} on:roll={setPair} index={1} />
-<ItemFlair gear={$gearTables.wil} die={$builder.wil?.max ?? 4} on:roll={setPair} index={2} />
+<h3 class="max-w-prose text-center mb-4 text-2xl font-subtitle">Choose your starting equipment</h3>
+
+<p class="max-w-prose text-left mb-4">Most Callings start with equipment, weapons, or other useful items. Those have already been added. {#if extras.length}Your Calling includes extra equipment that needs to be rolled down below.{/if}</p>
+
+<p class="max-w-prose text-left mb-4">You can then roll your Attributes on each Starting Equipment list below to see what else you’re carrying. You perform the roll by clicking on the purple icon of the die in the top right corner of the list.</p>
+
+<p class="max-w-prose text-left mb-6">After rolling both the Flair and Item from their respective lists, you can opt to Swap the values if that is more interesting. For example if you roll your d6 STR and get a 2 and 6 you can either have a Repaired Spear or a Colorful Staff.</p>
+
+<ItemFlair gear={$gearTables.str} die={$builder.str?.max ?? 4} on:roll={setPair} index={0} type="str" />
+<ItemFlair gear={$gearTables.dex} die={$builder.dex?.max ?? 4} on:roll={setPair} index={1} type="dex" />
+<ItemFlair gear={$gearTables.wil} die={$builder.wil?.max ?? 4} on:roll={setPair} index={2} type="wil" />
 {#if extras.length}
 <div class="text-lg mb-4">Extra Equipment from the {$builder.calling?.name} Calling</div>
 {#each extras as table, ti}
-<ItemFlair gear={$gearTables[table.type]} die={table.die} on:roll={setPair} index={ti + 3} />
+<ItemFlair gear={$gearTables[table.type]} die={table.die} on:roll={setPair} index={ti + 3} type={table.type}/>
 {/each}
 {/if}
 <Button on:click={forward}>Next</Button>

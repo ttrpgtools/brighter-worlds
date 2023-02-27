@@ -20,8 +20,9 @@
   }
 </script>
 <div class="flex flex-col gap-6 items-center">
-  <h3 class="max-w-prose text-center mb-4 text-lg">Choose your starting advanced ability</h3>
-  <p class="max-w-prose text-center mb-6">You can get more later with XP</p>
+  <h3 class="max-w-prose text-center mb-4 text-2xl font-subtitle">Choose your starting advanced ability</h3>
+  <p class="max-w-prose text-left mb-4">Each Calling has four Advanced Abilities that show ways your character might grow or develop as they progress through the world.</p>
+  <p class="max-w-prose text-left mb-6">Your first Advanced Ability is free. You may choose it now to start the game with, or save it for use later. The other Advanced Abilities can be unlocked by spending XP earned during play.</p>
   <GroupInputs options={advanced} bind:selected={chosen} max={1} let:opt>
     {@html opt.desc}
   </GroupInputs>

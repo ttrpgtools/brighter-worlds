@@ -7,6 +7,7 @@
   export let gear: StartingGearOptions;
   export let die: DieValue;
   export let index: number;
+  export let type: string;
 
   const dispatch = createEventDispatcher<{roll: {pair: Pair; index: number}}>();
   let flair = '';
@@ -46,7 +47,7 @@
 </script>
 <div class="flex flex-col gap-2 mb-4 w-full">
   <div class="flex gap-4 items-center justify-center">
-    <span class="text-2xl">{gear.name}</span>
+    <span class="text-2xl">{gear.name} / {type.toUpperCase()}</span>
     <Button on:click={swap} disabled={!both}>Swap</Button>
   </div>
   <div class="flex justify-center gap-4 mb-6 flex-wrap">

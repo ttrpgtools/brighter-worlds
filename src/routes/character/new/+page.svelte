@@ -15,8 +15,11 @@
   }
 </script>
 
-<div class="max-w-prose text-center mb-6 text-lg">
-  Find your calling adventurer! What drives you forward?
+<div class="max-w-prose text-center mb-4 text-2xl font-subtitle">
+  Find your Calling adventurer! What drives you forward?
+</div>
+<div class="max-w-prose text-left mb-6 text-md">
+  All characters are generalists. Everyone can swing a sword, sneak around, or cast a spell (given access to a Grimoire). These Callings define the things that put you ahead of the pack, give you an extra edge or let you break the rules.
 </div>
 <div class="rounded-md bg-yellow-100 dark:bg-amber-800 p-4 mb-6 max-w-prose">
   <div class="flex">
@@ -26,7 +29,7 @@
       </svg>
     </div>
     <div class="ml-3 text-sm text-yellow-800 dark:text-yellow-100">
-      <p>Note that for the moment, any characters created here are saved locally on this device. They will not be available on another device. Also note that the character builder and sheet are not complete. This is a work in progress.</p>
+      <p>Note that for the moment, any characters created here are saved locally in this browser. They will not be available on another device or browser.</p>
     </div>
   </div>
 </div>

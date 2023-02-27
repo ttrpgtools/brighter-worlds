@@ -16,9 +16,11 @@
   }
 
   let linked = $builder.choices?.filter(onlyLinked);
+  let myEnhance = $builder.choices?.filter(onlyEnhancement).filter(x => x.linked) ?? [];
   let temp = '';
   let compCalling = linked && linked.length ? (temp = linked[0].id, data.companions.find(x => x.id === temp)) : undefined;
-  let compEnhance = compCalling?.choices?.filter(onlyEnhancement);
+  let compEnhance = compCalling?.choices?.filter(onlyEnhancement) ?? [];
+  let totalEnhance = compEnhance.length + myEnhance.length;
   const companion: Partial<Character> = { name: '' }; 
   if (compCalling) {
     companion.grit = { current: compCalling.grit ?? 3, max: compCalling.grit ?? 3 };
@@ -39,14 +41,14 @@
   }
 </script>
 <div class="flex flex-col gap-6 items-center">
-  <h3 class="max-w-prose text-lg">Build-a-Companion</h3>
+  <h3 class="max-w-prose text-2xl font-subtitle">Build-a-Companion</h3>
   <p class="max-w-prose">Fluffy or fierce?</p>
   
   <input type="text" name="name" placeholder="Name" bind:value={companion.name} class="rounded-full dark:bg-gray-900 dark:text-white focus:ring-purple-500 focus:border-purple-500 max-w-sm">
   
-  {#if options}
-  <p class="max-w-prose">{data.enhancements?.desc} ({compEnhance?.length ?? 1})</p>
-  <GroupInputs {options} max={compEnhance?.length ?? 1} bind:selected={companion.abilities} let:opt>
+  {#if options && totalEnhance}
+  <p class="max-w-prose">{data.enhancements?.desc} ({totalEnhance})</p>
+  <GroupInputs {options} max={totalEnhance} bind:selected={companion.abilities} let:opt>
   {opt.desc}
   </GroupInputs>
   {/if}

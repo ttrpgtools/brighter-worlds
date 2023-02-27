@@ -71,7 +71,11 @@
         "id": "ability-2CpsKcwa",
         "type": "advanced",
         "name": "Level Up",
-        "desc": "Through training, special diet, or ritual your companion has learned some new tricks. Pick two more abilities from the Animal Companion list."
+        "desc": "Through training, special diet, or ritual your companion has learned some new tricks. Pick two more abilities from the Animal Companion list.",
+        "choices": [
+          { "choose": "enhancement", "table": "rt-animal-companion", "linked": true },
+          { "choose": "enhancement", "table": "rt-animal-companion", "linked": true }
+        ]
       },
       {
         "id": "ability-45gBa",
@@ -802,6 +806,16 @@
       { "choose": "enhancement", "table": "rt-animal-companion" }
     ],
     "abilities": [
+      {
+        "id": "ability-2CpsKcwa-companion",
+        "type": "advanced",
+        "name": "Level Up",
+        "desc": "Through training, special diet, or ritual you have learned some new tricks. Pick two more abilities from the Animal Companion list.",
+        "choices": [
+          { "choose": "enhancement", "table": "rt-animal-companion" },
+          { "choose": "enhancement", "table": "rt-animal-companion" }
+        ]
+      }
     ],
     "info": ""
   }

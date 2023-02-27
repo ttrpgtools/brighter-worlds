@@ -15,14 +15,14 @@
     goto(`/character/new`);
   }
   const enhancements: CallingEnhancement[][] = [];
-  const groupedChoices = $builder.choices?.filter(onlyEnhancement).reduce((p, c) => p.set(c.table, (p.get(c.table) ?? 0) + 1), new Map<string, number>()) ?? new Map<string, number>();
+  const groupedChoices = $builder.choices?.filter(onlyEnhancement).filter(x => !x.linked).reduce((p, c) => p.set(c.table, (p.get(c.table) ?? 0) + 1), new Map<string, number>()) ?? new Map<string, number>();
   const etables = Array.from(groupedChoices.keys() ?? []).map(x => data.list.find(y => y.id === x)).filter(defined);
   function forward() {
     wizard.setEnhancements(enhancements.flat(1));
   }
 </script>
 <div class="flex flex-col gap-6 items-center">
-  <h3 class="max-w-prose text-lg">Enhance!</h3>
+  <h3 class="max-w-prose text-2xl font-subtitle">Enhance!</h3>
   <p class="max-w-prose">Select certain enhancements based on your Calling abilities.</p>
 
   {#each etables as et, eti (et.id)}

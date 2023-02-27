@@ -82,7 +82,7 @@ export const wizard = fsm(STEP.CALLING, {
         abilities: [...(b.abilities ?? []), ...abilities],
       }));
       intern.choices = allChoices;
-      if (allChoices.some(x => x.choose === 'enhancement')) {
+      if (allChoices.some(x => x.choose === 'enhancement' && !x.linked)) {
         return STEP.ENHANCEMENTS;
       }
       if (allChoices.some(x => x.choose === 'linked')) {
@@ -111,7 +111,7 @@ export const wizard = fsm(STEP.CALLING, {
       const [compId] = manager.create(companion);
       builder.update(b => ({
         ...b,
-        abilities: [{id: id(), name: companion.name ?? '', desc: `<a href="/character/${compId}" target="_blank">${companion.name}'s Sheet</a>`, type: 'companion', details: companion.calling?.name ?? ''}, ...(b.abilities ?? [])]
+        abilities: [{id: id(), name: companion.name ?? '', desc: `<a href="/character/${compId}" class="text-purple-700 dark:text-purple-300" target="_blank">${companion.name}'s Sheet</a>`, type: 'companion', details: companion.calling?.name ?? ''}, ...(b.abilities ?? [])]
       }));
       return STEP.EQUIPMENT;
     }

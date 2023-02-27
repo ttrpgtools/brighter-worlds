@@ -71,6 +71,7 @@ export interface LinkedSheetChoice {
 export interface EnhancementChoice {
   choose: 'enhancement';
   table: string;
+  linked?: boolean;
 }
 
 export type CharacterChoice = EquipmentChoice | MagicChoice | LinkedSheetChoice | EnhancementChoice;
