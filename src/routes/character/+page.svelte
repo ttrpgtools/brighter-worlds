@@ -90,7 +90,7 @@
     <MenuLink href="/character/new">Create A New Character</MenuLink>
     <div>
       <IconButton icon="upload" title="Upload character from JSON file" on:click={startUpload} />
-      <input type="file" class="sr-only" bind:files bind:this={uploader} on:change={gotFiles}>
+      <input type="file" class="sr-only" bind:files bind:this={uploader} on:change={gotFiles} accept=".json">
     </div>
   </div>
   <MenuLink href="/">Home</MenuLink>
