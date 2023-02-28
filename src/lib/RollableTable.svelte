@@ -7,7 +7,6 @@
 
   type T = $$Generic;
   export let options: T[];
-  export let labelSelect = (opt: T) => opt as string;
   export let title: string;
   export let die: DieValue | undefined = undefined;
   export let once = false;
@@ -83,7 +82,7 @@
   <ul class="-mx-4 -my-5 sm:-m-6 rounded-b-lg relative">
     <div class="absolute py-2 px-4 sm:px-6 border-2 border-purple-400 dark:border-purple-600 w-full" class:rounded-b-lg={shuffle === options.length} class:hidden={shuffle === 0} style:transform={`translateY(${(shuffle - 1) * 100}%)`}>&nbsp;</div>
     {#each options as opt, oi}
-    <li class="py-2 px-4 sm:px-6 border-2 border-transparent {alt(oi)} {rolled === (oi + 1) ? 'bg-purple-700 text-white dark:bg-purple-300 dark:text-gray-900' : ''}">{labelSelect(opt)}</li>
+    <li class="py-2 px-4 sm:px-6 border-2 border-transparent {alt(oi)} {rolled === (oi + 1) ? 'bg-purple-700 text-white dark:bg-purple-300 dark:text-gray-900' : ''}"><slot {opt}>{opt}</slot></li>
     {/each}
   </ul>
 </Card>

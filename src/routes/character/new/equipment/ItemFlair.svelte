@@ -1,5 +1,6 @@
 <script lang="ts">
   import Button from "$lib/Button.svelte";
+  import Die from "$lib/dice/Die.svelte";
   import RollableTable from "$lib/RollableTable.svelte";
   import type { Item, StartingGearOptions, DieValue, TableRoll } from "$lib/types";
   import { createEventDispatcher } from "svelte";
@@ -55,7 +56,7 @@
       <RollableTable options={gear.flair} title="Flair" once {die} on:roll={handleFlair} bind:this={flairTable} />
     </div>
     <div class="w-full max-w-sm">
-      <RollableTable options={gear.items} title="Item" once labelSelect={x => x.name} {die} on:roll={handleItem} bind:this={itemTable} />
+      <RollableTable options={gear.items} title="Item" once {die} on:roll={handleItem} bind:this={itemTable} let:opt>{opt.name} {#if opt.damage}<span class="ml-1 inline-block relative -top-px">(<Die which={opt.damage} size="h-4 w-4" /> d{opt.damage})</span>{/if}</RollableTable>
     </div>
   </div>
 </div>

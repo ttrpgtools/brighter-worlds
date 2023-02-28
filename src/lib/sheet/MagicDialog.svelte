@@ -101,7 +101,7 @@
 
   let bwmagic = builtin as Ritual[]; // Weird thing to keep TypeScript happy.
 </script>
-<InputDialog title={magicDialogTitle} showDelete={magicDialogDelete} dice={[]} bind:this={magicDialog} form={magicForm} on:delete={removeMagic}>
+<InputDialog title={magicDialogTitle} scrollable={false} showDelete={magicDialogDelete} dice={[]} bind:this={magicDialog} form={magicForm} on:delete={removeMagic}>
   <form class="text-center flex flex-col gap-2">
     <Combobox options={bwmagic} bind:textValue={magicForm.name} placeholder="Name" on:select={pickMagic} />
     <input type="text" name="desc" placeholder="Description" bind:value={magicForm.desc} bind:this={descField} class="rounded-full dark:bg-gray-900 dark:text-white focus:ring-purple-500 focus:border-purple-500">

@@ -13,7 +13,7 @@
   $: advancedAbilities = calling.abilities.filter(x => x.type === 'advanced');
 </script>
 <DialogBase let:close bind:this={comp} maxWidth="max-w-[65ch]">
-  <div class="flex flex-col prose dark:prose-invert prose-purple max-h-[calc(100vh-10rem)] overflow-y-scroll -mx-6 px-6">
+  <div class="flex flex-col prose dark:prose-invert prose-purple max-h-[calc(100vh-10rem)] -mx-6 px-6">
     <h2 class="text-3xl mb-2 font-subtitle text-purple-500">{calling.name}</h2>
     <p class="italic">
       {calling.desc}
@@ -35,7 +35,7 @@
       {/each}
     </ul>
   </div>
-  <div class="mt-5 text-center mb-1">
+  <div class="mt-5 text-center mb-1" slot="footer">
     <Button on:click={() => close()}>Close</Button>
   </div>
 </DialogBase>

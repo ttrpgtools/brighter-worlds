@@ -5,6 +5,7 @@
 
   export let maxWidth = 'max-w-md';
   export let title = '';
+  export let scrollable = true;
   type T = $$Generic;
 
   const dialog = createDialog({ label: title });
@@ -56,10 +57,10 @@
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <div class="fixed inset-0 bg-purple-500 bg-opacity-20" on:click={() => close()} transition:blur />
 
-    <div class="fixed inset-0 overflow-y-auto">
+    <div class="fixed inset-0">
       <div class="flex min-h-full items-center justify-center p-4 text-center">
         <div class="w-full {maxWidth} max-h-[calc(100vh-2rem)] transform rounded-2xl bg-white dark:bg-gray-900 p-6 text-left align-middle shadow-xl transition-all flex flex-col" use:dialog.modal transition:scale={{start: 0.5}}>
-          <div class="overflow-y-auto h-full -mx-6 px-6 pb-6">
+          <div class="{scrollable ? 'overflow-y-auto' : ''} h-full -mx-6 px-6 pb-6">
             <slot name="pretitle"></slot>
             {#if !!title}<h3 class="text-lg font-medium leading-6 text-center">{title}</h3>{/if}
             <slot {close} {open}></slot>

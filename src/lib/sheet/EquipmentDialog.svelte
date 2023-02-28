@@ -98,7 +98,7 @@
 
 
 </script>
-<InputDialog title={itemDialogTitle} showDelete={itemDialogDelete} dice={[]} bind:this={itemDialog} form={itemForm} on:delete={removeGear}>
+<InputDialog title={itemDialogTitle} scrollable={false} showDelete={itemDialogDelete} dice={[]} bind:this={itemDialog} form={itemForm} on:delete={removeGear}>
   <form class="text-center flex flex-col gap-2">
     <input type="text" name="name" placeholder="Name" bind:value={itemForm.name} class="rounded-full dark:bg-gray-900 dark:text-white focus:ring-purple-500 focus:border-purple-500">
     <input type="text" name="desc" placeholder="Description" bind:value={itemForm.desc} class="rounded-full dark:bg-gray-900 dark:text-white focus:ring-purple-500 focus:border-purple-500">

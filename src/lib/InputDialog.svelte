@@ -9,6 +9,7 @@ import { focusFirst } from "./util/focus";
   import { onEnter } from "./util/handlers";
 export let dice: DieValue[] = [];
 export let title = '';
+export let scrollable = true;
 export let showDelete = false;
 type T = $$Generic;
 export let form: T;
@@ -36,7 +37,7 @@ function handleDelete() {
   comp.close();
 }
 </script>
-<DialogBase {title} let:close bind:this={comp}>
+<DialogBase {title} let:close bind:this={comp} {scrollable}>
   <div slot="pretitle">
     {#if dice.length > 0}
     <div class="flex gap-4 justify-center items-center mb-3 sm:mb-5">
