@@ -4,6 +4,7 @@
   import DieSelector from "$lib/sheet/DieSelector.svelte";
   import type { DieValue, Item } from "$lib/types";
   import { id } from "$lib/rolling/id";
+  import { append, remove, update } from "$lib/util/array";
 
   export let equipment: Item[];
 
@@ -16,6 +17,7 @@
     blast: boolean;
     enableMagic: boolean;
     armor: string;
+    quantity: string;
   }
 
   function newItemForm(id?: string) {
@@ -25,7 +27,8 @@
         return {
           ...item,
           damage: item.damage ?? 0,
-          armor: item.armor ? item.armor.toString() : ''
+          armor: item.armor ? item.armor.toString() : '',
+          quantity: item.quantity ? item.quantity.toString() : '',
         } as ItemForm;
       }
     }
@@ -37,6 +40,7 @@
       bulky: false,
       enableMagic: false,
       armor: '',
+      quantity: '',
     } as ItemForm;
   }
 
@@ -62,6 +66,12 @@
       if (item.armor) {
         proper.armor = parseInt(item.armor, 10);
       }
+      if (item.quantity) {
+        const quant = parseInt(item.quantity, 10);
+        if (quant > 0) {
+          proper.quantity = quant;
+        }
+      }
       return proper;
     }
   }
@@ -72,7 +82,7 @@
     itemForm = newItemForm();
     const item = await gearForm();
     if (item != null) {
-      equipment = [...equipment, item];
+      equipment = append(equipment, item);
     }
   }
 
@@ -82,17 +92,14 @@
     itemForm = newItemForm(id);
     const item = await gearForm();
     if (item != null) {
-      const index = equipment.findIndex(x => x.id === id);
-      if (index >= 0) {
-        equipment = [...equipment.slice(0, index), item, ...equipment.slice(index + 1)];
-      }
+      equipment = update(equipment, item);
     }
   }
 
   function removeGear(ev: CustomEvent<ItemForm>) {
     const id = ev.detail.id;
     if (id) {
-      equipment = equipment.filter(e => e.id !== id);
+      equipment = remove(equipment, id);
     }
   }
 
@@ -111,6 +118,9 @@
       </div>
       <div class="flex gap-2 items-center">
         <input type="text" name="armor" size=5 inputmode="numeric" placeholder="Armor" bind:value={itemForm.armor} class="rounded-full dark:bg-gray-900 dark:text-white focus:ring-purple-500 focus:border-purple-500"> 
+      </div>
+      <div class="flex gap-2 items-center">
+        <input type="text" name="quantity" size=5 inputmode="numeric" placeholder="Qty" bind:value={itemForm.quantity} class="rounded-full dark:bg-gray-900 dark:text-white focus:ring-purple-500 focus:border-purple-500"> 
       </div>
       <div class="flex gap-2 items-center">
         <DieSelector bind:current={itemForm.damage} /> Damage 

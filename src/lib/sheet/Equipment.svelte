@@ -1,5 +1,6 @@
 <script lang="ts">
 import { Die } from "$lib/dice";
+  import IconButton from "$lib/IconButton.svelte";
   import { getModifiedDice } from "$lib/rolling/modifier";
 import type { DieValue, Item } from "$lib/types";
 import { armor } from "$lib/util/character";
@@ -19,6 +20,11 @@ function addGear() {
 
 function editGear(id: string) {
   dialog.editGear(id);
+}
+
+function addQuantity(item: Item, amt: number) {
+  item.quantity = Math.max(0, (item.quantity ?? 0) + amt);
+  equipment = equipment;
 }
 </script>
 <Card class="md:h-[25rem]">
@@ -48,6 +54,13 @@ function editGear(id: string) {
               <p class="truncate text-sm font-medium cursor-pointer" title={item.name} on:click={() => editGear(item.id)} on:keydown={onEnter(() => editGear(item.id))}>{item.name}</p>
             </div>
             <div class="flex gap-2 items-center">
+              {#if item.quantity != null}
+              <div class="flex items-center gap-1">
+                <IconButton icon="up" padding="p-1.5" on:click={() => addQuantity(item, 1)}/>
+                <span class="inline-block min-w-[2rem] text-center">{item.quantity}</span>
+                <IconButton icon="down" padding="p-1.5" on:click={() => addQuantity(item, -1)}/>
+              </div>
+              {/if}
               {#if item.bulky}<span class="inline-flex items-center rounded-full dark:bg-purple-100 px-2.5 py-0.5 text-xs font-medium dark:text-purple-800 bg-purple-800 text-purple-100">Bulky</span>{/if}
               {#if item.damage}<RollSelector label={item.name} die={item.damage} direction={-1} on:roll let:events><button use:events type="button" class="inline-flex items-center text-sm font-medium leading-5"><Die which={item.damage}/></button></RollSelector>{/if}
             </div>

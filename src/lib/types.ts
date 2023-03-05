@@ -30,6 +30,7 @@ export interface Item extends UsableEntity {
   bulky: boolean;
   armor?: number;
   fragile?: boolean;
+  quantity?: number;
   enableMagic?: boolean | { type: MagicType | 'all', count?: number }
 }
 
