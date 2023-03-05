@@ -36,6 +36,19 @@
     flairTable.rollTable(x);
   }
 
+  function roll() {
+    flairTable.rollTable();
+    itemTable.rollTable();
+  }
+
+  function act() {
+    if (both) {
+      swap();
+    } else {
+      roll();
+    }
+  }
+
   function handleFlair(ev: CustomEvent<TableRoll<string>>) {
     flair = ev.detail.value;
     flairRoll = ev.detail.roll;
@@ -49,7 +62,7 @@
 <div class="flex flex-col gap-2 mb-4 w-full">
   <div class="flex gap-4 items-center justify-center">
     <span class="text-2xl">{gear.name} / {type.toUpperCase()}</span>
-    <Button on:click={swap} disabled={!both}>Swap</Button>
+    <Button on:click={act}>{both ? `Swap` : `Roll`}</Button>
   </div>
   <div class="flex justify-center gap-4 mb-6 flex-wrap">
     <div class="w-full max-w-sm">

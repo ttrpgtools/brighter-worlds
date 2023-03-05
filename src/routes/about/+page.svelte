@@ -10,7 +10,7 @@
 <main class="p-8 flex flex-col items-center gap-2">
   <h2 class="font-title text-4xl text-center">About Brighter Worlds Online</h2>
   <div class="font-symbol text-6xl">A</div>
-  <div class="text-left mb-6 prose dark:prose-invert">
+  <div class="text-left mb-6 prose dark:prose-invert prose-a:text-purple-700 dark:prose-a:text-purple-300 prose-a:no-underline hover:prose-a:underline">
     <p>
       <a target="_blank" rel="noreferrer" href="https://brighterworldsrpg.com/">Brighter Worlds</a> is a tabletop role playing game (TTRPG) written by David Lombardo.
       There is a <a href="https://awkwardturtle.itch.io/brighter-worlds" target="_blank" rel="noreferrer">beautiful PDF available for purchase,</a> go buy it if you like the game.
@@ -35,16 +35,8 @@
     </div>
     <div class="font-symbol text-4xl text-center text-purple-700 dark:text-purple-300">l</div>
     <p>
-      The source code for this app is available on <a href="https://github.com/colinbate/brighter-worlds">GitHub</a>. If you encounter any issues, you can add them to <a href="https://github.com/colinbate/brighter-worlds/issues">Issue Tracker</a>.
+      The source code for this app is available on <a target="_blank" rel="noreferrer" href="https://github.com/ttrpgtools/brighter-worlds">GitHub</a>. If you encounter any issues, you can add them to <a target="_blank" rel="noreferrer"  href="https://github.com/ttrpgtools/brighter-worlds/issues">Issue Tracker</a>.
     </p>
   </div>
   <MenuLink href="/">Home</MenuLink>
 </main>
-<style>
-  a {
-    @apply text-purple-700 no-underline hover:underline;
-  }
-  :global(html.dark) a {
-    @apply text-purple-300
-  }
-</style>
