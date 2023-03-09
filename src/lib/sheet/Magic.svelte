@@ -2,6 +2,7 @@
 import { Die } from "$lib/dice";
 import type { Magic } from "$lib/types";
 import { onEnter } from "$lib/util/handlers";
+  import { toggleHeight } from "$lib/util/toggle-height";
 import Card from "../Card.svelte";
 import MagicDialog from "./MagicDialog.svelte";
   import RollSelector from "./RollSelector.svelte";
@@ -48,7 +49,7 @@ function editMagic(id: string) {
               {#if arcana.damage}<RollSelector label={arcana.name} die={arcana.damage} direction={-1} on:roll let:events><button use:events type="button" class="inline-flex items-center text-sm font-medium leading-5"><Die which={arcana.damage}/></button></RollSelector>{/if}
             </div>
           </div>
-          {#if arcana.desc}<p class="text-sm text-gray-600 dark:text-gray-400 truncate" title={arcana.desc}>{arcana.desc}</p>{/if}
+          {#if arcana.desc}<p use:toggleHeight class="text-sm text-gray-600 dark:text-gray-400">{arcana.desc}</p>{/if}
         </li>
         {:else}
         <li class="py-3 italic text-gray-600 dark:text-gray-400">No magic here.</li>

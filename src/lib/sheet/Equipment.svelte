@@ -5,6 +5,7 @@ import { Die } from "$lib/dice";
 import type { DieValue, Item } from "$lib/types";
 import { armor } from "$lib/util/character";
 import { onEnter } from "$lib/util/handlers";
+  import { toggleHeight } from "$lib/util/toggle-height";
 import { createEventDispatcher } from "svelte";
 import Card from "../Card.svelte";
 import EquipmentDialog from "./EquipmentDialog.svelte";
@@ -65,7 +66,7 @@ function addQuantity(item: Item, amt: number) {
               {#if item.damage}<RollSelector label={item.name} die={item.damage} direction={-1} on:roll let:events><button use:events type="button" class="inline-flex items-center text-sm font-medium leading-5"><Die which={item.damage}/></button></RollSelector>{/if}
             </div>
           </div>
-          {#if item.desc}<p class="text-sm text-gray-600 dark:text-gray-400 truncate" title={item.desc}>{item.desc}</p>{/if}
+          {#if item.desc}<p use:toggleHeight class="text-sm text-gray-600 dark:text-gray-400">{item.desc}</p>{/if}
         </li>
         {/each}
       </ul>

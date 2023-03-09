@@ -4,6 +4,7 @@
   import type { Ability, Calling, CallingEnhancements, CharacterChoice, Entity, HasChoices } from "$lib/types";
   import { onEnter } from "$lib/util/handlers";
   import { capitalize } from "$lib/util/string";
+  import { toggleHeight } from "$lib/util/toggle-height";
   import CallingAbilityDialog from "./CallingAbilityDialog.svelte";
   import CallingDetailDialog from "./CallingDetailDialog.svelte";
   import RollSelector from "./RollSelector.svelte";
@@ -62,7 +63,7 @@
             {#if ability.damage}<RollSelector label={ability.name} die={ability.damage} direction={-1} on:roll let:events><button use:events type="button" class="inline-flex items-center text-sm font-medium leading-5"><Die which={ability.damage}/></button></RollSelector>{/if}
           </div>
         </div>
-        {#if ability.desc}<p class="text-sm text-gray-600 dark:text-gray-400 max-h-[3.75rem] overflow-hidden">{@html ability.desc}</p>{/if}
+        {#if ability.desc}<p use:toggleHeight class="text-sm text-gray-600 dark:text-gray-400 overflow-hidden">{@html ability.desc}</p>{/if}
       </li>
       {:else}
       <li class="py-3 italic text-gray-600 dark:text-gray-400">No abilities found... odd.</li>
