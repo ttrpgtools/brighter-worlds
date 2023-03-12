@@ -1,4 +1,5 @@
 <script>
+  import Footer from "$lib/Footer.svelte";
   import MenuLink from "$lib/MenuLink.svelte";
 </script>
 <svelte:head>
@@ -15,4 +16,7 @@
   <MenuLink href="/arcana">Magna Arcana</MenuLink>
   <MenuLink href="/about">About</MenuLink>
   <!-- <MenuLink href="/academy">Dream Academy</MenuLink> -->
+  <div class="pt-6">
+    <Footer></Footer>
+  </div>
 </main>
