@@ -19,11 +19,16 @@
   import Roller from '$lib/sheet/Roller.svelte';
   import { broadcast } from '$lib/data/channel-child';
   import type { PageData } from './$types';
+  import IconButton from '$lib/IconButton.svelte';
+  import SheetSettings from '$lib/sheet/SheetSettings.svelte';
+  import { sendToDiscord } from '$lib/util/discord';
+  import Icon from '$lib/Icon.svelte';
 
   export let data: PageData;
 
   let dice: DiceDialog;
   let damageDialog: DamageDialog;
+  let settingsDialog: SheetSettings;
 
   const character = manager.getSheet(data.id);
 
@@ -47,8 +52,13 @@
         interim = secondValue;
       }
     }
-    broadcast.send({id: $character.id, name: $character.name, type: 'roll', dice: sides, result: interim, label});
     label = label || `d${sides}`;
+    if ($character.settings?.rollToBridge) {
+      broadcast.send({id: $character.id, name: $character.name, type: 'roll', dice: sides, result: interim, label});
+    }
+    if ($character.settings?.rollToDiscord) {
+      sendToDiscord($character.name, interim, label, $character.settings.discordWebhook);
+    }
     dice.show(`${interim}`, sides, label);
     console.log(`${label} =`, interim);
   }
@@ -63,6 +73,10 @@
     const dice = ev.detail.dice;
     const name = ev.detail.name;
     showRoll(dice, name);
+  }
+
+  function openSettings() {
+    settingsDialog.open();
   }
 
   async function takeDamage(ev: CustomEvent<{ type: 'str' | 'dex' | 'wil' }>) {
@@ -99,14 +113,26 @@
   </svelte:head>
   <DiceDialog bind:this={dice} />
   <DamageDialog bind:this={damageDialog} />
+  <SheetSettings bind:this={settingsDialog} bind:settings={$character.settings} />
   <Roller on:roll={(ev) => showRoll([ev.detail])} />
   <div class="relative flex flex-col justify-start overflow-hidden dark:bg-gray-800 pt-6 pb-10 px-4 gap-4">
     <!-- <img src="/img/beams.jpg" alt="" class="absolute top-1/2 left-1/2 max-w-none -translate-x-1/2 -translate-y-1/2" width="1308" /> -->
     <div class="absolute inset-0 bg-[url(/img/grid.svg)] dark:invert bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]"></div>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      <div class="relative justify-self-center text-center">
-        <h1 class="text-4xl font-title">Brighter Worlds</h1>
-        <span class="block font-symbol text-6xl h-4 relative -top-6 text-purple-500">j</span>
+      <div class="flex gap-2">
+        <div><IconButton icon="cog" on:click={openSettings}/></div>
+        <div class="relative justify-self-center text-center flex-grow">
+          <h1 class="text-4xl font-title">Brighter Worlds</h1>
+          <span class="block font-symbol text-6xl h-4 relative -top-6 text-purple-500">j</span>
+        </div>
+        <div class="w-8 flex flex-col gap-2">
+          {#if $character.settings?.rollToDiscord}
+          <Icon icon="discord" />
+          {/if}
+          {#if $character.settings?.rollToBridge}
+          <Icon icon="broadcast" />
+          {/if}
+        </div>
       </div>
       <Name bind:name={$character.name} bind:pronouns={$character.pronouns} />
       <div class="relative rounded-lg bg-white shadow-xl dark:bg-gray-900 dark:shadow-purple-400/20 ring-1 ring-gray-900/5 md:h-[25rem] flex flex-col gap-6">

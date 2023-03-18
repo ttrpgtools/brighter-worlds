@@ -88,6 +88,12 @@ export interface EulogyStanza {
   spent: boolean;
 }
 
+export interface SheetSettings {
+  rollToBridge: boolean;
+  rollToDiscord: boolean;
+  discordWebhook: string;
+}
+
 export interface Character {
   id: string;
   name: string;
@@ -104,6 +110,7 @@ export interface Character {
   spells: Spell[];
   rituals: Ritual[];
   notes?: string;
+  settings?: SheetSettings;
 }
 
 export interface Attrs { str: DieValue; dex: DieValue; wil: DieValue; };

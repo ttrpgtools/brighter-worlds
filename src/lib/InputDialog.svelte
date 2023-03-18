@@ -1,41 +1,42 @@
 <script lang="ts">
-import { createEventDispatcher } from "svelte";
-import Button from "./Button.svelte";
+  import { createEventDispatcher } from "svelte";
+  import Button from "./Button.svelte";
   import DeleteButton from "./DeleteButton.svelte";
-import DialogBase from "./DialogBase.svelte";
-import { Die } from "./dice";
-import type { DieValue } from "./types";
-import { focusFirst } from "./util/focus";
+  import DialogBase from "./DialogBase.svelte";
+  import { Die } from "./dice";
+  import type { DieValue } from "./types";
+  import { focusFirst } from "./util/focus";
   import { onEnter } from "./util/handlers";
-export let dice: DieValue[] = [];
-export let title = '';
-export let scrollable = true;
-export let showDelete = false;
-type T = $$Generic;
-export let form: T;
-export let okBtnLabel = 'OK';
-export let okBtnAction = () => close(form);
-let comp: DialogBase<T>;
+  export let dice: DieValue[] = [];
+  export let title = '';
+  export let scrollable = true;
+  export let showDelete = false;
+  type T = $$Generic;
+  export let form: T;
+  export let okBtnLabel = 'OK';
+  export let okBtnAction = () => close(form);
+  export let valid = true;
+  let comp: DialogBase<T>;
 
-const dispatch = createEventDispatcher();
+  const dispatch = createEventDispatcher();
 
-export async function open() {
-  return comp.open<T>();
-}
+  export async function open() {
+    return comp.open<T>();
+  }
 
-export function close(value?: T) {
-  comp.close(value);
-}
+  export function close(value?: T) {
+    comp.close(value);
+  }
 
-function handleKeys(ev: KeyboardEvent) {
-  ev.preventDefault();
-  okBtnAction();
-}
+  function handleKeys(ev: KeyboardEvent) {
+    ev.preventDefault();
+    okBtnAction();
+  }
 
-function handleDelete() {
-  dispatch('delete', form);
-  comp.close();
-}
+  function handleDelete() {
+    dispatch('delete', form);
+    comp.close();
+  }
 </script>
 <DialogBase {title} let:close bind:this={comp} {scrollable}>
   <div slot="pretitle">
@@ -53,7 +54,7 @@ function handleDelete() {
     <slot></slot>
   </div>
   <div class="mt-5 text-center flex gap-2 justify-start" slot="footer">
-    <Button on:click={okBtnAction}>{okBtnLabel}</Button>
+    <Button disabled={!valid} on:click={okBtnAction}>{okBtnLabel}</Button>
     <Button plain on:click={() => close()}>Cancel</Button>
     {#if showDelete}
       <div class="flex-grow"></div>
