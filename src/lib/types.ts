@@ -121,18 +121,31 @@ export interface CharacterSummary extends Attrs {
   calling: string;
 }
 
-export interface NpcStats {
+interface BaseNpc {
   id: string;
   name: string;
-  grit: number;
-  str: DieValue;
-  dex: DieValue;
-  wil: DieValue;
   armor?: number;
   attacks: UsableEntity[],
   notes: string[],
   wants?: string,
   found?: string,
+}
+
+export interface NpcStats extends BaseNpc, Attrs {
+  grit: number;
+}
+
+export interface NpcInstance extends BaseNpc {
+  grit: Attribute;
+  str: Attribute<DieValue, 0>;
+  dex: Attribute<DieValue, 0>;
+  wil: Attribute<DieValue, 0>;
+  status: string;
+}
+
+export interface Encounter extends Identifiable, Named {
+  npcs: NpcInstance[];
+  notes: string;
 }
 
 export interface Calling extends Entity, HasChoices {

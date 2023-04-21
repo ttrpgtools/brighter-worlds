@@ -13,7 +13,7 @@
   import { status } from '$lib/const';
   import Magic from '$lib/sheet/Magic.svelte';
   import { armor, burdened } from '$lib/util/character';
-  import DamageDialog from './DamageDialog.svelte';
+  import DamageDialog from '$lib/sheet/DamageDialog.svelte';
   import Calling from '$lib/sheet/Calling.svelte';
   import Statuses from '$lib/sheet/Statuses.svelte';
   import Roller from '$lib/sheet/Roller.svelte';
