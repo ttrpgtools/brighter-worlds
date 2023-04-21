@@ -8,7 +8,7 @@
   onMount(() => {
     console.log('[Bridge] Mounting');
     window.addEventListener('message', initPort);
-    const unlisten = broadcast.addListener(broadcastHandle);
+    const unlisten = broadcast.subscribe(broadcastHandle);
     if (window.parent && window.parent !== window) {
       window.parent.postMessage({type: 'init'}, '*');
     }
@@ -29,7 +29,7 @@
 
   function channelReceive(ev: MessageEvent<RemoteMessage>) {
     if (ev && ev.data) {
-      broadcast.send(ev.data);
+      broadcast.set(ev.data);
     }
   }
 

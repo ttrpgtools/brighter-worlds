@@ -34,7 +34,7 @@
 
   onMount(() => {
     character.load();
-    const unlisten = broadcast.addListener((msg) => console.log(`[Sheet] Broadcast received`, msg));
+    const unlisten = broadcast.subscribe((msg) => console.log(`[Sheet] Broadcast received`, msg));
     return () => { unlisten(); }
   });
   
@@ -54,7 +54,7 @@
     }
     label = label || `d${sides}`;
     if ($character.settings?.rollToBridge) {
-      broadcast.send({id: $character.id, name: $character.name, type: 'roll', dice: sides, result: interim, label});
+      broadcast.set({id: $character.id, name: $character.name, type: 'roll', dice: sides, result: interim, label});
     }
     if ($character.settings?.rollToDiscord) {
       sendToDiscord($character.name, interim, label, $character.settings.discordWebhook);

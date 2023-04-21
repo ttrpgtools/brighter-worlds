@@ -2,7 +2,8 @@ import { id } from "$lib/rolling/id";
 import type { Character, CharacterSummary } from "$lib/types";
 import type { Writable } from "svelte/store";
 import { get } from 'svelte/store';
-import { clear, lazyFactory, type LazyWritable } from "./storage";
+import { clear, getter } from "./storage";
+import { createIdbStore, del, type LazyWritable } from "./idb-store";
 import { download } from "$lib/util/download";
 
 const LIST_KEY = 'bw-sheet-list';
@@ -51,19 +52,24 @@ function reviveSheet(key: string, value: unknown) {
 }
 
 class Manager {
-  public list = lazyFactory<CharacterSummary[]>(LIST_KEY, []);
+  public list = createIdbStore<CharacterSummary[]>(LIST_KEY, []);
+  private oldList: CharacterSummary[] | null = null;
   private loaded = false;
   private sheetCache = new Map<string, LazyWritable<Character>>();
 
-  loadList() {
-    this.list.load();
+  async loadList() {
+    await this.list.load();
+    this.oldList = getter<CharacterSummary[]>(LIST_KEY);
+    if (this.oldList != null) {
+      await this.tryMigrate();
+    }
     this.loaded = true;
   }
 
-  create(char: Partial<Character>, unlisted = false): [string, Writable<Character>]{
+  async create(char: Partial<Character>, unlisted = false): Promise<[string, Writable<Character>]> {
     const newId = id();
     if (!this.loaded) {
-      this.loadList();
+      await this.loadList();
     }
     if (!unlisted) {
       this.list.update((current) => ([...current, {
@@ -83,18 +89,23 @@ class Manager {
 
   deleteSheet(id: string) {
     clear(`${SHEET_KEY_PREFIX}${id}`);
+    del(`${SHEET_KEY_PREFIX}${id}`);
     this.list.update((current) => current.filter(x => x.id !== id));
   }
 
-  download(id: string) {
+  async tryMigrate() {
+
+  }
+
+  async download(id: string) {
     const sheet = this.getSheet(id);
-    if (!sheet.init) sheet.load();
+    if (!sheet.init) await sheet.load();
     const char = get(sheet);
     const payload = JSON.stringify(char, replaceSheet, 2);
     download(payload, `bwo-${char.name || 'Unnamed'}.json`);
   }
 
-  upload(json: string) {
+  async upload(json: string) {
     try {
       const parsed = JSON.parse(json, reviveSheet);
       if ('id' in parsed) {
@@ -106,7 +117,7 @@ class Manager {
       }
       const ok = confirm(`Import character named ${parsed.name || '?'}?`);
       if (ok) {
-        this.create(parsed);
+        await this.create(parsed);
       }
     } catch {
       // Fail quietly for now
@@ -123,7 +134,7 @@ class Manager {
     }
     const empty = getEmptySheet();
     empty.id = id;
-    sheet = lazyFactory<Character>(`${SHEET_KEY_PREFIX}${id}`, empty, { replacer: replaceSheet, reviver: reviveSheet });
+    sheet = createIdbStore<Character>(`${SHEET_KEY_PREFIX}${id}`, empty);
     sheet.subscribe(char => {
       this.list.update(current => {
         const index = current.findIndex(x => x.id === id);
