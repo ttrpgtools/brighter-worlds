@@ -1,5 +1,6 @@
 <script lang="ts">
   import Beast from "$lib/entities/Beast.svelte";
+  import HomeLink from "$lib/HomeLink.svelte";
   import MenuLink from "$lib/MenuLink.svelte";
   import type { PageData } from "./$types";
   
@@ -8,6 +9,7 @@
 <svelte:head>
   <title>Bestiary :: Brighter Worlds Online</title>
 </svelte:head>
+<HomeLink />
 <main class="p-4 sm:p-8 flex flex-col items-center gap-2">
   <h2 class="font-title text-4xl text-center">The Creatures of Brighter Worlds</h2>
   <div class="font-symbol text-6xl">A</div>
@@ -16,5 +18,5 @@
     <Beast stats={npc} />
     {/each}
   </div>
-  <MenuLink href="/">Home</MenuLink>
+  <MenuLink href="/" icon="logo-leaf">Home</MenuLink>
 </main>

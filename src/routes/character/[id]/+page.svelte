@@ -145,13 +145,13 @@
         </div>
       </div>
       
-      <Equipment bind:equipment={$character.equipment} on:roll={damage} />
+      <Equipment bind:equipment={$character.equipment} on:roll={damage} class="md:h-[25rem]" />
       <Calling calling={$character.calling} bind:abilities={$character.abilities} callingList={data.callings} enhancements={data.enhancements} />
       <EulogyNotes bind:notes={$character.notes} bind:eulogy={$character.eulogy} />
       <Magic title="Spells" bind:magicList={$character.spells} on:roll={damage} type={'spell'} />
       <Magic title="Rituals" bind:magicList={$character.rituals} on:roll={damage} type={'ritual'} />
     </div>
   </div>
-  <div class="text-center my-6">
-    <MenuLink href="/character/">All Characters</MenuLink>
+  <div class="text-center my-6 flex flex-col items-center">
+    <MenuLink href="/character/" icon="nav-characters">All Characters</MenuLink>
   </div>

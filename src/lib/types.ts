@@ -19,15 +19,14 @@ export interface Entity {
 }
 
 export interface UsableEntity extends Entity {
-  damage?: DieValue;
-  extra?: DieValue;
+  damage?: DieValue | DieValue[];
   blast?: boolean;
 }
 
 export type MagicType = 'spell' | 'ritual';
 
 export interface Item extends UsableEntity {
-  bulky: boolean;
+  bulky?: boolean;
   armor?: number;
   fragile?: boolean;
   quantity?: number;
@@ -125,7 +124,6 @@ interface BaseNpc {
   id: string;
   name: string;
   armor?: number;
-  attacks: UsableEntity[],
   notes: string[],
   wants?: string,
   found?: string,
@@ -133,6 +131,7 @@ interface BaseNpc {
 
 export interface NpcStats extends BaseNpc, Attrs {
   grit: number;
+  attacks: UsableEntity[],
 }
 
 export interface NpcInstance extends BaseNpc {
@@ -141,6 +140,7 @@ export interface NpcInstance extends BaseNpc {
   dex: Attribute<DieValue, 0>;
   wil: Attribute<DieValue, 0>;
   status: string;
+  attacks: Item[];
 }
 
 export interface Encounter extends Identifiable, Named {

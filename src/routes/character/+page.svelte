@@ -7,6 +7,8 @@
   import DeleteButton from "$lib/DeleteButton.svelte";
   import ButtonLink from "$lib/ButtonLink.svelte";
   import IconButton from "$lib/IconButton.svelte";
+  import HomeLink from "$lib/HomeLink.svelte";
+  import Icon from "$lib/Icon.svelte";
 
   const list = manager.list;
   onMount(() => {
@@ -43,6 +45,7 @@
 <svelte:head>
   <title>Your Characters :: Brighter Worlds Online</title>
 </svelte:head>
+<HomeLink />
 <main class="p-8 flex flex-col items-center gap-2">
   <h2 class="font-title text-4xl text-center">Choose Your Adventurer</h2>
   <div class="font-symbol text-6xl">A</div>
@@ -87,11 +90,11 @@
   </div>
   <div class="font-symbol text-5xl">P</div>
   <div class="flex gap-4 items-center">
-    <MenuLink href="/character/new">Create A New Character</MenuLink>
+    <MenuLink href="/character/new" icon="nav-new-char">New Character</MenuLink>
     <div>
       <IconButton icon="upload" title="Upload character from JSON file" on:click={startUpload} />
       <input type="file" class="sr-only" bind:files bind:this={uploader} on:change={gotFiles} accept=".json">
     </div>
   </div>
-  <MenuLink href="/">Home</MenuLink>
+  <MenuLink href="/" icon="logo-leaf">Home</MenuLink>
 </main>

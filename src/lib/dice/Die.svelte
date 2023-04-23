@@ -18,9 +18,10 @@ export function knownDie(sides: number): sides is DieValue {
 }
 </script>
 <script lang="ts">
-export let which: DieValue;
+export let which: DieValue | DieValue[];
 export let size = 'h-6 w-6';
+$: first = Array.isArray(which) ? which[0] : which;
 </script>
-{#if dMap.has(which)}
-<svelte:component this={dMap.get(which)} {size}/>
+{#if dMap.has(first)}
+<svelte:component this={dMap.get(first)} {size}/>
 {/if}

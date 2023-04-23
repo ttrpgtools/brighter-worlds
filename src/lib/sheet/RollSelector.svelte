@@ -12,7 +12,7 @@
   const setupCloser = onClickOutside(() => popover.close(), true);
 
   export let label: string;
-  export let die: DieValue;
+  export let die: DieValue | DieValue[];
   export let direction: -1 | 1 = 1;
   export let posCls = '';
 

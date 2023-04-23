@@ -1,17 +1,19 @@
 <script lang="ts">
 import { Die } from "$lib/dice";
-  import IconButton from "$lib/IconButton.svelte";
-  import { getModifiedDice } from "$lib/rolling/modifier";
-import type { DieValue, Item } from "$lib/types";
+import IconButton from "$lib/IconButton.svelte";
+import type { Item } from "$lib/types";
 import { armor } from "$lib/util/character";
 import { onEnter } from "$lib/util/handlers";
-  import { toggleHeight } from "$lib/util/toggle-height";
-import { createEventDispatcher } from "svelte";
+import { toggleHeight } from "$lib/util/toggle-height";
 import Card from "../Card.svelte";
 import EquipmentDialog from "./EquipmentDialog.svelte";
-  import RollSelector from "./RollSelector.svelte";
+import RollSelector from "./RollSelector.svelte";
 export let equipment: Item[] = [];
-$: totalArmor = armor(equipment);
+export let baseArmor = 0;
+export let title = 'Equipment';
+let clazz = '';
+export { clazz as class };
+$: totalArmor = armor(equipment) + (baseArmor || 0);
 
 let dialog: EquipmentDialog;
 
@@ -28,11 +30,11 @@ function addQuantity(item: Item, amt: number) {
   equipment = equipment;
 }
 </script>
-<Card class="md:h-[25rem]">
+<Card class={clazz}>
   <EquipmentDialog bind:equipment bind:this={dialog} />
   <svelte:fragment slot="header">
     <div class="">
-      <h3 class="text-xl font-subtitle leading-6">Equipment</h3>
+      <h3 class="text-xl font-subtitle leading-6">{title}</h3>
     </div>
     <div class="flex-shrink-0">
       <div class="flex gap-4 items-center">

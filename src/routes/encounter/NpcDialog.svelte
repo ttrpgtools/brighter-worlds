@@ -34,7 +34,7 @@
   <form class="text-center flex flex-col gap-2">
     <select bind:value={form.selected} class="rounded-full dark:bg-gray-900 dark:text-white focus:ring-purple-500 focus:border-purple-500">
       {#each npcList as npc}
-      <option value={npc}>{npc.name}</option>
+      <option value={npc}>{npc.name === 'Untitled' ? `New Blank` : npc.name}</option>
       {/each}
     </select>
   </form>

@@ -16,10 +16,13 @@ export function getNpcInstance(stats: NpcStats) {
     wil: { current: stats.wil, max: stats.wil },
     status: '',
     armor: stats.armor,
-    attacks: stats.attacks,
+    attacks: stats.attacks.map(att => ({
+      ...att,
+      id: `beastattack-${id()}`,
+    })),
     wants: stats.wants,
     found: stats.found,
-    notes: stats.notes,
+    notes: stats.notes.slice(),
   };
   return empty;
 }
