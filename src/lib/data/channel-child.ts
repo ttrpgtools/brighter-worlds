@@ -1,34 +1,15 @@
-import type { HandlerFn, RemoteMessage } from "$lib/types";
+import type { RemoteMessage } from "$lib/types";
+import { createBroadcastStore } from "./broadcast-store";
+import { browser } from "$app/environment";
+import { writable, type Writable } from "svelte/store";
 
-const INTERNAL_CHANNEL = 'bwo-channel';
+const ROLL_CHANNEL = 'bwo-roll-channel';
 
-let chan: BroadcastChannel;
-
-function connect() {
-  if (!chan) {
-    chan = new BroadcastChannel(INTERNAL_CHANNEL);
-    chan.onmessage = broadcastReceive;
-  }
+let broadcast: Writable<RemoteMessage>;
+if (browser) {
+  broadcast = createBroadcastStore<RemoteMessage>(ROLL_CHANNEL);
+} else {
+  broadcast = writable<RemoteMessage>();
 }
 
-function broadcastReceive(ev: MessageEvent<RemoteMessage>) {
-  if (ev && ev.data) {
-    console.log('[BWO] Received broadcast data', ev.data);
-    handlers.forEach(fn => fn(ev.data));
-  }
-}
-
-const handlers = new Set<HandlerFn>();
-
-export const broadcast = {
-  send(msg: RemoteMessage) {
-    connect();
-    console.log('[BWO] Sending broadcast data', msg);
-    chan.postMessage(msg);
-  },
-  addListener(fn: HandlerFn) {
-    connect();
-    handlers.add(fn);
-    return () => handlers.delete(fn);
-  }
-};
+export { broadcast };
