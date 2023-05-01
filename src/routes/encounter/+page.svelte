@@ -1,8 +1,7 @@
 <script lang="ts">
   import DiceDialog from '$lib/DiceDialog.svelte';
   import { roll } from '$lib/rolling/roll';
-  import Name from "$lib/sheet/Name.svelte";
-  import type { DamageDetails, DieValue, Encounter, NpcInstance } from '$lib/types';
+  import type { DamageDetails, DieValue } from '$lib/types';
   import Attribute from '$lib/sheet/Attribute.svelte';
   import Grit from '$lib/sheet/Grit.svelte';
   import MenuLink from "$lib/MenuLink.svelte";
@@ -12,16 +11,14 @@
   import Roller from '$lib/sheet/Roller.svelte';
   import type { PageData } from './$types';
   import AutoTextarea from '$lib/AutoTextarea.svelte';
-  import { Die } from '$lib/dice';
   import NpcDialog from './NpcDialog.svelte';
   import { append } from '$lib/util/array';
-  import RollSelector from '$lib/sheet/RollSelector.svelte';
-  import { toggleHeight } from '$lib/util/toggle-height';
   import Card from '$lib/Card.svelte';
   import DeleteButton from '$lib/DeleteButton.svelte';
   import Button from '$lib/Button.svelte';
   import Equipment from '$lib/sheet/Equipment.svelte';
   import Icon from '$lib/Icon.svelte';
+  import { encounterStates } from '$lib/data/ui-state';
 
   export let data: PageData;
 
@@ -33,7 +30,18 @@
 
   onMount(() => {
     list.load();
+    encounterStates.load();
   });
+
+  function isOpen(id: string) {
+    return encounterStates.init ? ($encounterStates[id] ?? false) : false;
+  }
+
+  function handleToggle(ev: Event, id: string) {
+    if (encounterStates.init) {
+      $encounterStates[id] = (ev.target as HTMLDetailsElement).open;
+    }
+  }
   
   function persist() {
     $list = $list;
@@ -92,6 +100,8 @@
 
   function removeEncounter(eid: string) {
     $list = $list.filter(x => x.id !== eid);
+    const {[eid]: estate, ...rest} = $encounterStates;
+    $encounterStates = rest;
   }
 
   function removeNpc(nid: string, eid: number) {
@@ -121,7 +131,7 @@
   <div class="font-symbol text-6xl">A</div>
 <div class="flex flex-col gap-8 w-full max-w-4xl">
 {#each $list as encounter, eindex}
-<details class="w-full max-w-4xl" open>
+<details class="w-full max-w-4xl" open={isOpen(encounter.id)} on:toggle={(ev) => handleToggle(ev, encounter.id)}>
   <summary class="marker:content-none cursor-pointer rounded-full w-full relative border-2 border-purple-300 dark:border-purple-600 py-2 px-6 mb-2">
     <div class="inline-block text-3xl font-subtitle min-w-[2rem]">{encounter.name || `(unnamed)`}</div>
     <div class="absolute inset-y-0 right-1.5 flex items-center">
