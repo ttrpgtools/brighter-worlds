@@ -108,11 +108,14 @@ export const wizard = fsm(STEP.CALLING, {
   },
   [STEP.COMPANION]: {
     setCompanion(companion: Partial<Character>) {
-      const [compId] = manager.create(companion);
-      builder.update(b => ({
-        ...b,
-        abilities: [{id: id(), name: companion.name ?? '', desc: `<a href="/character/${compId}" class="text-purple-700 dark:text-purple-300" target="_blank">${companion.name}'s Sheet</a>`, type: 'companion', details: companion.calling?.name ?? ''}, ...(b.abilities ?? [])]
-      }));
+      manager.create(companion).then(([compId]) => {
+        builder.update(b => ({
+          ...b,
+          abilities: [{id: id(), name: companion.name ?? '', desc: `<a href="/character/${compId}" class="text-purple-700 dark:text-purple-300" target="_blank">${companion.name}'s Sheet</a>`, type: 'companion', details: companion.calling?.name ?? ''}, ...(b.abilities ?? [])]
+        }));
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        //@ts-ignore
+      });
       return STEP.EQUIPMENT;
     }
   },
@@ -150,8 +153,7 @@ export const wizard = fsm(STEP.CALLING, {
       if (choices?.length) {
         // Warn?
       }
-      const [newId] = manager.create(char);
-      goto(`/character/${newId}/`);
+      manager.create(char).then(([newId]) => goto(`/character/${newId}/`));
     }
   },
   '*': {

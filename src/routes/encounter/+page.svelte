@@ -28,9 +28,11 @@
 
   const list = encounters.list;
 
-  onMount(() => {
-    list.load();
-    encounterStates.load();
+  let loading = true;
+
+  onMount(async () => {
+    await Promise.all([list.load(), encounterStates.load()]);
+    loading = false;
   });
 
   function isOpen(id: string) {
@@ -132,7 +134,7 @@
 <div class="flex flex-col gap-8 w-full max-w-4xl">
 {#each $list as encounter, eindex}
 <details class="w-full max-w-4xl" open={isOpen(encounter.id)} on:toggle={(ev) => handleToggle(ev, encounter.id)}>
-  <summary class="marker:content-none cursor-pointer rounded-full w-full relative border-2 border-purple-300 dark:border-purple-600 py-2 px-6 mb-2">
+  <summary class="marker:content-none cursor-pointer rounded-full w-full relative border-2 border-purple-300 dark:border-purple-600 py-2 px-6 mb-2 hover:bg-purple-100 dark:hover:bg-purple-900">
     <div class="inline-block text-3xl font-subtitle min-w-[2rem]">{encounter.name || `(unnamed)`}</div>
     <div class="absolute inset-y-0 right-1.5 flex items-center">
       <DeleteButton on:confirm={() => removeEncounter(encounter.id)} />
@@ -229,7 +231,7 @@
 {:else}
 <div class="flex items-center justify-center gap-3 text-gray-500 dark:text-gray-400">
   <Icon icon="nav-encounter" />
-  No Encounters
+  {#if loading}Loading...{:else}No Encounters{/if}
 </div>
 {/each}
 <div class="text-center">

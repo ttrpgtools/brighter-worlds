@@ -94,7 +94,19 @@ class Manager {
   }
 
   async tryMigrate() {
-
+    if (this.oldList == null) return;
+    this.list.update(current => current.concat(this.oldList ?? []));
+    for (const summary of this.oldList) {
+      const id = summary.id;
+      const char = this.getSheet(id);
+      const oldChar = getter<Character>(`${SHEET_KEY_PREFIX}${id}`, reviveSheet);
+      if (oldChar != null) {
+        await char.load();
+        char.set(oldChar);
+        clear(`${SHEET_KEY_PREFIX}${id}`);
+      }
+    }
+    clear(LIST_KEY);
   }
 
   async download(id: string) {
@@ -136,6 +148,7 @@ class Manager {
     empty.id = id;
     sheet = createIdbStore<Character>(`${SHEET_KEY_PREFIX}${id}`, empty);
     sheet.subscribe(char => {
+      if (!sheet?.init) return;
       this.list.update(current => {
         const index = current.findIndex(x => x.id === id);
         if (index < 0) return current;

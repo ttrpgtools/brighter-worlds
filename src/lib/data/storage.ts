@@ -33,6 +33,13 @@ export interface FactoryOpts {
   replacer?: (key: string, value: unknown) => any,
 }
 
+/**
+ * Create a store that persists values to localStorage. It requires explicit loading to work with SSR.
+ * @param key The localStorage key to use.
+ * @param initialValue The initial value of the store.
+ * @param opts An option reviver and replacer used in the JSON serialization process.
+ * @returns A writable store that needes to be initialized.
+ */
 export function lazyFactory<T>(key: string, initialValue?: T, opts?: FactoryOpts): LazyWritable<T> {
   console.log('lazyFactory', key, initialValue);
   const internal = writable<T>(initialValue);
@@ -78,6 +85,10 @@ export function lazyFactory<T>(key: string, initialValue?: T, opts?: FactoryOpts
   }
 }
 
+/**
+ * Delete a key from localStorage
+ * @param key The key to delete from localStorage
+ */
 export function clear(key: string) {
   window.localStorage.removeItem(key);
 }

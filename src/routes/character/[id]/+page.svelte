@@ -32,8 +32,11 @@
 
   const character = manager.getSheet(data.id);
 
-  onMount(() => {
-    character.load();
+  onMount(async () => {
+    const exists = await character.load();
+    if (!exists) {
+      manager.loadList();
+    }
     const unlisten = broadcast.subscribe((msg) => console.log(`[Sheet] Broadcast received`, msg));
     return () => { unlisten(); }
   });

@@ -2,7 +2,7 @@ import { id } from "$lib/rolling/id";
 import type { Encounter, NpcInstance, NpcStats } from "$lib/types";
 import { writable, type Writable } from "svelte/store";
 import { get } from 'svelte/store';
-import { lazyFactory } from "./storage";
+import { createIdbStore } from "./idb-store";
 
 const KEY = 'bw-encounters';
 
@@ -38,18 +38,18 @@ function getEmptyEncounter() {
 }
 
 class EncounterManager {
-  public list = lazyFactory<Encounter[]>(KEY, []);
+  public list = createIdbStore<Encounter[]>(KEY, []);
   private loaded = false;
   private encCache = new Map<string, Writable<Encounter>>();
 
-  loadList() {
-    this.list.load();
+  async loadList() {
+    await this.list.load();
     this.loaded = true;
   }
 
-  create(): [string, Writable<Encounter>] {
+  async create(): Promise<[string, Writable<Encounter>]> {
     if (!this.loaded) {
-      this.loadList();
+      await this.loadList();
     }
     const fresh = getEmptyEncounter();
     this.list.update((current) => ([...current, fresh]));

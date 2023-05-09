@@ -1,9 +1,9 @@
 import { writable, type Updater, type Writable } from "svelte/store";
 import { createBroadcastStore } from "./broadcast-store";
 import { get, set as kvset, del } from 'idb-keyval';
-export {del};
+export { del };
 export interface LazyWritable<T> extends Writable<T> {
-  load: () => Promise<void>;
+  load: () => Promise<boolean>;
   init: boolean;
 }
 export function createIdbStore<T>(dbKey: string, initialValue: T, crossTab = true): LazyWritable<T> {
@@ -11,13 +11,16 @@ export function createIdbStore<T>(dbKey: string, initialValue: T, crossTab = tru
   const internal = crossTab ? createBroadcastStore<T>(broadcastKey, initialValue) : writable<T>(initialValue);
   let init = false;
   async function load() {
+    let ret = false;
     const value = await get<T>(dbKey);
     if (value != null) {
       internal.set(value);
+      ret = true;
     } else if (initialValue !== undefined) {
       kvset(dbKey, initialValue);
     }
     init = true;
+    return ret;
   }
   async function set(value: T) {
     if (!init) await load();
