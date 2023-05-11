@@ -2,14 +2,14 @@
   import DiceDialog from '$lib/DiceDialog.svelte';
   import { roll } from '$lib/rolling/roll';
   import Name from "$lib/sheet/Name.svelte";
-  import type { DamageDetails, DieValue } from '$lib/types';
+  import type { CharacterSummary, DamageDetails, DieValue } from '$lib/types';
   import Attribute from '$lib/sheet/Attribute.svelte';
   import Equipment from '$lib/sheet/Equipment.svelte';
   import Grit from '$lib/sheet/Grit.svelte';
   import EulogyNotes from '$lib/sheet/EulogyNotes.svelte';
   import MenuLink from "$lib/MenuLink.svelte";
-  import { manager } from '$lib/data/sheet-manager';
-  import { onMount } from 'svelte';
+  import { loadSheet } from '$lib/data/sheet-manager';
+  import { getContext, onMount } from 'svelte';
   import { status } from '$lib/const';
   import Magic from '$lib/sheet/Magic.svelte';
   import { armor, burdened } from '$lib/util/character';
@@ -23,6 +23,7 @@
   import SheetSettings from '$lib/sheet/SheetSettings.svelte';
   import { sendToDiscord } from '$lib/util/discord';
   import Icon from '$lib/Icon.svelte';
+  import type { Writable } from 'svelte/store';
 
   export let data: PageData;
 
@@ -30,13 +31,10 @@
   let damageDialog: DamageDialog;
   let settingsDialog: SheetSettings;
 
-  const character = manager.getSheet(data.id);
+  const list = getContext<Writable<CharacterSummary[] | undefined>>('sheet-list');
+  const character = loadSheet(data.id, list);
 
   onMount(async () => {
-    const exists = await character.load();
-    if (!exists) {
-      manager.loadList();
-    }
     const unlisten = broadcast.subscribe((msg) => console.log(`[Sheet] Broadcast received`, msg));
     return () => { unlisten(); }
   });

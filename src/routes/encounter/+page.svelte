@@ -6,7 +6,7 @@
   import Grit from '$lib/sheet/Grit.svelte';
   import MenuLink from "$lib/MenuLink.svelte";
   import { encounters, getNpcInstance } from '$lib/data/encounter-manager';
-  import { onMount } from 'svelte';
+  import { getContext, onMount } from 'svelte';
   import DamageDialog from '$lib/sheet/DamageDialog.svelte';
   import Roller from '$lib/sheet/Roller.svelte';
   import type { PageData } from './$types';
@@ -18,8 +18,10 @@
   import Button from '$lib/Button.svelte';
   import Equipment from '$lib/sheet/Equipment.svelte';
   import Icon from '$lib/Icon.svelte';
-  import { encounterStates } from '$lib/data/ui-state';
+  import { UIKEYS } from '$lib/data/ui-state';
+  import type { AsyncWritable } from '$lib/data/async-load-store';
 
+  const encounterStates = getContext<AsyncWritable<Record<string, boolean>>>(UIKEYS.encounterStates);
   export let data: PageData;
 
   let dice: DiceDialog;
@@ -31,18 +33,11 @@
   let loading = true;
 
   onMount(async () => {
-    await Promise.all([list.load(), encounterStates.load()]);
     loading = false;
   });
 
-  function isOpen(id: string) {
-    return encounterStates.init ? ($encounterStates[id] ?? false) : false;
-  }
-
   function handleToggle(ev: Event, id: string) {
-    if (encounterStates.init) {
-      $encounterStates[id] = (ev.target as HTMLDetailsElement).open;
-    }
+    $encounterStates[id] = (ev.target as HTMLDetailsElement).open;
   }
   
   function persist() {
@@ -133,7 +128,7 @@
   <div class="font-symbol text-6xl">A</div>
 <div class="flex flex-col gap-8 w-full max-w-4xl">
 {#each $list as encounter, eindex}
-<details class="w-full max-w-4xl" open={isOpen(encounter.id)} on:toggle={(ev) => handleToggle(ev, encounter.id)}>
+<details class="w-full max-w-4xl" open={$encounterStates[encounter.id] ?? false} on:toggle={(ev) => handleToggle(ev, encounter.id)}>
   <summary class="marker:content-none cursor-pointer rounded-full w-full relative border-2 border-purple-300 dark:border-purple-600 py-2 px-6 mb-2 hover:bg-purple-100 dark:hover:bg-purple-900">
     <div class="inline-block text-3xl font-subtitle min-w-[2rem]">{encounter.name || `(unnamed)`}</div>
     <div class="absolute inset-y-0 right-1.5 flex items-center">

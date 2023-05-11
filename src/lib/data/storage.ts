@@ -1,8 +1,21 @@
+import { defined } from '$lib/util/array';
 import { writable, type Updater, type Writable } from 'svelte/store';
 
 export function getter<T>(key: string, reviver?: (key: string, value: unknown) => any): T | null {
   const strout = window.localStorage.getItem(key) || "null";
   return JSON.parse(strout, reviver) as T;
+}
+
+export function getAll<T>(keyFilter: (key: string) => boolean, reviver?: (key: string, value: unknown) => any) : T[] {
+  const count = window.localStorage.length;
+  const keys: string[] = [];
+  for (let index = 0; index < count; index++) {
+    const key = window.localStorage.key(index);
+    if (key && keyFilter(key)) {
+      keys.push(key);
+    }
+  }
+  return keys.map(k => getter<T>(k, reviver)).filter(defined);
 }
 
 export function setter<T>(key: string, value: T | null, replacer?: (key: string, value: unknown) => any) {

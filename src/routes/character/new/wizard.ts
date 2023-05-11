@@ -1,6 +1,6 @@
 import type { Ability, Attrs, Calling, CallingEnhancement, Character, CharacterChoice, HasChoices, Item, Spell, Ritual } from '$lib/types';
 import fsm from 'svelte-fsm';
-import { manager } from '$lib/data/sheet-manager';
+import { createSheet } from '$lib/data/sheet-manager';
 import { get, writable } from 'svelte/store';
 import { goto } from '$app/navigation';
 import { id } from '$lib/rolling/id';
@@ -108,14 +108,11 @@ export const wizard = fsm(STEP.CALLING, {
   },
   [STEP.COMPANION]: {
     setCompanion(companion: Partial<Character>) {
-      manager.create(companion).then(([compId]) => {
-        builder.update(b => ({
-          ...b,
-          abilities: [{id: id(), name: companion.name ?? '', desc: `<a href="/character/${compId}" class="text-purple-700 dark:text-purple-300" target="_blank">${companion.name}'s Sheet</a>`, type: 'companion', details: companion.calling?.name ?? ''}, ...(b.abilities ?? [])]
-        }));
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        //@ts-ignore
-      });
+      const [compId] = createSheet(companion);
+      builder.update(b => ({
+        ...b,
+        abilities: [{id: id(), name: companion.name ?? '', desc: `<a href="/character/${compId}" class="text-purple-700 dark:text-purple-300" target="_blank">${companion.name}'s Sheet</a>`, type: 'companion', details: companion.calling?.name ?? ''}, ...(b.abilities ?? [])]
+      }));
       return STEP.EQUIPMENT;
     }
   },
@@ -153,7 +150,8 @@ export const wizard = fsm(STEP.CALLING, {
       if (choices?.length) {
         // Warn?
       }
-      manager.create(char).then(([newId]) => goto(`/character/${newId}/`));
+      const [newId] = createSheet(char);
+      goto(`/character/${newId}/`);
     }
   },
   '*': {

@@ -1,36 +1,37 @@
 import { writable, type Updater, type Writable } from "svelte/store";
 import { createBroadcastStore } from "./broadcast-store";
-import { get, set as kvset, del } from 'idb-keyval';
+import { get, set as kvset, del, entries } from 'idb-keyval';
+import { createAsyncStore, type AsyncWritable } from "./async-load-store";
 export { del };
 export interface LazyWritable<T> extends Writable<T> {
   load: () => Promise<boolean>;
   init: boolean;
 }
-export function createIdbStore<T>(dbKey: string, initialValue: T, crossTab = true): LazyWritable<T> {
+
+export function createIdbStore<T>(dbKey: string, initialValue: T, crossTab = true): AsyncWritable<T> {
+  if (typeof window === 'undefined' || !window.indexedDB) {
+    return createAsyncStore<T>(writable(initialValue), Promise.resolve(initialValue));
+  }
   const broadcastKey = `idb-data:${dbKey}`;
   const internal = crossTab ? createBroadcastStore<T>(broadcastKey, initialValue) : writable<T>(initialValue);
-  let init = false;
-  async function load() {
-    let ret = false;
-    const value = await get<T>(dbKey);
+
+  const loaded = get<T>(dbKey).then(value => {
     if (value != null) {
       internal.set(value);
-      ret = true;
-    } else if (initialValue !== undefined) {
+    } else if (initialValue != null) {
       kvset(dbKey, initialValue);
     }
-    init = true;
-    return ret;
-  }
+  });
+
   async function set(value: T) {
-    if (!init) await load();
+    await loaded;
     kvset(dbKey, value);
     internal.set(value);
   }
-  async function update(updater: Updater<T>) {
-    if (!init) await load();
+  async function update(fn: Updater<T>) {
+    await loaded;
     internal.update((value: T) => {
-      const result = updater(value);
+      const result = fn(value);
       kvset(dbKey, result);
       return result;
     });
@@ -40,9 +41,14 @@ export function createIdbStore<T>(dbKey: string, initialValue: T, crossTab = tru
     ...internal,
     set,
     update,
-    load,
-    get init() {
-      return init;
-    },
   }
+}
+
+export async function filteredValues<T>(fn: (key: IDBValidKey) => boolean): Promise<T[]> {
+  if (typeof window === 'undefined' || !window.indexedDB) {
+    return [];
+  }    
+  const all = await entries();
+  const some = (all ?? []).filter(([key]) => fn(key)).map(([, val]) => val);
+  return some;
 }

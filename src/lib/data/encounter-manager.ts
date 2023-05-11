@@ -38,19 +38,10 @@ function getEmptyEncounter() {
 }
 
 class EncounterManager {
-  public list = createIdbStore<Encounter[]>(KEY, []);
-  private loaded = false;
+  public list = createIdbStore<Encounter[]>(KEY, [], false);
   private encCache = new Map<string, Writable<Encounter>>();
 
-  async loadList() {
-    await this.list.load();
-    this.loaded = true;
-  }
-
   async create(): Promise<[string, Writable<Encounter>]> {
-    if (!this.loaded) {
-      await this.loadList();
-    }
     const fresh = getEmptyEncounter();
     this.list.update((current) => ([...current, fresh]));
     const enc = this.getEncounter(fresh.id, fresh);
@@ -63,7 +54,6 @@ class EncounterManager {
 
   getEncounter(id: string, fresh?: Encounter) {
     const enc = writable(getEmptyEncounter());
-    if (!this.loaded) return enc;
     const saved = this.encCache.get(id);
     if (saved != null) {
       return saved;

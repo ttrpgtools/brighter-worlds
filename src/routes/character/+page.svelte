@@ -1,22 +1,22 @@
 <script lang="ts">
-  import { manager } from "$lib/data/sheet-manager";
+  import { loadList, deleteSheet, uploadSheet, downloadSheet, newList } from "$lib/data/sheet-manager";
   import MenuLink from "$lib/MenuLink.svelte";
   import Card from "$lib/Card.svelte";
-  import { onMount } from "svelte";
   import { Die } from "$lib/dice/";
   import DeleteButton from "$lib/DeleteButton.svelte";
   import ButtonLink from "$lib/ButtonLink.svelte";
   import IconButton from "$lib/IconButton.svelte";
   import HomeLink from "$lib/HomeLink.svelte";
   import Icon from "$lib/Icon.svelte";
+  import { getContext } from "svelte";
+  import type { Writable } from "svelte/store";
+  import type { CharacterSummary } from "$lib/types";
 
-  const list = manager.list;
-  onMount(() => {
-    manager.loadList();
-  });
+  const list = getContext<Writable<CharacterSummary[] | undefined>>('sheet-list');
+  loadList(list);
 
   function deleteCharacter(id: string) {
-    manager.deleteSheet(id);
+    deleteSheet(id, list);
   }
 
   let files: FileList;
@@ -27,7 +27,7 @@
   function handOff(ev: ProgressEvent<FileReader>) {
     const content = ev.target?.result;
     if (typeof content === 'string') {
-      manager.upload(content);
+      uploadSheet(content, list);
     }
   }
   function gotFiles() {
@@ -50,6 +50,7 @@
   <h2 class="font-title text-4xl text-center">Choose Your Adventurer</h2>
   <div class="font-symbol text-6xl">A</div>
   <div class="flex justify-center flex-wrap gap-4 mb-6 w-full max-w-screen-2xl">
+    {#if $list && $list.length}
     {#each $list as sheet (sheet.id)}
       <Card class="w-full sm:w-1/3 min-w-[22rem]">
         <div class="flex flex-col gap-4">
@@ -77,16 +78,17 @@
             <div class="flex flex-row gap-4 items-center">
               <ButtonLink href={`/character/${sheet.id}`}>View</ButtonLink>
               <div>
-                <IconButton icon="download" title="Download {sheet.name || '?'} (JSON)" on:click={() => manager.download(sheet.id)} />
+                <IconButton icon="download" title="Download {sheet.name || '?'} (JSON)" on:click={() => downloadSheet(sheet.id)} />
               </div>
             </div>
             <DeleteButton on:confirm={() => deleteCharacter(sheet.id)}></DeleteButton>
           </div>
         </div>
       </Card>
+      {/each}
     {:else}
       <div>No characters saved.</div>
-    {/each}
+    {/if}
   </div>
   <div class="font-symbol text-5xl">P</div>
   <div class="flex gap-4 items-center">
