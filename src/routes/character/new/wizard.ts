@@ -111,7 +111,7 @@ export const wizard = fsm(STEP.CALLING, {
       const [compId] = createSheet(companion);
       builder.update(b => ({
         ...b,
-        abilities: [{id: id(), name: companion.name ?? '', desc: `<a href="/character/${compId}" class="text-purple-700 dark:text-purple-300" target="_blank">${companion.name}'s Sheet</a>`, type: 'companion', details: companion.calling?.name ?? ''}, ...(b.abilities ?? [])]
+        abilities: [{id: id(), name: companion.name ?? 'Companion', desc: `<a href="/character/${compId}" class="text-purple-700 dark:text-purple-300" target="_blank">${companion.name || `Companion`}'s Sheet</a>`, type: 'companion', details: companion.calling?.name ?? ''}, ...(b.abilities ?? [])]
       }));
       return STEP.EQUIPMENT;
     }
