@@ -138,6 +138,7 @@ export function loadSheet(id: string, list?: Writable<CharacterSummary[] | undef
 
 export function createSheet(char: Partial<Character>, list?: Writable<CharacterSummary[] | undefined>, cache?: SheetCache): [string, Writable<Character>] {
   const newId = id();
+  char.id = newId;
   if (list) {
     list.update((current) => {
       if (!current) return current;
