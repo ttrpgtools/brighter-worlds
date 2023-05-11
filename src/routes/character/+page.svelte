@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { loadList, deleteSheet, uploadSheet, downloadSheet, newList } from "$lib/data/sheet-manager";
+  import { loadList, deleteSheet, uploadSheet, downloadSheet, getList, getSheetCache } from "$lib/data/sheet-manager";
   import MenuLink from "$lib/MenuLink.svelte";
   import Card from "$lib/Card.svelte";
   import { Die } from "$lib/dice/";
@@ -8,12 +8,10 @@
   import IconButton from "$lib/IconButton.svelte";
   import HomeLink from "$lib/HomeLink.svelte";
   import Icon from "$lib/Icon.svelte";
-  import { getContext } from "svelte";
-  import type { Writable } from "svelte/store";
-  import type { CharacterSummary } from "$lib/types";
 
-  const list = getContext<Writable<CharacterSummary[] | undefined>>('sheet-list');
-  loadList(list);
+  const list = getList();
+  const cache = getSheetCache();
+  loadList(list, cache);
 
   function deleteCharacter(id: string) {
     deleteSheet(id, list);

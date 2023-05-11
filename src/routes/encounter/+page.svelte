@@ -6,7 +6,7 @@
   import Grit from '$lib/sheet/Grit.svelte';
   import MenuLink from "$lib/MenuLink.svelte";
   import { encounters, getNpcInstance } from '$lib/data/encounter-manager';
-  import { getContext, onMount } from 'svelte';
+  import { onMount } from 'svelte';
   import DamageDialog from '$lib/sheet/DamageDialog.svelte';
   import Roller from '$lib/sheet/Roller.svelte';
   import type { PageData } from './$types';
@@ -18,10 +18,9 @@
   import Button from '$lib/Button.svelte';
   import Equipment from '$lib/sheet/Equipment.svelte';
   import Icon from '$lib/Icon.svelte';
-  import { UIKEYS } from '$lib/data/ui-state';
-  import type { AsyncWritable } from '$lib/data/async-load-store';
+  import { getEncounterStates } from '$lib/data/ui-state';
 
-  const encounterStates = getContext<AsyncWritable<Record<string, boolean>>>(UIKEYS.encounterStates);
+  const encounterStates = getEncounterStates();
   export let data: PageData;
 
   let dice: DiceDialog;

@@ -7,6 +7,7 @@ export function getter<T>(key: string, reviver?: (key: string, value: unknown) =
 }
 
 export function getAll<T>(keyFilter: (key: string) => boolean, reviver?: (key: string, value: unknown) => any) : T[] {
+  if (typeof window === 'undefined') return [];
   const count = window.localStorage.length;
   const keys: string[] = [];
   for (let index = 0; index < count; index++) {

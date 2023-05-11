@@ -1,14 +1,12 @@
 <script lang="ts">
   import { Tab, TabGroup, TabList } from "@rgossiaux/svelte-headlessui";
-  import { UIKEYS } from "./data/ui-state";
-  import { getContext } from "svelte";
-  import type { AsyncWritable } from "./data/async-load-store";
+  import { getTabManager } from "./data/ui-state";
   export let tabs: {label: string}[];
   export let id: string;
   let classProp: string | undefined = undefined;
   export { classProp as class };
 
-  const tabManager = getContext<AsyncWritable<Record<string, number>>>(UIKEYS.tabManager);
+  const tabManager = getTabManager();
 </script>
 <div class="relative rounded-lg bg-white shadow-xl dark:bg-gray-900 dark:shadow-purple-400/20 ring-1 ring-gray-900/5 flex flex-col {classProp}">
   <TabGroup class="flex flex-col flex-1" defaultIndex={$tabManager[id] ?? 0} on:change={(e) => $tabManager[id] = e.detail}>
