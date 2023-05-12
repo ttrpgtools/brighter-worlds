@@ -80,7 +80,7 @@
     "dex": 10,
     "wil": 8,
     "attacks": [
-      { "id": "beastattack-ohsgietngsoheitgn", "name": "Claws", "damage": 8, "extra": 8, "desc": ""},
+      { "id": "beastattack-ohsgietngsoheitgn", "name": "Claws", "damage": [8, 8], "desc": ""},
       { "id": "beastattack-oasiengseohtignmh", "name": "Bite", "damage": 10, "desc": ""}
     ],
     "notes": [

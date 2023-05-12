@@ -8,10 +8,14 @@
   import IconButton from "$lib/IconButton.svelte";
   import HomeLink from "$lib/HomeLink.svelte";
   import Icon from "$lib/Icon.svelte";
+  import { get, writable } from "svelte/store";
+  import Loader from "$lib/Loader.svelte";
 
+  let loadStatus = writable('Loading...');
   const list = getList();
+  console.log('LIST', get(list))
   const cache = getSheetCache();
-  loadList(list, cache);
+  loadList(list, cache, loadStatus);
 
   function deleteCharacter(id: string) {
     deleteSheet(id, list);
@@ -85,7 +89,11 @@
       </Card>
       {/each}
     {:else}
-      <div>No characters saved.</div>
+      {#if $loadStatus}
+        <div><Loader /></div>
+      {:else}
+        <div>No characters saved.</div>
+      {/if}
     {/if}
   </div>
   <div class="font-symbol text-5xl">P</div>

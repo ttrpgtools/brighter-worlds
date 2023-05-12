@@ -1,5 +1,11 @@
 import type { status } from "./const";
 
+export const EMPTY: unique symbol = Symbol();
+
+export function isEmpty(obj: unknown) {
+  return Object.getOwnPropertySymbols(obj).some(s => s === EMPTY);
+}
+
 export type DieValue = 4 | 6 | 8 | 10 | 12;
 
 export type Attr = 'str' | 'dex' | 'wil';
@@ -94,6 +100,7 @@ export interface SheetSettings {
 }
 
 export interface Character {
+  [EMPTY]?: boolean | undefined;
   id: string;
   name: string;
   pronouns: string;

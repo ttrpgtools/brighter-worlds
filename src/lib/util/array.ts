@@ -29,3 +29,7 @@ export function filterEmpty<T>(arr: T[]) {
 export function partition<T>(arr: T[], criteria: (x: T) => boolean) {
   return arr.reduce((acc, i) => (acc[criteria(i) ? 0 : 1].push(i), acc), [[], []] as [T[], T[]]);
 }
+
+export function wrap<T>(singleOrArray: T | T[]) {
+  return Array.isArray(singleOrArray) ? singleOrArray : [singleOrArray];
+}

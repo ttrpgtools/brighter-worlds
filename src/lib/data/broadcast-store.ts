@@ -1,10 +1,11 @@
+import { isEmpty } from "$lib/types";
 import { writable, type Updater, type Writable } from "svelte/store";
 
 export function createBroadcastStore<T>(channel: string, initialValue?: T): Writable<T> {
   const internal = writable<T>(initialValue);
   const chan = new BroadcastChannel(channel);
   chan.onmessage = (ev: MessageEvent<T>) => { if (ev && ev.data) internal.set(ev.data); }
-  if (initialValue !== undefined) {
+  if (initialValue !== undefined && !isEmpty(initialValue)) {
     chan.postMessage(initialValue);
   }
   return {

@@ -1,5 +1,5 @@
 import { id } from "$lib/rolling/id";
-import type { Character, CharacterSummary } from "$lib/types";
+import { type Character, type CharacterSummary, EMPTY } from "$lib/types";
 import type { Writable } from "svelte/store";
 import { get } from 'svelte/store';
 import { clear, getAll } from "./storage";
@@ -13,8 +13,11 @@ const LIST_KEY = 'bw-sheet-list';
 const SHEET_KEY_PREFIX = 'bw-sheet-';
 const SHEET_CACHE = 'bw-cache-sheets';
 
+
+
 function getEmptySheet() {
   const empty: Character = {
+    [EMPTY]: true,
     id: '',
     name: '',
     pronouns: '',
@@ -60,7 +63,6 @@ export function deleteSheet(id: string, list?: Writable<CharacterSummary[] | und
   del(`${SHEET_KEY_PREFIX}${id}`);
   if (list) {
     list.update((current) => {
-      console.log(`Update list (deleteSheet ${id}) current = `, current);
       if (!current) return current;
       return current.filter(x => x.id !== id);
     });
@@ -79,7 +81,6 @@ function extractSummary(char: Partial<Character>): CharacterSummary {
 }
 
 const refreshSummaries = (char: Character) => (current: CharacterSummary[] | undefined) => {
-  console.log('Update list (getSheet) current = ', current);
   if (!current) return current;
   const index = current.findIndex(x => x.id === char.id);
   if (index < 0) return current;
@@ -99,11 +100,15 @@ export function getList() {
 
 export type SheetCache = Map<string, AsyncWritable<Character>>;
 
-export function loadList(list: Writable<CharacterSummary[] | undefined>, cache: SheetCache) {
-  tryMigrate(cache).then(() => {
+export function loadList(list: Writable<CharacterSummary[] | undefined>, cache: SheetCache, status: Writable<string>) {
+  tryMigrate(status, cache).then(() => {
+    status.set('Loading...')
     filteredValues<Character>(k => k.toString().startsWith(SHEET_KEY_PREFIX))
     .then(some => some.map(extractSummary))
-    .then(sum => list.set(sum));
+    .then(sum => {
+      list.set(sum);
+      status.set('');
+    });
   });
 }
 
@@ -142,12 +147,11 @@ export function createSheet(char: Partial<Character>, list?: Writable<CharacterS
   if (list) {
     list.update((current) => {
       if (!current) return current;
-      console.log('Update list (createSheet) current = ', current);
       return [...current, extractSummary(char)]
     });
   }
   const sheet = loadSheet(newId, undefined, cache);
-  sheet.update(c => ({...c, ...char}));
+  sheet.update(c => ({...c, ...char, [EMPTY]: false}));
   return [newId, sheet];
 }
 
@@ -178,9 +182,10 @@ export async function uploadSheet(json: string, list?: Writable<CharacterSummary
   }
 }
 
-export async function tryMigrate(cache?: SheetCache) {
+export async function tryMigrate(status: Writable<string>, cache?: SheetCache) {
   if (typeof window === 'undefined') return;
   const oldList = getAll<Character>(key => key.startsWith(SHEET_KEY_PREFIX) && key !== LIST_KEY, reviveSheet);
+  if (oldList.length > 0) status.set('Migrating...');
   await Promise.all(oldList.map(char => {
     const id = char.id;
     const sheet = loadSheet(id, undefined, cache);

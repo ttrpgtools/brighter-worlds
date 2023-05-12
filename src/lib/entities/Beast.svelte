@@ -2,6 +2,7 @@
   import Card from "$lib/Card.svelte";
   import { Die } from "$lib/dice";
   import type { NpcStats } from "$lib/types";
+  import { wrap } from "$lib/util/array";
   export let stats: NpcStats
   $: hasAttacks = Array.isArray(stats.attacks) && stats.attacks.length > 0;
 </script>
@@ -18,7 +19,17 @@
     
     {#if hasAttacks}
       {#each stats.attacks as attack, a}
-      <p class="flex flex-wrap my-1 items-center"><span class="mr-1">{attack.name}</span>{#if attack.damage} (<Die which={attack.damage} size="w-4 h-4"/><span class="ml-1">d{attack.damage}</span>){/if}{#if attack.desc}, <span class="ml-1">{attack.desc}</span>{/if}</p>
+      <p class="flex flex-wrap my-1 items-center">
+        <span class="mr-1">{attack.name}</span>
+        {#if attack.damage} (<span class="inline-flex">
+          {#each wrap(attack.damage) as att}
+            <span class="after:content-['+'] last:after:content-none">
+              <Die which={att} size="w-4 h-4"/><span class="ml-1">d{att}</span>
+            </span>
+          {/each}
+        </span>){/if}
+        {#if attack.desc}, <span class="ml-1">{attack.desc}</span>{/if}
+      </p>
       {/each}
     {/if}
     {#if stats.notes.length > 0}
