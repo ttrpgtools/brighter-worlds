@@ -2,10 +2,11 @@
   import { getEnhanced, getImpaired, getModifiedDice } from "$lib/rolling/modifier";
   import type { DieValue } from "$lib/types";
   import { createEventDispatcher } from "svelte";
-  import { hold, add } from "$lib/util/hold";
+  import { add } from "$lib/util/hold";
   import { fly } from 'svelte/transition';
   import { createPopover } from 'svelte-headlessui';
   import { onClickOutside } from "$lib/util/on-click-outside";
+  import { getDesktopMode } from "$lib/data/settings";
 
   const dispatch = createEventDispatcher();
   const popover = createPopover({label: 'Modifiers'});
@@ -16,9 +17,10 @@
   export let direction: -1 | 1 = 1;
   export let posCls = '';
 
+  const desktop = getDesktopMode();
+
   function roll(pev: MouseEvent) {
     //const pev = ev.detail;
-    console.log('TAP');
     popover.close();
     const dice = getModifiedDice(pev, die as DieValue);
     dispatch('roll', { dice, name: label });
@@ -33,30 +35,31 @@
     popover.close();
     dispatch('roll', { dice, name: label });
   }
-  function stopMobileMenu(ev: Event) {
-    //if ('pointerType' in ev && ev.pointerType === 'touch') {
-      ev.preventDefault();
-    //}
+  function showSelector(ev: Event) {
+    ev.preventDefault();
+    popover.open();
   }
   function events(node: HTMLElement) {
     //const holdAction = hold(node);
     //const removeTap = add(node, 'tap', roll);
     //const removeHold = add(node, 'hold', () => popover.open());
     const removeClick = add(node, 'click', ev => {
-      if ($popover.expanded || ev.altKey || ev.ctrlKey || ev.shiftKey || ev.metaKey) {
+      if (ev.button === 2 && !$popover.expanded) {
+        popover.open();
+      } else if ($desktop || $popover.expanded || ev.altKey || ev.ctrlKey || ev.shiftKey || ev.metaKey) {
         roll(ev);
         ev.preventDefault();
       } else {
         popover.open();
       }
     });
-    //const removeContext = add(node, 'contextmenu', stopMobileMenu);
+    const removeContext = add(node, 'contextmenu', showSelector);
     return {
       destroy() {
         //removeTap();
         //removeHold();
         removeClick();
-        //removeContext();
+        removeContext();
         //holdAction.destroy();
       }
     }

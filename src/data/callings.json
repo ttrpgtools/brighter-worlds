@@ -529,7 +529,7 @@
     "for": "For players who want to hit things and cast spells at the same time.",
     "desc": "You are a grimblade and you have a grimblade, a unique and very large weapon that you’ve learned the trick of putting spells into. Whether you physically inscribe it onto a meteor metal blade, or embed the spells into a crystal hammer, you find this eminently more practical than lugging a big book around.",
     "equipment": [
-      { "name": "Grimblade", "desc": "Feel the magic.", "bulky": true, "enableMagic": { "type": "spells" } }
+      { "name": "Grimblade", "desc": "Feel the magic.", "bulky": true, "damage": 10, "enableMagic": { "type": "spells" } }
     ],
     "choices": [
       { "choose": "magic", "type": "spell", "random": false },
