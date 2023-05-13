@@ -25,12 +25,10 @@ export function createIdbStore<T>(dbKey: string, initialValue: T, crossTab = tru
   });
 
   async function set(value: T) {
-    await loaded;
     if (value == null || isEmpty(value)) {
-      console.warn('Attempting to set empty value!', dbKey);
-      // eslint-disable-next-line no-debugger
-      debugger;
+      return;
     }
+    await loaded;
     kvset(dbKey, value);
     internal.set(value);
   }
@@ -39,9 +37,7 @@ export function createIdbStore<T>(dbKey: string, initialValue: T, crossTab = tru
     internal.update((value: T) => {
       const result = fn(value);
       if (result == null || isEmpty(result)) {
-        console.warn('Attempting to update to empty value!', dbKey);
-        // eslint-disable-next-line no-debugger
-        debugger;
+        return value;
       }
       kvset(dbKey, result);
       return result;
