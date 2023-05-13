@@ -25,10 +25,8 @@
   import Icon from '$lib/Icon.svelte';
   import Loader from '$lib/Loader.svelte';
   import { writable } from 'svelte/store';
-  import { getDesktopMode } from '$lib/data/settings';
 
   let loadStatus = writable('Loading...');
-  let desktopMode = getDesktopMode();
 
   export let data: PageData;
 
@@ -108,9 +106,6 @@
   
   $: isDeprived = $character.statuses.has(status.DEPRIVED);
   $: isBurdened = burdened($character.equipment);
-  $: {
-    desktopMode.set($character?.settings?.desktopMode ?? false);
-  }
   </script>
   <svelte:head>
     <title>{$character.name || 'Character Sheet'} :: Brighter Worlds Online</title>

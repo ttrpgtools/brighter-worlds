@@ -97,7 +97,6 @@ export interface SheetSettings {
   rollToBridge: boolean;
   rollToDiscord: boolean;
   discordWebhook: string;
-  desktopMode?: boolean;
 }
 
 export interface Character {

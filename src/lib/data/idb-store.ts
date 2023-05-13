@@ -2,6 +2,7 @@ import { writable, type Updater, type Writable } from "svelte/store";
 import { createBroadcastStore } from "./broadcast-store";
 import { get, set as kvset, del, entries } from 'idb-keyval';
 import { createAsyncStore, type AsyncWritable } from "./async-load-store";
+import { isEmpty } from "$lib/types";
 export { del };
 export interface LazyWritable<T> extends Writable<T> {
   load: () => Promise<boolean>;
@@ -25,6 +26,11 @@ export function createIdbStore<T>(dbKey: string, initialValue: T, crossTab = tru
 
   async function set(value: T) {
     await loaded;
+    if (value == null || isEmpty(value)) {
+      console.warn('Attempting to set empty value!', dbKey);
+      // eslint-disable-next-line no-debugger
+      debugger;
+    }
     kvset(dbKey, value);
     internal.set(value);
   }
@@ -32,6 +38,11 @@ export function createIdbStore<T>(dbKey: string, initialValue: T, crossTab = tru
     await loaded;
     internal.update((value: T) => {
       const result = fn(value);
+      if (result == null || isEmpty(result)) {
+        console.warn('Attempting to update to empty value!', dbKey);
+        // eslint-disable-next-line no-debugger
+        debugger;
+      }
       kvset(dbKey, result);
       return result;
     });

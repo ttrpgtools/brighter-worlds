@@ -28,9 +28,6 @@
 <InputDialog {title} {showDelete} dice={[]} bind:this={dialog} form={form} {valid}>
   <form class="text-center flex flex-col gap-3">
     <div class="flex gap-3 items-center">
-      <Toggle bind:value={form.desktopMode} /><span>Single click to roll (right-click for menu)</span> 
-    </div>
-    <div class="flex gap-3 items-center">
       <Toggle bind:value={form.rollToBridge} /><span>Broadcast rolls to listeners</span> 
     </div>
     <div class="flex gap-3 items-center">

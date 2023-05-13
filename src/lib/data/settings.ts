@@ -1,13 +1,22 @@
 import { getContext, hasContext, setContext } from "svelte";
-import { writable, type Writable } from "svelte/store";
+import { createIdbStore } from "./idb-store";
+import type { AsyncWritable } from "./async-load-store";
 
-const DTMODE = 'setting:desktopMode';
+const SETTINGS_KEY = 'bw-settings';
 
-function getContextStore<T>(key: string, def?: T) {
+export interface Settings {
+  desktopMode: boolean;
+}
+
+const defaultSettings: Settings = {
+  desktopMode: false,
+};
+
+function getContextStore<T>(key: string, def: T) {
   return function () {
-    let store: Writable<T>;
+    let store: AsyncWritable<T>;
     if (!hasContext(key)) {
-      store = writable(def);
+      store = createIdbStore<T>(key, def);
       setContext(key, store);
     } else {
       store = getContext(key);
@@ -16,4 +25,4 @@ function getContextStore<T>(key: string, def?: T) {
   }
 }
 
-export const getDesktopMode = getContextStore(DTMODE, false);
+export const getSettings = getContextStore(SETTINGS_KEY, defaultSettings);

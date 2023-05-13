@@ -6,7 +6,7 @@
   import { fly } from 'svelte/transition';
   import { createPopover } from 'svelte-headlessui';
   import { onClickOutside } from "$lib/util/on-click-outside";
-  import { getDesktopMode } from "$lib/data/settings";
+  import { getSettings } from "$lib/data/settings";
 
   const dispatch = createEventDispatcher();
   const popover = createPopover({label: 'Modifiers'});
@@ -17,7 +17,7 @@
   export let direction: -1 | 1 = 1;
   export let posCls = '';
 
-  const desktop = getDesktopMode();
+  const settings = getSettings();
 
   function roll(pev: MouseEvent) {
     //const pev = ev.detail;
@@ -46,7 +46,7 @@
     const removeClick = add(node, 'click', ev => {
       if (ev.button === 2 && !$popover.expanded) {
         popover.open();
-      } else if ($desktop || $popover.expanded || ev.altKey || ev.ctrlKey || ev.shiftKey || ev.metaKey) {
+      } else if ($settings.desktopMode || $popover.expanded || ev.altKey || ev.ctrlKey || ev.shiftKey || ev.metaKey) {
         roll(ev);
         ev.preventDefault();
       } else {
