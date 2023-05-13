@@ -2,12 +2,13 @@ import { id } from "$lib/rolling/id";
 import { type Character, type CharacterSummary, EMPTY } from "$lib/types";
 import type { Writable } from "svelte/store";
 import { get } from 'svelte/store';
-import { clear, getAll } from "./storage";
+import { clear, getAll, getter } from "./storage";
 import { createIdbStore, del, filteredValues } from "./idb-store";
 import { download } from "$lib/util/download";
 import { createBroadcastStore } from "./broadcast-store";
 import { getContext, hasContext, setContext } from "svelte";
 import type { AsyncWritable } from "./async-load-store";
+import { sortByNumber } from "$lib/util/sort";
 
 const LIST_KEY = 'bw-sheet-list';
 const SHEET_KEY_PREFIX = 'bw-sheet-';
@@ -33,6 +34,8 @@ function getEmptySheet() {
     spells: [],
     rituals: [],
     notes: '',
+    created: 0,
+    sortkey: 0,
   };
   return empty;
 }
@@ -77,6 +80,8 @@ function extractSummary(char: Partial<Character>): CharacterSummary {
     str: char?.str?.max ?? 4,
     dex: char?.dex?.max ?? 4,
     wil: char?.wil?.max ?? 4,
+    created: char?.created ?? 1,
+    sortkey: char?.sortkey ?? 1,
   };
 }
 
@@ -106,6 +111,7 @@ export function loadList(list: Writable<CharacterSummary[] | undefined>, cache: 
     filteredValues<Character>(k => k.toString().startsWith(SHEET_KEY_PREFIX))
     .then(some => some.map(extractSummary))
     .then(sum => {
+      sum.sort(sortByNumber<CharacterSummary>('created'));
       list.set(sum);
       status.set('');
     });
@@ -151,7 +157,7 @@ export function createSheet(char: Partial<Character>, list?: Writable<CharacterS
     });
   }
   const sheet = loadSheet(newId, undefined, cache);
-  sheet.update(c => ({...c, ...char, [EMPTY]: false}));
+  sheet.update(c => ({...c, ...char, [EMPTY]: false, created: Date.now(), sortkey: Date.now()}));
   return [newId, sheet];
 }
 
@@ -184,10 +190,14 @@ export async function uploadSheet(json: string, list?: Writable<CharacterSummary
 
 export async function tryMigrate(status: Writable<string>, cache?: SheetCache) {
   if (typeof window === 'undefined') return;
-  const oldList = getAll<Character>(key => key.startsWith(SHEET_KEY_PREFIX) && key !== LIST_KEY, reviveSheet);
-  if (oldList.length > 0) status.set('Migrating...');
-  await Promise.all(oldList.map(char => {
+  const oldList = getter<CharacterSummary[]>(LIST_KEY) || [];
+  const orderMap = oldList.reduce((p,c,i) => ({...p, [c.id]: i + 1 }), {} as Record<string, number>);
+  const allChars = getAll<Character>(key => key.startsWith(SHEET_KEY_PREFIX) && key !== LIST_KEY, reviveSheet);
+  if (allChars.length > 0) status.set('Migrating...');
+  await Promise.all(allChars.map((char, ai) => {
     const id = char.id;
+    char.created = orderMap[id] ?? ai + 1;
+    char.sortkey = orderMap[id] ?? ai + 1;
     const sheet = loadSheet(id, undefined, cache);
     clear(`${SHEET_KEY_PREFIX}${id}`);
     return sheet.set(char);

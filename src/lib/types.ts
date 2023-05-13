@@ -118,6 +118,8 @@ export interface Character {
   rituals: Ritual[];
   notes?: string;
   settings?: SheetSettings;
+  created: number;
+  sortkey: number;
 }
 
 export interface Attrs { str: DieValue; dex: DieValue; wil: DieValue; };
@@ -126,6 +128,8 @@ export interface CharacterSummary extends Attrs {
   id: string;
   name: string;
   calling: string;
+  created: number;
+  sortkey: number;
 }
 
 interface BaseNpc {
