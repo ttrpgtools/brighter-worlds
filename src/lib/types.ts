@@ -2,8 +2,12 @@ import type { status } from "./const";
 
 export const EMPTY: unique symbol = Symbol();
 
-export function isEmpty(obj: unknown) {
+function hasEmptySymbol(obj: unknown): obj is {[EMPTY]: boolean}  {
   return Object.getOwnPropertySymbols(obj).some(s => s === EMPTY);
+}
+
+export function isEmpty(obj: unknown) {
+  return hasEmptySymbol(obj) ? obj[EMPTY] : false;
 }
 
 export type DieValue = 4 | 6 | 8 | 10 | 12;

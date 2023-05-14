@@ -1,3 +1,7 @@
+<script lang="ts">
+  import { getWizard } from "./wizard";
+  getWizard();
+</script>
 <svelte:head>
   <title>New Character :: Brighter Worlds Online</title>
 </svelte:head>

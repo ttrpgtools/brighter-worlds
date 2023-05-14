@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { builder, STEP, wizard } from "../wizard";
+  import { STEP, getWizard } from "../wizard";
   import { goto } from "$app/navigation";
   import { browser } from "$app/environment";
   import Button from "$lib/Button.svelte";
@@ -8,6 +8,8 @@
   import { onlyEnhancement, onlyLinked } from "$lib/util/guards";
   import GroupInputs from "$lib/GroupInputs.svelte";
   import { id } from "$lib/rolling/id";
+
+  const [wizard, builder] = getWizard();
 
   export let data: PageData;
 
@@ -44,7 +46,7 @@
   <h3 class="max-w-prose text-2xl font-subtitle">Build-a-Companion</h3>
   <p class="max-w-prose">Fluffy or fierce?</p>
   
-  <input type="text" name="name" placeholder="Name" bind:value={companion.name} class="rounded-full dark:bg-gray-900 dark:text-white focus:ring-purple-500 focus:border-purple-500 max-w-sm">
+  <input type="text" name="name" placeholder="Name" bind:value={companion.name} class="rounded-full dark:bg-gray-900 dark:text-white focus:ring-purple-500 focus:border-purple-500 w-full">
   
   {#if options && totalEnhance}
   <p class="max-w-prose">{data.enhancements?.desc} ({totalEnhance})</p>

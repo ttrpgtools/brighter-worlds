@@ -14,8 +14,6 @@ const LIST_KEY = 'bw-sheet-list';
 const SHEET_KEY_PREFIX = 'bw-sheet-';
 const SHEET_CACHE = 'bw-cache-sheets';
 
-
-
 function getEmptySheet() {
   const empty: Character = {
     [EMPTY]: true,
@@ -156,7 +154,7 @@ export function createSheet(char: Partial<Character>, list?: Writable<CharacterS
       return [...current, extractSummary(char)]
     });
   }
-  const sheet = loadSheet(newId, undefined, cache);
+  const sheet = loadSheet(newId, list, cache);
   sheet.update(c => ({...c, ...char, [EMPTY]: false, created: Date.now(), sortkey: Date.now()}));
   return [newId, sheet];
 }

@@ -2,10 +2,12 @@
   import type { Calling } from "$lib/types";
   import MenuLink from "$lib/MenuLink.svelte";
   import CallingSummary from "./CallingSummary.svelte";
-  import { STEP, wizard } from "./wizard";
+  import { STEP, getWizard } from "./wizard";
   import type { PageData } from "./$types";
   import HomeLink from "$lib/HomeLink.svelte";
   export let data: PageData;
+
+  const [wizard] = getWizard();
 
   if ($wizard !== STEP.CALLING) {
     wizard.reset();

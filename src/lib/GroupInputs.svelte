@@ -8,12 +8,14 @@
   export let max: number = 1;
   export let options: T[];
   export let selected: T[] = [];
+  export let hideUnavailable = false;
 
   $: onlyDeselect = selected.length === max;
 </script>
 <div class="mx-auto w-full max-w-md">
   <fieldset class="flex flex-col gap-3">
   {#each options as opt (opt.name)}
+  {#if !hideUnavailable || !onlyDeselect || selected.some(x => x === opt)}
   <div class="relative">
     <input id={`${baseId}-${opt.name}`} disabled={onlyDeselect && !selected.some(x => x === opt)} class="absolute opacity-0 w-0 h-0 peer" type="checkbox" bind:group={selected} name="type" value={opt} />
     <label
@@ -43,6 +45,7 @@
       </div>
     </label>
   </div>
+  {/if}
   {/each}
   </fieldset>
 </div>

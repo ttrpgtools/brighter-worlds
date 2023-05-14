@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Item, EquipmentChoice } from "$lib/types";
-  import { STEP, wizard, builder } from "../wizard";
+  import { STEP, getWizard } from "../wizard";
   import { goto } from "$app/navigation";
   import { browser } from "$app/environment";
   import Button from "$lib/Button.svelte";
@@ -8,6 +8,8 @@
   import ItemFlair from "./ItemFlair.svelte";
   import { filterEmpty } from "$lib/util/array";
   import { onlyEquipment } from "$lib/util/guards";
+
+  const [wizard, builder] = getWizard();
 
   if ($wizard !== STEP.EQUIPMENT && browser) {
     goto(`/character/new`);

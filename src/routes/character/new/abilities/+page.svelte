@@ -1,11 +1,13 @@
 <script lang="ts">
-  import { builder, STEP, wizard } from "../wizard";
+  import { STEP, getWizard } from "../wizard";
   import { goto } from "$app/navigation";
   import { browser } from "$app/environment";
   import Button from "$lib/Button.svelte";
   import type { PageData } from "./$types";
   import GroupInputs from "$lib/GroupInputs.svelte";
   import type { Ability, HasChoices } from "$lib/types";
+
+  const [wizard, builder] = getWizard();
 
   export let data: PageData;
   $: advanced = data.list.find(x => x.id === $builder.calling?.id)?.abilities.filter(x => x.type === 'advanced') ?? [];

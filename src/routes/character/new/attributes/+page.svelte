@@ -1,10 +1,12 @@
 <script lang="ts">
   import DieSelector from "$lib/sheet/DieSelector.svelte";
   import type { Attrs, DieValue } from "$lib/types";
-  import { STEP, wizard } from "../wizard";
+  import { STEP, getWizard } from "../wizard";
   import { goto } from "$app/navigation";
   import { browser } from "$app/environment";
   import Button from "$lib/Button.svelte";
+
+  const [wizard] = getWizard();
 
   if ($wizard !== STEP.ATTRIBUTES && browser) {
     goto(`/character/new`);

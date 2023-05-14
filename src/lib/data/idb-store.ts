@@ -26,6 +26,7 @@ export function createIdbStore<T>(dbKey: string, initialValue: T, crossTab = tru
 
   async function set(value: T) {
     if (value == null || isEmpty(value)) {
+      console.warn('setting empty', dbKey);
       return;
     }
     await loaded;
@@ -37,6 +38,7 @@ export function createIdbStore<T>(dbKey: string, initialValue: T, crossTab = tru
     internal.update((value: T) => {
       const result = fn(value);
       if (result == null || isEmpty(result)) {
+        console.warn('updating empty', dbKey);
         return value;
       }
       kvset(dbKey, result);

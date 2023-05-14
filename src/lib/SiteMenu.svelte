@@ -9,7 +9,6 @@
 
   const settings = getSettings();
   const menu = createMenu({ label: 'Actions' })
-  const active = false;
 
   let darkMode = false;
   
@@ -46,12 +45,12 @@
 <div class="flex w-full flex-col items-center justify-center">
   <div class="relative w-56 text-right">
     <div class="relative inline-block text-left">
-      <button use:menu.button on:select={onSelect} type="button" {title} on:click class="relative inline-flex items-center rounded-full bg-purple-300 dark:bg-purple-700 p-2 font-medium shadow-sm hover:bg-purple-200 dark:hover:bg-purple-800 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-900"><Icon icon="bars" /></button>
+      <button use:menu.button on:select={onSelect} type="button" {title} on:click class="relative inline-flex items-center rounded-full shadow-lg dark:shadow-purple-400/20 bg-purple-300 dark:bg-purple-700 p-2 font-medium hover:bg-purple-200 dark:hover:bg-purple-800 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-900"><Icon icon="bars" /></button>
       {#if $menu.expanded}
         <div
           use:menu.items
           transition:scale={{start: 0.8}}
-          class="absolute right-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white dark:bg-black shadow-lg ring-1 ring-purple-500 ring-opacity-5 focus:outline-none"
+          class="absolute right-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white dark:bg-black shadow-xl dark:shadow-purple-400/20 ring-1 ring-purple-500 ring-opacity-5 focus:outline-none"
         >
           <div class="px-1 py-1">
               <button

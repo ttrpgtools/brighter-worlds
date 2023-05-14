@@ -411,7 +411,6 @@
     "for": "For players who like to make do with random results, or like to talk to themselves.",
     "desc": "A spirit of chaos, better known as a demon, has made its home in your head. In exchange for the shelter your body provides, it grants you access to the knowledge and skills its picked up from prior hosts. Sometime, when you die, it will leap to a new body and pass along the skills and knowledge it learned from you, but you might prefer not to think about that.",
     "equipment": [
-      { "name": "Demon in your brain", "desc": "One random spell and ritual plus one chosen spell and ritual.", "bulky": false, "enableMagic": true },
       { "name": "Unusual choice of clothing", "desc": "Your demon insists on it.", "bulky": false }
     ],
     "choices": [
@@ -723,7 +722,6 @@
     "for": "For players who want to cast spells and also have an adorable pet.",
     "desc": "Familiar at your side, you channel the forces of magic across the mystic bond that connects you. You are a shepherd to ancient secrets, passed from person to person to keep them safe from forces who would rather see it lost.",
     "equipment": [
-      { "name": "Your Familiar", "desc": "You can link to your familiar's sheet", "bulky": false },
       { "name": "Grimoire", "desc": "Giant book of spells.", "bulky": true, "enableMagic": true },
       { "name": "A fanciful hat or ornamentation", "desc": "Ooo, that is fancy.", "bulky": false }
     ],
