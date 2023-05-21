@@ -1,5 +1,14 @@
 # Changes
 
+## v1.0.0-bata.3
+
+- Discord roll support
+- Added basic encounters for GM
+- Reorder inventory and magic lists
+- Changed data storage to be a bit more durable
+  - Making it easier for future cloud storage
+- Added a desktop mode for more convenient rolling
+
 ## v1.0.0-beta.2
 
 - You can download a file of your character

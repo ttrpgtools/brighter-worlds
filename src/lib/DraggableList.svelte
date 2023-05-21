@@ -9,10 +9,13 @@
   export let transformDraggedElement: TransformDraggedElementFunction = () => {};
   let listClass = '';
   export { listClass as class };
-  
+  $: listInternal = list;
   const flipDurationMs = 200;
 
   function handleSort(ev: CustomEvent<DndEvent<T>>) {
+    listInternal = ev.detail.items;
+  }
+  function finalize(ev: CustomEvent<DndEvent<T>>) {
     list = ev.detail.items;
   }
   function needShadow(item: T) {
@@ -23,8 +26,8 @@
     return false;
   }
 </script>
-<ul class={listClass} use:dndzone={{ items: list, flipDurationMs, dragDisabled: !draggable, dropTargetStyle: {}, transformDraggedElement }} on:consider={handleSort} on:finalize={handleSort}>
-  {#each list as item (item.id)}
+<ul class={listClass} use:dndzone={{ items: listInternal, flipDurationMs, dragDisabled: !draggable, dropTargetStyle: {}, transformDraggedElement }} on:consider={handleSort} on:finalize={finalize}>
+  {#each listInternal as item (item.id)}
     <li class={itemClass} animate:flip={{ duration: flipDurationMs }}>
       <slot {item}></slot>
       {#if needShadow(item)}
