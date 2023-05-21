@@ -5,7 +5,7 @@
   import Attribute from '$lib/sheet/Attribute.svelte';
   import Grit from '$lib/sheet/Grit.svelte';
   import MenuLink from "$lib/MenuLink.svelte";
-  import { encounters, getNpcInstance } from '$lib/data/encounter-manager';
+  import { encounters, getEncountersSettings, getNpcInstance } from '$lib/data/encounter-manager';
   import { onMount } from 'svelte';
   import DamageDialog from '$lib/sheet/DamageDialog.svelte';
   import Roller from '$lib/sheet/Roller.svelte';
@@ -19,13 +19,18 @@
   import Equipment from '$lib/sheet/Equipment.svelte';
   import Icon from '$lib/Icon.svelte';
   import { getEncounterStates } from '$lib/data/ui-state';
+  import SheetSettings from '$lib/sheet/SheetSettings.svelte';
+  import IconButton from '$lib/IconButton.svelte';
+  import { sendToDiscord } from '$lib/util/discord';
 
+  const encountersSettings = getEncountersSettings();
   const encounterStates = getEncounterStates();
   export let data: PageData;
 
   let dice: DiceDialog;
   let damageDialog: DamageDialog;
   let npcDialog: NpcDialog;
+  let settingsDialog: SheetSettings;
 
   const list = encounters.list;
 
@@ -43,24 +48,31 @@
     $list = $list;
   }
   
-  function showRoll(sides: DieValue[], label: string = '') {
+  function showRoll(sides: DieValue[], label: string = '', name = 'NPC') {
     const best = sides.reduce((p, c) => Math.max(roll(c), p), 0);
     
     label = label || sides.map(s => `d${s}`).join(',');
+    // if ($encountersSettings?.rollToBridge) {
+    //   broadcast.set({id: $character.id, name: $character.name, type: 'roll', dice: sides, result: best, label});
+    // }
+    if ($encountersSettings?.rollToDiscord) {
+      sendToDiscord(name, best, label, $encountersSettings.discordWebhook, sides);
+    }
+
     dice.show(`${best}`, sides, label);
     console.log(`${label} =`, best);
   }
   
-  function save(ev: CustomEvent<{ dice: DieValue[] }>, stat: string) {
+  function save(ev: CustomEvent<{ dice: DieValue[] }>, stat: string, name = 'NPC') {
     const dice = ev.detail.dice;
     const label = `${stat} Save`;
-    showRoll(dice, label);
+    showRoll(dice, label, name);
   }
   
-  function rollAttack(ev: CustomEvent<{ dice: DieValue[], name: string }>) {
+  function rollAttack(ev: CustomEvent<{ dice: DieValue[], name: string }>, npcname = 'NPC') {
     const dice = ev.detail.dice;
     const name = ev.detail.name;
-    showRoll(dice, name);
+    showRoll(dice, name, npcname);
   }
 
   async function takeDamage(ev: CustomEvent<{ type: 'str' | 'dex' | 'wil' }>, eindex: number, nindex: number) {
@@ -86,6 +98,9 @@
     }
     if (results.die != null) {
       $list[eindex].npcs[nindex][type].current = results.die;
+    }
+    if ($encountersSettings?.rollToDiscord && results.save) {
+      sendToDiscord(npc.name, results.save, `${type.toUpperCase()} save against ${results.dd ?? '?'} direct damage.`, $encountersSettings.discordWebhook, results.dice);
     }
     dice.show('Damage', results.dice, results.msg);
   }
@@ -121,9 +136,16 @@
 <NpcDialog npcList={data.npcs} bind:this={npcDialog} />
 <DiceDialog bind:this={dice} />
 <DamageDialog bind:this={damageDialog} />
+<SheetSettings bind:this={settingsDialog} bind:settings={$encountersSettings} />
 <Roller on:roll={(ev) => showRoll([ev.detail])} />
 <main class="p-4 sm:p-8 flex flex-col items-center gap-2">
-  <h2 class="font-title text-4xl text-center">Encounters</h2>
+  <div class="flex flex-row gap-3 items-center">
+    <h2 class="font-title text-4xl text-center">Encounters</h2>
+    <IconButton icon="cog" on:click={() => settingsDialog.open()}/>
+    {#if $encountersSettings?.rollToDiscord}
+    <Icon icon="discord" />
+    {/if}
+  </div>
   <div class="font-symbol text-6xl">A</div>
 <div class="flex flex-col gap-8 w-full max-w-4xl">
 {#each $list as encounter, eindex}
@@ -159,9 +181,9 @@
       <Card>
         <div class="flex flex-col gap-4">
           <Grit bind:value={npc.grit} isDeprived={false} isBurdened={false} />
-          <Attribute name="STR" value={npc.str} on:roll={(ev) => save(ev, 'STR')} on:damage={(ev) => takeDamage(ev, eindex, nin)} on:change={persist}/>
-          <Attribute name="DEX" value={npc.dex} on:roll={(ev) => save(ev, 'DEX')} on:damage={(ev) => takeDamage(ev, eindex, nin)} on:change={persist}/>
-          <Attribute name="WIL" value={npc.wil} on:roll={(ev) => save(ev, 'WIL')} on:damage={(ev) => takeDamage(ev, eindex, nin)} on:change={persist}/>
+          <Attribute name="STR" value={npc.str} on:roll={(ev) => save(ev, 'STR', npc.name)} on:damage={(ev) => takeDamage(ev, eindex, nin)} on:change={persist}/>
+          <Attribute name="DEX" value={npc.dex} on:roll={(ev) => save(ev, 'DEX', npc.name)} on:damage={(ev) => takeDamage(ev, eindex, nin)} on:change={persist}/>
+          <Attribute name="WIL" value={npc.wil} on:roll={(ev) => save(ev, 'WIL', npc.name)} on:damage={(ev) => takeDamage(ev, eindex, nin)} on:change={persist}/>
           {#if npc.status}
           <div class="flex items-center gap-2 border w-fit py-2 px-3 rounded-md border-gray-300 bg-white dark:bg-gray-900 dark:hover:bg-gray-800 dark:border-gray-600 shadow-sm">
             <span>{npc.status}</span>
@@ -176,25 +198,12 @@
       </Card>
       <div class="flex flex-col gap-4">
         {#if hasAttacks}
-        <Equipment bind:equipment={$list[eindex].npcs[nin].attacks} title="Attacks" baseArmor={npc.armor} class="flex-1" on:roll={rollAttack} />
+        <Equipment bind:equipment={$list[eindex].npcs[nin].attacks} title="Attacks" baseArmor={npc.armor} class="flex-1" on:roll={(ev) => rollAttack(ev, npc.name)} />
         {/if}
         {#if npc.wants || npc.found || npc.notes?.length > 0}
         <Card>
         <div>
           <ul class="-my-5 divide-y divide-gray-200 dark:divide-gray-600">
-            <!-- {#each npc.attacks as attack (attack.id)}
-            <li class="py-3">
-              <div class="flex items-center space-x-4">
-                <div class="min-w-0 flex-1 flex gap-4">
-                  <p class="truncate text-sm font-medium" title={attack.name}>{attack.name}</p>
-                </div>
-                <div class="flex gap-2 items-center">
-                  {#if attack.damage}<RollSelector label={attack.name} die={attack.damage} direction={-1} on:roll={rollAttack} let:events><button use:events type="button" class="inline-flex items-center text-sm font-medium leading-5"><Die which={attack.damage}/></button></RollSelector>{/if}
-                </div>
-              </div>
-              {#if attack.desc}<p use:toggleHeight class="text-sm text-gray-600 dark:text-gray-400">{attack.desc}</p>{/if}
-            </li>
-            {/each} -->
             {#if npc.notes?.length > 0}
               {#each npc.notes as note}
                 <li class="py-3">

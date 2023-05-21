@@ -3,6 +3,7 @@ import { clear } from "./storage";
 import { browser } from "$app/environment";
 import { getContext, hasContext, setContext } from "svelte";
 import type { AsyncWritable } from "./async-load-store";
+import { EMPTY } from "$lib/types";
 
 if (browser) {
   clear('bw-tab-manager'); // Remove legacy keys.
@@ -25,6 +26,6 @@ function createUiStore<T>(key: string, def: T) {
   }
 }
 
-export const getTabManager = createUiStore<Record<string, number>>(UIKEYS.tabManager, {});
+export const getTabManager = createUiStore<Record<string, number>>(UIKEYS.tabManager, {[EMPTY]: true});
 
-export const getEncounterStates = createUiStore<Record<string, boolean>>(UIKEYS.encounterStates, {});
+export const getEncounterStates = createUiStore<Record<string, boolean>>(UIKEYS.encounterStates, {[EMPTY]: true});

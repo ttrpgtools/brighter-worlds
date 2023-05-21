@@ -10,6 +10,14 @@ export function isEmpty(obj: unknown) {
   return hasEmptySymbol(obj) ? obj[EMPTY] : false;
 }
 
+export function setEmpty(obj: unknown, value: boolean) {
+  if (hasEmptySymbol(obj)) {
+    obj[EMPTY] = value;
+    return true;
+  }
+  return false;
+}
+
 export type DieValue = 4 | 6 | 8 | 10 | 12;
 
 export type Attr = 'str' | 'dex' | 'wil';
@@ -98,6 +106,7 @@ export interface EulogyStanza {
 }
 
 export interface SheetSettings {
+  [EMPTY]?: boolean | undefined;
   rollToBridge: boolean;
   rollToDiscord: boolean;
   discordWebhook: string;
@@ -150,6 +159,7 @@ export interface NpcStats extends BaseNpc, Attrs {
 }
 
 export interface NpcInstance extends BaseNpc {
+  [EMPTY]?: boolean | undefined;
   grit: Attribute;
   str: Attribute<DieValue, 0>;
   dex: Attribute<DieValue, 0>;
@@ -159,6 +169,7 @@ export interface NpcInstance extends BaseNpc {
 }
 
 export interface Encounter extends Identifiable, Named {
+  [EMPTY]?: boolean | undefined;
   npcs: NpcInstance[];
   notes: string;
 }
@@ -199,6 +210,8 @@ export interface DamageResults {
   grit?: number;
   die?: DieValue | 0;
   statuses?: Set<string>;
+  save?: number;
+  dd?: number;
 }
 
 export type RemoteMessageType = 'roll' | 'intro';

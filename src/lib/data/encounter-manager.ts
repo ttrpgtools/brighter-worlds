@@ -1,10 +1,12 @@
 import { id } from "$lib/rolling/id";
-import type { Encounter, NpcInstance, NpcStats } from "$lib/types";
+import {EMPTY, type Encounter, type NpcInstance, type NpcStats, type SheetSettings } from "$lib/types";
 import { writable, type Writable } from "svelte/store";
 import { get } from 'svelte/store';
 import { createIdbStore } from "./idb-store";
+import { getContextStore } from "./settings";
 
 const KEY = 'bw-encounters';
+const SETTINGS_KEY = 'bw-encounters-settings';
 
 export function getNpcInstance(stats: NpcStats) {
   const empty: NpcInstance = {
@@ -36,6 +38,15 @@ function getEmptyEncounter() {
   };
   return empty;
 }
+
+const defaultSettings: SheetSettings = {
+  [EMPTY]: true,
+  rollToBridge: false,
+  rollToDiscord: false,
+  discordWebhook: '',
+};
+
+export const getEncountersSettings = getContextStore(SETTINGS_KEY, defaultSettings);
 
 class EncounterManager {
   public list = createIdbStore<Encounter[]>(KEY, [], false);

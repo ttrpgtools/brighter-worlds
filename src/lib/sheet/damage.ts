@@ -87,6 +87,8 @@ export function calculateDamage(character: DamageDetails, howmuch: DamageForm | 
         const mod = critCount === ofCount ? `avoided` : `took`;
         result.msg = `You took ${dd} direct damage, some of which was automatically critical${pps} You then rolled a ${saveAgainstDirectDamage} and ${mod} more critical damage. ${ps}`;
         result.dice = [rolledAttr];
+        result.save = saveAgainstDirectDamage;
+        result.dd = dd;
       } else {
         const pps = critCount > 1 ? ` ${critCount} times.` : '.';
         result.msg = `You took ${dd} direct damage, which was automatically critical${pps} ${ps}`;
@@ -95,11 +97,15 @@ export function calculateDamage(character: DamageDetails, howmuch: DamageForm | 
     } else {
       result.msg = `You took ${dd} direct damage, rolled a ${saveAgainstDirectDamage} and have taken critical damage. ${ps}`;
       result.dice = [currentAttr];
+      result.save = saveAgainstDirectDamage;
+      result.dd = dd;
     }
     result.die = newAttr;
   } else {
     result.msg = `You took ${dd} direct damage but rolled a ${saveAgainstDirectDamage} and avoided critical damage.`;
     result.dice = [currentAttr];
+    result.save = saveAgainstDirectDamage;
+    result.dd = dd;
   }
   return result;
 }

@@ -56,7 +56,7 @@
       broadcast.set({id: $character.id, name: $character.name, type: 'roll', dice: sides, result: best, label});
     }
     if ($character.settings?.rollToDiscord) {
-      sendToDiscord($character.name, best, label, $character.settings.discordWebhook);
+      sendToDiscord($character.name, best, label, $character.settings.discordWebhook, sides);
     }
     dice.show(`${best}`, sides, label);
     console.log(`${label} =`, best);
@@ -100,6 +100,9 @@
     }
     if (results.die != null) {
       $character[type].current = results.die;
+    }
+    if ($character.settings?.rollToDiscord && results.save) {
+      sendToDiscord($character.name, results.save, `${type.toUpperCase()} save against ${results.dd ?? '?'} direct damage.`, $character.settings.discordWebhook, results.dice);
     }
     dice.show('Damage', results.dice, results.msg);
   }
