@@ -11,6 +11,7 @@ class NpcManager extends JsonDataManager<NpcStats> {
       str: 4,
       dex: 6,
       wil: 6,
+      armor: 0,
       attacks: [
         {
           id: 'beastattack-default',

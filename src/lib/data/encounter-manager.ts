@@ -17,7 +17,7 @@ export function getNpcInstance(stats: NpcStats) {
     dex: { current: stats.dex, max: stats.dex },
     wil: { current: stats.wil, max: stats.wil },
     status: '',
-    armor: stats.armor,
+    armor: stats.armor ?? 0,
     attacks: stats.attacks.map(att => ({
       ...att,
       id: `beastattack-${id()}`,

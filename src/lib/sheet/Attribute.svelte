@@ -12,7 +12,7 @@
   }
 </script>
 <div class="grid grid-cols-5 items-center">
-  <RollSelector label={name} die={value.current || 4} let:events on:roll>
+  <RollSelector label="{name} Save" die={value.current || 4} let:events on:roll>
     <button use:events type="button" title="Roll {name} Save" class="font-subtitle text-xl bg-purple-300 dark:bg-purple-700 hover:bg-purple-200 dark:hover:bg-purple-800 rounded-full px-2 pt-2 pb-1 w-16 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-900">{name}</button>
   </RollSelector>
 

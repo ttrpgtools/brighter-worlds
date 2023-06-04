@@ -2,8 +2,6 @@
   import DiceDialog from '$lib/DiceDialog.svelte';
   import { roll } from '$lib/rolling/roll';
   import type { DamageDetails, DieValue } from '$lib/types';
-  import Attribute from '$lib/sheet/Attribute.svelte';
-  import Grit from '$lib/sheet/Grit.svelte';
   import MenuLink from "$lib/MenuLink.svelte";
   import { encounters, getEncountersSettings, getNpcInstance } from '$lib/data/encounter-manager';
   import { onMount } from 'svelte';
@@ -13,15 +11,16 @@
   import AutoTextarea from '$lib/AutoTextarea.svelte';
   import NpcDialog from './NpcDialog.svelte';
   import { append } from '$lib/util/array';
-  import Card from '$lib/Card.svelte';
   import DeleteButton from '$lib/DeleteButton.svelte';
   import Button from '$lib/Button.svelte';
-  import Equipment from '$lib/sheet/Equipment.svelte';
   import Icon from '$lib/Icon.svelte';
   import { getEncounterStates } from '$lib/data/ui-state';
   import SheetSettings from '$lib/sheet/SheetSettings.svelte';
   import IconButton from '$lib/IconButton.svelte';
   import { sendToDiscord } from '$lib/util/discord';
+  import NpcSheet from './NpcSheet.svelte';
+  import { armor } from '$lib/util/character';
+  import HomeLink from '$lib/HomeLink.svelte';
 
   const encountersSettings = getEncountersSettings();
   const encounterStates = getEncounterStates();
@@ -63,15 +62,8 @@
     console.log(`${label} =`, best);
   }
   
-  function save(ev: CustomEvent<{ dice: DieValue[] }>, stat: string, name = 'NPC') {
-    const dice = ev.detail.dice;
-    const label = `${stat} Save`;
-    showRoll(dice, label, name);
-  }
-  
-  function rollAttack(ev: CustomEvent<{ dice: DieValue[], name: string }>, npcname = 'NPC') {
-    const dice = ev.detail.dice;
-    const name = ev.detail.name;
+  function basicRoll(ev: CustomEvent<{ dice: DieValue[], name: string }>, npcname = 'NPC') {
+    const { dice, name } = ev.detail;
     showRoll(dice, name, npcname);
   }
 
@@ -80,12 +72,12 @@
     const npc = $list[eindex].npcs[nindex];
     const chinfo: DamageDetails = {
       type,
-      armor: npc.armor || 0,
+      armor: armor(npc.attacks) + (npc.armor || 0),
       statuses: new Set(npc.status ? [npc.status] : []),
       grit: npc.grit.current,
       die: npc[type].current,
     };
-    
+
     const results = await damageDialog.getDamage(chinfo);
 
     if (results == null) return;
@@ -133,6 +125,7 @@
 <svelte:head>
   <title>Encounters :: Brighter Worlds Online</title>
 </svelte:head>
+<HomeLink />
 <NpcDialog npcList={data.npcs} bind:this={npcDialog} />
 <DiceDialog bind:this={dice} />
 <DamageDialog bind:this={damageDialog} />
@@ -168,66 +161,12 @@
   </div>
   <div class="flex flex-col gap-4">
   {#each encounter.npcs as npc, nin}
-  {@const hasAttacks = Array.isArray(npc.attacks) && npc.attacks.length > 0}
+  <NpcSheet bind:npc
+    on:confirm={() => removeNpc(npc.id, eindex)}
+    on:roll={ev => basicRoll(ev, npc.name)}
+    on:damage={(ev) => takeDamage(ev, eindex, nin)}
+    on:change={persist} />
   
-  <div class="relative flex flex-col gap-2">
-    <div class="relative">
-      <input type="text" class="w-full border-0 dark:bg-gray-900 placeholder-shown:bg-gray-100 dark:placeholder-shown:bg-black focus:border-purple-600 focus:ring-0 font-title text-3xl p-4 rounded-lg h-full" placeholder="Name" bind:value={npc.name}>
-      <div class="absolute inset-y-0 right-4 flex items-center">
-        <DeleteButton on:confirm={() => removeNpc(npc.id, eindex)} />
-      </div>
-    </div>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <Card>
-        <div class="flex flex-col gap-4">
-          <Grit bind:value={npc.grit} isDeprived={false} isBurdened={false} />
-          <Attribute name="STR" value={npc.str} on:roll={(ev) => save(ev, 'STR', npc.name)} on:damage={(ev) => takeDamage(ev, eindex, nin)} on:change={persist}/>
-          <Attribute name="DEX" value={npc.dex} on:roll={(ev) => save(ev, 'DEX', npc.name)} on:damage={(ev) => takeDamage(ev, eindex, nin)} on:change={persist}/>
-          <Attribute name="WIL" value={npc.wil} on:roll={(ev) => save(ev, 'WIL', npc.name)} on:damage={(ev) => takeDamage(ev, eindex, nin)} on:change={persist}/>
-          {#if npc.status}
-          <div class="flex items-center gap-2 border w-fit py-2 px-3 rounded-md border-gray-300 bg-white dark:bg-gray-900 dark:hover:bg-gray-800 dark:border-gray-600 shadow-sm">
-            <span>{npc.status}</span>
-            <button type="button" title="Clear status" aria-label="Clear status" on:click={() => npc.status = ''} class="rounded-md bg-purple-900 p-0.5 text-white shadow-sm hover:bg-purple-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-600">
-              <svg class="h-5 w-5 rotate-45" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
-              </svg>
-            </button>
-          </div>
-          {/if}
-        </div>
-      </Card>
-      <div class="flex flex-col gap-4">
-        {#if hasAttacks}
-        <Equipment bind:equipment={$list[eindex].npcs[nin].attacks} title="Attacks" baseArmor={npc.armor} class="flex-1" on:roll={(ev) => rollAttack(ev, npc.name)} />
-        {/if}
-        {#if npc.wants || npc.found || npc.notes?.length > 0}
-        <Card>
-        <div>
-          <ul class="-my-5 divide-y divide-gray-200 dark:divide-gray-600">
-            {#if npc.notes?.length > 0}
-              {#each npc.notes as note}
-                <li class="py-3">
-                  <p class="text-sm font-medium">{note}</p>
-                </li>
-              {/each}
-            {/if}
-            {#if npc.wants}
-              <li class="py-3">
-                <p class="text-sm font-medium"><strong class="text-purple-700 dark:text-purple-200">Wants:</strong> {npc.wants}</p>
-              </li>
-            {/if}
-            {#if npc.found}
-              <li class="py-3">
-                <p class="text-sm font-medium"><strong class="text-purple-700 dark:text-purple-200">Often Found:</strong> {npc.found}</p>
-              </li>
-            {/if}
-          </ul>
-        </div>
-        </Card>
-        {/if}
-      </div>
-    </div>
-  </div>
   {/each}
   </div>
 </details>

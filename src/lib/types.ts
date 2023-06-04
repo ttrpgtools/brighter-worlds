@@ -166,6 +166,7 @@ export interface NpcInstance extends BaseNpc {
   wil: Attribute<DieValue, 0>;
   status: string;
   attacks: Item[];
+  armor: number;
 }
 
 export interface Encounter extends Identifiable, Named {
