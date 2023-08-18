@@ -251,6 +251,7 @@ export interface StartingGearOptions {
 }
 
 export interface StartingGear {
+  starting: Item[];
   str: StartingGearOptions;
   dex: StartingGearOptions;
   wil: StartingGearOptions;

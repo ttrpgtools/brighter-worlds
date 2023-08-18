@@ -14,13 +14,13 @@
   if ($wizard !== STEP.EQUIPMENT && browser) {
     goto(`/character/new`);
   }
-
+  
+  const gearTables = gearManager.list;
   function forward() {
-    const startingGear = filterEmpty(allPairs.map(combine));
-    wizard.setEquipment(startingGear);
+    const rolledGear = filterEmpty(allPairs.map(combine));
+    wizard.setEquipment([...$gearTables.starting, ...rolledGear]);
   }
 
-  const gearTables = gearManager.list;
 
   if (browser) {
     gearManager.loadList();

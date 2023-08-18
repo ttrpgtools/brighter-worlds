@@ -25,6 +25,7 @@
   import Icon from '$lib/Icon.svelte';
   import Loader from '$lib/Loader.svelte';
   import { writable } from 'svelte/store';
+  import { calculateGrit } from '$lib/util/grit';
 
   let loadStatus = writable('Loading...');
 
@@ -45,6 +46,8 @@
   });
   
   function persist() {
+    const newGrit = calculateGrit($character.dex.max, $character.wil.max);
+    $character.grit.max = newGrit;
     $character = $character;
   }
   

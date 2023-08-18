@@ -7,6 +7,7 @@ import { id } from '$lib/rolling/id';
 import { roll } from '$lib/rolling/roll';
 import { defined } from '$lib/util/array';
 import { getContext, hasContext, setContext } from 'svelte';
+import { calculateGrit } from '$lib/util/grit';
 
 type Builder = Writable<Partial<Character> & HasChoices>;
 
@@ -58,13 +59,21 @@ function createWizard(builder: Builder, intern: HasChoices) {
     },
     [STEP.ATTRIBUTES]: {
       setAttrs(attrs: Attrs) {
+        const grit = calculateGrit(attrs.dex, attrs.wil);
         builder.update(b => ({
           ...b,
+          grit: { current: grit, max: grit },
           str: { current: attrs.str, max: attrs.str },
           dex: { current: attrs.dex, max: attrs.dex },
           wil: { current: attrs.wil, max: attrs.wil },
         }))
-        return STEP.ABILITIES;
+        if (intern.choices?.some(x => x.choose === 'enhancement' && !x.linked)) {
+          return STEP.ENHANCEMENTS;
+        }
+        if (intern.choices?.some(x => x.choose === 'linked')) {
+          return STEP.COMPANION;
+        }
+        return STEP.EQUIPMENT;
       }
     },
     [STEP.ABILITIES]: {
