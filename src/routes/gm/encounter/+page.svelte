@@ -315,6 +315,6 @@
 </div>
 
 <div class="text-center my-6">
-  <MenuLink href="/" icon="logo-leaf">Home</MenuLink>
+  <MenuLink href="/gm" icon="nav-gm">GM Tools</MenuLink>
 </div>
 </main>

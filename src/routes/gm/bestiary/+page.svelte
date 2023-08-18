@@ -18,5 +18,5 @@
     <Beast stats={npc} />
     {/each}
   </div>
-  <MenuLink href="/" icon="logo-leaf">Home</MenuLink>
+  <MenuLink href="/gm" icon="nav-gm">GM Tools</MenuLink>
 </main>

@@ -16,6 +16,8 @@
   export let die: DieValue | DieValue[];
   export let direction: -1 | 1 = 1;
   export let posCls = '';
+  let klass = '';
+  export { klass as class };
 
   const settings = getSettings();
 
@@ -76,7 +78,7 @@
     });
   }
 </script>
-<div class="flex">
+<div class="flex {klass}">
   <div class="relative" use:manageCloser>
     {#if $popover.expanded}
     <div class="absolute z-10 {direction === 1 ? (posCls || `left-full translate-x-2`) : (posCls || `right-full -translate-x-2`)} flex gap-2 top-1/2 -translate-y-1/2 {direction === 1 ? 'flex-row' : 'flex-row-reverse'}">
