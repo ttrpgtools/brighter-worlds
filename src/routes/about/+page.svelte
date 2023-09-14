@@ -22,7 +22,7 @@
       There is a <a href="https://awkwardturtle.itch.io/brighter-worlds" target="_blank" rel="noreferrer">beautiful PDF available for purchase,</a> go buy it if you like the game.
     </p>
     <p>
-      <strong>Brighter Worlds Online</strong>, is created by <a href="https://ttrpg.tools" target="_blank" rel="noreferrer">Colin Bate</a>, and has no official connection to Brighter Worlds other than Colin being a fan and having David's approval. 
+      <strong>Brighter Worlds Online</strong> is an independent production by <a href="https://ttrpg.tools" target="_blank" rel="noreferrer">Colin Bate (TTRPG.tools)</a> and is not affiliated with AwkwardTurtle Games or David Lombardo. It is published under the Brighter Worlds Third Party License. Brighter Worlds is copyright AwkwardTurtle Games and David Lombardo.
     </p>
     <p>
       There is text used from the Brighter Worlds SRD, and that content is used under the CC-BY-SA 4.0 license. Any of the base callings, spells, rituals, equipment and creature desciptions fall under this license and are similarly licensed on this site. 
