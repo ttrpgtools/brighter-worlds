@@ -1,4 +1,5 @@
 <script>
+  import Footer from "$lib/Footer.svelte";
   import MenuLink from "$lib/MenuLink.svelte";
 </script>
 <main class="p-8 flex flex-col items-center justify-center gap-2 min-h-screen min-h-[100svh]">
@@ -8,5 +9,8 @@
     <MenuLink href="/gm/encounter" icon="nav-encounter">Encounters</MenuLink>
     <MenuLink href="/gm/bestiary" icon="nav-bestiary">Bestiary</MenuLink>
     <MenuLink href="/" icon="logo-leaf">Home</MenuLink>
+  </div>
+  <div class="pt-6">
+    <Footer></Footer>
   </div>
 </main>
