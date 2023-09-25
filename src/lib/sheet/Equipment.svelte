@@ -12,9 +12,12 @@
   import Icon from "$lib/Icon.svelte";
   import InputDialog from "$lib/InputDialog.svelte";
   import { id } from "$lib/rolling/id";
+  import { createEventDispatcher } from "svelte";
   export let equipment: Item[] = [];
   export let baseArmor: number | undefined = undefined;
   export let title = 'Equipment';
+  export let hideArmor = false;
+  export let selectable = false;
   let clazz = '';
   const instanceId = id();
   export { clazz as class };
@@ -31,6 +34,15 @@
 
   function editGear(id: string) {
     dialog.editGear(id);
+  }
+
+  const dispatch = createEventDispatcher();
+  function selectGear(item: Item) {
+    if (!selectable || draggable) {
+      editGear(item.id);
+    } else {
+      dispatch('select-item', item);
+    }
   }
 
   function addQuantity(item: Item, amt: number) {
@@ -67,10 +79,12 @@
         {#if equipment.length > 1}
         <IconButton icon="edit-order" padding={draggable ? `p-1 !bg-emerald-300 dark:!bg-emerald-700` : `p-1`} on:click={() => draggable = !draggable} />
         {/if}
+        {#if !hideArmor}
         <button class="relative {baseArmor == null ? 'cursor-default' : ''}" on:click={setBaseArmor}>
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="w-6"><path fill="currentColor" d="M256 0c4.6 0 9.2 1 13.4 2.9L457.7 82.8c22 9.3 38.4 31 38.3 57.2c-.5 99.2-41.3 280.7-213.7 363.2c-16.7 8-36.1 8-52.8 0C57.3 420.7 16.5 239.2 16 140c-.1-26.2 16.3-47.9 38.3-57.2L242.7 2.9C246.8 1 251.4 0 256 0z"/></svg>
           <div class="absolute w-full text-center text-lg top-1/2 -translate-y-1/2 leading-none text-white dark:text-gray-900">{totalArmor}</div>
         </button>
+        {/if}
         <button type="button" on:click={addGear} class="relative inline-flex items-center rounded-full bg-purple-300 dark:bg-purple-700 p-1 font-medium shadow-sm hover:bg-purple-200 dark:hover:bg-purple-800 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-900"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="h-4 w-4"><path fill="currentColor" d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z"/></svg></button>
       </div>
     </div>
@@ -83,7 +97,7 @@
         <div class="flex items-center space-x-4 group-data-[is-dnd-shadow-item]:invisible">
           <div class="min-w-0 flex-1 flex gap-2 items-center">
             {#if draggable}<Icon icon="grip-v" />{/if}
-            <p class="truncate text-sm font-medium cursor-pointer" title={item.name} on:click={() => editGear(item.id)} on:keydown={onEnter(() => editGear(item.id))}>{item.name}</p>
+            <p class="truncate text-sm font-medium cursor-pointer" title={item.name} on:click={() => selectGear(item)} on:keydown={onEnter(() => editGear(item.id))}>{item.name}</p>
           </div>
           <div class="flex gap-2 items-center">
             {#if item.quantity != null}

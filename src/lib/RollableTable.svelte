@@ -63,8 +63,11 @@
     }
     const selected = options[rolled - 1];
     if (selected != null) {
-      const tRoll = { roll: rolled, value: selected };
-      dispatch('roll', tRoll);
+      if (knownDie(sides)) {
+        dispatch('roll', { roll: rolled, value: selected, title, dice: [sides] });
+      } else {
+        dispatch('roll', { roll: rolled, value: selected, title, total: sides });
+      }
     }
   }
 </script>

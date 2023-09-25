@@ -14,7 +14,6 @@
     <MenuLink href="/character" icon="nav-characters">Characters</MenuLink>
     <MenuLink href="/arcana" icon="nav-arcana">Magna Arcana</MenuLink>
     <MenuLink href="/gm" icon="nav-gm">GM Tools</MenuLink>
-    <!-- <MenuLink href="/reliquary">Reliquary</MenuLink> -->
     <MenuLink href="/about" icon="nav-about">About</MenuLink>
   </div>
   <!-- <MenuLink href="/academy">Dream Academy</MenuLink> -->

@@ -1,22 +1,29 @@
 <script lang="ts">
-  import Beast from "$lib/entities/Beast.svelte";
-  import HomeLink from "$lib/HomeLink.svelte";
-  import MenuLink from "$lib/MenuLink.svelte";
+  import { getNpcInstance } from "$lib/data/encounter-manager";
+  import type { NpcStats } from "$lib/types";
+  import SidebarSection from "../SidebarSection.svelte";
+  import { addNpc, getPlaymat } from "../playmat";
   import type { PageData } from "./$types";
   
   export let data: PageData;
+  let mat = getPlaymat();
+
+  function addToMat(stats: NpcStats) {
+    const npc = getNpcInstance(stats);
+    addNpc(mat, npc);
+  }
 </script>
 <svelte:head>
   <title>Bestiary :: Brighter Worlds Online</title>
 </svelte:head>
-<HomeLink />
-<main class="p-4 sm:p-8 flex flex-col items-center gap-2">
-  <h2 class="font-title text-4xl text-center">The Creatures of Brighter Worlds</h2>
-  <div class="font-symbol text-6xl">A</div>
-  <div class="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-6 mb-6">
+<div class="flex flex-col gap-4">
+  <SidebarSection title="SRD Creatures" open>
+
     {#each data.npcs as npc}
-    <Beast stats={npc} />
+    <div class="flex flex-row justify-between">
+      <button type="button" class="cursor-pointer" on:click={() => addToMat(npc)}>{npc.name}</button>
+      <span>{npc.grit} Grit</span>
+    </div>
     {/each}
-  </div>
-  <MenuLink href="/gm" icon="nav-gm">GM Tools</MenuLink>
-</main>
+  </SidebarSection>
+</div>

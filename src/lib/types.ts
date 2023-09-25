@@ -34,6 +34,7 @@ export interface Entity {
   id: string;
   name: string;
   desc?: string;
+  image?: string | Blob;
 }
 
 export interface UsableEntity extends Entity {
@@ -222,6 +223,12 @@ export interface BaseRemoteMessage {
   name: string;
 }
 
+export interface RollResult {
+  dice: DieValue[];
+  result: number;
+  label?: string;
+}
+
 export interface RemoteRollMessage extends BaseRemoteMessage {
   type: 'roll';
   dice: DieValue[];
@@ -241,6 +248,9 @@ export type HandlerFn = (msg: RemoteMessage) => void;
 
 export interface TableRoll<T> {
   roll: number;
+  dice?: DieValue[];
+  total?: number;
+  title?: string;
   value: T;
 }
 
