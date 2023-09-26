@@ -88,7 +88,7 @@
       armor: armor($character.equipment),
       statuses: $character.statuses,
       grit: $character.grit.current,
-      die: $character[type].current,
+      dice: {str: $character.str.current, dex: $character.dex.current, wil: $character.wil.current},
     };
     
     const results = await damageDialog.getDamage(chinfo);

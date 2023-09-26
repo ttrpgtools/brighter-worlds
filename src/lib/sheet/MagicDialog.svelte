@@ -95,7 +95,7 @@
     const {name, desc, damage, blast} = (ev as CustomEvent<{selected: T}>).detail.selected;
     magicForm.desc = desc ?? '';
     magicForm.name = name;
-    magicForm.damage = damage ?? 0;
+    magicForm.damage = Array.isArray(damage) ? damage[0] : damage ?? 0;
     magicForm.blast = blast ?? false;
   }
 

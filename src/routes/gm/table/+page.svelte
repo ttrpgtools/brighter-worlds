@@ -25,7 +25,7 @@
   </SidebarSection>
   <SidebarSection title="Core Game Tables" open>
     <RollableTable options={encounterOpts} title="Dungeon Encounter Roll" on:roll={add} />
-    <ReactionRolls />
+    <ReactionRolls on:roll={add} />
   </SidebarSection>
 
   <SidebarSection title="Pending">

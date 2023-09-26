@@ -7,7 +7,7 @@
   export let settings: SheetSettings = { rollToBridge: false, rollToDiscord: false, discordWebhook: '' };
 
   let dialog: InputDialog<SheetSettings>;
-  let title = 'Sheet Settings';
+  export let title = 'Sheet Settings';
   let showDelete = false;
   let form = { ...settings };
   $: valid = !form.rollToDiscord || form.discordWebhook?.startsWith(DISCORD_API_BASE);

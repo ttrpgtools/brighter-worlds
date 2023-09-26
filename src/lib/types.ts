@@ -35,6 +35,7 @@ export interface Entity {
   name: string;
   desc?: string;
   image?: string | Blob;
+  icon?: string;
 }
 
 export interface UsableEntity extends Entity {
@@ -194,6 +195,7 @@ export interface DamageForm {
   bypassGrit: boolean;
   bypassArmor: boolean;
   overflow: boolean;
+  type: Attr;
 }
 
 export type Status = typeof status[keyof typeof status]
@@ -201,14 +203,15 @@ export type Status = typeof status[keyof typeof status]
 export interface DamageDetails {
   armor: number;
   grit: number;
-  type: Attr;
-  die: DieValue | 0;
+  type?: Attr;
+  dice: Record<Attr, DieValue | 0>;
   statuses: Set<string>;
 }
 
 export interface DamageResults {
   msg: string;
   dice: DieValue[];
+  type: Attr;
   grit?: number;
   die?: DieValue | 0;
   statuses?: Set<string>;

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { DamageDetails, DieValue } from '$lib/types';
+  import type { Encounter } from '$lib/types';
   import { encounters, getNpcInstance } from '$lib/data/encounter-manager';
   import { onMount } from 'svelte';
   import type { PageData } from './$types';
@@ -10,11 +10,9 @@
   import Button from '$lib/Button.svelte';
   import Icon from '$lib/Icon.svelte';
   import { getEncounterStates } from '$lib/data/ui-state';
-  import IconButton from '$lib/IconButton.svelte';
-  import { sendToDiscord } from '$lib/util/discord';
-  import NpcSheet from '../NpcSheet.svelte';
-  import { armor } from '$lib/util/character';
   import Disclosable from '$lib/Disclosable.svelte';
+  import { addScene, getPlaymat, addNpc as addNpcToMat } from '../playmat';
+  import { getNpcs } from '../bestiary/npcs';
 
 
   const encounterStates = getEncounterStates();
@@ -23,20 +21,16 @@
   let npcDialog: NpcDialog;
 
   const list = encounters.list;
+  const mat = getPlaymat();
+  const bestiary = getNpcs();
+
+  $: allNpcs = data.npcs.concat($bestiary);
 
   let loading = true;
 
   onMount(async () => {
     loading = false;
   });
-
-  function handleToggle(ev: Event, id: string) {
-    $encounterStates[id] = (ev.target as HTMLDetailsElement).open;
-  }
-  
-  function persist() {
-    $list = $list;
-  }
   
   function addEncounter() {
     encounters.create();
@@ -62,11 +56,21 @@
     }
   }
 
+  function addToMat(encounter: Encounter) {
+    addScene(mat, {
+      id: encounter.id,
+      name: encounter.name,
+      desc: encounter.notes,
+      icon: 'nav-encounter'
+    });
+    encounter.npcs?.forEach(n => addNpcToMat(mat, n));
+  }
+
 </script>
 <svelte:head>
   <title>Encounters :: Brighter Worlds Online</title>
 </svelte:head>
-<NpcDialog npcList={data.npcs} bind:this={npcDialog} />
+<NpcDialog npcList={allNpcs} bind:this={npcDialog} />
 
 <aside class="flex flex-col gap-4 w-full">
   <div class="flex flex-col gap-4 w-full max-w-4xl">
@@ -83,20 +87,22 @@
         <div class="flex flex-col gap-4">
           <input type="text" placeholder="Name" bind:value={encounter.name} class="rounded-full dark:bg-gray-900 dark:text-white focus:ring-purple-500 focus:border-purple-500">
           <div class="mx-2"><AutoTextarea bind:value={encounter.notes} maxRows={12} minRows={3}></AutoTextarea></div>
-          <div class="flex items-center gap-4 justify-between mb-4 border-b border-gray-200 dark:border-gray-600">
+          <div class="flex items-center gap-4 justify-between border-b border-gray-200 dark:border-gray-600">
             <h3 class="text-lg font-bold">NPCs</h3>
             <div>
               <button type="button" on:click={() => addNpc(eindex)} class="relative inline-flex items-center rounded-full bg-purple-300 dark:bg-purple-700 p-1 font-medium shadow-sm hover:bg-purple-200 dark:hover:bg-purple-800 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-900"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="h-4 w-4"><path fill="currentColor" d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z"/></svg></button>
             </div>
           </div>
-        </div>
-        <div class="flex flex-col gap-4">
-        {#each encounter.npcs as npc}
-        <div class="flex flex-row justify-between">
-          <div class="">{npc.name}</div>
-          <span>{npc.grit.max} Grit</span>
-        </div>
-        {/each}
+          {#each encounter.npcs as npc}
+          <div class="flex flex-row justify-between relative group/npc">
+            <div class="">{npc.name}</div>
+            <span>{npc.grit.max} Grit</span>
+            <button type="button" on:click={() => removeNpc(npc.id, eindex)} class="hidden absolute top-1/2 -translate-y-1/2 right-0 text-lg rounded-full leading-none h-6 w-6 bg-purple-300 dark:bg-purple-900 group-hover/npc:flex items-center justify-center"><span class="relative -top-px">&times;</span></button>
+          </div>
+          {/each}
+          <div class="text-center">
+            <Button on:click={() => addToMat(encounter)}>Add to Mat</Button>
+          </div>
         </div>
       </Disclosable>
     {:else}

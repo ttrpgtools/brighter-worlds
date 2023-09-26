@@ -11,6 +11,7 @@ const ENDGAME = {
 
 export function calculateDamage(character: DamageDetails, howmuch: DamageForm | undefined) {
   if (howmuch == null || howmuch.damage === '') return;
+  const dmgType = character.type ?? howmuch.type;
   const allDmg = howmuch.damage.split(/[#*,\s]+/);
   const allAmt = allDmg.map(x => parseInt(x, 10)).filter(x => !Number.isNaN(x) && x !== 0);
   if (allAmt.length === 0) return;
@@ -18,12 +19,13 @@ export function calculateDamage(character: DamageDetails, howmuch: DamageForm | 
   if (!howmuch.bypassArmor) {
     unmitigated = allAmt.reduce((p, c) => p + Math.max(c - character.armor, 0), 0);
     if (unmitigated <= 0) {
-      return { msg: 'Your armor protected you from the damage.', dice: [] };
+      return { msg: 'Your armor protected you from the damage.', dice: [], type: dmgType };
     }
   } else {
     unmitigated = allAmt.reduce((p, c) => p + c, 0);
   }
-  const result: DamageResults = { msg: '', dice: [] };
+  
+  const result: DamageResults = { msg: '', dice: [], type: dmgType };
   if (!howmuch.bypassGrit) {
     if (character.grit > 0) {
       const gritUsed = Math.min(character.grit, unmitigated);
@@ -37,12 +39,12 @@ export function calculateDamage(character: DamageDetails, howmuch: DamageForm | 
   }
   // Direct Damage taken at this point.
   const dd = unmitigated;
-  const currentAttr = character.die;
+  const currentAttr = character.dice[dmgType];
   if (currentAttr === 0) {
-    result.msg = ENDGAME[character.type].msg;
+    result.msg = ENDGAME[dmgType].msg;
     result.statuses = new Set(character.statuses);
     result.statuses.delete(status.INCAPACITATED);
-    result.statuses.add(ENDGAME[character.type].status);
+    result.statuses.add(ENDGAME[dmgType].status);
     return result;
   }
   let newAttr: DieValue | 0 = currentAttr;
@@ -79,7 +81,7 @@ export function calculateDamage(character: DamageDetails, howmuch: DamageForm | 
       result.statuses = new Set(character.statuses);
       result.statuses.add(status.INCAPACITATED);
     } else {
-      ps = `Your ${character.type.toUpperCase()} d${currentAttr} is now a d${newAttr}.`;
+      ps = `Your ${dmgType.toUpperCase()} d${currentAttr} is now a d${newAttr}.`;
     }
     if (ofCount > 0) {
       if (saveAgainstDirectDamage > 0) {

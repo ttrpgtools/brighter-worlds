@@ -1,6 +1,10 @@
-<script>
+<script lang="ts">
   import Card from "$lib/Disclosable.svelte";
   import { rolls } from "$lib/rolling/roll";
+  import type { TableRoll } from "$lib/types";
+  import { createEventDispatcher } from "svelte";
+
+  const dispatch = createEventDispatcher<{roll: TableRoll<string>}>();
 
   let reaction = 'Pending...';
   let rolled = false;
@@ -17,6 +21,7 @@
     reaction = `${text} (${results[0]} + ${results[1]})`;
     indicator = color;
     rolled = true;
+    dispatch('roll', { dice: [6, 6], value: text, roll: total, title: 'Reaction Roll' });
   }
 </script>
 

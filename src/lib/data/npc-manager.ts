@@ -8,7 +8,7 @@ class NpcManager extends JsonDataManager<NpcStats> {
       id: 'beast-default',
       name: 'Untitled',
       grit: 3,
-      str: 4,
+      str: 6,
       dex: 6,
       wil: 6,
       armor: 0,

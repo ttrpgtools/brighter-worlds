@@ -18,6 +18,7 @@
   export let title = 'Equipment';
   export let hideArmor = false;
   export let selectable = false;
+  export let flat = false;
   let clazz = '';
   const instanceId = id();
   export { clazz as class };
@@ -62,7 +63,7 @@
     }
   }
 </script>
-<Card class={clazz}>
+<Card class={clazz} inside={flat}>
   <EquipmentDialog bind:equipment bind:this={dialog} />
   <InputDialog bind:this={baseArmorDialog} form={baseArmorForm}>
     <form class="flex gap-4 items-center">
@@ -76,7 +77,7 @@
     </div>
     <div class="flex-shrink-0">
       <div class="flex gap-4 items-center">
-        {#if equipment.length > 1}
+        {#if equipment.length > 1 || selectable}
         <IconButton icon="edit-order" padding={draggable ? `p-1 !bg-emerald-300 dark:!bg-emerald-700` : `p-1`} on:click={() => draggable = !draggable} />
         {/if}
         {#if !hideArmor}
@@ -93,7 +94,7 @@
   <div>
     <div class="flow-root">
       {#if equipment.length}
-      <DraggableList {draggable} bind:list={equipment} class="-my-5 divide-y divide-gray-200 dark:divide-gray-600" itemClass="py-3 relative !visible group" {transformDraggedElement} let:item>
+      <DraggableList {draggable} bind:list={equipment} class="{flat ? `-mt-5` : `-my-5`} divide-y divide-gray-200 dark:divide-gray-600" itemClass="py-3 relative !visible group" {transformDraggedElement} let:item>
         <div class="flex items-center space-x-4 group-data-[is-dnd-shadow-item]:invisible">
           <div class="min-w-0 flex-1 flex gap-2 items-center">
             {#if draggable}<Icon icon="grip-v" />{/if}

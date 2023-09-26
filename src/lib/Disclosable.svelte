@@ -1,6 +1,7 @@
 <script lang="ts">
 export let title = 'Summary';
 export let open = false;
+export let overflowable = false;
 let classProp: string | undefined = undefined;
 export { classProp as class };
 </script>
@@ -10,7 +11,7 @@ export { classProp as class };
       <h3 class="text-xl font-subtitle leading-6 flex-1">{title}</h3>
     </slot>
   </summary>
-  <div class="px-4 py-5 sm:p-6 flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
+  <div class="px-4 py-5 sm:p-6 flex flex-col flex-1 {overflowable ? `` : `overflow-y-auto overflow-x-hidden`}">
     <slot></slot>
   </div>
 </details>

@@ -21,7 +21,7 @@
   }
 </script>
 <div class="flex flex-col gap-4">
-  <SidebarSection title="Custom Items" open addable>
+  <SidebarSection title="Custom Items" open>
     <Equipment bind:equipment={$reliquary} title="Relics" hideArmor selectable on:select-item={add}></Equipment>
   </SidebarSection>
   <SidebarSection title="SRD Items">
