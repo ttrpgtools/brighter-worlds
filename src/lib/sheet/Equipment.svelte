@@ -19,6 +19,7 @@
   export let hideArmor = false;
   export let selectable = false;
   export let flat = false;
+  export let allowFormula = false;
   let clazz = '';
   const instanceId = id();
   export { clazz as class };
@@ -64,7 +65,7 @@
   }
 </script>
 <Card class={clazz} inside={flat}>
-  <EquipmentDialog bind:equipment bind:this={dialog} />
+  <EquipmentDialog bind:equipment bind:this={dialog} {allowFormula} />
   <InputDialog bind:this={baseArmorDialog} form={baseArmorForm}>
     <form class="flex gap-4 items-center">
       <label for="basearmor-{instanceId}">Base Armor</label>
@@ -106,6 +107,11 @@
               <IconButton icon="up" padding="p-1.5" on:click={() => addQuantity(item, 1)}/>
               <span class="inline-block min-w-[2rem] text-center">{item.quantity}</span>
               <IconButton icon="down" padding="p-1.5" on:click={() => addQuantity(item, -1)}/>
+            </div>
+            {/if}
+            {#if allowFormula && item.quantFormula}
+            <div class="font-medium text-sm">
+              ({item.quantFormula})
             </div>
             {/if}
             {#if item.bulky}<span class="inline-flex items-center rounded-full dark:bg-purple-100 px-2.5 py-0.5 text-xs font-medium dark:text-purple-800 bg-purple-800 text-purple-100">Bulky</span>{/if}

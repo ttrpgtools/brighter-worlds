@@ -6,5 +6,3 @@ export const load: PageServerLoad = async function() {
     npcs: [npcManager.getDefault(), ...npcManager.getAll()],
   };
 }
-
-export const prerender = true;

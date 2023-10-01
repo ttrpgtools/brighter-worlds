@@ -1,11 +1,14 @@
 <script>
+  import { rollFormula } from '$lib/rolling/roll';
   import SidebarSection from './SidebarSection.svelte';
+  let formula = '';
+  let result = 0;
+  function rollit() {
+    result = rollFormula(formula);
+  }
 </script>
 
 <div class="flex flex-col gap-4">
-
-  
-
   <SidebarSection title="Rules of Combat">
     <div id="rules-of-combat" class="prose dark:prose-invert prose-sm prose-h1:font-subtitle">
       <h2 id="rounds-and-initiative">
@@ -135,4 +138,8 @@
       </p>
     </div>
   </SidebarSection>
+
+  <input type="text" bind:value={formula} class="rounded-full dark:bg-gray-900 dark:text-white focus:ring-purple-500 focus:border-purple-500">
+  <button on:click={rollit}>Roll</button>
+  <div>{result}</div>
 </div>

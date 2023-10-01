@@ -7,9 +7,9 @@
   import DamageDialog from "$lib/sheet/DamageDialog.svelte";
   import Roller from "$lib/sheet/Roller.svelte";
   import SheetSettings from "$lib/sheet/SheetSettings.svelte";
-  import type { DamageDetails, DieValue, NpcInstance } from "$lib/types";
+  import type { DamageDetails, DieValue, Entity, Item, NpcInstance } from "$lib/types";
   import { armor } from "$lib/util/character";
-  import { sendToDiscord } from "$lib/util/discord";
+  import { sendToDiscord, sendSceneToDiscord, sendItemToDiscord } from "$lib/util/discord";
   import { getPlaymat, addRoll } from "./playmat";
 
   let dice: DiceDialog;
@@ -78,6 +78,18 @@
   export function basicRoll(ev: CustomEvent<{ dice: DieValue[], name: string }>, npcname = 'NPC') {
     const { dice, name } = ev.detail;
     showRoll(dice, name, npcname);
+  }
+
+  export function shareScene(scene: Entity) {
+    if ($encountersSettings?.rollToDiscord) {
+      sendSceneToDiscord(scene, $encountersSettings.discordWebhook);
+    }
+  }
+
+  export function shareItem(item: Item) {
+    if ($encountersSettings?.rollToDiscord) {
+      sendItemToDiscord(item, $encountersSettings.discordWebhook);
+    }
   }
 </script>
 <DiceDialog bind:this={dice} />

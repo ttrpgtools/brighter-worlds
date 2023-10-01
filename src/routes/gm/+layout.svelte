@@ -3,8 +3,10 @@
   import Disclosable from "$lib/Disclosable.svelte";
   import Icon from "$lib/Icon.svelte";
   import MenuLink from "$lib/MenuLink.svelte";
+  import type { Entity, Item } from "$lib/types";
   import GmLink from "./GmLink.svelte";
   import GmTools from "./GmTools.svelte";
+  import ItemBlock from "./ItemBlock.svelte";
   import NpcSheet from "./NpcSheet.svelte";
   import Scene from "./Scene.svelte";
   import { getPlaymat, clearMat, removeItem } from "./playmat";
@@ -15,6 +17,12 @@
 
   function npcRoll(name: string) {
     return (ev: CustomEvent) => tools.basicRoll(ev, name);
+  }
+  function shareScene(scene: Entity) {
+    return () => tools.shareScene(scene);
+  }
+  function shareItem(item: Item) {
+    return () => tools.shareItem(item);
   }
 </script>
 <main class="flex flex-col min-h-screen min-h-[100svh]">
@@ -29,7 +37,7 @@
 
   <!-- 3 column wrapper -->
   <div class="mx-auto w-full max-w-7xl grow lg:flex xl:px-2">
-    <div class="shrink-0 border-b border-gray-200 dark:border-gray-600 px-4 py-6 sm:px-6 lg:w-96 lg:border-r lg:border-b-0 lg:pr-8 xl:pr-6">
+    <div class="shrink-0 border-b border-gray-200 dark:border-gray-600 px-4 py-6 sm:px-6 lg:w-[26rem] lg:border-r lg:border-b-0 lg:pr-8 xl:pr-6">
       <!-- Left column area -->
       <div class="flex flex-row gap-1 border-b border-purple-700 dark:border-purple-300 mb-4">
         <GmLink href="/gm" icon="nav-rungame" title="Run Game"></GmLink>
@@ -57,21 +65,11 @@
         </div>
         {#each $mat as item}
           {#if item.type === 'scene'}
-            <Scene scene={item.scene} on:remove={() => removeItem(mat, item)}/>
+            <Scene scene={item.scene} on:remove={() => removeItem(mat, item)} on:share={shareScene(item.scene)}/>
           {:else if item.type === 'npc'}
             <NpcSheet bind:npc={item.npc} on:confirm={() => removeItem(mat, item)} on:roll={npcRoll(item.npc.name)} on:damage={async () => { if (item.type === 'npc') { await tools.takeDamage(item.npc); item.npc = item.npc; } }} />
           {:else if item.type === 'item'}
-            <Disclosable>
-              <svelte:fragment slot="header">
-                <h3 class="text-xl font-subtitle leading-6 flex-1 flex items-center gap-2"><Icon icon="nav-relics"/><span class="relative top-0.5">{item.item.name}</span></h3>
-                <div class="ml-auto flex gap-3">
-                  <DeleteButton on:confirm={() => removeItem(mat, item)} size="w-3 h-3"/>
-                </div>
-              </svelte:fragment>
-              <div class="prose dark:prose-invert prose-purple">
-                {@html item.item.desc}
-              </div>
-            </Disclosable>
+            <ItemBlock item={item.item} on:confirm={() => removeItem(mat, item)} on:share={shareItem(item.item)} />
           {:else if item.type === 'roll'}
             {@const diceStr = item.roll.dice.length ? ` (${item.roll.dice.map(s => `d${s}`).join(' | ')})` : ``}
             <div class="border border-gray-200 dark:border-gray-600 rounded-md p-3 relative group/roll">

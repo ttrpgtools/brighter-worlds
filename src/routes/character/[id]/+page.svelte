@@ -59,7 +59,7 @@
       broadcast.set({id: $character.id, name: $character.name, type: 'roll', dice: sides, result: best, label});
     }
     if ($character.settings?.rollToDiscord) {
-      sendToDiscord($character.name, best, label, $character.settings.discordWebhook, sides);
+      sendToDiscord($character.name, best, label, $character.settings.discordWebhook, sides, $character.name);
     }
     dice.show(`${best}`, sides, label);
     console.log(`${label} =`, best);

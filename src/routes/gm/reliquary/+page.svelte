@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { rollFormula } from "$lib/rolling/roll";
   import Equipment from "$lib/sheet/Equipment.svelte";
   import type { Item } from "$lib/types";
   import SidebarSection from "../SidebarSection.svelte";
@@ -12,6 +13,9 @@
 
   function addToMat(item: Item) {
     const cloned = structuredClone(item);
+    if (cloned.quantFormula) {
+      cloned.quantity = rollFormula(cloned.quantFormula);
+    }
     addItem(mat, cloned);
   }
 
@@ -22,7 +26,7 @@
 </script>
 <div class="flex flex-col gap-4">
   <SidebarSection title="Custom Items" open>
-    <Equipment bind:equipment={$reliquary} title="Relics" hideArmor selectable on:select-item={add}></Equipment>
+    <Equipment bind:equipment={$reliquary} title="Relics" hideArmor selectable on:select-item={add} allowFormula></Equipment>
   </SidebarSection>
   <SidebarSection title="SRD Items">
     {#each data.relics as relic}

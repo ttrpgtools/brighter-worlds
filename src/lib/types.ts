@@ -50,6 +50,7 @@ export interface Item extends UsableEntity {
   armor?: number;
   fragile?: boolean;
   quantity?: number;
+  quantFormula?: string;
   enableMagic?: boolean | { type: MagicType | 'all', count?: number }
 }
 
