@@ -7,7 +7,7 @@
   import DamageDialog from "$lib/sheet/DamageDialog.svelte";
   import Roller from "$lib/sheet/Roller.svelte";
   import SheetSettings from "$lib/sheet/SheetSettings.svelte";
-  import type { DamageDetails, DieValue, Entity, Item, NpcInstance } from "$lib/types";
+  import type { CustomRolltableDef, DamageDetails, DieValue, Entity, Item, NpcInstance } from "$lib/types";
   import { armor } from "$lib/util/character";
   import { sendToDiscord, sendSceneToDiscord, sendItemToDiscord } from "$lib/util/discord";
   import { getPlaymat, addRoll } from "./playmat";
@@ -94,6 +94,7 @@
 </script>
 <DiceDialog bind:this={dice} />
 <DamageDialog bind:this={damageDialog} />
+
 <SheetSettings bind:this={settingsDialog} bind:settings={$encountersSettings} title="GM Settings" />
 <Roller on:roll={(ev) => showRoll([ev.detail], 'Custom Roll', 'GM')} />
 

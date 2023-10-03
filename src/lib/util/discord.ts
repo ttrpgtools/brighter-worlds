@@ -80,6 +80,7 @@ export async function sendItemToDiscord(item: Item, hook: string) {
   };
   if (item.desc) discordItem.description = item.desc;
   if (item.image && typeof item.image === 'string') discordItem.image = { url: item.image };
+  if (item.quantity) discordItem.fields.push({ name: 'Quantity', value: `${item.quantity}`});
   if (item.bulky) discordItem.fields.push({ name: 'Bulky', value: 'true', inline: true });
   if (item.armor) discordItem.fields.push({ name: 'Armor', value: `${item.armor}`, inline: true });
   if (item.damage) discordItem.fields.push({ name: 'Damage', value: wrap(item.damage).map(d => `d${d}`).join(' | '), inline: true });

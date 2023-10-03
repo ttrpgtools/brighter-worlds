@@ -21,7 +21,7 @@
     reaction = `${text} (${results[0]} + ${results[1]})`;
     indicator = color;
     rolled = true;
-    dispatch('roll', { dice: [6, 6], value: text, roll: total, title: 'Reaction Roll' });
+    dispatch('roll', { dice: [6, 6], value: [text], roll: total, title: 'Reaction Roll' });
   }
 </script>
 

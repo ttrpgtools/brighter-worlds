@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Encounter } from '$lib/types';
-  import { encounters, getNpcInstance } from '$lib/data/encounter-manager';
+  import { encounters } from '$lib/data/encounter-manager';
   import { onMount } from 'svelte';
   import type { PageData } from './$types';
   import AutoTextarea from '$lib/AutoTextarea.svelte';
@@ -11,7 +11,7 @@
   import Icon from '$lib/Icon.svelte';
   import { getEncounterStates } from '$lib/data/ui-state';
   import Disclosable from '$lib/Disclosable.svelte';
-  import { addScene, getPlaymat, addNpc as addNpcToMat } from '../playmat';
+  import { addEncounter as addEncounterToMat, getPlaymat } from '../playmat';
   import { getNpcs } from '../bestiary/npcs';
 
 
@@ -50,20 +50,14 @@
     const stats = await npcDialog.select();
     console.log('NPC', stats);
     if (stats) {
-      const instance = getNpcInstance(stats);
-      console.log('Instance', instance);
-      $list[encounter].npcs = append($list[encounter].npcs, instance);
+      const copy = structuredClone(stats);
+      console.log('NPC Copy', copy);
+      $list[encounter].npcs = append($list[encounter].npcs, copy);
     }
   }
 
   function addToMat(encounter: Encounter) {
-    addScene(mat, {
-      id: encounter.id,
-      name: encounter.name,
-      desc: encounter.notes,
-      icon: 'nav-encounter'
-    });
-    encounter.npcs?.forEach(n => addNpcToMat(mat, n));
+    addEncounterToMat(mat, encounter);
   }
 
 </script>
@@ -86,7 +80,7 @@
         </svelte:fragment>
         <div class="flex flex-col gap-4">
           <input type="text" placeholder="Name" bind:value={encounter.name} class="rounded-full dark:bg-gray-900 dark:text-white focus:ring-purple-500 focus:border-purple-500">
-          <div class="mx-2"><AutoTextarea bind:value={encounter.notes} maxRows={12} minRows={3}></AutoTextarea></div>
+          <div class="mx-2"><AutoTextarea bind:value={encounter.desc} maxRows={12} minRows={3}></AutoTextarea></div>
           <div class="flex items-center gap-4 justify-between border-b border-gray-200 dark:border-gray-600">
             <h3 class="text-lg font-bold">NPCs</h3>
             <div>
@@ -96,7 +90,7 @@
           {#each encounter.npcs as npc}
           <div class="flex flex-row justify-between relative group/npc">
             <div class="">{npc.name}</div>
-            <span>{npc.grit.max} Grit</span>
+            <span>{npc.grit} Grit</span>
             <button type="button" on:click={() => removeNpc(npc.id, eindex)} class="hidden absolute top-1/2 -translate-y-1/2 right-0 text-lg rounded-full leading-none h-6 w-6 bg-purple-300 dark:bg-purple-900 group-hover/npc:flex items-center justify-center"><span class="relative -top-px">&times;</span></button>
           </div>
           {/each}

@@ -147,9 +147,7 @@ export interface CharacterSummary extends Attrs {
   sortkey: number;
 }
 
-interface BaseNpc {
-  id: string;
-  name: string;
+interface BaseNpc extends Entity {
   armor?: number;
   notes: string[],
   wants?: string,
@@ -172,10 +170,9 @@ export interface NpcInstance extends BaseNpc {
   armor: number;
 }
 
-export interface Encounter extends Identifiable, Named {
+export interface Encounter extends Entity {
   [EMPTY]?: boolean | undefined;
-  npcs: NpcInstance[];
-  notes: string;
+  npcs: NpcStats[];
 }
 
 export interface Calling extends Entity, HasChoices {
@@ -220,6 +217,27 @@ export interface DamageResults {
   dd?: number;
 }
 
+export interface MultiValueOption {
+  trigger: number | [number, number];
+}
+
+interface TextRolltableOption extends MultiValueOption {
+  type: 'text';
+  value: string;
+}
+
+interface EntityRolltableOption extends MultiValueOption {
+  type: 'entity';
+  value: Entity;
+}
+
+export type RolltableOption = TextRolltableOption | EntityRolltableOption;
+
+export interface CustomRolltableDef extends Entity {
+  formula: string;
+  options: RolltableOption[];
+}
+
 export type RemoteMessageType = 'roll' | 'intro';
 
 export interface BaseRemoteMessage {
@@ -255,7 +273,7 @@ export interface TableRoll<T> {
   dice?: DieValue[];
   total?: number;
   title?: string;
-  value: T;
+  value: T[];
 }
 
 export interface StartingGearOptions {
