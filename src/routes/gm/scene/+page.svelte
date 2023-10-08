@@ -1,9 +1,9 @@
 <script lang="ts">
-  import type { Entity } from "$lib/types";
+  import type { Entity, Identifiable } from "$lib/types";
   import SceneDialog from "../SceneDialog.svelte";
   import SidebarSection from "../SidebarSection.svelte";
   import { addScene as addSceneToMat, getPlaymat } from "../playmat";
-  import { getScenes, addScene, updateScene } from "./scenes";
+  import { getScenes } from "./scenes";
 
   let sceneDialog: SceneDialog;
   let scenes = getScenes();
@@ -15,18 +15,25 @@
   async function newScene() {
     const s = await sceneDialog.getNew();
     if (s) {
-      addScene(scenes, s);
+      scenes.appendItem(s);
     }
   }
 
   async function editScene(scene: Entity) {
     const s = await sceneDialog.edit(scene);
     if (s) {
-      updateScene(scenes, s);
+      scenes.updateItem(s);
+    }
+  }
+
+  function remove(ev: CustomEvent<Identifiable>) {
+    const {id} = ev.detail;
+    if (id) {
+      scenes.removeItem(id);
     }
   }
 </script>
-<SceneDialog bind:this={sceneDialog} />
+<SceneDialog bind:this={sceneDialog} on:delete={remove} />
 <div class="flex flex-col gap-4">
   <SidebarSection title="Custom Scenes" addable on:click={newScene} open>
     {#each $scenes as scene}

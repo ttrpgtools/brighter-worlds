@@ -62,7 +62,7 @@ export async function sendToDiscord(name: string, result: number, label: string,
 
 export async function sendSceneToDiscord(item: Entity, hook: string) {
   const discordItem: DiscordEmbed = {
-    title: item.name,
+    title: '',//item.name,
     fields: [],
     footer: { text: 'Scene' },
     color: COLOR_SCENE,

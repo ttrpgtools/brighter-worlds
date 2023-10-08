@@ -34,7 +34,7 @@ function getEmptyEncounter() {
     id: id(),
     name: 'Untitled',
     npcs: [],
-    notes: '',
+    desc: '',
   };
   return empty;
 }

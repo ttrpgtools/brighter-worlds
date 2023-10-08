@@ -1,21 +1,21 @@
 <script lang="ts">
   import DeleteButton from "$lib/DeleteButton.svelte";
-import Disclosable from "$lib/Disclosable.svelte";
-import { getNpcInstance } from "$lib/data/encounter-manager";
+  import Disclosable from "$lib/Disclosable.svelte";
+  import { getNpcInstance } from "$lib/data/encounter-manager";
   import DieSelector from "$lib/sheet/DieSelector.svelte";
   import Equipment from "$lib/sheet/Equipment.svelte";
   import type { NpcStats } from "$lib/types";
   import SidebarSection from "../SidebarSection.svelte";
   import { addNpc as addNpcToMat, getPlaymat } from "../playmat";
   import type { PageData } from "./$types";
-  import { getNpcs, addNpc, removeNpc } from "./npcs";
+  import { getNpcs } from "./npcs";
   
   export let data: PageData;
   let mat = getPlaymat();
   let bestiary = getNpcs();
 
   function createNpc() {
-    addNpc(bestiary, {
+    bestiary.appendItem({
       id: '',
       name: '',
       notes: [],
@@ -56,7 +56,7 @@ import { getNpcInstance } from "$lib/data/encounter-manager";
         </div>
         <Equipment bind:equipment={npc.attacks} bind:baseArmor={npc.armor} title="Attacks" flat />
         <div class="text-right">
-          <DeleteButton size="w-3 h-3" on:confirm={() => removeNpc(bestiary, npc)} />
+          <DeleteButton size="w-3 h-3" on:confirm={() => bestiary.removeItem(npc)} />
         </div>
       </div>
     </Disclosable>

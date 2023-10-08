@@ -45,20 +45,24 @@
     }
   }
 
+  let showDelete = false;
+
   export async function getNew() {
+    showDelete = false;
     form = newForm();
     const item = await showForm();
     return item;
   }
 
   export async function edit(existing: Entity) {
+    showDelete = true;
     form = editForm(existing);
     const item = await showForm();
     return item;
   }
 
 </script>
-<InputDialog title="Scene" scrollable={false} {valid} showDelete={false} dice={[]} bind:this={dialog} form={form}>
+<InputDialog title="Scene" scrollable={false} {valid} {showDelete} dice={[]} bind:this={dialog} form={form} on:delete>
   <form class="text-center flex flex-col gap-2">
     <input type="text" data-1p-ignore name="name" placeholder="Name" bind:value={form.name} class="rounded-full dark:bg-gray-900 dark:text-white focus:ring-purple-500 focus:border-purple-500">
     <input type="text" name="image" placeholder="Image URL" bind:value={form.image} class="rounded-full dark:bg-gray-900 dark:text-white focus:ring-purple-500 focus:border-purple-500">
