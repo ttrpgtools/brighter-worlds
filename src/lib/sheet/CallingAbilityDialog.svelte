@@ -217,7 +217,7 @@
       {:else if $ui === 'companion'}
       <div>
         <form class="text-center flex flex-col gap-2">
-          <input type="text" name="name" placeholder="Name" bind:value={form.name} class="rounded-full dark:bg-gray-900 dark:text-white focus:ring-purple-500 focus:border-purple-500 flex-grow">
+          <input type="text" name="name" data-1p-ignore placeholder="Name" bind:value={form.name} class="rounded-full dark:bg-gray-900 dark:text-white focus:ring-purple-500 focus:border-purple-500 flex-grow">
           <input type="text" name="desc" placeholder="Description" bind:value={form.desc} class="rounded-full dark:bg-gray-900 dark:text-white focus:ring-purple-500 focus:border-purple-500 flex-grow">
           <input type="text" name="details" placeholder="Type" bind:value={form.details} class="rounded-full dark:bg-gray-900 dark:text-white focus:ring-purple-500 focus:border-purple-500 flex-grow">
         </form>
