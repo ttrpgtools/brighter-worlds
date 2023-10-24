@@ -7,18 +7,18 @@
   import DamageDialog from "$lib/sheet/DamageDialog.svelte";
   import Roller from "$lib/sheet/Roller.svelte";
   import SheetSettings from "$lib/sheet/SheetSettings.svelte";
-  import type { CustomRolltableDef, DamageDetails, DieValue, Entity, Item, NpcInstance } from "$lib/types";
+  import type { DamageDetails, DieValue, Entity, Item, NpcInstance } from "$lib/types";
   import { armor } from "$lib/util/character";
   import { sendToDiscord, sendSceneToDiscord, sendItemToDiscord } from "$lib/util/discord";
-  import { getPlaymat, addRoll } from "./playmat";
+  import { addRoll, getRollLog } from "./playmat";
 
   let dice: DiceDialog;
   let damageDialog: DamageDialog;
   let settingsDialog: SheetSettings;
 
   const encountersSettings = getEncountersSettings();
-  const mat = getPlaymat();
-
+  const log = getRollLog();
+  
   function showRoll(sides: DieValue[], label: string = '', name = 'NPC') {
     const best = sides.reduce((p, c) => Math.max(roll(c), p), 0);
     
@@ -33,7 +33,7 @@
     dice.show(`${best}`, sides, label);
     console.log(`${label} =`, best);
 
-    addRoll(mat, {
+    addRoll(log, {
       dice: sides,
       result: best,
       label: `${name}: ${label}`,
@@ -67,7 +67,7 @@
     dice.show('Damage', results.dice, results.msg);
 
     if (results.save) {
-      addRoll(mat, {
+      addRoll(log, {
         dice: results.dice,
         result: results.save,
         label: `${npc.name}: ${results.type.toUpperCase()} save against ${results.dd ?? '?'} direct damage.`,

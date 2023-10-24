@@ -6,7 +6,7 @@
   import CustomRolltable from "../CustomRolltable.svelte";
   import SidebarSection from "../SidebarSection.svelte";
   import RolltableDialog from "../RolltableDialog.svelte";
-  import { addEncounter, addItem, addNpc, addRoll, getPlaymat } from "../playmat";
+  import { addEncounter, addItem, addNpc, addRoll, getPlaymat, getRollLog } from "../playmat";
   import type { PageData } from "./$types";
   import { getNpcs } from "../bestiary/npcs";
   import { getRelics } from "../reliquary/relics";
@@ -37,13 +37,14 @@
   ];
 
   let mat = getPlaymat();
+  let log = getRollLog();
 
   let tables = getTables();
 
   function addRich(ev: CustomEvent<TableRoll<RolltableOption>>) {
     const roll = ev.detail;
     const first = roll.value[0];
-    addRoll(mat, {
+    addRoll(log, {
       result: roll.roll,
       dice: roll.dice ?? [],
       label: `${roll.title}: ${first.type === 'text' ? first.value : first.value.name}`

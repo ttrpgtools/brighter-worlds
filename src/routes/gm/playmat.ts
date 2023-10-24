@@ -27,12 +27,14 @@ interface PMRoll {
   roll: RollResult;
 }
 
-export type PlaymatItem = PMScene | PMItem | PMNpc | PMRoll;
+export type PlaymatItem = PMScene | PMItem | PMNpc;
 
 export type Playmat = PlaymatItem[];
 
 const PLAYMAT_KEY = 'bw-playmat';
+const ROLLLOG_KEY = 'bw-rolllog';
 export const getPlaymat = getContextStore<Playmat>(PLAYMAT_KEY, []);
+export const getRollLog = getContextStore<PMRoll[]>(ROLLLOG_KEY, []);
 
 function add(mat: ReturnType<typeof getPlaymat>, item: PlaymatItem) {
   const newId = id();
@@ -52,8 +54,8 @@ export function addScene(mat: ReturnType<typeof getPlaymat>, scene: Entity) {
   add(mat, {id: '', type: 'scene', scene});
 }
 
-export function addRoll(mat: ReturnType<typeof getPlaymat>, roll: RollResult) {
-  add(mat, {id: '', type: 'roll', roll});
+export function addRoll(mat: ReturnType<typeof getRollLog>, roll: RollResult) {
+  mat.update(list => [...list, {id: id(), type: 'roll', roll}]);
 }
 
 export function addEncounter(mat: ReturnType<typeof getPlaymat>, enc: Encounter) {
@@ -68,5 +70,15 @@ export function removeItem(mat: ReturnType<
 }
 
 export function clearMat(mat: ReturnType<typeof getPlaymat>) {
+  mat.set([]);
+}
+
+export function removeRoll(mat: ReturnType<
+  typeof getRollLog>, item: PMRoll | string) {
+  const id = typeof(item) === 'string' ? item : item.id;
+  mat.update(list => list.filter(x => x.id !== id));
+}
+
+export function clearRollLog(mat: ReturnType<typeof getRollLog>) {
   mat.set([]);
 }
