@@ -1,7 +1,7 @@
 <script lang="ts">
   import InputDialog from "$lib/InputDialog.svelte";
   import { id } from "$lib/rolling/id";
-  import type { NpcStats, CustomRolltableDef, RolltableOption, Encounter, Item } from "$lib/types";
+  import type { NpcStats, CustomRolltableDef, RolltableOption, Encounter, Item, Entity } from "$lib/types";
 
   export let npcList: NpcStats[] = [];
   export let encList: Encounter[] = [];
@@ -25,8 +25,9 @@
 
   function editForm(existing: CustomRolltableDef) {
     const { id, name, formula, options } = existing;
+    const realOptions = options.map(opt => opt.type === 'text' ? opt : {...opt, value: encList.find(x => x.id === opt.value.id) ?? relicList.find(x => x.id === opt.value.id) ?? npcList.find(x => x.id === opt.value.id) });
     return {
-      id, name, formula, options
+      id, name, formula, options: realOptions
     } as DialogForm;
   }
 
@@ -62,7 +63,14 @@
   function addOption() {
     form.options = [...form.options, {type: 'text', value: '', trigger: form.options.length + 1 }];
     form = form;
-  } 
+  }
+
+  function getId(item: string | Entity) {
+    if (typeof item === 'string') {
+      return '-';
+    }
+    return item;
+  }
 </script>
 <InputDialog title="Roll Table" scrollable={false} {valid} showDelete={false} dice={[]} bind:this={dialog} form={form}>
   <form class="text-center flex flex-col gap-2">
@@ -76,6 +84,7 @@
     </div>
     {#each form.options as opt, oi}
       <div class="flex gap-2">
+        <div>x</div>
         <div><select bind:value={form.options[oi].type} class="rounded-full dark:bg-gray-900 dark:text-white focus:ring-purple-500 focus:border-purple-500">
           <option value="text">text</option>
           <option value="entity">entity</option>
