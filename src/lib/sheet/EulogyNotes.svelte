@@ -8,7 +8,11 @@ import { TabPanels, TabPanel } from "@rgossiaux/svelte-headlessui";
 import EulogyDialog from "./EulogyDialog.svelte";
 export let eulogy: EulogyStanza[];
 export let notes = '';
-$: availableXp = xp(eulogy);
+
+let availableXp = 0;
+$: {
+  availableXp = xp(eulogy);
+};
 
 let dialog: EulogyDialog;
 
@@ -16,7 +20,7 @@ let dialog: EulogyDialog;
 
 <EulogyDialog bind:eulogy bind:this={dialog} />
 <TabbedCard tabs={[{label: 'Eulogy'},{label: 'Notes'}]} id="eulogy" class="md:h-[25rem]">
-  <div slot="sidehead" class="py-4 flex gap-2 items-center"><span class="text-lg font-subtitle inline-block h-6">XP:</span><span class="">{availableXp}</span></div>
+  <div slot="sidehead" class="py-4 flex gap-2 items-center"><span class="text-lg font-subtitle inline-block h-6">XP:</span><span class="" >{availableXp}</span></div>
   <TabPanels class="h-full">
     <TabPanel>
       {#each eulogy as stanza (stanza.id)}

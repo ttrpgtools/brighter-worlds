@@ -26,6 +26,7 @@
   import Loader from '$lib/Loader.svelte';
   import { writable } from 'svelte/store';
   import { calculateGrit } from '$lib/util/grit';
+  import { registerForRollCall } from '$lib/data/broadcast-hub';
 
   let loadStatus = writable('Loading...');
 
@@ -41,8 +42,10 @@
   tryMigrate(loadStatus, cache).then(() => loadStatus.set(''));
 
   onMount(() => {
-    const unlisten = broadcast.subscribe((msg) => console.log(`[Sheet] Broadcast received`, msg));
-    return () => { unlisten(); }
+    const unsubs: (() => void)[] = [];
+    unsubs.push(broadcast.subscribe((msg) => console.log(`[Sheet] Broadcast received`, msg)));
+    unsubs.push(registerForRollCall(here => here($character.id, $character.name)));
+    return () => { unsubs.forEach(x => x()) }
   });
   
   function persist() {
@@ -112,6 +115,9 @@
   
   $: isDeprived = $character.statuses.has(status.DEPRIVED);
   $: isBurdened = burdened($character.equipment);
+  $: {
+    
+  }
   </script>
   <svelte:head>
     <title>{$character.name || 'Character Sheet'} :: Brighter Worlds Online</title>

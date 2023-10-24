@@ -1,11 +1,13 @@
 import { COLOR_ITEM, COLOR_ROLL, COLOR_SCENE } from "$lib/const";
 import type { DieValue, Entity, Item } from "$lib/types";
 import { wrap } from "./array";
+import { encode } from "./b64";
 
 interface DiscordEmbed {
   title?: string;
   author?: { name: string, icon_url?: string; };
   description?: string;
+  url?: string;
   color?: number;
   footer?: { text: string; icon_url?: string; }
   image?: { url: string };
@@ -72,11 +74,20 @@ export async function sendSceneToDiscord(item: Entity, hook: string) {
   return await sendEmbed(discordItem, hook);
 }
 
+function createObtainItemUrl(item: Item) {
+  const payload = JSON.stringify(item);
+  const enc = encode(payload);
+  const url = new URL('/character/obtain', window.location.href);
+  url.searchParams.set('item', enc);
+  return url.href;
+}
+
 export async function sendItemToDiscord(item: Item, hook: string) {
   const discordItem: DiscordEmbed = {
     title: item.name,
     fields: [],
     color: COLOR_ITEM,
+    url: createObtainItemUrl(item),
   };
   if (item.desc) discordItem.description = item.desc;
   if (item.image && typeof item.image === 'string') discordItem.image = { url: item.image };
