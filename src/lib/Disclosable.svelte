@@ -2,6 +2,8 @@
 export let title = 'Summary';
 export let open = false;
 export let overflowable = false;
+export let imgsrc = '';
+export let imgalt = '';
 let classProp: string | undefined = undefined;
 export { classProp as class };
 </script>
@@ -11,7 +13,10 @@ export { classProp as class };
       <h3 class="text-xl font-subtitle leading-6 flex-1">{title}</h3>
     </slot>
   </summary>
-  <div class="px-4 py-5 sm:p-6 flex flex-col flex-1 {overflowable ? `` : `overflow-y-auto overflow-x-hidden`}">
-    <slot></slot>
+  <div class="flex flex-col lg:flex-row">
+    {#if imgsrc}<img src={imgsrc} alt={imgalt} class="lg:rounded-bl-lg max-w-xs">{/if}
+    <div class="px-4 py-5 sm:p-6 flex flex-col flex-1 {overflowable ? `` : `overflow-y-auto overflow-x-hidden`}">
+      <slot></slot>
+    </div>
   </div>
 </details>

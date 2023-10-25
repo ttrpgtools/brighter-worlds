@@ -8,6 +8,8 @@
 
   export let item: Item;
 
+  $: src = typeof(item.image) === 'string' ? item.image : '';
+
   const dispatch = createEventDispatcher();
 
   function reroll() {
@@ -16,7 +18,7 @@
     }
   }
 </script>
-<Disclosable>
+<Disclosable imgalt={`Photo of ${item.name}`} imgsrc={src}>
   <svelte:fragment slot="header">
     <h3 class="text-xl font-subtitle leading-6 flex-1 flex items-center gap-2"><Icon icon="nav-relics"/><span class="relative top-0.5">{item.name}</span></h3>
     <div class="ml-auto flex gap-3">

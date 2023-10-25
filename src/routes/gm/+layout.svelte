@@ -2,6 +2,7 @@
   import DeleteButton from "$lib/DeleteButton.svelte";
   import MenuLink from "$lib/MenuLink.svelte";
   import type { Entity, Item } from "$lib/types";
+  import { setGmContext } from "$lib/util/gm";
   import GmLink from "./GmLink.svelte";
   import GmTools from "./GmTools.svelte";
   import ItemBlock from "./ItemBlock.svelte";
@@ -9,6 +10,7 @@
   import Scene from "./Scene.svelte";
   import { getPlaymat, clearMat, removeItem, getRollLog, removeRoll, clearRollLog } from "./playmat";
 
+  setGmContext();
   const mat = getPlaymat();
   const log = getRollLog();
 
@@ -45,10 +47,6 @@
         <GmLink href="/gm/bestiary" icon="nav-bestiary" title="Bestiary"></GmLink>
         <GmLink href="/gm/table" icon="nav-tables" title="Tables"></GmLink>
         <GmLink href="/gm/reliquary" icon="nav-relics" title="Reliquary"></GmLink>
-        <!-- <div class="flex gap-2 items-end flex-1">
-          <a target="_blank" rel="noreferrer" href="https://ttrpg.tools" class="text-emerald-500 relative -top-px"><Icon icon="ttrpgtools" /></a>
-          <a target="_blank" rel="noreferrer" href="https://ttrpg.tools" class="text-purple-700 dark:text-purple-300 no-underline hover:underline">TTRPG.tools</a>
-        </div> -->
       </div>
       <div class="overflow-y-auto pt-4 lg:pr-3">
         <slot></slot>
