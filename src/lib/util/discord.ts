@@ -1,4 +1,4 @@
-import { COLOR_ITEM, COLOR_ROLL, COLOR_SCENE } from "$lib/const";
+import { COLOR_ITEM, COLOR_NPC, COLOR_ROLL, COLOR_SCENE } from "$lib/const";
 import type { DieValue, Entity, Item } from "$lib/types";
 import { wrap } from "./array";
 import { encode } from "./b64";
@@ -68,6 +68,18 @@ export async function sendSceneToDiscord(item: Entity, hook: string) {
     fields: [],
     footer: { text: 'Scene' },
     color: COLOR_SCENE,
+  };
+  if (item.desc) discordItem.description = item.desc;
+  if (item.image && typeof item.image === 'string') discordItem.image = { url: item.image };
+  return await sendEmbed(discordItem, hook);
+}
+
+export async function sendNpcToDiscord(item: Entity, hook: string) {
+  const discordItem: DiscordEmbed = {
+    title: item.name,
+    fields: [],
+    footer: { text: 'NPC' },
+    color: COLOR_NPC,
   };
   if (item.desc) discordItem.description = item.desc;
   if (item.image && typeof item.image === 'string') discordItem.image = { url: item.image };

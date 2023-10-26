@@ -25,6 +25,7 @@ export function getNpcInstance(stats: NpcStats) {
     wants: stats.wants,
     found: stats.found,
     notes: stats.notes.slice(),
+    image: stats.image,
   };
   return empty;
 }

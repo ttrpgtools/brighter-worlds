@@ -22,6 +22,9 @@
   function shareScene(scene: Entity) {
     return () => tools.shareScene(scene);
   }
+  function shareNpc(npc: Entity) {
+    return () => tools.shareNpc(npc);
+  }
   function shareItem(item: Item) {
     return () => tools.shareItem(item);
   }
@@ -66,7 +69,7 @@
           {#if item.type === 'scene'}
             <Scene scene={item.scene} on:remove={() => removeItem(mat, item)} on:share={shareScene(item.scene)}/>
           {:else if item.type === 'npc'}
-            <NpcSheet bind:npc={item.npc} on:confirm={() => removeItem(mat, item)} on:roll={npcRoll(item.npc.name)} on:damage={async () => { if (item.type === 'npc') { await tools.takeDamage(item.npc); item.npc = item.npc; } }} />
+            <NpcSheet bind:npc={item.npc} on:confirm={() => removeItem(mat, item)} on:share={shareNpc(item.npc)} on:roll={npcRoll(item.npc.name)} on:damage={async () => { if (item.type === 'npc') { await tools.takeDamage(item.npc); item.npc = item.npc; } }} />
           {:else if item.type === 'item'}
             <ItemBlock item={item.item} on:confirm={() => removeItem(mat, item)} on:share={shareItem(item.item)} />
           {/if}

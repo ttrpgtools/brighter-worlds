@@ -9,7 +9,7 @@
   import SheetSettings from "$lib/sheet/SheetSettings.svelte";
   import type { DamageDetails, DieValue, Entity, Item, NpcInstance } from "$lib/types";
   import { armor } from "$lib/util/character";
-  import { sendToDiscord, sendSceneToDiscord, sendItemToDiscord } from "$lib/util/discord";
+  import { sendToDiscord, sendSceneToDiscord, sendItemToDiscord, sendNpcToDiscord } from "$lib/util/discord";
   import { addRoll, getRollLog } from "./playmat";
 
   let dice: DiceDialog;
@@ -83,6 +83,12 @@
   export function shareScene(scene: Entity) {
     if ($encountersSettings?.rollToDiscord) {
       sendSceneToDiscord(scene, $encountersSettings.discordWebhook);
+    }
+  }
+
+  export function shareNpc(npc: Entity) {
+    if ($encountersSettings?.rollToDiscord) {
+      sendNpcToDiscord(npc, $encountersSettings.discordWebhook);
     }
   }
 

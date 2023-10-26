@@ -55,7 +55,8 @@
           <input type="number" name="grit" size="7" placeholder="Grit" bind:value={npc.grit} class="rounded-full dark:bg-gray-900 dark:text-white focus:ring-purple-500 focus:border-purple-500">
         </div>
         <Equipment bind:equipment={npc.attacks} bind:baseArmor={npc.armor} title="Attacks" flat />
-        <div class="text-right">
+        <div class="flex gap-4 items-center ">
+          <input type="text" name="image" placeholder="Image" bind:value={npc.image} class="rounded-full dark:bg-gray-900 dark:text-white focus:ring-purple-500 focus:border-purple-500 flex-1">
           <DeleteButton size="w-3 h-3" on:confirm={() => bestiary.removeItem(npc)} />
         </div>
       </div>

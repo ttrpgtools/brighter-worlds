@@ -11,3 +11,4 @@ export const KNOWN_STATUSES = new Set<string>(Object.values(status));
 export const COLOR_SCENE = 2463422;
 export const COLOR_ITEM = 16765698;
 export const COLOR_ROLL = 11032055;
+export const COLOR_NPC = 14423100;
