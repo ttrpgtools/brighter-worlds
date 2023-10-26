@@ -15,8 +15,9 @@
   }
 
   export let npc: NpcInstance;
+  $: src = typeof(npc.image) === 'string' ? npc.image : '';
 </script>
-<Disclosable overflowable>
+<Disclosable overflowable imgalt={`Photo of ${npc.name}`} imgsrc={src} imgclass="lg:rounded-bl-lg max-h-[9rem] self-end">
   <svelte:fragment slot="header">
     <div class="relative w-full flex items-center">
       <Icon icon="nav-bestiary"/>

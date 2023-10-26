@@ -4,6 +4,7 @@ export let open = false;
 export let overflowable = false;
 export let imgsrc = '';
 export let imgalt = '';
+export let imgclass = 'lg:rounded-bl-lg max-w-xs';
 let classProp: string | undefined = undefined;
 export { classProp as class };
 </script>
@@ -14,7 +15,7 @@ export { classProp as class };
     </slot>
   </summary>
   <div class="flex flex-col lg:flex-row">
-    {#if imgsrc}<img src={imgsrc} alt={imgalt} class="lg:rounded-bl-lg max-w-xs">{/if}
+    {#if imgsrc}<img src={imgsrc} alt={imgalt} class="{imgclass}">{/if}
     <div class="px-4 py-5 sm:p-6 flex flex-col flex-1 {overflowable ? `` : `overflow-y-auto overflow-x-hidden`}">
       <slot></slot>
     </div>
