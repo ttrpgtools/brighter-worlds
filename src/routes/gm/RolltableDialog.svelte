@@ -14,6 +14,20 @@
     options: RolltableOption[];
   }
 
+  function parseTrigger(old: number | [number, number] | string) {
+    if (typeof old === 'number' || Array.isArray(old)) {
+      return old;
+    }
+    const range = old.replace(/\s/g, '').split('-').filter(x => !!x).map(x => parseInt(x, 10));
+    if (range.length === 1) {
+      return range[0];
+    }
+    if (range.length === 2 && range[0] <= range[1]) {
+      return range;
+    }
+    return 0;
+  }
+
   function newForm() {
     return {
       id: id(),
@@ -43,7 +57,7 @@
         id: item.id,
         name: item.name,
         formula: item.formula,
-        options: item.options,
+        options: item.options.map(opt => ({...opt, trigger: parseTrigger(opt.trigger)})),
       } as CustomRolltableDef;
     }
   }

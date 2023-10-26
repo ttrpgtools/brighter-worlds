@@ -43,6 +43,7 @@
 
   function addRich(ev: CustomEvent<TableRoll<RolltableOption>>) {
     const roll = ev.detail;
+    if (!roll.value.length) return;
     const first = roll.value[0];
     addRoll(log, {
       result: roll.roll,
