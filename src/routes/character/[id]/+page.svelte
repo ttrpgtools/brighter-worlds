@@ -17,7 +17,7 @@
   import Calling from '$lib/sheet/Calling.svelte';
   import Statuses from '$lib/sheet/Statuses.svelte';
   import Roller from '$lib/sheet/Roller.svelte';
-  import { broadcast } from '$lib/data/channel-child';
+  import { broadcast, broadcastRoll } from '$lib/data/channel-child';
   import type { PageData } from './$types';
   import IconButton from '$lib/IconButton.svelte';
   import SheetSettings from '$lib/sheet/SheetSettings.svelte';
@@ -59,7 +59,8 @@
     
     label = label || `d${sides}`;
     if ($character.settings?.rollToBridge) {
-      broadcast.set({id: $character.id, name: $character.name, type: 'roll', dice: sides, result: best, label});
+      broadcastRoll($character.name, best, label, sides, $character.name);
+      //broadcast.set({id: $character.id, name: $character.name, type: 'roll', dice: sides, result: best, label});
     }
     if ($character.settings?.rollToDiscord) {
       sendToDiscord($character.name, best, label, $character.settings.discordWebhook, sides, $character.name);
@@ -108,7 +109,10 @@
       $character[type].current = results.die;
     }
     if ($character.settings?.rollToDiscord && results.save) {
-      sendToDiscord($character.name, results.save, `${type.toUpperCase()} save against ${results.dd ?? '?'} direct damage.`, $character.settings.discordWebhook, results.dice);
+      sendToDiscord($character.name, results.save, `${type.toUpperCase()} save against ${results.dd ?? '?'} direct damage.`, $character.settings.discordWebhook, results.dice, $character.name);
+    }
+    if ($character.settings?.rollToBridge && results.save) {
+      broadcastRoll($character.name, results.save, `${type.toUpperCase()} save against ${results.dd ?? '?'} direct damage.`, results.dice, $character.name);
     }
     dice.show('Damage', results.dice, results.msg);
   }
@@ -116,7 +120,7 @@
   $: isDeprived = $character.statuses.has(status.DEPRIVED);
   $: isBurdened = burdened($character.equipment);
   $: {
-    
+
   }
   </script>
   <svelte:head>

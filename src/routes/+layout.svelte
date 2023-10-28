@@ -15,6 +15,8 @@
 {#if $page.data?.layout?.showFooter ?? true}
 <Footer />
 {/if}
+{#if $page.data?.layout?.showMenu ?? true}
 <div class="absolute top-2 right-2">
 	<SiteMenu />
 </div>
+{/if}

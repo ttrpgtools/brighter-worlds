@@ -251,6 +251,14 @@ export interface RollResult {
   label?: string;
 }
 
+export interface LogRoll {
+  id: string;
+  name: string;
+  type: 'roll';
+  roll: RollResult;
+  time?: Date | number;
+}
+
 export interface RemoteRollMessage extends BaseRemoteMessage {
   type: 'roll';
   dice: DieValue[];
@@ -263,7 +271,13 @@ export interface RemoteTextMessage extends BaseRemoteMessage {
   message: string;
 }
 
-export type RemoteMessage = RemoteRollMessage | RemoteTextMessage;
+export interface RemoteEmbedMessage extends BaseRemoteMessage {
+  type: 'embed';
+  embed: DiscordEmbed;
+  time?: Date | number;
+}
+
+export type RemoteMessage = RemoteRollMessage | RemoteTextMessage | RemoteEmbedMessage;
 
 
 export type HandlerFn = (msg: RemoteMessage) => void;
@@ -298,4 +312,15 @@ export interface CallingEnhancement {
   name: string;
   desc: string;
   type: string;
+}
+
+export interface DiscordEmbed {
+  title?: string;
+  author?: { name: string, icon_url?: string; };
+  description?: string;
+  url?: string;
+  color?: number;
+  footer?: { text: string; icon_url?: string; }
+  image?: { url: string };
+  fields: { name: string, value: string, inline?: boolean }[];
 }

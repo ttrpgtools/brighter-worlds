@@ -6,7 +6,7 @@
   import CustomRolltable from "../CustomRolltable.svelte";
   import SidebarSection from "../SidebarSection.svelte";
   import RolltableDialog from "../RolltableDialog.svelte";
-  import { addEncounter, addItem, addNpc, addRoll, getPlaymat, getRollLog } from "../playmat";
+  import { addEncounter, addItem, addNpc, addLocalRoll, getPlaymat, getRollLog } from "../playmat";
   import type { PageData } from "./$types";
   import { getNpcs } from "../bestiary/npcs";
   import { getRelics } from "../reliquary/relics";
@@ -45,7 +45,7 @@
     const roll = ev.detail;
     if (!roll.value.length) return;
     const first = roll.value[0];
-    addRoll(log, {
+    addLocalRoll(log, {
       result: roll.roll,
       dice: roll.dice ?? [],
       label: `${roll.title}: ${first.type === 'text' ? first.value : first.value.name}`

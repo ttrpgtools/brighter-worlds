@@ -5,3 +5,4 @@ export const load: LayoutLoad = async function() {
     layout: { showFooter: false }
   };
 }
+export const ssr = false;

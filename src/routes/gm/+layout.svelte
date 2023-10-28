@@ -1,11 +1,14 @@
 <script lang="ts">
   import DeleteButton from "$lib/DeleteButton.svelte";
+  import Embed from "$lib/Embed.svelte";
   import MenuLink from "$lib/MenuLink.svelte";
   import type { Entity, Item } from "$lib/types";
   import { setGmContext } from "$lib/util/gm";
+  import { fly } from "svelte/transition";
   import GmLink from "./GmLink.svelte";
   import GmTools from "./GmTools.svelte";
   import ItemBlock from "./ItemBlock.svelte";
+  import LocalRoll from "./LocalRoll.svelte";
   import NpcSheet from "./NpcSheet.svelte";
   import Scene from "./Scene.svelte";
   import { getPlaymat, clearMat, removeItem, getRollLog, removeRoll, clearRollLog } from "./playmat";
@@ -32,7 +35,7 @@
 <main class="flex flex-col min-h-screen min-h-[100svh] lg:h-screen lg:h-[100svh]">
   <header class="shrink-0 bg-gray-300 dark:bg-gray-900">
     <div class="mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
-      <h1 class="font-title text-3xl text-center"><a href="https://brighterworldsrpg.com" class="text-purple-700 dark:text-purple-300">Brighter Worlds</a> GM&nbsp;Tools <GmTools bind:this={tools} /></h1>
+      <h1 class="font-title text-3xl flex-1 flex gap-4 items-center"><a href="https://brighterworldsrpg.com" class="text-purple-700 dark:text-purple-300">Brighter Worlds</a> GM&nbsp;Tools <GmTools bind:this={tools} /></h1>
       <div class="flex items-center gap-x-8">
         <MenuLink href="/" icon="logo-leaf">Home</MenuLink>
       </div>
@@ -78,18 +81,19 @@
       <div class="px-4 py-6 sm:px-6 lg:pl-8 xl:flex-1 xl:pl-6 flex flex-col gap-4 xl:basis-1/3 overflow-y-auto">
         <div class="flex flex-row justify-between">
           <h3 class="font-subtitle text-2xl">The Roll Log</h3>
-          {#if $mat.length}
+          {#if $log.list.length}
           <DeleteButton on:confirm={() => clearRollLog(log)} confirmText="Click again to clear log"/>
           {/if}
         </div>
-        {#each $log as item}
+        {#each $log.list as item (item.id)}
+        {@const dt = typeof item.time === 'number' ? new Date(item.time): item.time }
+        <div transition:fly={{ x: 50, duration: 200 }}>
           {#if item.type === 'roll'}
-            {@const diceStr = item.roll.dice.length ? ` (${item.roll.dice.map(s => `d${s}`).join(' | ')})` : ``}
-            <div class="border border-gray-200 dark:border-gray-600 rounded-md p-3 relative group/roll">
-              <span class="font-bold">{item.roll.result}</span> {diceStr}{item.roll.label ? ` — ` : ``}{item.roll.label}
-              <button type="button" on:click={() => removeRoll(log, item)} class="hidden absolute top-2 right-2 text-lg rounded-full leading-none h-6 w-6 bg-purple-300 dark:bg-purple-900 group-hover/roll:flex items-center justify-center"><span class="relative -top-px">&times;</span></button>
-            </div>
+            <LocalRoll {item} on:delete={() => removeRoll(log, item)}/>
+          {:else if item.type === 'embed'}
+            <Embed embed={item.embed} name={item.name} time={dt} on:delete={() => removeRoll(log, item)} />
           {/if}
+        </div>
         {/each}
       </div>
     </div>

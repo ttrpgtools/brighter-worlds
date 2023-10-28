@@ -1,7 +1,7 @@
 import { getNpcInstance } from "$lib/data/encounter-manager";
 import { getContextStore } from "$lib/data/settings";
 import { id } from "$lib/rolling/id";
-import type { Encounter, Entity, Item, NpcInstance, RollResult } from "$lib/types";
+import type { Encounter, Entity, Item, LogRoll, NpcInstance, RemoteEmbedMessage, RollResult } from "$lib/types";
 
 interface PMScene {
   id: string;
@@ -21,20 +21,20 @@ interface PMNpc {
   npc: NpcInstance
 }
 
-interface PMRoll {
-  id: string;
-  type: 'roll';
-  roll: RollResult;
-}
+
 
 export type PlaymatItem = PMScene | PMItem | PMNpc;
 
 export type Playmat = PlaymatItem[];
 
+export type LogRollItem = LogRoll | RemoteEmbedMessage;
+
+export type RollLog = { ids: Set<string>; list: LogRollItem[] };
+
 const PLAYMAT_KEY = 'bw-playmat';
-const ROLLLOG_KEY = 'bw-rolllog';
+const ROLLLOG_KEY = 'bw-rolllog2';
 export const getPlaymat = getContextStore<Playmat>(PLAYMAT_KEY, []);
-export const getRollLog = getContextStore<PMRoll[]>(ROLLLOG_KEY, []);
+export const getRollLog = getContextStore<RollLog>(ROLLLOG_KEY, {ids: new Set(), list: []});
 
 function add(mat: ReturnType<typeof getPlaymat>, item: PlaymatItem) {
   const newId = id();
@@ -54,10 +54,6 @@ export function addScene(mat: ReturnType<typeof getPlaymat>, scene: Entity) {
   add(mat, {id: '', type: 'scene', scene});
 }
 
-export function addRoll(mat: ReturnType<typeof getRollLog>, roll: RollResult) {
-  mat.update(list => [...list, {id: id(), type: 'roll', roll}]);
-}
-
 export function addEncounter(mat: ReturnType<typeof getPlaymat>, enc: Encounter) {
   addScene(mat, {...enc, icon: 'nav-encounter' });
   enc.npcs?.forEach(n => addNpc(mat, getNpcInstance(n)));
@@ -73,12 +69,28 @@ export function clearMat(mat: ReturnType<typeof getPlaymat>) {
   mat.set([]);
 }
 
+// --------------------------
+
+function addRoll(mat: ReturnType<typeof getRollLog>, toadd: LogRollItem) {
+  mat.update(log => log.ids.has(toadd.id) ? log : { ids: log.ids.add(toadd.id), list: [toadd, ...log.list] });
+}
+
+export function addLocalRoll(mat: ReturnType<typeof getRollLog>, roll: RollResult) {
+  const toadd = {id: id(), name: '', type: 'roll', roll} as LogRoll;
+  addRoll(mat, toadd);
+}
+
+export function addRemoteRoll(mat: ReturnType<typeof getRollLog>, item: Partial<RemoteEmbedMessage>) {
+  const toadd = Object.assign({id: id(), name: '', type: 'embed', time: new Date() } as RemoteEmbedMessage, item);
+  addRoll(mat, toadd);
+}
+
 export function removeRoll(mat: ReturnType<
-  typeof getRollLog>, item: PMRoll | string) {
+  typeof getRollLog>, item: LogRollItem | string) {
   const id = typeof(item) === 'string' ? item : item.id;
-  mat.update(list => list.filter(x => x.id !== id));
+  mat.update(log => (log.ids.delete(id), { ids: log.ids, list: log.list.filter(x => x.id !== id)}));
 }
 
 export function clearRollLog(mat: ReturnType<typeof getRollLog>) {
-  mat.set([]);
+  mat.set({ids: new Set(), list: []});
 }
