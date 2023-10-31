@@ -13,11 +13,11 @@ declare global {
 		'tap': CustomEvent<PointerEvent>;
 		'hold': CustomEvent<PointerEvent>;
 	}
-
-	namespace svelte.JSX {
+	
+	namespace svelteHTML {
 		interface HTMLAttributes<T> {
-			onconsider?: (event: CustomEvent<DndEvent<ItemType>> & { target: EventTarget & T }) => void;
-			onfinalize?: (event: CustomEvent<DndEvent<ItemType>> & { target: EventTarget & T }) => void;
+			'on:consider'?: (event: CustomEvent<DndEvent<ItemType>> & { target: EventTarget & T }) => void;
+			'on:finalize'?: (event: CustomEvent<DndEvent<ItemType>> & { target: EventTarget & T }) => void;
 		}
 	}
 }

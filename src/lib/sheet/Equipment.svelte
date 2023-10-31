@@ -99,7 +99,7 @@
         <div class="flex items-center space-x-4 group-data-[is-dnd-shadow-item]:invisible">
           <div class="min-w-0 flex-1 flex gap-2 items-center">
             {#if draggable}<Icon icon="grip-v" />{/if}
-            <p class="truncate text-sm font-medium cursor-pointer" title={item.name} on:click={() => selectGear(item)} on:keydown={onEnter(() => editGear(item.id))}>{item.name}</p>
+            <button type="button" class="truncate select-text text-sm font-medium cursor-pointer" title={item.name} on:click={() => selectGear(item)} on:keydown={onEnter(() => editGear(item.id))}>{item.name}</button>
           </div>
           <div class="flex gap-2 items-center">
             {#if item.quantity != null}

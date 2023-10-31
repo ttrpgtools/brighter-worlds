@@ -56,7 +56,7 @@
       <li class="py-3">
         <div class="flex items-center space-x-4 h-6">
           <div class="min-w-0 flex-1 flex gap-4">
-            <p class="truncate text-sm font-medium cursor-pointer" title={ability.name} on:click={() => abilityDialog.edit(ability.id)} on:keydown={onEnter(() => abilityDialog.edit(ability.id))}>{ability.name}</p>
+            <button type="button" class="truncate select-text text-sm font-medium cursor-pointer" title={ability.name} on:click={() => abilityDialog.edit(ability.id)} on:keydown={onEnter(() => abilityDialog.edit(ability.id))}>{ability.name}</button>
           </div>
           <div class="flex gap-2 items-center">
             <span class="inline-flex items-center rounded-full dark:bg-purple-100 px-2.5 py-0.5 text-xs font-medium dark:text-purple-800 bg-purple-800 text-purple-100">{capitalize(ability.type === 'enhance' || ability.type === 'companion' ? (ability.details ?? '') : ability.type)}</span>

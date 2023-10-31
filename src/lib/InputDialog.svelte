@@ -50,7 +50,8 @@
     </div>
     {/if}
   </div>
-  <div class="mt-5" use:focusFirst on:keydown={onEnter(handleKeys)}>
+  <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
+  <div role="dialog" class="mt-5" use:focusFirst on:keydown={onEnter(handleKeys)}>
     <slot></slot>
   </div>
   <div class="mt-5 text-center flex gap-2 justify-start" slot="footer">

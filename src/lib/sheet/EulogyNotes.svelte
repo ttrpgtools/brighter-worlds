@@ -26,7 +26,7 @@ let dialog: EulogyDialog;
       {#each eulogy as stanza (stanza.id)}
       <div class="mb-4 pl-7 relative">
         <span class="font-symbol text-2xl text-purple-500 inline-block w-4 absolute left-0 -top-1">{#if stanza.xp && stanza.spent}f{:else if !stanza.xp}Y{:else}p{/if}</span>
-        <p class="cursor-pointer" on:click={() => dialog.editStanza(stanza.id)} on:keydown={onEnter(() => dialog.editStanza(stanza.id))}>{stanza.message}</p>
+        <button type="button" class="cursor-pointer select-text" on:click={() => dialog.editStanza(stanza.id)} on:keydown={onEnter(() => dialog.editStanza(stanza.id))}>{stanza.message}</button>
       </div>
       {:else}
       <div class="mb-4">

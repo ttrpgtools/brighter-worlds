@@ -55,7 +55,7 @@
   {#if $dialog.expanded}
     
     <!-- svelte-ignore a11y-click-events-have-key-events -->
-    <div class="fixed inset-0 bg-purple-500 bg-opacity-20" on:click={() => close()} transition:blur />
+    <div role="none" class="fixed inset-0 bg-purple-500 bg-opacity-20" on:click={() => close()} transition:blur />
 
     <div class="fixed inset-0">
       <div class="flex min-h-full items-center justify-center p-4 text-center">

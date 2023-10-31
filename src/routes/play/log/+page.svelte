@@ -16,7 +16,7 @@
   let sid: Readable<string>;
   let element: Element;
 
-  onMount(async () => {
+  onMount(() => {
     console.log('[LOG] Mounting');
     const unlisten = broadcast.subscribe(broadcastHandle);
 
