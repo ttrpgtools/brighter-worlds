@@ -1,15 +1,18 @@
 import type { RemoteEmbedMessage } from '$lib/types';
 import { type DataConnection, Peer } from 'peerjs';
-import { readable, type Readable } from 'svelte/store';
+import { readable, type Readable, writable, readonly, type Writable } from 'svelte/store';
 
 export class Session extends EventTarget {
   public id: Readable<string>;
   private connections: DataConnection[] = [];
   private pending: [string, string][] = [];
   private me: Peer;
+  public count: Readable<number>;
   constructor(public gm: boolean = false) {
     super();
     const me = new Peer((null as unknown) as string , {debug: 3});
+    const ccounter = writable(gm ? 0 : 1);
+    this.count = readonly(ccounter);
     this.id = readable<string>('', (set) => {
       me.on('open', (id) => {
         set(id);
@@ -21,7 +24,7 @@ export class Session extends EventTarget {
     });
     me.on('connection', (dc) => {
       console.log('RECEIVED CONNECTION', dc.metadata);
-      this.addConnection(dc);
+      this.addConnection(dc, ccounter);
       this.dispatchEvent(new CustomEvent('status', {
         detail: `New connection from ${dc.metadata.name}`,
       }));
@@ -72,11 +75,20 @@ export class Session extends EventTarget {
     this.pending = [];
   }
 
-  private addConnection(dc: DataConnection) {
+  private addConnection(dc: DataConnection, cnt?: Writable<number>) {
     console.log('ADD CONN', dc);
     dc.on('open', () => {
       console.log('CONNECTION OPEN', dc.metadata);
       this.connections.push(dc);
+      cnt?.set(this.connections.length);
+      if (this.gm) {
+        this.dispatchEvent(new CustomEvent('join', {
+          detail: {
+            name: dc.metadata?.name,
+            connection: dc,
+          }
+        }))
+      }
     });
     dc.on('data', data => {
       console.log('DATA', data);
@@ -90,10 +102,28 @@ export class Session extends EventTarget {
     dc.on('error', err => {
       console.error('CONNECTION ERROR', err);
       this.connections = this.connections.filter(x => x.connectionId !== dc.connectionId);
+      cnt?.set(this.connections.length);
+      if (this.gm) {
+        this.dispatchEvent(new CustomEvent('leave', {
+          detail: {
+            name: dc.metadata?.name,
+            error: true,
+          }
+        }))
+      }
     });
     dc.on('close', () => {
       console.log('CONNECTION CLOSED', dc.metadata);
       this.connections = this.connections.filter(x => x.connectionId !== dc.connectionId);
+      cnt?.set(this.connections.length);
+      if (this.gm) {
+        this.dispatchEvent(new CustomEvent('leave', {
+          detail: {
+            name: dc.metadata?.name,
+            error: false,
+          }
+        }))
+      }
     })
   }
 }

@@ -9,10 +9,14 @@
     await comp.open<undefined>();
   }
 
+  function closeMe() {
+    comp.close();
+  }
+
   $: coreAbility = calling.abilities.filter(x => x.type === 'core');
   $: advancedAbilities = calling.abilities.filter(x => x.type === 'advanced');
 </script>
-<DialogBase let:close bind:this={comp} maxWidth="max-w-[65ch]">
+<DialogBase bind:this={comp} maxWidth="max-w-[65ch]">
   <div class="prose dark:prose-invert prose-purple max-h-[calc(100vh-10rem)] -mx-6 px-6">
     <h2 class="text-3xl mb-2 font-subtitle text-purple-500">{calling.name}</h2>
     {@html calling.desc}
@@ -32,6 +36,6 @@
     </ul>
   </div>
   <div class="mt-5 text-center mb-1" slot="footer">
-    <Button on:click={() => close()}>Close</Button>
+    <Button on:click={() => closeMe()}>Close</Button>
   </div>
 </DialogBase>

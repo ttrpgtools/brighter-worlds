@@ -10,8 +10,11 @@ let comp: DialogBase<undefined>;
 export async function open() {
   return comp.open<undefined>();
 }
+function close() {
+  comp.close();
+}
 </script>
-<DialogBase let:open let:close bind:this={comp}>
+<DialogBase bind:this={comp}>
   <div slot="pretitle">
     {#if dice.length > 0}
     <div class="flex gap-4 justify-center items-center mb-3 sm:mb-5">

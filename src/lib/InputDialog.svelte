@@ -38,7 +38,7 @@
     comp.close();
   }
 </script>
-<DialogBase {title} let:close bind:this={comp} {scrollable}>
+<DialogBase {title} bind:this={comp} {scrollable}>
   <div slot="pretitle">
     {#if dice.length > 0}
     <div class="flex gap-4 justify-center items-center mb-3 sm:mb-5">

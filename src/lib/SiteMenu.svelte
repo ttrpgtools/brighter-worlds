@@ -25,27 +25,13 @@
   function toggleDesktop() {
     $settings.desktopMode = !$settings.desktopMode;
   }
-
-  function onSelect(e: Event) {
-    const {selected} = (e as CustomEvent).detail;
-    switch (selected) {
-      case 'dark':
-        toggleMode();
-        break;
-      case 'desktop':
-        toggleDesktop();
-        break;
-      default:
-        break;
-    }
-  }
   
 </script>
 
 <div class="flex w-full flex-col items-center justify-center">
   <div class="relative text-right">
     <div class="relative inline-block text-left">
-      <button use:menu.button on:select={onSelect} type="button" {title} on:click class="relative inline-flex items-center rounded-full shadow-lg dark:shadow-purple-400/20 bg-purple-300 dark:bg-purple-700 p-2 font-medium hover:bg-purple-200 dark:hover:bg-purple-800 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-900"><Icon icon="bars" /></button>
+      <button use:menu.button type="button" {title} on:click class="relative inline-flex items-center rounded-full shadow-lg dark:shadow-purple-400/20 bg-purple-300 dark:bg-purple-700 p-2 font-medium hover:bg-purple-200 dark:hover:bg-purple-800 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-900"><Icon icon="bars" /></button>
       {#if $menu.expanded}
         <div
           use:menu.items
@@ -54,6 +40,7 @@
         >
           <div class="px-1 py-1">
               <button
+                on:click={toggleMode}
                 use:menu.item={{value: 'dark'}}
                 class="group flex gap-2 rounded-md items-center w-full px-2 py-2 text-sm {$menu.active === 'dark' ? 'bg-purple-500 text-white' : 'text-gray-900 dark:text-white'}"
               >
@@ -61,6 +48,7 @@
                 Switch to {darkMode ? `light` : `dark`} mode
               </button>
               <button
+                on:click={toggleDesktop}
                 use:menu.item={{value: 'desktop'}}
                 class="group flex gap-2 rounded-md items-center w-full px-2 py-2 text-sm {$menu.active === 'desktop' ? 'bg-purple-500 text-white' : 'text-gray-900 dark:text-white'}"
               >

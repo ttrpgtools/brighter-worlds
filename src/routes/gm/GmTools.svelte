@@ -23,6 +23,7 @@
   const encountersSettings = getEncountersSettings();
   const log = getRollLog();
   let gameId: Readable<string>;
+  let playerCount: Readable<number>;
   
   function showRoll(sides: DieValue[], label: string = '', name = 'NPC') {
     const best = sides.reduce((p, c) => Math.max(roll(c), p), 0);
@@ -124,14 +125,51 @@
 		console.log(evt);
     if (evt && evt.detail && evt.detail.data) {
       addRemoteRoll(log, evt.detail.data);
+      session?.send(evt.detail.data);
     }
 	}
+
+  function handleJoin(ev: Event) {
+    const evt = ev as CustomEvent<{name: string; connection: { send: (data: any) => void}}>;
+    if (evt && evt.detail) {
+      addRemoteRoll(log, {
+        embed: {
+          title: `${evt.detail.name || 'Player'} joined.`,
+          fields: []
+        }
+      });
+      evt.detail.connection?.send({
+        id: id(),
+        name: '',
+        type: 'embed',
+        embed: {
+          fields: [],
+          title: 'Game joined. Welcome to Brighter Worlds',
+        }
+      });
+    }
+  }
+
+  function handleLeave(ev: Event) {
+    const evt = ev as CustomEvent<{name: string;}>;
+    if (evt && evt.detail) {
+      addRemoteRoll(log, {
+        embed: {
+          title: `${evt.detail.name || 'Player'} left.`,
+          fields: []
+        }
+      });
+    }
+  }
 
   let session: Session | undefined;
   function createSession() {
     session = hostSession();
 		gameId = session.id;
+    playerCount = session.count;
 		session.addEventListener('data', handleData);
+		session.addEventListener('join', handleJoin);
+		session.addEventListener('leave', handleLeave);
   }
 </script>
 <DiceDialog bind:this={dice} />
@@ -146,5 +184,5 @@
 {/if}
 {#if $encountersSettings?.rollToBridge}
 <IconButton icon="broadcast" on:click={createSession}/>
-<div class="font-sans text-sm">{$gameId ?? ''}</div>
+<div class="font-sans text-sm">{$gameId ?? ''} {#if $gameId}({$playerCount}){/if}</div>
 {/if}
