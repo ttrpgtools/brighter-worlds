@@ -2,19 +2,21 @@
   import { onMount } from "svelte";
   import type { RemoteEmbedMessage, RemoteMessage } from "$lib/types";
   import { broadcast } from "$lib/data/channel-child";
-  import { addToLog, clearLog, getPlayLog, removeItem } from "./playlog";
+  import { addToLog, clearLog, getGameId, getPlayLog, removeItem } from "./playlog";
   import DeleteButton from "$lib/DeleteButton.svelte";
   import Embed from "$lib/Embed.svelte";
   import Button from "$lib/Button.svelte";
   import { joinSession, type Session } from "$lib/data/p2p";
-  import type { Readable } from "svelte/store";
   import { fly } from "svelte/transition";
+  import type { Readable } from "svelte/store";
+  import { COLOR_NPC } from "$lib/const";
+  import { distinctUntilChanged } from "$lib/util/distinctUntilChanged";
 
   let log = getPlayLog();
-  let peerId = '';
   let sesh: Session | undefined;
-  let sid: Readable<string>;
   let element: Element;
+  let gameId = getGameId();
+  let count: Readable<number>;
 
   onMount(() => {
     console.log('[LOG] Mounting');
@@ -40,15 +42,43 @@
       addToLog(log, evt.detail.data);
     }
 	}
-	
 
-  function connect() {
-    if (peerId === '') return;
-    sesh = joinSession(peerId, '');
-    sid = sesh.id;
-		sesh.addEventListener('data', handleData);
+  async function handleError(ev: Event) {
+    const evt = ev as CustomEvent<Error>;
+    if (evt.detail) {
+      addToLog(log, {
+        embed: {
+          title: evt.detail.message.replaceAll('peer', 'game'),
+          fields: [],
+          color: COLOR_NPC,
+        }
+      });
+    }
   }
 
+  function connect() {
+    if ($gameId === '') return;
+    if (sesh) {
+      if (count && $count > 0) {
+        // Should disconnect
+        sesh.disconnect();
+        addToLog(log, {
+        embed: {
+          title: `Left game.`,
+          fields: []
+        }
+      });
+      } else {
+        sesh.connect($gameId, '');
+      }
+    } else {
+      sesh = joinSession($gameId, '');
+      count = sesh.count;
+      sesh.addEventListener('data', handleData);
+      sesh.addEventListener('error', distinctUntilChanged(handleError, x => (x as CustomEvent<Error>)?.detail?.message));
+    }
+  }
+  $: buttonText = count && $count > 0 ? 'Disconnect' : 'Connect';
 </script>
 <div bind:this={element} class="px-4 py-6 sm:px-6 lg:pl-8 xl:flex-1 xl:pl-6 flex flex-col gap-4 xl:basis-1/3 overflow-y-auto h-screen h-[100svh]">
   <div class="flex flex-row justify-between">
@@ -60,8 +90,8 @@
     </div>
   </div>
   <div class="flex gap-3 items-center">
-    <input type="text" name="peerId" placeholder="Game Code (from GM)" bind:value={peerId} class="rounded-full flex-1  dark:text-white focus:ring-purple-500 focus:border-purple-500 {$sid ? `bg-green-200 dark:bg-green-800` : `dark:bg-gray-900`}">
-    <Button on:click={connect}>Connect</Button>
+    <input type="text" name="peerId" spellcheck="false" readonly={count && $count > 0} placeholder="Game Code (from GM)" bind:value={$gameId} class="rounded-full flex-1  dark:text-white focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-900 {count && $count > 0 ? `opacity-50` : ``}">
+    <Button on:click={connect}>{buttonText}</Button>
   </div>
   {#each $log.list as msg (msg.id)}
     {@const dt = typeof msg.time === 'number' ? new Date(msg.time): msg.time }

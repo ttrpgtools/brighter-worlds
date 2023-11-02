@@ -1,6 +1,6 @@
 import type { RemoteEmbedMessage } from '$lib/types';
 import { type DataConnection, Peer } from 'peerjs';
-import { readable, type Readable, writable, readonly, type Writable } from 'svelte/store';
+import { type Readable, writable, readonly, type Writable } from 'svelte/store';
 
 export class Session extends EventTarget {
   public id: Readable<string>;
@@ -8,19 +8,20 @@ export class Session extends EventTarget {
   private pending: [string, string][] = [];
   private me: Peer;
   public count: Readable<number>;
+  private makeConn: (to: string, name: string) => void;
   constructor(public gm: boolean = false) {
     super();
     const me = new Peer((null as unknown) as string , {debug: 3});
-    const ccounter = writable(gm ? 0 : 1);
+    const ccounter = writable(0);
+    const sid = writable('');
     this.count = readonly(ccounter);
-    this.id = readable<string>('', (set) => {
-      me.on('open', (id) => {
-        set(id);
-        console.log('I AM', id);
-        if (this.pending.length) {
-          this.processPending();
-        }
-      });
+    this.id = readonly(sid);
+    me.on('open', (id) => {
+      sid.set(id);
+      console.log('I AM', id);
+      if (this.pending.length) {
+        this.processPending();
+      }
     });
     me.on('connection', (dc) => {
       console.log('RECEIVED CONNECTION', dc.metadata);
@@ -29,10 +30,22 @@ export class Session extends EventTarget {
         detail: `New connection from ${dc.metadata.name}`,
       }));
     });
-    me.on('error', err => console.error('PEER ERROR', err));
+    me.on('error', err => {
+      console.error('PEER ERROR', err);
+      this.dispatchEvent(new CustomEvent('error', { detail: err }));
+    });
     me.on('close', () => console.log('PEER CLOSED'));
     me.on('disconnected', (cid) => console.log('PEER DISCONNECTED', cid));
     this.me = me;
+    this.makeConn = (to: string, name: string) => {
+      const dc = this.me.connect(to, {
+        metadata: {
+          name
+        },
+        reliable: true,
+      });
+      this.addConnection(dc, ccounter);
+    }
   }
 
   send(data: RemoteEmbedMessage) {
@@ -57,14 +70,11 @@ export class Session extends EventTarget {
     }
   }
 
-  private makeConn(to: string, name: string) {
-    const dc = this.me.connect(to, {
-      metadata: {
-        name
-      },
-      reliable: true,
+  disconnect() {
+    console.log('Disconnecting', this.connections.length, 'connections');
+    this.connections.forEach(dc => {
+      dc.close();
     });
-    this.addConnection(dc);
   }
 
   private processPending() {
@@ -75,7 +85,7 @@ export class Session extends EventTarget {
     this.pending = [];
   }
 
-  private addConnection(dc: DataConnection, cnt?: Writable<number>) {
+  private addConnection(dc: DataConnection, cnt: Writable<number>) {
     console.log('ADD CONN', dc);
     dc.on('open', () => {
       console.log('CONNECTION OPEN', dc.metadata);

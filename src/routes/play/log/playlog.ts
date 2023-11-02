@@ -6,7 +6,9 @@ import type { RemoteEmbedMessage } from "$lib/types";
 export type Playlog = { ids: Set<string>; list: RemoteEmbedMessage[] };
 
 const PLAYLOG_KEY = 'bw-player-log';
+const GAMEID_KEY = 'bw-current-gameid';
 export const getPlayLog = getContextStore<Playlog>(PLAYLOG_KEY, { ids: new Set(), list: [] });
+export const getGameId = getContextStore<string>(GAMEID_KEY, '');
 
 export function addToLog(mat: ReturnType<typeof getPlayLog>, item: Partial<RemoteEmbedMessage>) {
   const toadd = Object.assign({id: id(), name: '', type: 'embed', time: new Date() } as RemoteEmbedMessage, item);
