@@ -69,7 +69,7 @@
 <aside class="flex flex-col gap-4 w-full">
   <div class="flex flex-col gap-4 w-full max-w-4xl">
     {#each $list as encounter, eindex}
-      <Disclosable bind:open={$encounterStates[encounter.id]}>
+      <Disclosable short bind:open={$encounterStates[encounter.id]}>
         <svelte:fragment slot="header">
           <div class="pr-2">
             <h3 class="text-xl font-subtitle leading-6">{encounter.name || `(unnamed)`}</h3>

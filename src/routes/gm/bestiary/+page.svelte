@@ -39,9 +39,9 @@
 <div class="flex flex-col gap-4">
   <SidebarSection title="Custom NPCs" open addable on:click={createNpc}>
     {#each $bestiary as npc (npc.id)}
-    <Disclosable overflowable>
+    <Disclosable overflowable short>
       <svelte:fragment slot="header">
-        <input type="text" bind:value={npc.name} class="flex-1 border-0 bg-transparent" placeholder="NPC Name">
+        <input type="text" bind:value={npc.name} class="flex-1 py-1 border-0 bg-transparent" placeholder="NPC Name">
         <button type="button" on:click={() => addToMat(npc)} class="relative inline-flex items-center rounded-full bg-purple-300 dark:bg-purple-700 p-1 font-medium shadow-sm hover:bg-purple-200 dark:hover:bg-purple-800 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-900"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="h-4 w-4"><path fill="currentColor" d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z"/></svg></button>
       </svelte:fragment>
       <div class="flex flex-col gap-4">
