@@ -20,6 +20,10 @@ export interface DiscordEmbed {
 */
   $: color = `#${(embed.color ?? 0).toString(16)}`;
   const dispatch = createEventDispatcher();
+
+  function openBig() {
+    dispatch('imageclick', embed.image?.url);
+  }
 </script>
 <div class="rounded border-l-4 relative shadow dark:bg-gray-900 bg-gray-200 border-gray-500  p-3 flex flex-col gap-2 group" style="border-color: {color};">
   <button type="button" on:click={() => dispatch('delete')} class="opacity-0 transition-opacity absolute top-3 right-4 text-lg rounded-full leading-none h-6 w-6 bg-purple-300 dark:bg-purple-900 group-hover:opacity-100 flex items-center justify-center"><span class="relative -top-px">&times;</span></button>
@@ -37,6 +41,6 @@ export interface DiscordEmbed {
   </div>
   {/if}
   {#if embed.image}
-  <img src={embed.image.url} alt={`Image of ${embed.title}`} class="max-w-xs rounded-sm">
+  <button type="button" on:click={openBig}><img src={embed.image.url} alt={`Image of ${embed.title}`} class="max-w-xs rounded-sm"></button>
   {/if}
 </div>

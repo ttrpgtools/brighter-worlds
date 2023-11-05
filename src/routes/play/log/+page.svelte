@@ -11,6 +11,7 @@
   import type { Readable } from "svelte/store";
   import { COLOR_NPC } from "$lib/const";
   import { distinctUntilChanged } from "$lib/util/distinctUntilChanged";
+  import ModalImg from "../ModalImg.svelte";
 
   let log = getPlayLog();
   let sesh: Session | undefined;
@@ -79,6 +80,22 @@
     }
   }
   $: buttonText = count && $count > 0 ? 'Disconnect' : 'Connect';
+
+  let showImage = '';
+  function openImg(ev: CustomEvent<string>) {
+    const url = ev.detail;
+    if (window && window.parent && window.parent !== window) {
+      // in iframe, ask parent to open image.
+      window.parent.postMessage({ type: 'showImage', data: url });
+    } else {
+      // open it myself.
+      showImage = url;
+    }
+  }
+
+  function closeImg() {
+    showImage = '';
+  }
 </script>
 <div bind:this={element} class="px-4 py-6 sm:px-6 lg:pl-8 xl:flex-1 xl:pl-6 flex flex-col gap-4 xl:basis-1/3 overflow-y-auto h-screen h-[100svh]">
   <div class="flex flex-row justify-between">
@@ -96,7 +113,10 @@
   {#each $log.list as msg (msg.id)}
     {@const dt = typeof msg.time === 'number' ? new Date(msg.time): msg.time }
     <div transition:fly={{ x: -50, duration: 200 }}>
-      <Embed embed={msg.embed} name={msg.name} time={dt} on:delete={() => removeItem(log, msg)}/>
+      <Embed embed={msg.embed} name={msg.name} time={dt} on:delete={() => removeItem(log, msg)} on:imageclick={openImg}/>
     </div>
   {/each}
 </div>
+{#if showImage}
+<ModalImg url={showImage} on:click={closeImg} />
+{/if}
