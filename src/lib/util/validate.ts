@@ -30,3 +30,7 @@ export function isNpc(entity: Entity): entity is NpcStats {
 export function isEncounter(entity: Entity): entity is Encounter {
   return 'npcs' in entity;
 }
+
+export function isElement(potential: unknown): potential is Element {
+  return (typeof potential === 'object' && potential != null && 'tagName' in potential);
+}

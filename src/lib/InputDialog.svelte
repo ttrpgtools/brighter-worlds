@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { isElement } from "./util/validate";
+
   import { createEventDispatcher } from "svelte";
   import Button from "./Button.svelte";
   import DeleteButton from "./DeleteButton.svelte";
@@ -29,6 +31,7 @@
   }
 
   function handleKeys(ev: KeyboardEvent) {
+    if (isElement(ev.target) && ev.target.tagName.toUpperCase() === 'TEXTAREA') { return; }
     ev.preventDefault();
     okBtnAction();
   }

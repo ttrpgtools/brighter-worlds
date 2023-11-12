@@ -1,12 +1,12 @@
 import { getNpcInstance } from "$lib/data/encounter-manager";
 import { getContextStore } from "$lib/data/settings";
 import { id } from "$lib/rolling/id";
-import type { Encounter, Entity, Item, LogRoll, NpcInstance, RemoteEmbedMessage, RollResult } from "$lib/types";
+import type { Encounter, Item, LogRoll, NpcInstance, RemoteEmbedMessage, RollResult, Scene } from "$lib/types";
 
 interface PMScene {
   id: string;
   type: 'scene';
-  scene: Entity;
+  scene: Scene;
 }
 
 interface PMItem {
@@ -50,7 +50,7 @@ export function addItem(mat: ReturnType<typeof getPlaymat>, item: Item) {
   add(mat, {id: '', type: 'item', item});
 }
 
-export function addScene(mat: ReturnType<typeof getPlaymat>, scene: Entity) {
+export function addScene(mat: ReturnType<typeof getPlaymat>, scene: Scene) {
   add(mat, {id: '', type: 'scene', scene});
 }
 

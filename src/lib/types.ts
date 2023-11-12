@@ -170,6 +170,10 @@ export interface NpcInstance extends BaseNpc {
   armor: number;
 }
 
+export interface Scene extends Entity {
+  gmnotes?: string;
+}
+
 export interface Encounter extends Entity {
   [EMPTY]?: boolean | undefined;
   npcs: NpcStats[];
