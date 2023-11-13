@@ -4,7 +4,7 @@
   import type { SheetSettings } from "$lib/types";
   const DISCORD_API_BASE = 'https://discord.com/api/webhooks/';
 
-  export let settings: SheetSettings = { rollToBridge: false, rollToDiscord: false, discordWebhook: '' };
+  export let settings: SheetSettings = { rollToBridge: true, rollToDiscord: false, discordWebhook: '' };
 
   let dialog: InputDialog<SheetSettings>;
   export let title = 'Sheet Settings';

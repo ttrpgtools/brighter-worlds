@@ -58,7 +58,7 @@
     const best = sides.reduce((p, c) => Math.max(roll(c), p), 0);
     
     label = label || `d${sides}`;
-    if ($character.settings?.rollToBridge) {
+    if ($character.settings?.rollToBridge !== false) {
       broadcastRoll($character.name, best, label, sides, $character.name);
       //broadcast.set({id: $character.id, name: $character.name, type: 'roll', dice: sides, result: best, label});
     }
@@ -111,7 +111,7 @@
     if ($character.settings?.rollToDiscord && results.save) {
       sendToDiscord($character.name, results.save, `${type.toUpperCase()} save against ${results.dd ?? '?'} direct damage.`, $character.settings.discordWebhook, results.dice, $character.name);
     }
-    if ($character.settings?.rollToBridge && results.save) {
+    if ($character.settings?.rollToBridge !== false && results.save) {
       broadcastRoll($character.name, results.save, `${type.toUpperCase()} save against ${results.dd ?? '?'} direct damage.`, results.dice, $character.name);
     }
     dice.show('Damage', results.dice, results.msg);
@@ -152,7 +152,7 @@
           {#if $character.settings?.rollToDiscord}
           <Icon icon="discord" />
           {/if}
-          {#if $character.settings?.rollToBridge}
+          {#if $character.settings?.rollToBridge !== false}
           <Icon icon="broadcast" />
           {/if}
         </div>
