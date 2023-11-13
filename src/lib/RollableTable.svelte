@@ -22,6 +22,7 @@
 
   $: sides = Math.min(die ?? options.length, options.length);
   $: dieSides = advanced ? formulaDie() : sides;
+  $: dieLabel = knownDie(dieSides) ? '' : (dieSides !== 0 ? `d${dieSides}` : formula || 'Roll');
   function alt(i: number, h: Set<number>) {
     const last = i === (options.length - 1) ? 'rounded-b-lg' : '';
     return h.has(i)
@@ -58,7 +59,7 @@
 
   const SHUFFLE_COUNT = 10;
   let shuffle = 0;
-  export async function rollTable(preRoll?: number) {
+  export async function getResult(preRoll?: number) : Promise<TableRoll<T> | undefined> {
     shuffle = 0;
     highlighted = new Set();
     if (preRoll != null) {
@@ -86,11 +87,14 @@
     if (selected != null) {
       console.log('dieSides', dieSides);
       if (knownDie(dieSides)) {
-        dispatch('roll', { roll: rolled, value: selected, title, dice: [dieSides] });
-      } else {
-        dispatch('roll', { roll: rolled, value: selected, title, total: dieSides });
+        return { roll: rolled, value: selected, title, dice: [dieSides] };
       }
+      return { roll: rolled, value: selected, title, total: dieSides };
     }
+  }
+  export async function rollTable(preRoll?: number) {
+    const troll = await getResult(preRoll);
+    if (troll) dispatch('roll', troll);
   }
 </script>
 <Card>
@@ -100,7 +104,7 @@
     </div>
     <div class="flex-shrink-0">
       <div class="flex gap-4 items-center">
-        <button type="button" on:click={() => (!once || rolled === 0) && rollTable()} disabled={once && rolled > 0} class="relative inline-flex items-center rounded-full disabled:cursor-not-allowed bg-purple-300 dark:bg-purple-700 p-1 font-medium shadow-sm hover:bg-purple-200 dark:hover:bg-purple-800 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-900">{#if knownDie(dieSides)}<Die which={dieSides} />{:else}Roll{/if}</button>
+        <button type="button" on:click={() => (!once || rolled === 0) && rollTable()} disabled={once && rolled > 0} class="relative inline-flex items-center {knownDie(dieSides) ? `rounded-full` : `rounded-md`} disabled:cursor-not-allowed bg-purple-300 dark:bg-purple-700 p-1 font-medium shadow-sm hover:bg-purple-200 dark:hover:bg-purple-800 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-900">{#if knownDie(dieSides)}<Die which={dieSides} />{:else}{dieLabel}{/if}</button>
       </div>
     </div>
   </svelte:fragment>
