@@ -1,6 +1,8 @@
 import { die } from './die';
 import { browserCrypto } from './browser-crypto';
-import { isNumeric } from '$lib/util/validate';
+import { isNumeric, isSimpleRollFormula } from '$lib/util/validate';
+import type { DieValue } from '$lib/types';
+import { knownDie } from '$lib/dice/Die.svelte';
 
 export function roll(sides: number) {
   return die(sides)(browserCrypto);
@@ -44,4 +46,19 @@ export function rollFormula(formula: string) {
   const value = terms.reduce((p, c) => p + parseTerm(c), 0);
   console.log(value);
   return value;
+}
+
+export class Formula {
+  public simple: boolean;
+  public dice: DieValue[];
+
+  constructor(public formula: string) {
+    this.simple = isSimpleRollFormula(formula);
+    const formulaDie = this.simple ? parseInt(formula?.replace(/1?d/, '') ?? '0', 10) : 0;
+    this.dice = knownDie(formulaDie) ? [formulaDie] : [];
+  }
+
+  roll() {
+    return rollFormula(this.formula);
+  }
 }

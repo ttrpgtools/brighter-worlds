@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import type { RemoteEmbedMessage, RemoteMessage } from "$lib/types";
+  import type { Cta, RemoteEmbedMessage, RemoteMessage } from "$lib/types";
   import { broadcast } from "$lib/data/channel-child";
   import { addToLog, clearLog, getGameId, getPlayLog, removeItem } from "./playlog";
   import DeleteButton from "$lib/DeleteButton.svelte";
@@ -12,12 +12,22 @@
   import { COLOR_NPC } from "$lib/const";
   import { distinctUntilChanged } from "$lib/util/distinctUntilChanged";
   import ModalImg from "../ModalImg.svelte";
+  import { id } from "$lib/rolling/id";
+  import DiceDialog from "$lib/DiceDialog.svelte";
+  import { requestRollCall } from "$lib/data/broadcast-hub";
+  import { Formula } from "$lib/rolling/roll";
+  import { formatRoll } from "$lib/util/share";
 
   let log = getPlayLog();
   let sesh: Session | undefined;
   let element: Element;
   let gameId = getGameId();
   let count: Readable<number>;
+  let die: DiceDialog;
+  const chars = requestRollCall();
+  $: activeChars = Array.from($chars.entries());
+  let selectedChar = 0;
+  $: currentName = activeChars.length ? activeChars[selectedChar][1].name : '';
 
   onMount(() => {
     console.log('[LOG] Mounting');
@@ -57,6 +67,16 @@
     }
   }
 
+  function callToAction(ev: CustomEvent<Cta>) {
+    const cta = ev.detail;
+    const f = new Formula(cta.formula);
+    const value = f.roll();
+    const roll = formatRoll(currentName, value, `Requested ${f.formula}`, f.dice);
+    roll.meta = cta.meta;
+    sesh?.send({id: id(), name: currentName, embed: roll, type: 'embed'});
+    die.show(`${value}`, f.dice, f.formula);
+  }
+
   function connect() {
     if ($gameId === '') return;
     if (sesh) {
@@ -70,10 +90,10 @@
         }
       });
       } else {
-        sesh.connect($gameId, '');
+        sesh.connect($gameId, currentName);
       }
     } else {
-      sesh = joinSession($gameId, '');
+      sesh = joinSession($gameId, currentName);
       count = sesh.count;
       sesh.addEventListener('data', handleData);
       sesh.addEventListener('error', distinctUntilChanged(handleError, x => (x as CustomEvent<Error>)?.detail?.message));
@@ -97,9 +117,22 @@
     showImage = '';
   }
 </script>
+<DiceDialog bind:this={die} />
 <div bind:this={element} class="px-4 py-6 sm:px-6 lg:pl-8 xl:flex-1 xl:pl-6 flex flex-col gap-4 xl:basis-1/3 overflow-y-auto h-screen h-[100svh]">
   <div class="flex flex-row justify-between">
     <h3 class="font-subtitle text-2xl">The Game Log</h3>
+    <div>
+      <span>Current character:</span>
+      {#if activeChars.length === 1}
+      {currentName}
+      {:else if activeChars.length > 1}
+      <select bind:value={selectedChar} class="rounded-lg border-purple-500 dark:bg-gray-900">
+        {#each activeChars as char, ci}
+          <option value={ci}>{char[1].name}</option>
+        {/each}
+      </select> {currentName}
+      {/if}
+    </div>
     <div>
       {#if $log?.list?.length}
       <DeleteButton on:confirm={() => clearLog(log)} confirmText="Click again to clear log"/>
@@ -113,7 +146,7 @@
   {#each $log.list as msg (msg.id)}
     {@const dt = typeof msg.time === 'number' ? new Date(msg.time): msg.time }
     <div transition:fly={{ x: -50, duration: 200 }}>
-      <Embed embed={msg.embed} name={msg.name} time={dt} on:delete={() => removeItem(log, msg)} on:imageclick={openImg}/>
+      <Embed embed={msg.embed} name={msg.name} time={dt} on:delete={() => removeItem(log, msg)} on:imageclick={openImg} on:cta={callToAction}/>
     </div>
   {/each}
 </div>

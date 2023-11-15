@@ -6,6 +6,7 @@
   export let embed: DiscordEmbed;
   export let name = '';
   export let time: Date | undefined = undefined;
+  export let showMeta = false;
 /*
 export interface DiscordEmbed {
   title?: string;
@@ -43,4 +44,12 @@ export interface DiscordEmbed {
   {#if embed.image}
   <button type="button" on:click={openBig}><img src={embed.image.url} alt={`Image of ${embed.title}`} class="max-w-xs rounded-sm"></button>
   {/if}
+  {#if embed.cta}
+  <div class="flex gap-4 text-sm">
+    {#each embed.cta as c}
+    <button type="button" on:click={() => dispatch('cta', c)} class="rounded-md px-2 py-1 bg-purple-300 dark:bg-purple-700">{c.label}{#if showMeta}&nbsp;({c.meta}){/if}</button>
+    {/each}
+  </div>
+  {/if}
+  {#if embed.meta && showMeta}<p class="opacity-75 italic">{embed.meta}</p>{/if}
 </div>

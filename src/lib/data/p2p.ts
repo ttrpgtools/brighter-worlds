@@ -1,4 +1,4 @@
-import type { RemoteEmbedMessage } from '$lib/types';
+import type { RemoteCtaReplyMessage, RemoteEmbedMessage } from '$lib/types';
 import { type DataConnection, Peer } from 'peerjs';
 import { type Readable, writable, readonly, type Writable } from 'svelte/store';
 
@@ -48,7 +48,7 @@ export class Session extends EventTarget {
     }
   }
 
-  send(data: RemoteEmbedMessage) {
+  send(data: RemoteEmbedMessage | RemoteCtaReplyMessage) {
     console.log('SEND to', this.connections.length, 'connections');
     this.connections.forEach(dc => {
       console.log('SEND TO', dc);

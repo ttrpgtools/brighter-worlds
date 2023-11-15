@@ -4,17 +4,19 @@
   import IconButton from "$lib/IconButton.svelte";
   import { getEncountersSettings } from "$lib/data/encounter-manager";
   import { hostSession, type Session } from "$lib/data/p2p";
-  import { roll } from "$lib/rolling/roll";
+  import { Formula, roll } from "$lib/rolling/roll";
   import DamageDialog from "$lib/sheet/DamageDialog.svelte";
   import Roller from "$lib/sheet/Roller.svelte";
   import SheetSettings from "$lib/sheet/SheetSettings.svelte";
-  import type { DamageDetails, DieValue, Entity, Item, NpcInstance, RemoteEmbedMessage } from "$lib/types";
+  import type { DamageDetails, DieValue, Entity, Item, NpcInstance, RemoteCtaReplyMessage, RemoteEmbedMessage } from "$lib/types";
   import { armor } from "$lib/util/character";
   import { sendToDiscord, sendSceneToDiscord, sendItemToDiscord, sendNpcToDiscord } from "$lib/util/discord";
   import type { Readable } from "svelte/store";
   import { addLocalRoll, addRemoteRoll, getRollLog } from "./playmat";
-  import { formatItem, formatNpc, formatRoll, formatScene } from "$lib/util/share";
+  import { formatCta, formatItem, formatNpc, formatRoll, formatScene } from "$lib/util/share";
   import { id } from "$lib/rolling/id";
+  import { rollRequests } from "./gmtools";
+  import { onMount } from "svelte";
 
   let dice: DiceDialog;
   let damageDialog: DamageDialog;
@@ -24,12 +26,24 @@
   const log = getRollLog();
   let gameId: Readable<string>;
   let playerCount: Readable<number>;
+
+  onMount(() => {
+    const unsub = rollRequests.subscribe((roll) => {
+      const cta = formatCta([{label: `Roll ${roll.formula}`, id: id(), type: 'roll', formula: roll.formula, meta: roll.name}], 'Can someone...');
+      const rem = {id: id(), name: '', type: 'embed' as const, embed: cta};
+      addRemoteRoll(log, rem);
+      if ($encountersSettings?.rollToBridge !== false) {
+        session?.send(rem);
+      }
+    });
+    return () => unsub();
+  });
   
   function showRoll(sides: DieValue[], label: string = '', name = 'NPC') {
     const best = sides.reduce((p, c) => Math.max(roll(c), p), 0);
     
     label = label || sides.map(s => `d${s}`).join(',');
-    if ($encountersSettings?.rollToBridge) {
+    if ($encountersSettings?.rollToBridge !== false) {
       const roll = formatRoll(name, best, label, sides);
       roll.title = name;
       session?.send({id: id(), name: '', type: 'embed', embed: roll});
@@ -45,6 +59,21 @@
       dice: sides,
       result: best,
       label: `${name}: ${label}`,
+    });
+  }
+
+  export function formulaRoll(formula: string, label?: string, name: string = 'GM', meta?: string) {
+    const f = new Formula(formula);
+    const value = f.roll();
+    const roll = formatRoll(name, value, label ?? formula, f.dice);
+    roll.title = name;
+    session?.send({id: id(), name, embed: roll, type: 'embed'});
+    const m = meta ? ` (${meta})` : '';
+    dice.show(`${value}`, f.dice, `${label ?? formula}${m}`);
+    addLocalRoll(log, {
+      dice: f.dice,
+      result: value,
+      label: `${name}: ${label ?? formula}${m}`,
     });
   }
 
@@ -72,7 +101,7 @@
     if ($encountersSettings?.rollToDiscord && results.save) {
       sendToDiscord(npc.name, results.save, `${results.type.toUpperCase()} save against ${results.dd ?? '?'} direct damage.`, $encountersSettings.discordWebhook, results.dice, npc.name);
     }
-    if ($encountersSettings?.rollToBridge && results.save) {
+    if ($encountersSettings?.rollToBridge !== false && results.save) {
       const roll = formatRoll(npc.name, results.save, `${results.type.toUpperCase()} save against ${results.dd ?? '?'} direct damage.`, results.dice, npc.name);
       roll.title = npc.name;
       session?.send({id: id(), name: '', type: 'embed', embed: roll});
@@ -97,7 +126,7 @@
     if ($encountersSettings?.rollToDiscord) {
       sendSceneToDiscord(scene, $encountersSettings.discordWebhook);
     }
-    if ($encountersSettings?.rollToBridge) {
+    if ($encountersSettings?.rollToBridge !== false) {
       session?.send({id: id(), name: '', type: 'embed', embed: formatScene(scene)});
     }
   }
@@ -106,7 +135,7 @@
     if ($encountersSettings?.rollToDiscord) {
       sendNpcToDiscord(npc, $encountersSettings.discordWebhook);
     }
-    if ($encountersSettings?.rollToBridge) {
+    if ($encountersSettings?.rollToBridge !== false) {
       session?.send({id: id(), name: '', type: 'embed', embed: formatNpc(npc)});
     }
   }
@@ -115,17 +144,22 @@
     if ($encountersSettings?.rollToDiscord) {
       sendItemToDiscord(item, $encountersSettings.discordWebhook);
     }
-    if ($encountersSettings?.rollToBridge) {
+    if ($encountersSettings?.rollToBridge !== false) {
       session?.send({id: id(), name: '', type: 'embed', embed: formatItem(item)});
     }
   }
 
   function handleData(ev: Event) {
-		const evt = ev as CustomEvent<{name: string; data: RemoteEmbedMessage;}>;
+		const evt = ev as CustomEvent<{name: string; data: RemoteEmbedMessage | RemoteCtaReplyMessage;}>;
 		console.log(evt);
     if (evt && evt.detail && evt.detail.data) {
-      addRemoteRoll(log, evt.detail.data);
-      session?.send(evt.detail.data);
+      const data = evt.detail.data;
+      if (data.type === 'embed') {
+        addRemoteRoll(log, data);
+        session?.send(data);
+      } else {
+
+      }
     }
 	}
 
@@ -144,7 +178,7 @@
         type: 'embed',
         embed: {
           fields: [],
-          title: 'Game joined. Welcome to Brighter Worlds',
+          title: `Game joined. Welcome to Brighter Worlds ${evt.detail.name}`,
         }
       });
     }
@@ -182,7 +216,7 @@
 {#if $encountersSettings?.rollToDiscord}
   <Icon icon="discord" />
 {/if}
-{#if $encountersSettings?.rollToBridge}
+{#if $encountersSettings?.rollToBridge !== false}
 <IconButton icon="broadcast" on:click={createSession}/>
 <div class="font-sans text-sm">{$gameId ?? ''} {#if $gameId}({$playerCount}){/if}</div>
 {/if}

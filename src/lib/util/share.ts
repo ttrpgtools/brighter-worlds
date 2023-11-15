@@ -1,5 +1,5 @@
 import { COLOR_ITEM, COLOR_NPC, COLOR_ROLL, COLOR_SCENE } from "$lib/const";
-import type { DieValue, DiscordEmbed, Entity, Item } from "$lib/types";
+import type { Cta, DieValue, DiscordEmbed, Entity, Item } from "$lib/types";
 import { wrap } from "./array";
 import { encode } from "./b64";
 
@@ -64,4 +64,14 @@ export function formatItem(item: Item) {
   if (item.armor) discordItem.fields.push({ name: 'Armor', value: `${item.armor}`, inline: true });
   if (item.damage) discordItem.fields.push({ name: 'Damage', value: wrap(item.damage).map(d => `d${d}`).join(' | '), inline: true });
   return discordItem;
+}
+
+export function formatCta(cta: Cta[], title?: string) {
+  const discord: DiscordEmbed = {
+    fields: [],
+    cta,
+    color: COLOR_ROLL,
+    title,
+  };
+  return discord;
 }

@@ -7,7 +7,6 @@
   import ButtonLink from "$lib/ButtonLink.svelte";
   import IconButton from "$lib/IconButton.svelte";
   import HomeLink from "$lib/HomeLink.svelte";
-  import Icon from "$lib/Icon.svelte";
   import { get, writable } from "svelte/store";
   import Loader from "$lib/Loader.svelte";
 

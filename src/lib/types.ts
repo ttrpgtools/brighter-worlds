@@ -281,6 +281,12 @@ export interface RemoteEmbedMessage extends BaseRemoteMessage {
   time?: Date | number;
 }
 
+export interface RemoteCtaReplyMessage extends BaseRemoteMessage {
+  type: 'ctareply';
+  cta: string;
+  time?: Date | number;
+}
+
 export type RemoteMessage = RemoteRollMessage | RemoteTextMessage | RemoteEmbedMessage;
 
 
@@ -318,13 +324,26 @@ export interface CallingEnhancement {
   type: string;
 }
 
+export interface BaseCta extends Identifiable {
+  label: string;
+  meta?: string;
+}
+export interface RollCta extends BaseCta {
+  type: 'roll';
+  formula: string;
+}
+
+export type Cta = RollCta;
+
 export interface DiscordEmbed {
   title?: string;
   author?: { name: string, icon_url?: string; };
   description?: string;
   url?: string;
   color?: number;
+  cta?: Cta[];
   footer?: { text: string; icon_url?: string; }
   image?: { url: string };
   fields: { name: string, value: string, inline?: boolean }[];
+  meta?: string;
 }

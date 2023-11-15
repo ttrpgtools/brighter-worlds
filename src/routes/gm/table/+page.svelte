@@ -13,6 +13,7 @@
   import { addTable, getTables, removeTable, updateTable } from "./tables";
   import Icon from "$lib/Icon.svelte";
   import { id } from "$lib/rolling/id";
+  import { rollRequests } from "../gmtools";
 
   export let data: PageData;
 
@@ -97,6 +98,10 @@
     delete customTables[table.id];
   }
 
+  function requestRoll(table: CustomRolltableDef) {
+    rollRequests.emit({name: table.name, formula: table.formula});
+  }
+
   async function fullEncounterRoll(table: CustomRolltableDef) {
     const encRoll = await encounterTable.getResult();
     if (encRoll) {
@@ -133,6 +138,7 @@
     {#each $tables as table}
     <div class="relative group/table">
       <button type="button" on:click={() => remove(table)} class="hidden absolute top-2 left-2 text-lg z-20 rounded-full leading-none h-6 w-6 bg-purple-300 dark:bg-purple-900 group-hover/table:flex items-center justify-center"><span class="relative -top-px">&times;</span></button>
+      <button type="button" on:click={() => requestRoll(table)} class="hidden absolute top-2 left-1/2 -translate-x-1/2 text-lg z-20 rounded-full leading-none h-6 w-6 bg-purple-300 dark:bg-purple-900 group-hover/table:flex items-center justify-center"><Icon icon="broadcast"/></button>
       <button type="button" on:click={() => fullEncounterRoll(table)} class="hidden absolute top-2 right-2 text-lg z-20 rounded-full leading-none h-6 w-6 bg-purple-300 dark:bg-purple-900 group-hover/table:flex items-center justify-center"><Icon icon="nav-encounter"/></button>
       <CustomRolltable options={table.options} title={table.name} formula={table.formula} on:click={() => editTable(table)} on:roll={addRich} bind:this={customTables[table.id]} />
     </div>

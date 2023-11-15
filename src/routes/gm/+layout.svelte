@@ -2,7 +2,7 @@
   import DeleteButton from "$lib/DeleteButton.svelte";
   import Embed from "$lib/Embed.svelte";
   import MenuLink from "$lib/MenuLink.svelte";
-  import type { Entity, Item } from "$lib/types";
+  import type { Cta, Entity, Item } from "$lib/types";
   import { setGmContext } from "$lib/util/gm";
   import { fly } from "svelte/transition";
   import GmLink from "./GmLink.svelte";
@@ -30,6 +30,9 @@
   }
   function shareItem(item: Item) {
     return () => tools.shareItem(item);
+  }
+  function callToAction(ev: CustomEvent<Cta>) {
+    tools.formulaRoll(ev.detail.formula, `Requested ${ev.detail.formula}`, 'GM', ev.detail.meta);
   }
 </script>
 <main class="flex flex-col min-h-screen min-h-[100svh] lg:h-screen lg:h-[100svh]">
@@ -63,7 +66,7 @@
       <div class="px-4 py-6 sm:px-6 lg:pl-8 xl:flex-1 xl:pl-6 flex flex-col gap-4 xl:basis-2/3 overflow-y-auto">
         <!-- Main area Logging? -->
         <div class="flex flex-row justify-between">
-          <h3 class="font-subtitle text-2xl">The Play Mat</h3>
+          <button type="button" on:click={() => tools.sendCta()}><h3 class="font-subtitle text-2xl">The Play Mat</h3></button>
           {#if $mat.length}
           <DeleteButton on:confirm={() => clearMat(mat)} confirmText="Click again to clear mat"/>
           {/if}
@@ -91,7 +94,7 @@
           {#if item.type === 'roll'}
             <LocalRoll {item} on:delete={() => removeRoll(log, item)}/>
           {:else if item.type === 'embed'}
-            <Embed embed={item.embed} name={item.name} time={dt} on:delete={() => removeRoll(log, item)} />
+            <Embed embed={item.embed} name={item.name} time={dt} showMeta on:delete={() => removeRoll(log, item)} on:cta={callToAction} />
           {/if}
         </div>
         {/each}
