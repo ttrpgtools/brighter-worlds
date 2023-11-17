@@ -59,7 +59,7 @@
 
   const SHUFFLE_COUNT = 10;
   let shuffle = 0;
-  export async function getResult(preRoll?: number) : Promise<TableRoll<T> | undefined> {
+  export async function getResult(preRoll?: number, animate = false) : Promise<TableRoll<T> | undefined> {
     shuffle = 0;
     highlighted = new Set();
     if (preRoll != null) {
@@ -67,9 +67,11 @@
     } else {
       rolled = 0;
       const final = advanced ? rollFormula(formula ?? '') : roll(sides);
-      const shuffles = rolls(options.length, SHUFFLE_COUNT);
-      // Await Animation
-      await doShuffle(shuffles);
+      if (animate) {
+        const shuffles = rolls(options.length, SHUFFLE_COUNT);
+        // Await Animation
+        await doShuffle(shuffles);
+      }
       rolled = final;
       shuffle = 0;
       console.log(`Rolled = ${rolled}`);
@@ -93,7 +95,7 @@
     }
   }
   export async function rollTable(preRoll?: number) {
-    const troll = await getResult(preRoll);
+    const troll = await getResult(preRoll, true);
     if (troll) dispatch('roll', troll);
   }
 </script>

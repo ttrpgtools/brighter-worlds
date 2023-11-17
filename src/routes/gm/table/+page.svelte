@@ -1,12 +1,12 @@
 <script lang="ts">
   import Disclosable from "$lib/Disclosable.svelte";
   import { getNpcInstance, encounters } from "$lib/data/encounter-manager";
-  import type { CustomRolltableDef, RolltableOption, TableRoll } from "$lib/types";
+  import type { CustomRolltableDef, DiscordEmbed, RolltableOption, TableRoll } from "$lib/types";
   import { isEncounter, isNpc } from "$lib/util/validate";
   import CustomRolltable from "../CustomRolltable.svelte";
   import SidebarSection from "../SidebarSection.svelte";
   import RolltableDialog from "../RolltableDialog.svelte";
-  import { addEncounter, addItem, addNpc, addLocalRoll, getPlaymat, getRollLog } from "../playmat";
+  import { addEncounter, addItem, addNpc, addLocalRoll, getPlaymat, getRollLog, addRemoteRoll } from "../playmat";
   import type { PageData } from "./$types";
   import { getNpcs } from "../bestiary/npcs";
   import { getRelics } from "../reliquary/relics";
@@ -14,6 +14,8 @@
   import Icon from "$lib/Icon.svelte";
   import { id } from "$lib/rolling/id";
   import { rollRequests } from "../gmtools";
+  import { ENCOUNTER_ROLL_NO, ENCOUNTER_ROLL_SIGNS, ENCOUNTER_ROLL_YES, REACTION_ROLL_NEG, REACTION_ROLL_NEUTRAL, REACTION_ROLL_POS, REACTION_ROLL_VNEG, REACTION_ROLL_VPOS } from "$lib/const";
+  import { formatEncounterRoll } from "$lib/util/share";
 
   export let data: PageData;
 
@@ -26,17 +28,17 @@
   let tableDialog: RolltableDialog;
 
   const encounterOpts: RolltableOption[] = [
-    { type: 'text', value: 'Encounter', trigger: 1 },
-    { type: 'text', value: 'Signs of an Encounter', trigger: [2, 3] },
-    { type: 'text', value: 'Nothing', trigger: [4, 6] },
+    { type: 'text', value: ENCOUNTER_ROLL_YES, trigger: 1 },
+    { type: 'text', value: ENCOUNTER_ROLL_SIGNS, trigger: [2, 3] },
+    { type: 'text', value: ENCOUNTER_ROLL_NO, trigger: [4, 6] },
   ];
 
   const reactionOpts: RolltableOption[] = [
-    { type: 'text', value: 'Extremely positive', trigger: [2, 3] },
-    { type: 'text', value: 'Positive', trigger: [4, 6] },
-    { type: 'text', value: 'Neutral', trigger: 7 },
-    { type: 'text', value: 'Negative', trigger: [8, 10] },
-    { type: 'text', value: 'Extremely negative', trigger: [11, 12] },
+    { type: 'text', value: REACTION_ROLL_VPOS, trigger: [2, 3] },
+    { type: 'text', value: REACTION_ROLL_POS, trigger: [4, 6] },
+    { type: 'text', value: REACTION_ROLL_NEUTRAL, trigger: 7 },
+    { type: 'text', value: REACTION_ROLL_NEG, trigger: [8, 10] },
+    { type: 'text', value: REACTION_ROLL_VNEG, trigger: [11, 12] },
   ];
 
   let encounterTable: CustomRolltable;
@@ -74,6 +76,10 @@
     }
   }
 
+  function addRemote(embed: DiscordEmbed) {
+    addRemoteRoll(log, { embed });
+  }
+
   function addRich(ev: CustomEvent<TableRoll<RolltableOption>>) {
     const roll = ev.detail;
     addOption(roll);
@@ -105,16 +111,17 @@
   async function fullEncounterRoll(table: CustomRolltableDef) {
     const encRoll = await encounterTable.getResult();
     if (encRoll) {
-      addOption(encRoll);
-      if (encRoll.value.length && encRoll.value[0].value === 'Nothing') {
+      const type = encRoll.value.length > 0 && encRoll.value[0].type === 'text' ? encRoll.value[0].value : '';
+      if (type === 'Nothing') {
+        addRemote(formatEncounterRoll(type));
         return;
       }
       const [reactionRoll, roll] = await Promise.all([reactionTable.getResult(), customTables[table.id].getResult()]);
       const reaction = (reactionRoll && reactionRoll.value.length) ? ` (${reactionRoll.value[0].value})` : '';
-      if (reactionRoll) addOption(reactionRoll);
       if (roll && roll.value.length) {
         const res = roll.value[0];
-        addLocalRoll(log, getRollResult(roll));
+        const label = res.type === 'entity' ? res.value.name : res.value;
+        addRemote(formatEncounterRoll(type, reaction, label));
         if (res.type === 'entity') {
           const ent = res.value;
           if (isNpc(ent)) {

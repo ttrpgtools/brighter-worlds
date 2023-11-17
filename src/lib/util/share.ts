@@ -1,4 +1,4 @@
-import { COLOR_ITEM, COLOR_NPC, COLOR_ROLL, COLOR_SCENE } from "$lib/const";
+import { COLOR_DANGER, COLOR_ITEM, COLOR_NPC, COLOR_OK, COLOR_ROLL, COLOR_SCENE, COLOR_WARN, ENCOUNTER_ROLL_NO, ENCOUNTER_ROLL_YES } from "$lib/const";
 import type { Cta, DieValue, DiscordEmbed, Entity, Item } from "$lib/types";
 import { wrap } from "./array";
 import { encode } from "./b64";
@@ -73,5 +73,20 @@ export function formatCta(cta: Cta[], title?: string) {
     color: COLOR_ROLL,
     title,
   };
+  return discord;
+}
+
+export function formatEncounterRoll(type: string, reaction?: string, label?: string) {
+  const discord: DiscordEmbed = {
+    fields: [],
+    color: type === ENCOUNTER_ROLL_NO ? COLOR_OK : (type === ENCOUNTER_ROLL_YES ? COLOR_DANGER : COLOR_WARN),
+    title: type,
+  };
+  if (reaction) {
+    discord.fields.push({ name: 'Reaction', value: reaction });
+  }
+  if (label) {
+    discord.fields.push({ name: 'Result', value: label });
+  }
   return discord;
 }
