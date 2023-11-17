@@ -35,6 +35,7 @@ function handleResponses(updater: (this: void, updater: Updater<Map<string, {nam
   return function(ev: MessageEvent<RollCallMsg>) {
     if (ev?.data?.type === 'here') {
       const {id, name} = ev.data;
+      if (!id || !name) return;
       updater(list => {
         if (!list.has(id)) {
           list.set(id, {name, count: 1});
@@ -74,6 +75,10 @@ export function requestRollCall() {
   setupChannel(update);
   rollcallChannel?.postMessage({ type: 'request' });
   return { subscribe } as Readable<Map<string, {name: string; count: number;}>>;
+}
+
+export function rerequest() {
+  rollcallChannel?.postMessage({ type: 'request' });
 }
 
 export function registerForRollCall(fn: RollCallback) {

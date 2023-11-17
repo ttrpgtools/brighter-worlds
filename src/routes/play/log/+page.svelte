@@ -14,7 +14,7 @@
   import ModalImg from "../ModalImg.svelte";
   import { id } from "$lib/rolling/id";
   import DiceDialog from "$lib/DiceDialog.svelte";
-  import { requestRollCall } from "$lib/data/broadcast-hub";
+  import { requestRollCall, rerequest } from "$lib/data/broadcast-hub";
   import { Formula } from "$lib/rolling/roll";
   import { formatRoll } from "$lib/util/share";
 
@@ -24,17 +24,24 @@
   let gameId = getGameId();
   let count: Readable<number>;
   let die: DiceDialog;
-  const chars = requestRollCall();
-  $: activeChars = Array.from($chars.entries());
-  let selectedChar = 0;
-  $: currentName = activeChars.length ? activeChars[selectedChar][1].name : '';
-
+  let currentName: string | undefined;
+  let activeChars: string[] | undefined;
+  
   onMount(() => {
     console.log('[LOG] Mounting');
     const unlisten = broadcast.subscribe(broadcastHandle);
-
+    const chars = requestRollCall();
+    const unrollcall = chars.subscribe((v) => {
+      console.log('[LOG] rc', v);
+      activeChars = Array.from(v.entries()).map(([,{name}]) => name).filter(x => !!x);
+      console.log('[LOG] active', activeChars);
+      if (!currentName || !activeChars.includes(currentName)) {
+        currentName = activeChars[0];
+      }
+    });
     return () => {
       unlisten();
+      unrollcall();
     };
   });
 
@@ -71,9 +78,9 @@
     const cta = ev.detail;
     const f = new Formula(cta.formula);
     const value = f.roll();
-    const roll = formatRoll(currentName, value, `Requested ${f.formula}`, f.dice);
+    const roll = formatRoll(currentName ?? '', value, `Requested ${f.formula}`, f.dice);
     roll.meta = cta.meta;
-    sesh?.send({id: id(), name: currentName, embed: roll, type: 'embed'});
+    sesh?.send({id: id(), name: currentName ?? '', embed: roll, type: 'embed'});
     die.show(`${value}`, f.dice, f.formula);
   }
 
@@ -90,10 +97,10 @@
         }
       });
       } else {
-        sesh.connect($gameId, currentName);
+        sesh.connect($gameId, currentName ?? '');
       }
     } else {
-      sesh = joinSession($gameId, currentName);
+      sesh = joinSession($gameId, currentName ?? '');
       count = sesh.count;
       sesh.addEventListener('data', handleData);
       sesh.addEventListener('error', distinctUntilChanged(handleError, x => (x as CustomEvent<Error>)?.detail?.message));
@@ -122,15 +129,19 @@
   <div class="flex flex-row justify-between">
     <h3 class="font-subtitle text-2xl">The Game Log</h3>
     <div>
-      <span>Current character:</span>
-      {#if activeChars.length === 1}
-      {currentName}
-      {:else if activeChars.length > 1}
-      <select bind:value={selectedChar} class="rounded-lg border-purple-500 dark:bg-gray-900">
-        {#each activeChars as char, ci}
-          <option value={ci}>{char[1].name}</option>
-        {/each}
-      </select> {currentName}
+      {#if activeChars && activeChars.length > 0}
+        <span>Current character:</span>
+        {#if activeChars.length === 1}
+        {currentName}
+        {:else if activeChars.length > 1}
+        <select bind:value={currentName} class="rounded-lg border-purple-500 dark:bg-gray-900">
+          {#each activeChars as char}
+            <option value={char}>{char}</option>
+          {/each}
+        </select> {currentName}
+        {/if}
+      {:else}
+      <button type="button" on:click={() => rerequest()} class="rounded-md px-2 py-1 bg-purple-300 dark:bg-purple-700">Check Characters</button>
       {/if}
     </div>
     <div>

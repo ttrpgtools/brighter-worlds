@@ -44,7 +44,7 @@
   onMount(() => {
     const unsubs: (() => void)[] = [];
     unsubs.push(broadcast.subscribe((msg) => console.log(`[Sheet] Broadcast received`, msg)));
-    unsubs.push(registerForRollCall(here => here($character.id, $character.name)));
+    unsubs.push(registerForRollCall(here => $character.name ? here($character.id, $character.name) : setTimeout(() => here($character.id, $character.name), 200)));
     return () => { unsubs.forEach(x => x()) }
   });
   
