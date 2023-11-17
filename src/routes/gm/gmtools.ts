@@ -15,3 +15,5 @@ export function getEventStore<T>() {
 }
 
 export const rollRequests = getEventStore<{name: string; formula: string;}>();
+
+export const rollResponses = getEventStore<{id: string; result: number;}>();

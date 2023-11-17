@@ -21,11 +21,11 @@
     dispatch('roll', tableRoll);
   }
 
-  export async function rollTable() {
-    await table.rollTable();
+  export async function rollTable(pre?: number) {
+    await table.rollTable(pre);
   }
-  export async function getResult() {
-    return await table.getResult();
+  export async function getResult(pre?: number) {
+    return await table.getResult(pre);
   }
 </script>
 

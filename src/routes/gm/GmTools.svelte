@@ -8,14 +8,14 @@
   import DamageDialog from "$lib/sheet/DamageDialog.svelte";
   import Roller from "$lib/sheet/Roller.svelte";
   import SheetSettings from "$lib/sheet/SheetSettings.svelte";
-  import type { DamageDetails, DieValue, Entity, Item, NpcInstance, RemoteCtaReplyMessage, RemoteEmbedMessage } from "$lib/types";
+  import type { DamageDetails, DieValue, DiscordEmbed, Entity, Item, NpcInstance, RemoteCtaReplyMessage, RemoteEmbedMessage } from "$lib/types";
   import { armor } from "$lib/util/character";
   import { sendToDiscord, sendSceneToDiscord, sendItemToDiscord, sendNpcToDiscord } from "$lib/util/discord";
   import type { Readable } from "svelte/store";
   import { addLocalRoll, addRemoteRoll, getRollLog } from "./playmat";
   import { formatCta, formatItem, formatNpc, formatRoll, formatScene } from "$lib/util/share";
   import { id } from "$lib/rolling/id";
-  import { rollRequests } from "./gmtools";
+  import { rollRequests, rollResponses } from "./gmtools";
   import { onMount } from "svelte";
 
   let dice: DiceDialog;
@@ -62,19 +62,19 @@
     });
   }
 
-  export function formulaRoll(formula: string, label?: string, name: string = 'GM', meta?: string) {
+  export function formulaRoll(formula: string, label?: string, name: string = 'GM') {
     const f = new Formula(formula);
     const value = f.roll();
     const roll = formatRoll(name, value, label ?? formula, f.dice);
     roll.title = name;
     session?.send({id: id(), name, embed: roll, type: 'embed'});
-    const m = meta ? ` (${meta})` : '';
-    dice.show(`${value}`, f.dice, `${label ?? formula}${m}`);
+    dice.show(`${value}`, f.dice, `${label ?? formula}`);
     addLocalRoll(log, {
       dice: f.dice,
       result: value,
-      label: `${name}: ${label ?? formula}${m}`,
+      label: `${name}: ${label ?? formula}`,
     });
+    return value;
   }
 
   export async function takeDamage(npc: NpcInstance) {
@@ -149,6 +149,13 @@
     }
   }
 
+  function handleCtaReply(embed: DiscordEmbed) {
+    if (embed.meta && embed.fields.length > 0) {
+      const value = parseInt(embed.fields[0].name, 10);
+      rollResponses.emit({ id: embed.meta, result: value });
+    }
+  }
+
   function handleData(ev: Event) {
 		const evt = ev as CustomEvent<{name: string; data: RemoteEmbedMessage | RemoteCtaReplyMessage;}>;
 		console.log(evt);
@@ -156,6 +163,7 @@
       const data = evt.detail.data;
       if (data.type === 'embed') {
         addRemoteRoll(log, data);
+        handleCtaReply(data.embed);
         session?.send(data);
       } else {
 

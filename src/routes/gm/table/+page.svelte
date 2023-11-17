@@ -13,9 +13,10 @@
   import { addTable, getTables, removeTable, updateTable } from "./tables";
   import Icon from "$lib/Icon.svelte";
   import { id } from "$lib/rolling/id";
-  import { rollRequests } from "../gmtools";
+  import { rollRequests, rollResponses } from "../gmtools";
   import { ENCOUNTER_ROLL_NO, ENCOUNTER_ROLL_SIGNS, ENCOUNTER_ROLL_YES, REACTION_ROLL_NEG, REACTION_ROLL_NEUTRAL, REACTION_ROLL_POS, REACTION_ROLL_VNEG, REACTION_ROLL_VPOS } from "$lib/const";
   import { formatEncounterRoll } from "$lib/util/share";
+  import { onMount } from "svelte";
 
   export let data: PageData;
 
@@ -49,6 +50,15 @@
   let log = getRollLog();
 
   let tables = getTables();
+
+  onMount(() => {
+    const unsub = rollResponses.subscribe(({id, result}) => {
+      if (customTables[id]) {
+        customTables[id].rollTable(result);
+      }
+    });
+    return () => unsub();
+  });
 
   function getRollResult(roll: TableRoll<RolltableOption>) {
     const first = roll.value[0];
@@ -105,7 +115,7 @@
   }
 
   function requestRoll(table: CustomRolltableDef) {
-    rollRequests.emit({name: table.name, formula: table.formula});
+    rollRequests.emit({name: table.id, formula: table.formula});
   }
 
   async function fullEncounterRoll(table: CustomRolltableDef) {

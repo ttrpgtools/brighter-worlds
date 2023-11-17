@@ -12,6 +12,7 @@
   import NpcSheet from "./NpcSheet.svelte";
   import Scene from "./Scene.svelte";
   import { getPlaymat, clearMat, removeItem, getRollLog, removeRoll, clearRollLog } from "./playmat";
+  import { rollResponses } from "./gmtools";
 
   setGmContext();
   const mat = getPlaymat();
@@ -32,7 +33,8 @@
     return () => tools.shareItem(item);
   }
   function callToAction(ev: CustomEvent<Cta>) {
-    tools.formulaRoll(ev.detail.formula, `Requested ${ev.detail.formula}`, 'GM', ev.detail.meta);
+    const value = tools.formulaRoll(ev.detail.formula, `Requested ${ev.detail.formula}`, 'GM');
+    if (ev.detail.meta) rollResponses.emit({id: ev.detail.meta, result: value});
   }
 </script>
 <main class="flex flex-col min-h-screen min-h-[100svh] lg:h-screen lg:h-[100svh]">
@@ -94,7 +96,7 @@
           {#if item.type === 'roll'}
             <LocalRoll {item} on:delete={() => removeRoll(log, item)}/>
           {:else if item.type === 'embed'}
-            <Embed embed={item.embed} name={item.name} time={dt} showMeta on:delete={() => removeRoll(log, item)} on:cta={callToAction} />
+            <Embed embed={item.embed} name={item.name} time={dt} on:delete={() => removeRoll(log, item)} on:cta={callToAction} />
           {/if}
         </div>
         {/each}
