@@ -2,7 +2,7 @@
   import DeleteButton from "$lib/DeleteButton.svelte";
   import Embed from "$lib/Embed.svelte";
   import MenuLink from "$lib/MenuLink.svelte";
-  import type { Cta, Entity, Item } from "$lib/types";
+  import type { Cta, DieMod, Entity, Item, NpcInstance } from "$lib/types";
   import { setGmContext } from "$lib/util/gm";
   import { fly } from "svelte/transition";
   import GmLink from "./GmLink.svelte";
@@ -11,7 +11,7 @@
   import LocalRoll from "./LocalRoll.svelte";
   import NpcSheet from "./NpcSheet.svelte";
   import Scene from "./Scene.svelte";
-  import { getPlaymat, clearMat, removeItem, getRollLog, removeRoll, clearRollLog } from "./playmat";
+  import { getPlaymat, clearMat, removeItem, updateItem, getRollLog, removeRoll, clearRollLog, type PlaymatItem } from "./playmat";
   import { rollResponses } from "./gmtools";
 
   setGmContext();
@@ -35,6 +35,15 @@
   function callToAction(ev: CustomEvent<Cta>) {
     const value = tools.formulaRoll(ev.detail.formula, `Requested ${ev.detail.formula}`, 'GM');
     if (ev.detail.meta) rollResponses.emit({id: ev.detail.meta, result: value});
+  }
+  function takeDamage(npc: NpcInstance, item: PlaymatItem) {
+    return async (ev: CustomEvent<{mod?: DieMod}>) => {
+      await tools.takeDamage(npc, ev.detail.mod);
+      if (item.type === 'npc') {
+        item.npc = npc;
+        updateItem(mat, item);
+      }
+    }
   }
 </script>
 <main class="flex flex-col min-h-screen min-h-[100svh] lg:h-screen lg:h-[100svh]">
@@ -77,7 +86,7 @@
           {#if item.type === 'scene'}
             <Scene scene={item.scene} on:remove={() => removeItem(mat, item)} on:share={shareScene(item.scene)}/>
           {:else if item.type === 'npc'}
-            <NpcSheet bind:npc={item.npc} on:confirm={() => removeItem(mat, item)} on:share={shareNpc(item.npc)} on:roll={npcRoll(item.npc.name)} on:damage={async () => { if (item.type === 'npc') { await tools.takeDamage(item.npc); item.npc = item.npc; } }} />
+            <NpcSheet bind:npc={item.npc} on:confirm={() => removeItem(mat, item)} on:share={shareNpc(item.npc)} on:roll={npcRoll(item.npc.name)} on:damage={takeDamage(item.npc, item)} />
           {:else if item.type === 'item'}
             <ItemBlock item={item.item} on:confirm={() => removeItem(mat, item)} on:share={shareItem(item.item)} />
           {/if}

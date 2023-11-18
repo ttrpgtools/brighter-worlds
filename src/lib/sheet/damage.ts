@@ -1,7 +1,8 @@
 import { stepDown } from "$lib/dice";
-import { roll } from "$lib/rolling/roll";
-import type { DamageForm, DieValue, DamageDetails, DamageResults } from "$lib/types";
+import { bestRoll } from "$lib/rolling/roll";
+import type { DamageForm, DieValue, DamageDetails, DamageResults, DieRollSet } from "$lib/types";
 import { status } from '$lib/const';
+import { getModDiceSet } from "$lib/rolling/modifier";
 
 const ENDGAME = {
   str: { msg: 'You died.', status: status.DEAD },
@@ -51,7 +52,7 @@ export function calculateDamage(character: DamageDetails, howmuch: DamageForm | 
   let ofCount = 0;
   let critCount = 0;
   let saveAgainstDirectDamage = 0;
-  let rolledAttr: DieValue = 4;
+  let rolledAttr: DieRollSet = [];
   while (unmitigated > 0 && newAttr !== 0) {
     let critical = false;
     if (unmitigated >= newAttr) {
@@ -60,8 +61,10 @@ export function calculateDamage(character: DamageDetails, howmuch: DamageForm | 
       critical = true;
       ofCount++;
     } else {
-      saveAgainstDirectDamage = roll(newAttr);
-      rolledAttr = newAttr;
+      console.log(`Damage Save Mod`, character.mod);
+      rolledAttr = getModDiceSet(newAttr, character.mod);
+      console.log(`Damage Save Dice`, rolledAttr);
+      saveAgainstDirectDamage = bestRoll(rolledAttr);
       critical = unmitigated >= saveAgainstDirectDamage;
       unmitigated = 0;
     }
@@ -88,7 +91,7 @@ export function calculateDamage(character: DamageDetails, howmuch: DamageForm | 
         const pps = critCount > 2 ? ` (${critCount - 1} times).` : '.';
         const mod = critCount === ofCount ? `avoided` : `took`;
         result.msg = `You took ${dd} direct damage, some of which was automatically critical${pps} You then rolled a ${saveAgainstDirectDamage} and ${mod} more critical damage. ${ps}`;
-        result.dice = [rolledAttr];
+        result.dice = rolledAttr;
         result.save = saveAgainstDirectDamage;
         result.dd = dd;
       } else {
@@ -98,14 +101,14 @@ export function calculateDamage(character: DamageDetails, howmuch: DamageForm | 
       }
     } else {
       result.msg = `You took ${dd} direct damage, rolled a ${saveAgainstDirectDamage} and have taken critical damage. ${ps}`;
-      result.dice = [currentAttr];
+      result.dice = rolledAttr;
       result.save = saveAgainstDirectDamage;
       result.dd = dd;
     }
     result.die = newAttr;
   } else {
     result.msg = `You took ${dd} direct damage but rolled a ${saveAgainstDirectDamage} and avoided critical damage.`;
-    result.dice = [currentAttr];
+    result.dice = rolledAttr;
     result.save = saveAgainstDirectDamage;
     result.dd = dd;
   }

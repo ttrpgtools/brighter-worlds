@@ -30,7 +30,7 @@
   }
 </script>
 <MagicDialog bind:magicList {type} bind:this={dialog} />
-<Card class="md:h-[25rem]">
+<Card class="md:h-[25rem] lg:order-2">
   <svelte:fragment slot="header">
     <div class="">
       <h3 class="text-xl font-subtitle leading-6">{title}</h3>

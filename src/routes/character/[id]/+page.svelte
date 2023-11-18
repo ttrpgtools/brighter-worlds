@@ -1,8 +1,8 @@
 <script lang="ts">
   import DiceDialog from '$lib/DiceDialog.svelte';
-  import { roll } from '$lib/rolling/roll';
+  import { bestRoll } from '$lib/rolling/roll';
   import Name from "$lib/sheet/Name.svelte";
-  import type { DamageDetails, DieValue } from '$lib/types';
+  import type { Attr, DamageDetails, DieMod, DieValue } from '$lib/types';
   import Attribute from '$lib/sheet/Attribute.svelte';
   import Equipment from '$lib/sheet/Equipment.svelte';
   import Grit from '$lib/sheet/Grit.svelte';
@@ -55,7 +55,7 @@
   }
   
   function showRoll(sides: DieValue[], label: string = '') {
-    const best = sides.reduce((p, c) => Math.max(roll(c), p), 0);
+    const best = bestRoll(sides);
     
     label = label || `d${sides}`;
     if ($character.settings?.rollToBridge !== false) {
@@ -85,10 +85,12 @@
     settingsDialog.open();
   }
 
-  async function takeDamage(ev: CustomEvent<{ type: 'str' | 'dex' | 'wil' }>) {
+  async function takeDamage(ev: CustomEvent<{ type: Attr, mod?: DieMod }>) {
     const type = ev.detail.type;
+    const mod = ev.detail.mod;
     const chinfo: DamageDetails = {
       type,
+      mod,
       armor: armor($character.equipment),
       statuses: $character.statuses,
       grit: $character.grit.current,
@@ -114,6 +116,7 @@
     if ($character.settings?.rollToBridge !== false && results.save) {
       broadcastRoll($character.name, results.save, `${type.toUpperCase()} save against ${results.dd ?? '?'} direct damage.`, results.dice, $character.name);
     }
+    console.log(`Take Damage Result Dice`, results.dice);
     dice.show('Damage', results.dice, results.msg);
   }
   
@@ -142,11 +145,11 @@
     <!-- <img src="/img/beams.jpg" alt="" class="absolute top-1/2 left-1/2 max-w-none -translate-x-1/2 -translate-y-1/2" width="1308" /> -->
     <div class="absolute inset-0 bg-[url(/img/grid.svg)] dark:invert bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]"></div>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      <div class="flex gap-2">
+      <div class="flex gap-2 items-center md:items-start">
         <div><IconButton icon="cog" on:click={openSettings}/></div>
         <div class="relative justify-self-center text-center flex-grow">
           <h1 class="text-4xl font-title">Brighter Worlds</h1>
-          <span class="block font-symbol text-6xl h-4 relative -top-6 text-purple-500">j</span>
+          <span class="md:block font-symbol text-6xl hidden h-4 relative -top-6 text-purple-500">j</span>
         </div>
         <div class="w-8 flex flex-col gap-2">
           {#if $character.settings?.rollToDiscord}
@@ -169,10 +172,10 @@
       </div>
       
       <Equipment bind:equipment={$character.equipment} on:roll={damage} class="md:h-[25rem]" />
-      <Calling calling={$character.calling} bind:abilities={$character.abilities} callingList={data.callings} enhancements={data.enhancements} />
-      <EulogyNotes bind:notes={$character.notes} bind:eulogy={$character.eulogy} />
       <Magic title="Spells" bind:magicList={$character.spells} on:roll={damage} type={'spell'} />
       <Magic title="Rituals" bind:magicList={$character.rituals} on:roll={damage} type={'ritual'} />
+      <Calling calling={$character.calling} bind:abilities={$character.abilities} callingList={data.callings} enhancements={data.enhancements} />
+      <EulogyNotes bind:notes={$character.notes} bind:eulogy={$character.eulogy} />
     </div>
   </div>
   <div class="text-center my-6 flex flex-col items-center">

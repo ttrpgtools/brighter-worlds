@@ -20,6 +20,10 @@ export function setEmpty(obj: unknown, value: boolean) {
 
 export type DieValue = 4 | 6 | 8 | 10 | 12;
 
+export type DieMod = 'impair' | 'enhance';
+
+export type DieRollSet = DieValue[] & {mod?: DieMod};
+
 export type Attr = 'str' | 'dex' | 'wil';
 
 export interface Attribute<T = number, T2 = T> {
@@ -205,6 +209,7 @@ export type Status = typeof status[keyof typeof status]
 export interface DamageDetails {
   armor: number;
   grit: number;
+  mod?: DieMod;
   type?: Attr;
   dice: Record<Attr, DieValue | 0>;
   statuses: Set<string>;

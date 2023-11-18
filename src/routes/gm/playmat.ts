@@ -2,6 +2,7 @@ import { getNpcInstance } from "$lib/data/encounter-manager";
 import { getContextStore } from "$lib/data/settings";
 import { id } from "$lib/rolling/id";
 import type { Encounter, Item, LogRoll, NpcInstance, RemoteEmbedMessage, RollResult, Scene } from "$lib/types";
+import { update } from "$lib/util/array";
 
 interface PMScene {
   id: string;
@@ -57,6 +58,10 @@ export function addScene(mat: ReturnType<typeof getPlaymat>, scene: Scene) {
 export function addEncounter(mat: ReturnType<typeof getPlaymat>, enc: Encounter) {
   addScene(mat, {...enc, icon: 'nav-encounter' });
   enc.npcs?.forEach(n => addNpc(mat, getNpcInstance(n)));
+}
+
+export function updateItem(mat: ReturnType<typeof getPlaymat>, item: PlaymatItem) {
+  mat.update(list => update(list, item));
 }
 
 export function removeItem(mat: ReturnType<

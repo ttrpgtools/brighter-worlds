@@ -13,6 +13,10 @@ export function rolls(sides: number, count = 5) {
   return Array.from(Array(count), () => roller(browserCrypto))
 }
 
+export function bestRoll(dice: number[]) {
+  return dice.reduce((p, c) => Math.max(roll(c), p), 0);
+}
+
 function parseFactor(factor: string) {
   if (!factor) return 0;
   const neg = factor.at(0) === '-';

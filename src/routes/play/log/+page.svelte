@@ -162,7 +162,7 @@
   {:else}
   <div class="text-gray-500 border-3 border-dashed rounded-lg p-4 border-gray-500 h-full flex flex-col gap-4 items-center justify-center text-center">
     <Icon icon="nav-arcana" size="2rem" />
-    <p class="text-lg">Welcome adventurers, this is where your story will unfold.</p>
+    <p class="text-lg">Welcome adventurers, this is where your story unfolds.</p>
   </div>
   {/each}
 </div>

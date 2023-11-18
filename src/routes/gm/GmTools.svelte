@@ -8,7 +8,7 @@
   import DamageDialog from "$lib/sheet/DamageDialog.svelte";
   import Roller from "$lib/sheet/Roller.svelte";
   import SheetSettings from "$lib/sheet/SheetSettings.svelte";
-  import type { DamageDetails, DieValue, DiscordEmbed, Entity, Item, NpcInstance, RemoteCtaReplyMessage, RemoteEmbedMessage } from "$lib/types";
+  import type { DamageDetails, DieMod, DieValue, DiscordEmbed, Entity, Item, NpcInstance, RemoteCtaReplyMessage, RemoteEmbedMessage } from "$lib/types";
   import { armor } from "$lib/util/character";
   import { sendToDiscord, sendSceneToDiscord, sendItemToDiscord, sendNpcToDiscord } from "$lib/util/discord";
   import type { Readable } from "svelte/store";
@@ -77,8 +77,9 @@
     return value;
   }
 
-  export async function takeDamage(npc: NpcInstance) {
+  export async function takeDamage(npc: NpcInstance, mod?: DieMod) {
     const chinfo: DamageDetails = {
+      mod,
       armor: armor(npc.attacks) + (npc.armor || 0),
       statuses: new Set(npc.status ? [npc.status] : []),
       grit: npc.grit.current,
