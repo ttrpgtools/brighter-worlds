@@ -2,7 +2,7 @@ import type { PageLoad } from "./$types";
 
 export const load: PageLoad = async function() {
   return {
-    layout: { showFooter: false, showMenu: true }
+    layout: { showFooter: false, showMenu: false }
   };
 }
 

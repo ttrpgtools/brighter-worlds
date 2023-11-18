@@ -17,10 +17,10 @@
   import { requestRollCall, rerequest } from "$lib/data/broadcast-hub";
   import { Formula } from "$lib/rolling/roll";
   import { formatRoll } from "$lib/util/share";
+  import Icon from "$lib/Icon.svelte";
 
   let log = getPlayLog();
   let sesh: Session | undefined;
-  let element: Element;
   let gameId = getGameId();
   let count: Readable<number>;
   let die: DiceDialog;
@@ -125,40 +125,45 @@
   }
 </script>
 <DiceDialog bind:this={die} />
-<div bind:this={element} class="px-4 py-6 sm:px-6 lg:pl-8 xl:flex-1 xl:pl-6 flex flex-col gap-4 xl:basis-1/3 overflow-y-auto h-screen h-[100svh]">
-  <div class="flex flex-row justify-between">
-    <h3 class="font-subtitle text-2xl">The Game Log</h3>
-    <div>
+<div class="px-4 py-6 sm:px-6 flex flex-col gap-4 overflow-y-auto h-screen h-[100svh]">
+  <div class=" flex flex-row justify-between items-center">
+    <h3 class="text-2xl font-bold">Narrator</h3>
+    <div class="flex gap-2 items-center">
       {#if activeChars && activeChars.length > 0}
-        <span>Current character:</span>
+      <svg xmlns="http://www.w3.org/2000/svg" height="1em" fill="currentColor" viewBox="0 0 448 512"><path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"/></svg>
         {#if activeChars.length === 1}
         {currentName}
         {:else if activeChars.length > 1}
-        <select bind:value={currentName} class="rounded-lg border-purple-500 dark:bg-gray-900">
+        <select bind:value={currentName} class="rounded-md pl-2 py-1 border-orange-500 dark:bg-gray-900">
           {#each activeChars as char}
             <option value={char}>{char}</option>
           {/each}
-        </select> {currentName}
+        </select>
         {/if}
       {:else}
-      <button type="button" on:click={() => rerequest()} class="rounded-md px-2 py-1 bg-purple-300 dark:bg-purple-700">Check Characters</button>
+      <button type="button" on:click={() => rerequest()} class="rounded-md px-2 py-1 bg-orange-300 dark:bg-orange-700">Check Characters</button>
       {/if}
     </div>
-    <div>
+    <div class=" min-w-[2rem]">
       {#if $log?.list?.length}
-      <DeleteButton on:confirm={() => clearLog(log)} confirmText="Click again to clear log"/>
+      <DeleteButton size="w-4 h-4" on:confirm={() => clearLog(log)} confirmText="Click again to clear log"/>
       {/if}
     </div>
   </div>
   <div class="flex gap-3 items-center">
-    <input type="text" name="peerId" spellcheck="false" readonly={count && $count > 0} placeholder="Game Code (from GM)" bind:value={$gameId} class="rounded-full flex-1  dark:text-white focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-900 {count && $count > 0 ? `opacity-50` : ``}">
-    <Button on:click={connect}>{buttonText}</Button>
+    <input type="text" name="peerId" spellcheck="false" readonly={count && $count > 0} placeholder="Game Code (from GM)" bind:value={$gameId} class="rounded-md flex-1 px-2 py-1 dark:text-white focus:ring-orange-500 focus:border-orange-500 dark:bg-gray-900 {count && $count > 0 ? `opacity-50` : ``}">
+    <button type="button" on:click={connect} class="rounded-md px-2 py-1 bg-orange-300 dark:bg-orange-700">{buttonText}</button>
   </div>
   {#each $log.list as msg (msg.id)}
     {@const dt = typeof msg.time === 'number' ? new Date(msg.time): msg.time }
     <div transition:fly={{ x: -50, duration: 200 }}>
       <Embed embed={msg.embed} name={msg.name} time={dt} on:delete={() => removeItem(log, msg)} on:imageclick={openImg} on:cta={callToAction}/>
     </div>
+  {:else}
+  <div class="text-gray-500 border-3 border-dashed rounded-lg p-4 border-gray-500 h-full flex flex-col gap-4 items-center justify-center text-center">
+    <Icon icon="nav-arcana" size="2rem" />
+    <p class="text-lg">Welcome adventurers, this is where your story will unfold.</p>
+  </div>
   {/each}
 </div>
 {#if showImage}

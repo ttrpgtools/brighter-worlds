@@ -5,11 +5,13 @@
 		<meta name="viewport" content="width=device-width" />
 		<script>
 			const mode = window.localStorage.getItem('dark-mode');
-			if (window &&
-				(mode === 'dark' ||
-				(mode == null && window.matchMedia('(prefers-color-scheme: dark)').matches))) {
-					document.documentElement.classList.add('dark');
-			}
+			const isDark = mode => (mode === 'dark' || (mode == null && window.matchMedia('(prefers-color-scheme: dark)').matches))
+			document.documentElement.classList.toggle('dark', isDark(mode));
+			window.addEventListener('storage', ({key, newValue}) => {
+				if (key === 'dark-mode') {
+					document.documentElement.classList.toggle('dark', isDark(newValue));
+				}
+			})
 		</script>
 		%sveltekit.head%
 		<link rel="apple-touch-icon" sizes="180x180" href="%sveltekit.assets%/apple-touch-icon.png">
