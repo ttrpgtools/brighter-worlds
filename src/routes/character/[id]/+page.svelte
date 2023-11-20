@@ -10,9 +10,9 @@
   import MenuLink from "$lib/MenuLink.svelte";
   import { getList, getSheetCache, loadSheet, tryMigrate } from '$lib/data/sheet-manager';
   import { onMount } from 'svelte';
-  import { status } from '$lib/const';
+  import { SAVE_GOAL, status } from '$lib/const';
   import Magic from '$lib/sheet/Magic.svelte';
-  import { armor, burdened } from '$lib/util/character';
+  import { armor, burdened, isFunctional } from '$lib/util/character';
   import DamageDialog from '$lib/sheet/DamageDialog.svelte';
   import Calling from '$lib/sheet/Calling.svelte';
   import Statuses from '$lib/sheet/Statuses.svelte';
@@ -27,14 +27,25 @@
   import { writable } from 'svelte/store';
   import { calculateGrit } from '$lib/util/grit';
   import { registerForRollCall } from '$lib/data/broadcast-hub';
+  import { stepDown } from '$lib/dice';
+  import ChoiceDialog from '$lib/ChoiceDialog.svelte';
 
   let loadStatus = writable('Loading...');
 
   export let data: PageData;
 
+  const FAILED_CAST_UNC = 1;
+  const FAILED_CAST_FAIL = 2;
+  const failedCast = [
+    {value: FAILED_CAST_FAIL, label: `Spell Fails`},
+    {value: FAILED_CAST_UNC, label: `Fall Unconscious`},
+  ];
+  let failedRoll = 0;
+
   let dice: DiceDialog;
   let damageDialog: DamageDialog;
   let settingsDialog: SheetSettings;
+  let castDialog: ChoiceDialog<number>;
 
   const list = getList();
   const cache = getSheetCache();
@@ -54,7 +65,7 @@
     $character = $character;
   }
   
-  function showRoll(sides: DieValue[], label: string = '') {
+  async function showRoll(sides: DieValue[], label: string = '') {
     const best = bestRoll(sides);
     
     label = label || `d${sides}`;
@@ -65,8 +76,9 @@
     if ($character.settings?.rollToDiscord) {
       sendToDiscord($character.name, best, label, $character.settings.discordWebhook, sides, $character.name);
     }
-    dice.show(`${best}`, sides, label);
+    await dice.show(`${best}`, sides, label);
     console.log(`${label} =`, best);
+    return best;
   }
   
   function save(ev: CustomEvent<{ dice: DieValue[] }>, stat: string) {
@@ -76,9 +88,43 @@
   }
   
   function damage(ev: CustomEvent<{ dice: DieValue[], name: string }>) {
-    const dice = ev.detail.dice;
-    const name = ev.detail.name;
+    const {dice, name} = ev.detail;
     showRoll(dice, name);
+  }
+
+  async function cast(ev: CustomEvent<{ dice: DieValue[], name: string }>) {
+    if (!isFunctional($character.statuses) || $character.wil.current === 0) {
+      await dice.show('Non Functional', [], `Your status indicates you may not be 'casting capable' at the moment`);
+      return;
+    }
+    const name = ev.detail.name;
+    const rolledDice = ev.detail.dice;
+    if ($character.grit.current > 0) {
+      $character.grit.current = 0;
+      await showRoll(rolledDice, name);
+    } else {
+      const wilSave = bestRoll([$character.wil.current]);
+      if (wilSave >= SAVE_GOAL) {
+        await dice.show(`${wilSave}`, [$character.wil.current], 'WIL Save Success!', 'text-emerald-500');
+        await showRoll(rolledDice, name);
+      } else {
+        const newWil = stepDown($character.wil.current);
+        if (newWil === 0) {
+          $character.statuses.add(status.CATATONIC);
+          $character.statuses = $character.statuses;
+          await dice.show(`${wilSave}`, [$character.wil.current], `WIL Save Failed. You've lost all will and have become catatonic`, 'text-emerald-500');
+        } else {
+          failedRoll = wilSave;
+          const opt = await castDialog.open();
+          if (opt === FAILED_CAST_UNC) {
+            $character.statuses.add(status.UNCONSCIOUS);
+            $character.statuses = $character.statuses;
+            await showRoll(rolledDice, name);
+          }
+        }
+        $character.wil.current = newWil;
+      }
+    }
   }
 
   function openSettings() {
@@ -131,6 +177,7 @@
   </svelte:head>
   <DiceDialog bind:this={dice} />
   <DamageDialog bind:this={damageDialog} />
+  <ChoiceDialog bind:this={castDialog} choices={failedCast} msg="WIL Save Failed. You lose some WIL and have to choose..." titleClass="text-rose-500" title={failedRoll.toString()} />
   <SheetSettings bind:this={settingsDialog} bind:settings={$character.settings} />
   <Roller on:roll={(ev) => showRoll([ev.detail])} />
   {#if $loadStatus}
@@ -172,7 +219,7 @@
       </div>
       
       <Equipment bind:equipment={$character.equipment} on:roll={damage} class="md:h-[25rem]" />
-      <Magic title="Spells" bind:magicList={$character.spells} on:roll={damage} type={'spell'} />
+      <Magic title="Spells" bind:magicList={$character.spells} on:roll={cast} type={'spell'} />
       <Magic title="Rituals" bind:magicList={$character.rituals} on:roll={damage} type={'ritual'} />
       <Calling calling={$character.calling} bind:abilities={$character.abilities} callingList={data.callings} enhancements={data.enhancements} />
       <EulogyNotes bind:notes={$character.notes} bind:eulogy={$character.eulogy} />

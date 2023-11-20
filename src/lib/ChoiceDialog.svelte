@@ -7,12 +7,15 @@ export let dice: DieValue[] = [];
 export let title = '';
 export let msg = '';
 export let titleClass = '';
-let comp: DialogBase<undefined>;
+export let msgClass = '';
+type T = $$Generic;
+export let choices: {value: T; label: string;}[];
+let comp: DialogBase<T>;
 export async function open() {
-  return comp.open<undefined>();
+  return comp.open<T>();
 }
-function close() {
-  comp.close();
+function close(value: T) {
+  comp.close(value);
 }
 </script>
 <DialogBase bind:this={comp}>
@@ -30,12 +33,14 @@ function close() {
   </div>
   {#if !!msg}
   <div class="mt-2">
-    <p class="text-gray-700 dark:text-gray-300 text-center">
+    <p class="text-center {msgClass}">
       {msg}
     </p>
   </div>
   {/if}
-  <div class="mt-5 sm:mt-6 text-center" slot="footer">
-    <Button on:click={() => close()}>Close</Button>
+  <div class="mt-5 sm:mt-6 flex gap-4 justify-center" slot="footer">
+    {#each choices as choice}
+    <Button on:click={() => close(choice.value)}>{choice.label}</Button>
+    {/each}
   </div>
 </DialogBase>

@@ -5,6 +5,7 @@ export const status = {
   DEPRIVED: 'deprived',
   INCAPACITATED: 'incapacitated',
   PARALYSED: 'paralysed',
+  UNCONSCIOUS: 'unconscious',
 } as const;
 
 export const KNOWN_STATUSES = new Set<string>(Object.values(status));
@@ -31,3 +32,4 @@ export const REACTION_ROLL_NEUTRAL = 'Neutral';
 export const REACTION_ROLL_NEG = 'Negative';
 export const REACTION_ROLL_VNEG = 'Extremely negative';
 
+export const SAVE_GOAL = 4;
