@@ -9,13 +9,17 @@
   import MagicDialog from "./MagicDialog.svelte";
   import RollSelector from "./RollSelector.svelte";
   import Icon from "$lib/Icon.svelte";
-  type T = $$Generic<Magic>
+  import { createEventDispatcher } from "svelte";
+  type T = $$Generic<Magic>;
   export let magicList: T[];
   export let title: string;
-  type TType = T["type"]
+  export let castable = false;
+  type TType = T["type"];
   export let type: TType;
 
   let dialog: MagicDialog<T>;
+  
+  const dispatch = createEventDispatcher();
 
   function addMagic() {
     dialog.addMagic();
@@ -54,7 +58,11 @@
           <button type="button" class="truncate select-text text-sm font-medium cursor-pointer" title={arcana.name} on:click={() => editMagic(arcana.id)} on:keydown={onEnter(() => editMagic(arcana.id))}>{arcana.name}</button>
         </div>
         <div class="flex gap-2 items-center">
-          {#if arcana.damage}<RollSelector label={arcana.name} die={arcana.damage} direction={-1} on:roll let:events><button use:events type="button" class="inline-flex items-center text-sm font-medium leading-5"><Die which={arcana.damage}/></button></RollSelector>{/if}
+          {#if arcana.damage}
+          <RollSelector label={arcana.name} die={arcana.damage} direction={-1} on:roll let:events><button use:events type="button" class="inline-flex items-center text-sm font-medium leading-5"><Die which={arcana.damage}/></button></RollSelector>
+          {:else if castable}
+          <button on:click={() => dispatch('cast', {dice: [], name: arcana.name})} type="button" class="inline-flex items-center text-sm font-medium leading-5"><Icon icon="cast-magic" /></button>
+          {/if}
         </div>
       </div>
       {#if arcana.desc}<p use:toggleHeight class="text-sm group-data-[is-dnd-shadow-item]:invisible text-gray-600 dark:text-gray-400">{arcana.desc}</p>{/if}

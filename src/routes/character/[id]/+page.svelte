@@ -64,19 +64,23 @@
     $character.grit.max = newGrit;
     $character = $character;
   }
-  
-  async function showRoll(sides: DieValue[], label: string = '') {
-    const best = bestRoll(sides);
-    
-    label = label || `d${sides}`;
+
+  function sendRollExternal(value: number, label: string, sides: DieValue[]) {
     if ($character.settings?.rollToBridge !== false) {
-      broadcastRoll($character.name, best, label, sides, $character.name);
+      broadcastRoll($character.name, value, label, sides, $character.name);
       //broadcast.set({id: $character.id, name: $character.name, type: 'roll', dice: sides, result: best, label});
     }
     if ($character.settings?.rollToDiscord) {
-      sendToDiscord($character.name, best, label, $character.settings.discordWebhook, sides, $character.name);
+      sendToDiscord($character.name, value, label, $character.settings.discordWebhook, sides, $character.name);
     }
-    await dice.show(`${best}`, sides, label);
+  }
+  
+  async function showRoll(sides: DieValue[], label: string = '', rollValue?: number, titleClass = '') {
+    if (rollValue == null && sides.length === 0) return;
+    const best = rollValue ?? bestRoll(sides);
+    label = label || `d${sides}`;
+    sendRollExternal(best, label, sides);
+    await dice.show(`${best}`, sides, label, titleClass);
     console.log(`${label} =`, best);
     return best;
   }
@@ -84,7 +88,8 @@
   function save(ev: CustomEvent<{ dice: DieValue[] }>, stat: string) {
     const dice = ev.detail.dice;
     const label = `${stat} Save`;
-    showRoll(dice, label);
+    const value = bestRoll(dice);
+    showRoll(dice, label, value, value >= SAVE_GOAL ? 'text-emerald-500' : 'text-rose-500');
   }
   
   function damage(ev: CustomEvent<{ dice: DieValue[], name: string }>) {
@@ -101,25 +106,38 @@
     const rolledDice = ev.detail.dice;
     if ($character.grit.current > 0) {
       $character.grit.current = 0;
-      await showRoll(rolledDice, name);
+      if (rolledDice.length) {
+        await showRoll(rolledDice, name);
+      } else {
+        await dice.show(`Cast`, [], name);
+      }
     } else {
       const wilSave = bestRoll([$character.wil.current]);
       if (wilSave >= SAVE_GOAL) {
-        await dice.show(`${wilSave}`, [$character.wil.current], 'WIL Save Success!', 'text-emerald-500');
-        await showRoll(rolledDice, name);
+        await showRoll([$character.wil.current], 'WIL Save Success!', wilSave, 'text-emerald-500');
+        if (rolledDice.length) {
+          await showRoll(rolledDice, name);
+        } else {
+          await dice.show(`Cast`, [], name);
+        }
       } else {
         const newWil = stepDown($character.wil.current);
         if (newWil === 0) {
           $character.statuses.add(status.CATATONIC);
           $character.statuses = $character.statuses;
-          await dice.show(`${wilSave}`, [$character.wil.current], `WIL Save Failed. You've lost all will and have become catatonic`, 'text-emerald-500');
+          await showRoll([$character.wil.current], `WIL Save Failed. You've lost all will and have become catatonic`, wilSave, 'text-rose-500');
         } else {
           failedRoll = wilSave;
+          sendRollExternal(wilSave, 'WIL Save Failed', [$character.wil.current]);
           const opt = await castDialog.open();
           if (opt === FAILED_CAST_UNC) {
             $character.statuses.add(status.UNCONSCIOUS);
             $character.statuses = $character.statuses;
-            await showRoll(rolledDice, name);
+            if (rolledDice.length) {
+              await showRoll(rolledDice, name);
+            } else {
+              await dice.show(`Cast`, [], name);
+            }
           }
         }
         $character.wil.current = newWil;
@@ -219,7 +237,7 @@
       </div>
       
       <Equipment bind:equipment={$character.equipment} on:roll={damage} class="md:h-[25rem]" />
-      <Magic title="Spells" bind:magicList={$character.spells} on:roll={cast} type={'spell'} />
+      <Magic title="Spells" bind:magicList={$character.spells} on:roll={cast} castable on:cast={cast} type={'spell'} />
       <Magic title="Rituals" bind:magicList={$character.rituals} on:roll={damage} type={'ritual'} />
       <Calling calling={$character.calling} bind:abilities={$character.abilities} callingList={data.callings} enhancements={data.enhancements} />
       <EulogyNotes bind:notes={$character.notes} bind:eulogy={$character.eulogy} />
