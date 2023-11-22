@@ -14,6 +14,7 @@
   export let magicList: T[];
   export let title: string;
   export let castable = false;
+  export let isSharing = false;
   type TType = T["type"];
   export let type: TType;
 
@@ -52,10 +53,15 @@
   <div class="flow-root h-full">
     {#if magicList.length}
     <DraggableList {draggable} bind:list={magicList} class="-my-5 divide-y divide-gray-200 dark:divide-gray-600" itemClass="py-3 relative !visible group" {transformDraggedElement} let:item={arcana}>
-      <div class="flex items-center space-x-4 h-6 group-data-[is-dnd-shadow-item]:invisible">
-        <div class="min-w-0 flex-1 flex gap-4">
+      <div class="flex items-center gap-4 h-6 group/item group-data-[is-dnd-shadow-item]:invisible">
+        <div class="min-w-0 flex-1 flex gap-4 relative items-center">
           {#if draggable}<Icon icon="grip-v" />{/if}
           <button type="button" class="truncate select-text text-sm font-medium cursor-pointer" title={arcana.name} on:click={() => editMagic(arcana.id)} on:keydown={onEnter(() => editMagic(arcana.id))}>{arcana.name}</button>
+          {#if isSharing}
+          <div class="absolute right-0 hidden group-hover/item:block">
+            <IconButton icon="share" on:click={() => dispatch('share', arcana)} />
+          </div>
+          {/if}
         </div>
         <div class="flex gap-2 items-center">
           {#if arcana.damage}

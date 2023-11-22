@@ -29,7 +29,15 @@ export interface DiscordEmbed {
 <div class="rounded border-l-4 relative shadow dark:bg-gray-900 bg-gray-200 border-gray-500  p-3 flex flex-col gap-2 group" style="border-color: {color};">
   <button type="button" on:click={() => dispatch('delete')} class="opacity-0 transition-opacity absolute top-3 right-4 text-lg rounded-full leading-none h-6 w-6 bg-purple-300 dark:bg-purple-900 group-hover:opacity-100 flex items-center justify-center"><span class="relative -top-px">&times;</span></button>
   {#if time}<time class="absolute top-3 right-12 text-gray-700 dark:text-gray-300 bg-gray-200/90 dark:bg-gray-900/90 rounded-sm px-2 opacity-0 transition-opacity group-hover:opacity-100">{toNiceTimestamp(time)}</time>{/if}
-  {#if embed.title ?? name}<h3 class="font-bold">{#if embed.url}<a href={embed.url} target="_blank" class="text-purple-600 dark:text-purple-300 underline" rel="noreferrer">{embed.title ?? name}</a>{:else}{embed.title ?? name}{/if}</h3>{/if}
+  {#if embed.title ?? name}<h3 class="font-bold flex items-center gap-3">{#if embed.url}<a href={embed.url} target="_blank" class="text-purple-600 dark:text-purple-300 underline" rel="noreferrer">{embed.title ?? name}</a>{:else}{embed.title ?? name}{/if}
+    {#if embed.author}
+    <span class="inline-flex items-center gap-x-1.5 rounded-full px-2 py-1 text-xs font-medium ring-1 ring-inset ring-gray-700 dark:ring-gray-200">
+      <svg class="h-1.5 w-1.5" fill={color} viewBox="0 0 6 6" aria-hidden="true">
+        <circle cx="3" cy="3" r="3" />
+      </svg>
+      {embed.author.name}
+    </span>
+    {/if}</h3>{/if}
   {#if embed.description}<p>{embed.description}</p>{/if}
   {#if embed.fields && embed.fields.length}
   <div class="flex gap-4 text-sm">

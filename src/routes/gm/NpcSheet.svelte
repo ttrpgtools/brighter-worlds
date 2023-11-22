@@ -3,6 +3,7 @@
   import DeleteButton from "$lib/DeleteButton.svelte";
   import Disclosable from "$lib/Disclosable.svelte";
   import Icon from "$lib/Icon.svelte";
+  import IconButton from "$lib/IconButton.svelte";
   import DieSelector from "$lib/sheet/DieSelector.svelte";
   import Equipment from "$lib/sheet/Equipment.svelte";
   import RollSelector from "$lib/sheet/RollSelector.svelte";
@@ -23,7 +24,7 @@
       <Icon icon="nav-bestiary"/>
       <input type="text" class="w-full border-0 relative py-1 top-0.5 dark:bg-gray-900 placeholder-shown:bg-gray-100 dark:placeholder-shown:bg-black focus:border-purple-600 focus:ring-0 font-subtitle text-xl h-full" placeholder="Name" bind:value={npc.name}>
       <div class="absolute inset-y-0 gap-3 right-0 flex items-center">
-        <button type="button" on:click={() => dispatch('share')} class="rounded-full leading-none h-6 w-6 bg-purple-300 dark:bg-purple-900 flex items-center justify-center"><span class="relative -top-px w-3 h-3"><svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 448 512"><path d="M352 224c53 0 96-43 96-96s-43-96-96-96s-96 43-96 96c0 4 .2 8 .7 11.9l-94.1 47C145.4 170.2 121.9 160 96 160c-53 0-96 43-96 96s43 96 96 96c25.9 0 49.4-10.2 66.6-26.9l94.1 47c-.5 3.9-.7 7.8-.7 11.9c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-25.9 0-49.4 10.2-66.6 26.9l-94.1-47c.5-3.9 .7-7.8 .7-11.9s-.2-8-.7-11.9l94.1-47C302.6 213.8 326.1 224 352 224z"/></svg></span></button>
+        <IconButton icon="share" on:click={() => dispatch('share')} />
         <DeleteButton on:confirm size="w-3 h-3"/>
       </div>
     </div>

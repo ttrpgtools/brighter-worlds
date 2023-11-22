@@ -14,6 +14,8 @@ export const COLOR_SCENE = 2463422;
 export const COLOR_ITEM = 16765698;
 export const COLOR_ROLL = 11032055;
 export const COLOR_NPC = 14423100;
+// #f472b6 pink-400
+export const COLOR_MAGIC = 16020150;
 
 // #f43f5e rose-500
 export const COLOR_DANGER = 16007006;

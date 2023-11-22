@@ -1,5 +1,5 @@
-import { COLOR_DANGER, COLOR_ITEM, COLOR_NPC, COLOR_OK, COLOR_ROLL, COLOR_SCENE, COLOR_WARN, ENCOUNTER_ROLL_NO, ENCOUNTER_ROLL_YES } from "$lib/const";
-import type { Cta, DieValue, DiscordEmbed, Entity, Item } from "$lib/types";
+import { COLOR_DANGER, COLOR_ITEM, COLOR_MAGIC, COLOR_NPC, COLOR_OK, COLOR_ROLL, COLOR_SCENE, COLOR_WARN, ENCOUNTER_ROLL_NO, ENCOUNTER_ROLL_YES } from "$lib/const";
+import type { Cta, DieValue, DiscordEmbed, Entity, Item, Magic } from "$lib/types";
 import { wrap } from "./array";
 import { encode } from "./b64";
 
@@ -50,7 +50,7 @@ function createObtainItemUrl(item: Item) {
   return url.href;
 }
 
-export function formatItem(item: Item) {
+export function formatItem(item: Item, name = '') {
   const discordItem: DiscordEmbed = {
     title: item.name,
     fields: [],
@@ -59,9 +59,25 @@ export function formatItem(item: Item) {
   };
   if (item.desc) discordItem.description = item.desc;
   if (item.image && typeof item.image === 'string') discordItem.image = { url: item.image };
+  if (name) discordItem.author = { name };
   if (item.quantity) discordItem.fields.push({ name: 'Quantity', value: `${item.quantity}`});
   if (item.bulky) discordItem.fields.push({ name: 'Bulky', value: 'true', inline: true });
   if (item.armor) discordItem.fields.push({ name: 'Armor', value: `${item.armor}`, inline: true });
+  if (item.damage) discordItem.fields.push({ name: 'Damage', value: wrap(item.damage).map(d => `d${d}`).join(' | '), inline: true });
+  return discordItem;
+}
+
+export function formatMagic(item: Magic, name = '') {
+  const discordItem: DiscordEmbed = {
+    title: item.name,
+    fields: [],
+    color: COLOR_MAGIC,
+    //url: createObtainItemUrl(item),
+  };
+  if (item.desc) discordItem.description = item.desc;
+  if (item.image && typeof item.image === 'string') discordItem.image = { url: item.image };
+  if (name) discordItem.author = { name };
+  if (item.type) discordItem.fields.push({ name: 'Type', value: `${item.type}`});
   if (item.damage) discordItem.fields.push({ name: 'Damage', value: wrap(item.damage).map(d => `d${d}`).join(' | '), inline: true });
   return discordItem;
 }

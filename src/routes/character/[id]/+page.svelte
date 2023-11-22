@@ -2,7 +2,7 @@
   import DiceDialog from '$lib/DiceDialog.svelte';
   import { bestRoll } from '$lib/rolling/roll';
   import Name from "$lib/sheet/Name.svelte";
-  import type { Attr, DamageDetails, DieMod, DieValue } from '$lib/types';
+  import type { Attr, DamageDetails, DieMod, DieValue, Item, Magic as MagicType } from '$lib/types';
   import Attribute from '$lib/sheet/Attribute.svelte';
   import Equipment from '$lib/sheet/Equipment.svelte';
   import Grit from '$lib/sheet/Grit.svelte';
@@ -17,7 +17,7 @@
   import Calling from '$lib/sheet/Calling.svelte';
   import Statuses from '$lib/sheet/Statuses.svelte';
   import Roller from '$lib/sheet/Roller.svelte';
-  import { broadcast, broadcastRoll } from '$lib/data/channel-child';
+  import { broadcast, broadcastItem, broadcastMagic, broadcastRoll, broadcastScene } from '$lib/data/channel-child';
   import type { PageData } from './$types';
   import IconButton from '$lib/IconButton.svelte';
   import SheetSettings from '$lib/sheet/SheetSettings.svelte';
@@ -95,6 +95,14 @@
   function damage(ev: CustomEvent<{ dice: DieValue[], name: string }>) {
     const {dice, name} = ev.detail;
     showRoll(dice, name);
+  }
+
+  function shareItem(ev: CustomEvent<Item>) {
+    broadcastItem(ev.detail, $character.name);
+  }
+
+  function shareMagic(ev: CustomEvent<MagicType>) {
+    broadcastMagic(ev.detail, $character.name);
   }
 
   async function cast(ev: CustomEvent<{ dice: DieValue[], name: string }>) {
@@ -189,6 +197,7 @@
   $: {
 
   }
+  $: isSharing = $character.settings?.rollToBridge !== false || $character.settings?.rollToDiscord;
   </script>
   <svelte:head>
     <title>{$character.name || 'Character Sheet'} :: Brighter Worlds Online</title>
@@ -236,9 +245,9 @@
         </div>
       </div>
       
-      <Equipment bind:equipment={$character.equipment} on:roll={damage} class="md:h-[25rem]" />
-      <Magic title="Spells" bind:magicList={$character.spells} on:roll={cast} castable on:cast={cast} type={'spell'} />
-      <Magic title="Rituals" bind:magicList={$character.rituals} on:roll={damage} type={'ritual'} />
+      <Equipment bind:equipment={$character.equipment} on:roll={damage} class="md:h-[25rem]" {isSharing} on:share={shareItem} />
+      <Magic title="Spells" bind:magicList={$character.spells} on:roll={cast} castable on:cast={cast} type={'spell'} {isSharing} on:share={shareMagic} />
+      <Magic title="Rituals" bind:magicList={$character.rituals} on:roll={damage} type={'ritual'} {isSharing} on:share={shareMagic} />
       <Calling calling={$character.calling} bind:abilities={$character.abilities} callingList={data.callings} enhancements={data.enhancements} />
       <EulogyNotes bind:notes={$character.notes} bind:eulogy={$character.eulogy} />
     </div>

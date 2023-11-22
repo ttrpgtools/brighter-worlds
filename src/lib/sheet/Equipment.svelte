@@ -18,6 +18,7 @@
   export let title = 'Equipment';
   export let hideArmor = false;
   export let selectable = false;
+  export let isSharing = false;
   export let flat = false;
   export let allowFormula = false;
   let clazz = '';
@@ -96,10 +97,15 @@
     <div class="flow-root">
       {#if equipment.length}
       <DraggableList {draggable} bind:list={equipment} class="{flat ? `-mt-5` : `-my-5`} divide-y divide-gray-200 dark:divide-gray-600" itemClass="py-3 relative !visible group" {transformDraggedElement} let:item>
-        <div class="flex items-center space-x-4 group-data-[is-dnd-shadow-item]:invisible">
-          <div class="min-w-0 flex-1 flex gap-2 items-center">
+        <div class="flex items-center gap-4 group-data-[is-dnd-shadow-item]:invisible group/item">
+          <div class="min-w-0 flex-1 flex gap-2 items-center relative">
             {#if draggable}<Icon icon="grip-v" />{/if}
             <button type="button" class="truncate select-text text-sm font-medium cursor-pointer" title={item.name} on:click={() => selectGear(item)} on:keydown={onEnter(() => editGear(item.id))}>{item.name}</button>
+            {#if isSharing}
+            <div class="absolute right-0 hidden group-hover/item:block">
+              <IconButton icon="share" on:click={() => dispatch('share', item)} />
+            </div>
+            {/if}
           </div>
           <div class="flex gap-2 items-center">
             {#if item.quantity != null}
