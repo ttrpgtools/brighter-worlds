@@ -19,7 +19,7 @@ let dialog: EulogyDialog;
 </script>
 
 <EulogyDialog bind:eulogy bind:this={dialog} />
-<TabbedCard tabs={[{label: 'Eulogy'},{label: 'Notes'}]} id="eulogy" class="md:h-[25rem] lg:order-2">
+<TabbedCard tabs={[{label: 'Epitaph'},{label: 'Notes'}]} id="eulogy" class="md:h-[25rem] lg:order-2">
   <div slot="sidehead" class="py-4 flex gap-2 items-center"><span class="text-lg font-subtitle inline-block h-6">XP:</span><span class="" >{availableXp}</span></div>
   <TabPanels class="h-full">
     <TabPanel>

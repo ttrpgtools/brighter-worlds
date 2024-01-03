@@ -47,7 +47,7 @@
   }
 
   export async function addStanza() {
-    title = 'Add eulogy stanza';
+    title = 'Add epitaph';
     showDelete = false;
     form = newForm();
     const item = await formResults();
@@ -57,7 +57,7 @@
   }
 
   export async function editStanza(id: string) {
-    title = 'Edit item';
+    title = 'Edit epitaph';
     showDelete = true;
     form = newForm(id);
     const item = await formResults();
