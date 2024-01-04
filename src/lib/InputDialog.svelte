@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { isElement } from "./util/validate";
+
   import { createEventDispatcher } from "svelte";
   import Button from "./Button.svelte";
   import DeleteButton from "./DeleteButton.svelte";
@@ -29,6 +31,7 @@
   }
 
   function handleKeys(ev: KeyboardEvent) {
+    if (isElement(ev.target) && ev.target.tagName.toUpperCase() === 'TEXTAREA') { return; }
     ev.preventDefault();
     okBtnAction();
   }
@@ -38,7 +41,7 @@
     comp.close();
   }
 </script>
-<DialogBase {title} let:close bind:this={comp} {scrollable}>
+<DialogBase {title} bind:this={comp} {scrollable}>
   <div slot="pretitle">
     {#if dice.length > 0}
     <div class="flex gap-4 justify-center items-center mb-3 sm:mb-5">
@@ -50,7 +53,8 @@
     </div>
     {/if}
   </div>
-  <div class="mt-5" use:focusFirst on:keydown={onEnter(handleKeys)}>
+  <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
+  <div role="dialog" class="mt-5" use:focusFirst on:keydown={onEnter(handleKeys)}>
     <slot></slot>
   </div>
   <div class="mt-5 text-center flex gap-2 justify-start" slot="footer">

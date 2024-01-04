@@ -3,8 +3,6 @@ import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async function() {
   return {
-    npcs: npcManager.getAll(),
+    npcs: [npcManager.getDefault(), ...npcManager.getAll()],
   };
 }
-
-export const prerender = true;

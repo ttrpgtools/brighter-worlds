@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { builder, STEP, wizard } from "../wizard";
+  import { STEP, getWizard } from "../wizard";
   import { goto } from "$app/navigation";
   import { browser } from "$app/environment";
   import Button from "$lib/Button.svelte";
@@ -8,6 +8,8 @@
   import { onlyEnhancement } from "$lib/util/guards";
   import { defined } from "$lib/util/array";
   import GroupInputs from "$lib/GroupInputs.svelte";
+
+  const [wizard, builder] = getWizard();
 
   export let data: PageData;
 

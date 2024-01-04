@@ -1,11 +1,25 @@
-import { writable, type Writable } from 'svelte/store';
+import { defined } from '$lib/util/array';
+import { writable, type Updater, type Writable } from 'svelte/store';
 
-function getter<T>(key: string, reviver?: (key: string, value: unknown) => any): T | null {
+export function getter<T>(key: string, reviver?: (key: string, value: unknown) => any): T | null {
   const strout = window.localStorage.getItem(key) || "null";
   return JSON.parse(strout, reviver) as T;
 }
 
-function setter<T>(key: string, value: T | null, replacer?: (key: string, value: unknown) => any) {
+export function getAll<T>(keyFilter: (key: string) => boolean, reviver?: (key: string, value: unknown) => any) : T[] {
+  if (typeof window === 'undefined') return [];
+  const count = window.localStorage.length;
+  const keys: string[] = [];
+  for (let index = 0; index < count; index++) {
+    const key = window.localStorage.key(index);
+    if (key && keyFilter(key)) {
+      keys.push(key);
+    }
+  }
+  return keys.map(k => getter<T>(k, reviver)).filter(defined);
+}
+
+export function setter<T>(key: string, value: T | null, replacer?: (key: string, value: unknown) => any) {
   if (value === undefined) {
     value = null;
   }
@@ -24,8 +38,8 @@ export function factory<T>(key: string, defaultValue: T) {
 }
 
 export interface LazyWritable<T> extends Writable<T> {
-  load: () => void
-  init: boolean
+  load: () => Promise<boolean>;
+  init: boolean;
 }
 
 export interface FactoryOpts {
@@ -33,35 +47,62 @@ export interface FactoryOpts {
   replacer?: (key: string, value: unknown) => any,
 }
 
-export function lazyFactory<T>(key: string, defaultValue: T, opts?: FactoryOpts) {
-  const wstore = writable<T>(defaultValue) as LazyWritable<T>;
-  let loading = false;
-  wstore.init = false;
-  wstore.load = () => {
-    loading = true;
-    const saved = getter<T>(key, opts?.reviver);
-    if (saved != null) {
-      wstore.set(saved);
+/**
+ * Create a store that persists values to localStorage. It requires explicit loading to work with SSR.
+ * @param key The localStorage key to use.
+ * @param initialValue The initial value of the store.
+ * @param opts An option reviver and replacer used in the JSON serialization process.
+ * @returns A writable store that needes to be initialized.
+ */
+export function lazyFactory<T>(key: string, initialValue?: T, opts?: FactoryOpts): LazyWritable<T> {
+  console.log('lazyFactory', key, initialValue);
+  const internal = writable<T>(initialValue);
+  let init = false;
+
+  async function load() {
+    const value = getter<T>(key, opts?.reviver);
+    console.log('lazyFactory::load', key, value);
+    init = true;
+    if (value != null) {
+      internal.set(value);
+      return true;
+    } else if (initialValue !== undefined) {
+      console.log('lazyFactory::load running setter', key, initialValue);
+      setter(key, initialValue, opts?.replacer);
     }
-    loading = false;
-    wstore.init = true;
-  };
-  wstore.subscribe(value => {
-    if (!loading && wstore.init) {
-      setter(key, value, opts?.replacer);
-    }
-  });
-  return wstore;
+    return false;
+  }
+
+  async function set(value: T) {
+    if (!init) return;
+    console.log('lazyFactory::set', key, value);
+    setter(key, value, opts?.replacer);
+    internal.set(value);
+  }
+  async function update(updater: Updater<T>) {
+    if (!init) return;
+    internal.update((value: T) => {
+      const result = updater(value);
+      setter(key, result, opts?.replacer);
+      return result;
+    });
+  }
+  
+  return {
+    ...internal,
+    set,
+    update,
+    load,
+    get init() {
+      return init;
+    },
+  }
 }
 
-export function get<T = unknown>(key: string) {
-  return getter<T>(key);
-}
-
-export function set<T = unknown>(key: string, value: T) {
-  return setter<T>(key, value);
-}
-
+/**
+ * Delete a key from localStorage
+ * @param key The key to delete from localStorage
+ */
 export function clear(key: string) {
   window.localStorage.removeItem(key);
 }

@@ -4,19 +4,19 @@
     "name": "Alchemist",
     "tagline": "A crafter distilling the natural world into potions.",
     "for": "For players who like to plan ahead, collect ingredients, and do alchemy.",
-    "desc": "Through branch and root you know how to unlock the secrets of the earth. You use this knowledge to wrench the very world to will.",
+    "desc": "An expert at distillation and brewing. Via chemical and magical means you are able to unlock the potential of natural substances and combine them to create power effects. Nothing is beyond your means, so long as you’re able to find sufficiently powerful ingredients.\n\nYou’ll start with a **Recipe Book** (*bulky*) which holds your potion recipes. If you obtain Spells or Rituals in the future, this book also acts as a Grimoire which can store magic.\n\nCreate **two potion recipes** to start with, you have **3 Vials** of each of those potions already brewed.",
     "equipment": [
       { "name": "Recipe Book", "desc": "Acts as a Grimoire that also stores your potion recipes.", "bulky": true, "enableMagic": true },
       { "name": "Alchemy Supplies", "desc": "", "bulky": false },
-      { "name": "Complete Potion 1", "desc": "Edit this to your first potion", "bulky": false },
-      { "name": "Complete Potion 2", "desc": "Edit this to your second potion", "bulky": false }
+      { "name": "Vials of Potion 1", "desc": "Edit this to your first potion", "bulky": false, "quantity": 3 },
+      { "name": "Vials of Potion 2", "desc": "Edit this to your second potion", "bulky": false, "quantity": 3 }
     ],
     "abilities": [
       {
         "id": "ability-T4KroGq36Ht",
         "type": "core",
-        "name": "Branch and Bone",
-        "desc": "You can distill plants, minerals, animal parts, and other ingredients into potion components. With the necessary components, you can brew doses of any potion whose recipe you know."
+        "name": "Potion Making",
+        "desc": "A potion is a liquid substance consumed or applied in some way to create a magical effect.\n\nYou can distill plants, minerals, animal parts, and other ingredients into potion components. With the necessary components, you can brew doses of any potion whose recipe you know.\n\nWith time and effort you can develop new potion recipes. Explain the desired effects along with the proposed recipe. A potion recipe must contain at least two dissimilar components along with a brewing process. Brewing will usually take at least an hour and will produce 3 doses of the potion.\n\nAny potion effect is possible, but the required components and process may be esoteric or prohibitive.\n\nThe GM will tell you if it will work, or if one or more more of the following are true:\n\n- It will require one or more additional components.\n- It requires a laborious, time consuming, or difficult to achieve brewing process.\n- It takes a large amount of raw materials to produce a single dose.\n- It creates an unstable, volatile potion that must be used quickly or lose its efficacy.\n- The process is uncertain, and the final effect will depend on a random roll.\n- It will have an unintended side effect when consumed."
       },
       {
         "id": "ability-pId4TB77H6iZ0vQoQLKm",
@@ -39,8 +39,8 @@
       {
         "id": "ability-J3a6NGE",
         "type": "advanced",
-        "name": "Topical Treatment",
-        "desc": "You can produce potions that are applied in ways other than drinking, such as breathable fumes, topical ointments, or smeared onto weapons."
+        "name": "Complex Compounding",
+        "desc": "You can produce non-liquid potions that take the form of solids or gasses."
       }
     ],
     "rituals": [
@@ -103,7 +103,7 @@
     "name": "Archivist",
     "tagline": "A collector and collator of knowledge.",
     "for": "For players who like to keep notes and read lore.",
-    "desc": "You’ve always liked knowing things. Collecting information and stories like a squirrel collecting nuts for the winter. Frustrated with incomplete, inconsistent, and obviously biased records you’ve emerged from your study to do first hand research and correct the record.",
+    "desc": "A collector of information, a keeper of stories, a traveling source of knowledge.\n\nYou start with your **Archive** (*bulky*) a tome which contains your accumulated knowledge. If you obtain Spells or Rituals in the future, this book also acts as a Grimoire which can store magic.\n\nTwo Topics of information are already stored within your Archive. The first two times you access your **Deep Lore** note down the relevent Topic.",
     "equipment": [
       { "name": "Your Archive", "desc": "Acts as a Grimoire that also stores your Topics. Starts with one Topic of information based on your prior studies and one ritual of your choice.", "bulky": true, "enableMagic": true }
     ],
@@ -115,26 +115,20 @@
       {
         "id": "ability-BzHLsSJd6KM",
         "type": "core",
-        "name": "Expert Reader",
-        "desc": "No matter the language, culture, code, cypher, or style you can always quickly discern the intent and meaning of any written language."
-      },
-      {
-        "id": "ability-LjJg2Vbu2HmtyC9",
-        "type": "core",
-        "name": "Deep Lore",
-        "desc": "You are a master at collecting and collating information. Any Topic stored within your Archive is always at your fingertips. The first time you encounter something that falls within a Topic recorded in your Archive, you may ask the GM a single question about it. Further questions will take time to look up, or require further research. It takes six hours to record a new Topic of information into your Archive from any source of knowledge."
+        "name": "Archival Expertise",
+        "desc": "You are a **Linguistic Expert**: fluent in every known language, and can quickly learn new ones given time and examples of text or speech.\n\nThe **Deep Lore** of the world is always at your fingertips inside your **Archive**. The first time you encounter something new that falls within a Topic stored in your Archive, you may ask the GM a single question about it which will be answered honestly. Further questions about the same subject will take time or research to answer.\n\nGiven a new source of knowledge, it takes you at least one hour to copy a new Topic into your Archive. Significantly complex, in depth, or esoteric Topics may take more time to understand."
       },
       {
         "id": "ability-xwtZl5iJZps6lsz",
         "type": "advanced",
         "name": "Office Assistant",
-        "desc": "Whether due to accumulated knowledge or through some arcane rite, your Archive has awoken into a sentient, floating being. Casting spells still requires you to hold the Archive to read from it."
+        "desc": "Whether due to accumulated knowledge or through some arcane rite, your Archive has awoken into a sentient, floating being. Using your Archive as a Grimoire to cast Spells or perform Rituals still requires you to be in contact with it."
       },
       {
         "id": "ability-Je3E95zYpeVWxrx",
         "type": "advanced",
         "name": "Monster Manual",
-        "desc": "Thoroughly examine a creature to record it as a Topic in your Archive. When you take the time to lecture from your notes, you and any who listen gain +1 armor against those creatures during the next combat, and can easily identify weaknesses."
+        "desc": "Thoroughly examine a creature to record it as a Topic in your Archive. When you take ten minutes to review your notes you, and any who listen, gain +1 armor against those creatures the next time your encounter them, and can easily identify any weaknesses."
       },
       {
         "id": "ability-Fl1Cq8wGLLtwXK",
@@ -207,17 +201,17 @@
     "name": "Bag of Bones",
     "tagline": "A walking, talking skeleton.",
     "for": "For players who don’t want to be at risk of dying easily, and would like to play a living cartoon.",
-    "desc": "You’re a walking, talking skeleton. Devoid of life and yet alive. Perhaps your state is the result of a run-in with a grumpy necromancer. Or maybe a ritual for lichdom went badly. Or did you get bored of guarding a dungeon, and decide to try your luck with a life of adventure? Your status as a bag of bones means you’re harder to kill (a second time) but making friends is perhaps a bit more difficult now.",
+    "desc": "You’re a skeleton, made of bones and animated by some supernatural force. You’re hard to kill permanently, and don’t stay down for long.\n\nYou start with nothing more than your **Fearsome Visage** and **Lack of Flesh**.",
     "equipment": [
       { "name": "A Lack of Flesh", "desc": "", "bulky": false, "armor": 1 },
-      { "name": "A Fearsome Visage", "desc": "Whoa, that's frightening.", "bulky": false }
+      { "name": "Fearsome Visage", "desc": "You frighten most creatures" }
     ],
     "abilities": [
       {
         "id": "ability-oZUNYHmsuoCugkQWK",
         "type": "core",
-        "name": "Living Death",
-        "desc": "You're a skeleton. You're made of bones and animated by some supernatural force. You’re hard to kill, and don’t stay down for long. You do not require food, water, or sleep. As long as your skull remains intact, you cannot fully die. Direct Damage you suffer never overflows your current STR die. When you take Critical Damage, parts of your body are knocked off. You don’t restore STR by resting, but instead by replacing lost or damaged bones. You may temporarily step down your STR to detach parts of your body which you retain control of."
+        "name": "No Body to Love",
+        "desc": "Your **Lack of Flesh** grants you +1 Armor against physical damage.\n\nYour **Fearsome Visage** will be initially frightening to most creatures, unless you take measures to obscure your form.\n\nYou do not require food, water, or sleep and as long as your skull remains intact you cannot fully die.\n\nDirect Damage you suffer never overflows, instead Critical Damage causes a limb (or other significant part of your body) to fly off in addition to stepping down the relevant die. You don’t restore Attribute Dice by resting, but instead by replacing lost or damaged bones.\n\nIf you willingly detach a limb, you remain in control of it (but are still at risk of losing STR if those detached parts are broken)."
       },
       {
         "id": "ability-MSHeE9fRPF",
@@ -251,10 +245,11 @@
     "name": "Blessed of Water",
     "tagline": "Empowered through spiritually bonding with an aquatic place.",
     "for": "For players who like free-form effects, or want to play a water bender.",
-    "desc": "Were you granted a boon by an ocean goddess? Are you the daughter of a river spirit? Perhaps you did some great deed for the guardian of a particular cove? Your watery patron granted you a part of itself and bound you to water. They are not a dominant presence in your journey, but their support is constant and you hear their voice in the patter of rain, the burble of a creek, or the crash of ocean waves.",
+    "desc": "You have a pact with some watery patron. You might be the daughter of a river spirit, have been granted a boon by an ocean goddess, or did some great deed for the guardian of a particular cove. In any case you were granted a small part of their power, and can always hear their voice in the patter of rain, the burble of a creek, or the crash of ocean waves.\n\nName your Patron, and choose the Blessing they’ve granted you.\n\nYou start with a water skin, or some other vessel, full with a gallon of water.",
     "equipment": [
       { "name": "Waterskin", "desc": "", "bulky": false },
-      { "name": "A small, impossible token from your Patron", "desc": "", "bulky": false }
+      { "name": "A small, impossible token from your Patron", "desc": "", "bulky": false },
+      { "name": "Water", "desc": "Water wielded as a weapon", "damage": 6, "bulky": false }
     ],
     "choices": [
       { "choose": "enhancement", "table": "rt-water-blessing" }
@@ -360,7 +355,7 @@
     "name": "Crystal Wizard",
     "tagline": "A magic user harnessing the mystic properties of crystals.",
     "for": "For players who like to prepare magic before casting it, like to read through lists of magic, or want to focus on rituals over spells.",
-    "desc": "The spheres talk. They speak in frequencies and tones inaudible to all living things. You’ve discovered that crystals, when prepared in particular ways, can resonant with this divine conversation. Others may scoff at your talk of the mystic resonance of quartz, or sympathetic vibrations of tourmaline, but you know that by listening carefully you can access powers beyond the ken of your contemporaries.",
+    "desc": "Crystals speak to you. They whisper their secrets in frequencies and tones inaudible to most, but you’ve learned how to listen.\n\nYou start with a **Crystal Grimoire** which is stored within a crystal on, in, or around your body when not in use. Choose one Spell and two Rituals that it contains.\n\nYou also have two **Arcane Storage Crystals** each attuned to one of your two starting Rituals. These allow you to prepare rituals ahead of time to enact their effects instantly.",
     "equipment": [
       { "name": "Crystal Grimoire", "desc": "Choose one spell and two rituals.", "bulky": false, "enableMagic": true },
       { "name": "Arcane Storage Crystal", "desc": "Attuned to one of your rituals.", "bulky": false }
@@ -375,13 +370,13 @@
         "id": "ability-lA4daKAkdhHkwM1J7",
         "type": "core",
         "name": "Crystal Wizardry",
-        "desc": "You have harnessed the mystically resonant nature of crystals to enhance your magic. You can condense your rituals into Storage Crystals to perform them without effort, store your Grimoire within a crystal, and learn new magics by attuning to the crystal frequencies of the universe.\n\n### Arcane Storage Crystals\n\nYou may attune your Storage Crystals with a ritual from your Grimoire. Attuning a crystal this way takes 6 hours, but does not require your constant attention. You can still perform attuned rituals out of your Grimoire as usual. Discharge a Storage Crystal to perform the attuned ritual immediately (a single combat round rather than 10 minutes), and without needing to sacrifice any components. Once discharged, a crystal must be attuned to a ritual to be used again. Creating a new Arcane Storage Crystal costs 1 permanent Max Grit. Each crystal is bound to you (either physically or magically) and cannot be lost or stolen.\n\n### Crystal Grimoire\n\nYour Grimoire is mystically bonded to a crystal embedded somewhere on your body. When not in use, the Grimoire is stored within the crystal, and if destroyed or lost it will reform within that crystal in an hour.\n\n### Crystal Research\n\nAny time you spend XP choose a new ritual to add to your Grimoire."
+        "desc": "You may attune your **Arcane Storage Crystals** with a ritual from your Grimoire. Attuning a crystal this way takes 6 hours, but does not require your constant attention (for example, you can start the process before you rest for the night). You can still perform attuned rituals out of your Grimoire as usual.\n\nDischarge a Storage Crystal to perform the attuned ritual immediately (a single combat round rather than 10 minutes), and without needing to sacrifice any components. Once discharged, a crystal must be attuned to a ritual to be used again.\n\nAnytime you spend XP you may convert an appropriate crystal in your posession into a new Storage Crystal. When you do, choose a new ritual to add to your Grimoire."
       },
       {
         "id": "ability-nB0jwe",
         "type": "advanced",
-        "name": "Crystal Sight",
-        "desc": "Embed a “third eye” crystal onto your body, allowing you to see mystical, spiritual, and other non-physical entities and effects."
+        "name": "Crystal Vibes",
+        "desc": "You can pick up on the mystic vibrations caused by the single most intense emotional, spiritual, or magical nearby presence. This could be the mood of a crowd, the nature of an ongoing ritual, the presence of an angry spirit, or some other non-physical effect. With time, preparation, and the correct crystals, you can suppress or enhance these vibrations."
       },
       {
         "id": "ability-fYQjuNkz6hkWa",
@@ -411,7 +406,6 @@
     "for": "For players who like to make do with random results, or like to talk to themselves.",
     "desc": "A spirit of chaos, better known as a demon, has made its home in your head. In exchange for the shelter your body provides, it grants you access to the knowledge and skills its picked up from prior hosts. Sometime, when you die, it will leap to a new body and pass along the skills and knowledge it learned from you, but you might prefer not to think about that.",
     "equipment": [
-      { "name": "Demon in your brain", "desc": "One random spell and ritual plus one chosen spell and ritual.", "bulky": false, "enableMagic": true },
       { "name": "Unusual choice of clothing", "desc": "Your demon insists on it.", "bulky": false }
     ],
     "choices": [
@@ -466,12 +460,11 @@
     "name": "Devoted",
     "tagline": "Dedicated to an ideal. A paladin empowered through their faith and belief.",
     "for": "For players who like their character to live by a code.",
-    "desc": "You are devoted to something larger than yourself. It might be a deity, an organization, or simply an ideal. Whatever it is, your devotion to it grants you strength beyond mortal ken. Whether it is power granted to you, or pulled from within, your devotion guides your actions.",
+    "desc": "You are devoted to something larger than yourself. It might be a deity, an organization, or simply an ideal. Whatever it is, your devotion to it grants you strength beyond mortal ken. Whether it is power granted to you, or pulled from within, your devotion guides your actions.\n\nDeclare what it is you are devoted to, then choose a **Vow** you must live by, and two **Boons** your devotion grants you.\n\nYou start with a piece of **Armor** (1 Armor) decorated, indicative, or otherwise emblematic of your Devotion.",
     "equipment": [
       { "name": "Decorated Armor", "desc": "", "bulky": false, "armor": 1 }
     ],
     "choices": [
-      { "choose": "equipment", "type": "str", "die": 10 },
       { "choose": "enhancement", "table": "rt-devoted-vows" },
       { "choose": "enhancement", "table": "rt-devoted-boons" },
       { "choose": "enhancement", "table": "rt-devoted-boons" }
@@ -480,8 +473,8 @@
       {
         "id": "ability-nBOETu4rE",
         "type": "core",
-        "name": "Devoted Oath",
-        "desc": "Choose a vow you must live by, and two boons your devotion grants you. If you break your vow, you lose your boons for a year and a day, or until you make amends."
+        "name": "Oath of Devotion",
+        "desc": "If you break your vow, you lose your boons for a year and a day, or until you make amends.\n\nYour Vow applies only to you, not to your companions."
       },
       {
         "id": "ability-rWOhqv3ZHrS",
@@ -529,7 +522,7 @@
     "for": "For players who want to hit things and cast spells at the same time.",
     "desc": "You are a grimblade and you have a grimblade, a unique and very large weapon that you’ve learned the trick of putting spells into. Whether you physically inscribe it onto a meteor metal blade, or embed the spells into a crystal hammer, you find this eminently more practical than lugging a big book around.",
     "equipment": [
-      { "name": "Grimblade", "desc": "Feel the magic.", "bulky": true, "enableMagic": { "type": "spells" } }
+      { "name": "Grimblade", "desc": "Feel the magic.", "bulky": true, "damage": 10, "enableMagic": { "type": "spells" } }
     ],
     "choices": [
       { "choose": "magic", "type": "spell", "random": false },
@@ -540,7 +533,7 @@
         "id": "ability-WgN2wz0bGxQ",
         "type": "core",
         "name": "Grimblade",
-        "desc": "You have a mystical weapon capable of storing spells (but not rituals) as though it were a Grimoire. It is any type of melee weapon, made of some unusual material. Your Grimblade is indestructible and you always know where it is.\n\n### Grimblade\n\nYour Grimblade acts as a Grimoire which can only store spells. It can take the form of engraving arcane words onto the flat of a great two handed blade, embedding mystic energy into the crystalline head of a massive hammer, or simply bashing people about the head with a very large book.\n\n###Kinetic Spellcasting\n\nIf you deal Direct Damage (this does not require Critical Damage) with your Grimblade you may immediately cast a spell ignoring the usual costs. You do not set your Grit to zero or make a Save. You can still cast spells from it as usual, but if you cast a spell while at zero Grit you roll the Save with your STR rather than your WIL."
+        "desc": "You have a mystical weapon capable of storing spells (but not rituals) as though it were a Grimoire. It is any type of melee weapon, made of some unusual material. Your Grimblade is indestructible and you always know where it is.\n\n### Grimblade\n\nYour Grimblade acts as a Grimoire which can only store spells. It can take the form of engraving arcane words onto the flat of a great two handed blade, embedding mystic energy into the crystalline head of a massive hammer, or simply bashing people about the head with a very large book.\n\n### Kinetic Spellcasting\n\nIf you deal Direct Damage (this does not require Critical Damage) with your Grimblade you may immediately cast a spell ignoring the usual costs. You do not set your Grit to zero or make a Save. You can still cast spells from it as usual, but if you cast a spell while at zero Grit you roll the Save with your STR rather than your WIL."
       },
       {
         "id": "ability-2hSXpe4gys1petRbfTZr",
@@ -574,10 +567,8 @@
     "name": "Runewright",
     "tagline": "A crafter of precise and unique magics.",
     "for": "For players who like to assemble unique effects out of logical or grammatical components.",
-    "desc": "You are a runewright, you imbue and channel power through engraved symbols of power. You are no wizard. You’re above running around shooting crude magic from your fingertips, blasting things with fireballs. Runes are sophisticated. Runes are subtler, slower, and longer lasting than spells. Anyone can pick up a spellbook and cast a spell, crafting runes takes refinement. And you are refined.",
+    "desc": "You imbue and channel power through engraved symbols of power. Runes are subtler, slower, and longer lasting than spells. When applied properly, they are art.\n\nYou begin with knowledge of two **Elements**, two **Verbs**, and two **Subjects**.\n\nYou also have two **Key Runes** tattooed or otherwise engraved onto your body.",
     "equipment": [
-      { "name": "Etching or Drawing tools", "desc": "", "bulky": false },
-      { "name": "Flawless handwriting", "desc": "", "bulky": false }
     ],
     "choices": [
       { "choose": "enhancement", "table": "rt-ruins-elements" },
@@ -591,8 +582,8 @@
       {
         "id": "ability-iVwrspxo0",
         "type": "core",
-        "name": "Runic Magic",
-        "desc": "You can inscribe runes that incorporate one Element, one Verb, and one Subject. Activate an inscribed rune with a fresh drop of your blood and reducing your Max Grit by 1. You can deactivate a rune at will to recover the spent Max Grit."
+        "name": "Runic Inscription",
+        "desc": "Runic magic is subtler than both Spells and Rituals, dealing mostly with modifying existing things. The effects are long lasting, but generally less powerful.\n\nYou can inscribe runes that incorporate one Element, one Verb, and one Subject.\n\nWhen you inscribe a rune, tell the GM what your intended effect is and what components you plan to use to achieve that. They’ll tell you if that’s possible, or if you’ll have to do more to achieve your goal. Wide reaching or particularly powerful effects might require a unique material to hold the rune, or for the rune to be duplicated in multiple places.\n\nOnce inscribed, activate a rune by physically touching it to one of your **Key Runes**. Each Key Rune can only empower on Rune at a time. You may deactivate a Rune with a thought from any distance to free a Key Rune to be used again. Any number of Runes can be inscribed, but you may only have one per Key Rune empowered at once.\n\nWhenever you spend XP gain an additional Key Rune."
       },
       {
         "id": "ability-1Se9MxJCXOeijXRmAN",
@@ -603,14 +594,14 @@
       {
         "id": "ability-uCW7oACqPu7",
         "type": "advanced",
-        "name": "Rune Logic",
-        "desc": "You’ve learned to add Modifiers as a fourth component of a rune:\n\n- **If**: Set a condition under which an empowered run will activate.\n- **Not**: Invert the effects of the Verb or Element used in a rune."
+        "name": "Remote Control",
+        "desc": "You can activate inscribed runes from a distance without needing physical contact with the Key Rune used. You may also inscribe specific conditions into your run which, after being empowered, will cause a runes effects to activate upon the conditions being met."
       },
       {
         "id": "ability-UNkzs6E2",
         "type": "advanced",
         "name": "Synergistic Conjunctions",
-        "desc": "You’ve learned the **And** component which lets you write runes that incorporate two Elements, two Verbs, or two Subjects."
+        "desc": "You’ve learned the **And** component which lets you write runes that incorporate multiple Elements, Verbs, and Subjects simultaneously. This can also be used to chain several runes together."
       },
       {
         "id": "ability-0L2lI8NkURy43",
@@ -723,7 +714,6 @@
     "for": "For players who want to cast spells and also have an adorable pet.",
     "desc": "Familiar at your side, you channel the forces of magic across the mystic bond that connects you. You are a shepherd to ancient secrets, passed from person to person to keep them safe from forces who would rather see it lost.",
     "equipment": [
-      { "name": "Your Familiar", "desc": "You can link to your familiar's sheet", "bulky": false },
       { "name": "Grimoire", "desc": "Giant book of spells.", "bulky": true, "enableMagic": true },
       { "name": "A fanciful hat or ornamentation", "desc": "Ooo, that is fancy.", "bulky": false }
     ],

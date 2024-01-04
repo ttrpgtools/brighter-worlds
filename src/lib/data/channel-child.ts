@@ -1,34 +1,42 @@
-import type { HandlerFn, RemoteMessage } from "$lib/types";
+import type { DieValue, Entity, Item, Magic, RemoteMessage } from "$lib/types";
+import { createBroadcastStore } from "./broadcast-store";
+import { browser } from "$app/environment";
+import { writable, type Writable } from "svelte/store";
+import { formatItem, formatMagic, formatNpc, formatRoll, formatScene } from "$lib/util/share";
+import { id } from "$lib/rolling/id";
 
-const INTERNAL_CHANNEL = 'bwo-channel';
+const ROLL_CHANNEL = 'bwo-roll-channel';
 
-let chan: BroadcastChannel;
-
-function connect() {
-  if (!chan) {
-    chan = new BroadcastChannel(INTERNAL_CHANNEL);
-    chan.onmessage = broadcastReceive;
-  }
+let broadcast: Writable<RemoteMessage>;
+if (browser) {
+  broadcast = createBroadcastStore<RemoteMessage>(ROLL_CHANNEL);
+} else {
+  broadcast = writable<RemoteMessage>();
 }
 
-function broadcastReceive(ev: MessageEvent<RemoteMessage>) {
-  if (ev && ev.data) {
-    console.log('[BWO] Received broadcast data', ev.data);
-    handlers.forEach(fn => fn(ev.data));
-  }
+export { broadcast };
+
+export function broadcastRoll(name: string, result: number, label: string, dice: DieValue[] = [], character?: string) {
+  const roll = formatRoll(name, result, label, dice, character);
+  broadcast.set({id: id(), name: character ?? '', type: 'embed', embed: roll});
 }
 
-const handlers = new Set<HandlerFn>();
+export async function broadcastScene(item: Entity) {
+  const scene = formatScene(item);
+  broadcast.set({id: id(), name: '', type: 'embed', embed: scene});
+}
 
-export const broadcast = {
-  send(msg: RemoteMessage) {
-    connect();
-    console.log('[BWO] Sending broadcast data', msg);
-    chan.postMessage(msg);
-  },
-  addListener(fn: HandlerFn) {
-    connect();
-    handlers.add(fn);
-    return () => handlers.delete(fn);
-  }
-};
+export async function broadcastMagic(item: Magic, name = '') {
+  const magic = formatMagic(item, name);
+  broadcast.set({id: id(), name, type: 'embed', embed: magic});
+}
+
+export async function broadcastNpc(item: Entity) {
+  const npc = formatNpc(item);
+  broadcast.set({id: id(), name: '', type: 'embed', embed: npc});
+}
+
+export async function broadcastItem(item: Item, name = '') {
+  const relic = formatItem(item, name);
+  broadcast.set({id: id(), name, type: 'embed', embed: relic});
+}

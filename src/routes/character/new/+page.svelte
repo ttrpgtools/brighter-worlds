@@ -2,9 +2,12 @@
   import type { Calling } from "$lib/types";
   import MenuLink from "$lib/MenuLink.svelte";
   import CallingSummary from "./CallingSummary.svelte";
-  import { STEP, wizard } from "./wizard";
+  import { STEP, getWizard } from "./wizard";
   import type { PageData } from "./$types";
+  import HomeLink from "$lib/HomeLink.svelte";
   export let data: PageData;
+
+  const [wizard] = getWizard();
 
   if ($wizard !== STEP.CALLING) {
     wizard.reset();
@@ -14,7 +17,7 @@
     wizard.setCalling(calling, data.spells, data.rituals);
   }
 </script>
-
+<HomeLink />
 <div class="max-w-prose text-center mb-4 text-2xl font-subtitle">
   Find your Calling adventurer! What drives you forward?
 </div>
@@ -38,4 +41,4 @@
     <CallingSummary calling={calling} on:click={() => startWizard(calling)} />
   {/each}
 </div>
-<MenuLink href="/">Home</MenuLink>
+<MenuLink href="/" icon="logo-leaf">Home</MenuLink>

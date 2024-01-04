@@ -11,13 +11,15 @@ const config = {
 			borderWidth: {
 				'3': '3px',
 			},
+			aria: {
+				current: 'current="page"'
+			}
 		}
 	},
 
 	plugins: [
 		require('@tailwindcss/forms'),
 		require('@tailwindcss/typography'),
-		require('@tailwindcss/line-clamp'),
 	]
 };
 

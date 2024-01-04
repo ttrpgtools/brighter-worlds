@@ -1,3 +1,4 @@
+import { status } from "$lib/const";
 import type { EulogyStanza, Item } from "$lib/types";
 
 export function armor(eq: Item[]) {
@@ -18,4 +19,12 @@ export function burdened(eq: Item[]) {
 
 export function xp(es: EulogyStanza[]) {
   return es.reduce((p, c) => p + (c.xp && !c.spent ? 1 : 0), 0);
+}
+
+export function isFunctional(statuses: Set<string>) {
+  return !statuses.has(status.DEAD)
+      && !statuses.has(status.CATATONIC)
+      && !statuses.has(status.INCAPACITATED)
+      && !statuses.has(status.UNCONSCIOUS)
+      && !statuses.has(status.PARALYSED);
 }

@@ -1,0 +1,61 @@
+[
+  {
+    "id": "relic-00",
+    "name": "Appraising Hand",
+    "desc": "The severed and preserved hand of a once famous art merchant. Will appraise any small object placed in its grip and communicate its fair market value with gestures."
+  },
+  {
+    "id": "relic-01",
+    "name": "Aroma-Alchemy Candle",
+    "desc": "When placed in or on a material with alchemical properties and lit, the essence of the material is wicked up into the candle and dispersed through the area with a decreased effect. For example if placed within a sleeping potion it would result in a smell that encourages drowsiness and keeps those already asleep from waking."
+  },
+  {
+    "id": "relic-02",
+    "name": "Blindfold of the Nightwalker",
+    "desc": "A leather blindfold with a closed eye embossed across the front.\n\nWhile wearing the Blindfold light and dark are reversed to your vision. Well lit areas are pitch black and lightless rooms are clear as day."
+  },
+  {
+    "id": "relic-03",
+    "name": "Fall Feather",
+    "desc": "A slightly shimmering, but otherwise unremarkable bird feather.\n\nWhile grasping the feather falling occurs as a leisurely, safe speed. Lasts until you next touch the ground. Single use. Standard safety equipment found on airships, skywhale trains, and other modes of aerial transport."
+  },
+  {
+    "id": "relic-04",
+    "name": "Greathorn Blade",
+    "desc": "A sword roughly carved from the horn of some great beast.\n\nIf pierced into the ground at a campsite, most creatures will avoid the location due to the lingering intimidating presence of the original beast.",
+    "damage": 10,
+    "bulky": true
+  },
+  {
+    "id": "relic-05",
+    "name": "Living Wood Bust",
+    "desc": "A wooden bust, apparently grown into shape rather than carved. It has only a vague suggestion of a face, rather than detailed features.\n\nIf placed on a wood, living or dead, the bust will enable that object to speak and answer three questions."
+  },
+  {
+    "id": "relic-06",
+    "name": "Lizardskin Cloak",
+    "desc": "Billowing cloak made of tanned lizard skin, scale pattern still visible. If the cloak is charged a bright yellow like a morning sun, while discharged it’s a dull blue.\n\nWhile charged, can be made to glow as a dim torch. Discharge the cloak to release either:\n\n- a bright flash which will dazzle or blind anyone looking at it.\n- a lance of sunlight dealing d10 damage that sets its target alight on critical damage.\n\nRecharge by basking in sunlight while wearing it for 6 hours.",
+    "damage": 10
+  },
+  {
+    "id": "relic-07",
+    "name": "Magic Jam",
+    "desc": "Jar of sticky, elderberry jam.\n\nApply to a magic item to make it edible. Eating the item will incorporate its effects into your body in some way (results not guaranteed). 3 servings (large items may require multiple servings)."
+  },
+  {
+    "id": "relic-08",
+    "name": "Seed of the Flower Of Second Blooming",
+    "desc": "If planted within a corpse and tended for a season, the plant will produce a single fruit. Eating the entire fruit will grant all memories of the corpse’s life. Aspects of their personality may also bleed over."
+  },
+  {
+    "id": "relic-09",
+    "name": "Snarrow Quiver",
+    "desc": "A simple quiver made of snake leather. Contains 1d4-1 venomous snakes.\n\nWhen a snake is drawn from the quiver it straightens and becomes rigid, allowing it to be fired from a bow. Direct damage applies the snake’s poison. Snakes may not survive this ordeal. New snakes may be captured and added if found. A steady diet of eggs, rodents, or other food is required to keep the snakes alive."
+  },
+  {
+    "id": "relic-10",
+    "name": "Umbral Dagger",
+    "desc": "A long, slightly curved dagger. Regardless of the ambient light, one edge of the dagger appears to be illuminated and the other is hidden in shadow.\n\nThe dagger can cut both light and shadow, allowing the user to pick up and manipulate the severed pieces as though they were fabric.",
+    "damage": 6
+  }
+]

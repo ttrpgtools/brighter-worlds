@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { builder, STEP, wizard } from "../wizard";
+  import { STEP, getWizard } from "../wizard";
   import { goto } from "$app/navigation";
   import { browser } from "$app/environment";
   import Button from "$lib/Button.svelte";
@@ -8,6 +8,8 @@
   import { onlyMagic } from "$lib/util/guards";
   import GroupInputs from "$lib/GroupInputs.svelte";
   import { partition } from "$lib/util/array";
+
+  const [wizard, builder] = getWizard();
 
   export let data: PageData;
 
@@ -39,7 +41,7 @@
         </p>
       </div>
       {/if}
-      <GroupInputs options={spellPartition[0]} max={spellsNeeded} bind:selected={spells} let:opt>
+      <GroupInputs options={spellPartition[0]} max={spellsNeeded} bind:selected={spells} let:opt hideUnavailable={true}>
       {opt.desc}
       </GroupInputs>
     </div>
@@ -48,14 +50,16 @@
   {#if ritualsNeeded > 0}
     <div class="flex flex-col gap-2 items-center">
       <h4 class="text-lg">Rituals ({ritualsNeeded})</h4>
-      <div class="">
+      {#if spellPartition[1].length}
+      <div class="text-gray-600 dark:text-gray-400 text-sm">
         <p>(Already assigned:
         {#each ritualPartition[1] as chosen, ci}
           <span class="ml-1">{chosen.name}{#if ci !== ritualPartition[1].length - 1}, {:else}){/if}</span>
         {/each}
         </p>
       </div>
-      <GroupInputs options={ritualPartition[0]} max={ritualsNeeded} bind:selected={rituals} let:opt>
+      {/if}
+      <GroupInputs options={ritualPartition[0]} max={ritualsNeeded} bind:selected={rituals} let:opt hideUnavailable={true}>
       {opt.desc}
       </GroupInputs>
     </div>

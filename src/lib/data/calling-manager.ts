@@ -6,6 +6,7 @@ import { JsonDataManager } from './base-manager';
 
 const callingList = callings.map(c => ({
   ...c,
+  desc: renderSafe(c.desc),
   abilities: c.abilities.map(a => ({...a, desc: renderSafe(a.desc)})),
   equipment: c.equipment.map(e => ({...e, id: id()})),
 })) as Calling[];

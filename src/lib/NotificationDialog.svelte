@@ -6,12 +6,16 @@ import type { DieValue } from "./types";
 export let dice: DieValue[] = [];
 export let title = '';
 export let msg = '';
+export let titleClass = '';
 let comp: DialogBase<undefined>;
 export async function open() {
   return comp.open<undefined>();
 }
+function close() {
+  comp.close();
+}
 </script>
-<DialogBase let:open let:close bind:this={comp}>
+<DialogBase bind:this={comp}>
   <div slot="pretitle">
     {#if dice.length > 0}
     <div class="flex gap-4 justify-center items-center mb-3 sm:mb-5">
@@ -22,7 +26,7 @@ export async function open() {
       {/each}
     </div>
     {/if}
-    <h3 class="text-xl font-medium leading-6 text-center">{title}</h3>
+    <h3 class="text-xl font-medium leading-6 text-center {titleClass}">{title}</h3>
   </div>
   {#if !!msg}
   <div class="mt-2">

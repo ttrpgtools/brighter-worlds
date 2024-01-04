@@ -50,12 +50,12 @@
   }
 
   function handleFlair(ev: CustomEvent<TableRoll<string>>) {
-    flair = ev.detail.value;
+    flair = ev.detail.value[0];
     flairRoll = ev.detail.roll;
   }
 
   function handleItem(ev: CustomEvent<TableRoll<Item>>) {
-    item = ev.detail.value;
+    item = ev.detail.value[0];
     itemRoll = ev.detail.roll;
   }
 </script>

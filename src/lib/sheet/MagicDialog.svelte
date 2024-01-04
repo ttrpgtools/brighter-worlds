@@ -13,7 +13,9 @@
   type TType = T["type"]
   export let type: TType;
   
-  const builtin = type === 'spell' ? spellManager.getAll() : ritualManager.getAll();
+  const builtin: Magic[] = type === 'spell' ? spellManager.getAll() : ritualManager.getAll();
+
+  let selectedMagic: T | undefined;
 
   interface MagicForm {
     id?: string;
@@ -26,6 +28,7 @@
   function newMagicForm(id?: string) {
     if (id) {
       const magic = magicList.find(x => x.id === id);
+      selectedMagic = builtin.find(b => b.name === magic?.name && b.desc === magic?.desc) as T;
       if (magic != null) {
         return {
           ...magic,
@@ -92,18 +95,18 @@
   }
 
   function pickMagic(ev: Event) {
+    if(!(ev as CustomEvent).detail) return;
     const {name, desc, damage, blast} = (ev as CustomEvent<{selected: T}>).detail.selected;
     magicForm.desc = desc ?? '';
     magicForm.name = name;
-    magicForm.damage = damage ?? 0;
+    magicForm.damage = Array.isArray(damage) ? damage[0] : damage ?? 0;
     magicForm.blast = blast ?? false;
   }
 
-  let bwmagic = builtin as Ritual[]; // Weird thing to keep TypeScript happy.
 </script>
 <InputDialog title={magicDialogTitle} scrollable={false} showDelete={magicDialogDelete} dice={[]} bind:this={magicDialog} form={magicForm} on:delete={removeMagic}>
   <form class="text-center flex flex-col gap-2">
-    <Combobox options={bwmagic} bind:textValue={magicForm.name} placeholder="Name" on:select={pickMagic} />
+    <Combobox options={builtin} selectedValue={selectedMagic} bind:textValue={magicForm.name} placeholder="Name" on:select={pickMagic} />
     <input type="text" name="desc" placeholder="Description" bind:value={magicForm.desc} bind:this={descField} class="rounded-full dark:bg-gray-900 dark:text-white focus:ring-purple-500 focus:border-purple-500">
     <div class="flex gap-4 items-center flex-wrap mt-4">
       <div class="flex gap-2 items-center">

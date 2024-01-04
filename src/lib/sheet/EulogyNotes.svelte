@@ -8,21 +8,25 @@ import { TabPanels, TabPanel } from "@rgossiaux/svelte-headlessui";
 import EulogyDialog from "./EulogyDialog.svelte";
 export let eulogy: EulogyStanza[];
 export let notes = '';
-$: availableXp = xp(eulogy);
+
+let availableXp = 0;
+$: {
+  availableXp = xp(eulogy);
+};
 
 let dialog: EulogyDialog;
 
 </script>
 
 <EulogyDialog bind:eulogy bind:this={dialog} />
-<TabbedCard tabs={[{label: 'Eulogy'},{label: 'Notes'}]} id="eulogy" class="md:h-[25rem]">
-  <div slot="sidehead" class="py-4 flex gap-2 items-center"><span class="text-lg font-subtitle inline-block h-6">XP:</span><span class="">{availableXp}</span></div>
+<TabbedCard tabs={[{label: 'Epitaph'},{label: 'Notes'}]} id="eulogy" class="md:h-[25rem] lg:order-2">
+  <div slot="sidehead" class="py-4 flex gap-2 items-center"><span class="text-lg font-subtitle inline-block h-6">XP:</span><span class="" >{availableXp}</span></div>
   <TabPanels class="h-full">
     <TabPanel>
       {#each eulogy as stanza (stanza.id)}
       <div class="mb-4 pl-7 relative">
         <span class="font-symbol text-2xl text-purple-500 inline-block w-4 absolute left-0 -top-1">{#if stanza.xp && stanza.spent}f{:else if !stanza.xp}Y{:else}p{/if}</span>
-        <p class="cursor-pointer" on:click={() => dialog.editStanza(stanza.id)} on:keydown={onEnter(() => dialog.editStanza(stanza.id))}>{stanza.message}</p>
+        <button type="button" class="cursor-pointer select-text" on:click={() => dialog.editStanza(stanza.id)} on:keydown={onEnter(() => dialog.editStanza(stanza.id))}>{stanza.message}</button>
       </div>
       {:else}
       <div class="mb-4">

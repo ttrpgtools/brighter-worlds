@@ -11,13 +11,12 @@ export let dice: DieValue[] = [4, 6, 8, 10, 12];
 
 const dispatch = createEventDispatcher();
 
-function handleChange(ev: CustomEvent) {
-  current = ev.detail;
-  dispatch('change', ev.detail);
+$: {
+  dispatch('change', current);
 }
 
 </script>
-<Listbox let:open value={current} on:change={handleChange} class="relative">
+<Listbox let:open bind:value={current} class="relative">
   <ListboxButton class="relative w-full cursor-default rounded-md border {invalid ? 'border-red-500 text-red-500' : 'border-gray-300 dark:border-gray-600'} bg-white dark:bg-gray-900 dark:hover:bg-gray-800 py-2 pl-3 pr-10 text-left shadow-sm focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500 sm:text-sm">
     {#if current === 0}
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" class="w-6 h-6"><path fill="currentColor" d="M315.3 411.3c-6.253 6.253-16.37 6.253-22.63 0L160 278.6l-132.7 132.7c-6.253 6.253-16.37 6.253-22.63 0c-6.253-6.253-6.253-16.37 0-22.63L137.4 256L4.69 123.3c-6.253-6.253-6.253-16.37 0-22.63c6.253-6.253 16.37-6.253 22.63 0L160 233.4l132.7-132.7c6.253-6.253 16.37-6.253 22.63 0c6.253 6.253 6.253 16.37 0 22.63L182.6 256l132.7 132.7C321.6 394.9 321.6 405.1 315.3 411.3z"/></svg>
