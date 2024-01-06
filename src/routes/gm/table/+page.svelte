@@ -149,6 +149,9 @@
     }
   }
 </script>
+<svelte:head>
+  <title>Tables :: Brighter Worlds Online</title>
+</svelte:head>
 <RolltableDialog bind:this={tableDialog} npcList={allNpcs} encList={$encList} relicList={$relicList} />
 <div class="flex flex-col gap-4">
   <SidebarSection title="Custom Roll Tables" open addable on:click={addCustom}>

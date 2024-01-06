@@ -63,7 +63,7 @@
     </Disclosable>
     {/each}
   </SidebarSection>
-  <SidebarSection title="SRD Creatures" open>
+  <SidebarSection title="SRD Creatures">
     {#each data.npcs as npc, ni (npc.id)}
     <div class="flex flex-row justify-between">
       <button type="button" class="cursor-pointer" class:italic={ni === 0} on:click={() => addToMat(npc)}>{npc.name}</button>

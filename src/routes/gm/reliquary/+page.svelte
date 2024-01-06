@@ -24,6 +24,9 @@
     addToMat(item);
   }
 </script>
+<svelte:head>
+  <title>Relics :: Brighter Worlds Online</title>
+</svelte:head>
 <div class="flex flex-col gap-4">
   <SidebarSection title="Custom Items" open>
     <Equipment bind:equipment={$reliquary} title="Relics" hideArmor selectable on:select-item={add} allowFormula></Equipment>

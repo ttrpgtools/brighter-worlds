@@ -1,5 +1,32 @@
 [
   {
+    "id": "beast-adventurer",
+    "name": "Adventurer",
+    "grit": 5,
+    "str": 6,
+    "dex": 6,
+    "wil": 6,
+    "attacks": [
+      {
+        "id": "beastattack-eitnawtnawldrtnawd",
+        "name": "Melee",
+        "damage": 8
+      },
+      {
+        "id": "beastattack-eitnawtnawldrtnawd234523",
+        "name": "Ranged",
+        "damage": 6
+      }
+    ],
+    "notes": [
+      "Jack of all trades, problem solver, mercenry, handyman.",
+      "Wandering from place to place finding ways to make coin with continually variable morals.",
+      "Roll on the STR Equipment table to see what unique weapons they wield."
+    ],
+    "wants": "Adventure.",
+    "found": "Anywhere adventure calls."
+  },
+  {
     "id": "beast-alligator",
     "name": "Alligator",
     "grit": 3,
@@ -50,28 +77,6 @@
     "found": "Harassing random passersby."
   },
   {
-    "id": "beast-screaming-ghost",
-    "name": "Screaming Ghost",
-    "grit": 4,
-    "str": 4,
-    "dex": 6,
-    "wil": 8,
-    "attacks": [
-      {
-        "id": "beastattack-hngaswdtrlmvzsoei",
-        "name": "Scream",
-        "damage": 6,
-        "desc": "sonic damage, also roll a WIL save against fear."
-      }
-    ],
-    "notes": [
-      "Weak to salt. While within a few feet of salt, attacks against are enhanced and its attacks are impaired.",
-      "Can enter another creature's body, causing that creature to freeze up for ~10 seconds if that creature has lower WIL. Doing this releases the ghost into its proper afterlife."
-    ],
-    "wants": "To move on.",
-    "found": "Wherever people were killed in brutal ways."
-  },
-  {
     "id": "beast-",
     "name": "Fourteen Eyed Watcher",
     "grit": 6,
@@ -90,6 +95,24 @@
     ],
     "wants": "To witness change.",
     "found": "Eyes glinting in the night, peering unsettlingly at whatever has attracted its attention."
+  },
+  {
+    "id": "beast-goblin",
+    "name": "Goblin",
+    "grit": 3,
+    "str": 6,
+    "dex": 8,
+    "wil": 6,
+    "attacks": [
+      { "id": "beastattack-oinsegnsfrnsfog", "name": "Scavenged Weapon", "damage": 6, "desc": ""}
+    ],
+    "notes": [
+      "Weird little guys.",
+      "Cheerful hedonists.",
+      "Not inherently hostile to others, but will respond with enthusiastic violence if attacked."
+    ],
+    "wants": "All that is best in life.",
+    "found": "In places they have no business being in."
   },
   {
     "id": "beast-half-dead-cat",
@@ -129,6 +152,24 @@
     "found": "Luring unsuspecting travelers to an area already saturated with its Dust."
   },
   {
+    "id": "beast-mook",
+    "name": "Mook",
+    "grit": 1,
+    "str": 4,
+    "dex": 4,
+    "wil": 4,
+    "attacks": [
+      { "id": "beastattack-oisnsioefgsgfdu8", "name": "Dagger", "damage": 6, "desc": ""}
+    ],
+    "notes": [
+      "Makes enhanced Morale Saves as long as their Master lives.",
+      "Prone to getting overly attached to the nearest source of mystical maleficence.",
+      "Fiercly devoted right up until they become sniveling cowards when faced with immediate threats."
+    ],
+    "wants": "To serve a worthy master, but is willing to settle for almost anything.",
+    "found": "Incompetently carrying out dastardly deeds."
+  },
+  {
     "id": "beast-notiavore",
     "name": "Notiavore",
     "grit": 6,
@@ -147,6 +188,44 @@
     ],
     "wants": "Your most cherished memory.",
     "found": "Lurking in the dark corners of libraries and scriptoriums."
+  },
+  {
+    "id": "beast-screaming-ghost",
+    "name": "Screaming Ghost",
+    "grit": 4,
+    "str": 4,
+    "dex": 6,
+    "wil": 8,
+    "attacks": [
+      {
+        "id": "beastattack-hngaswdtrlmvzsoei",
+        "name": "Scream",
+        "damage": 6,
+        "desc": "sonic damage, also roll a WIL save against fear."
+      }
+    ],
+    "notes": [
+      "Weak to salt. While within a few feet of salt, attacks against are enhanced and its attacks are impaired.",
+      "Can enter another creature's body, causing that creature to freeze up for ~10 seconds if that creature has lower WIL. Doing this releases the ghost into its proper afterlife."
+    ],
+    "wants": "To move on.",
+    "found": "Wherever people were killed in brutal ways."
+  },
+  {
+    "id": "beast-skeleton",
+    "name": "Skeleton",
+    "grit": 3,
+    "str": 6,
+    "dex": 6,
+    "wil": 6,
+    "attacks": [
+      { "id": "beastattack-89sgs98ngdnote", "name": "Rusty Weapon", "damage": 6, "desc": ""}
+    ],
+    "notes": [
+      "A collection of dead bones animated through evil magicks, confluence of dark energies, unfinished business, or other arcane happenstance."
+    ],
+    "wants": "To feel the warmth of life again.",
+    "found": "Repeating the actions its body would have taken in life."
   },
   {
     "id": "beast-snackoon",
@@ -203,5 +282,23 @@
     ],
     "wants": "Some tasty, sun warmed organ meat. As a snack.",
     "found": "Fiercely defending a found corpse from threats (real or imagined)."
+  },
+  {
+    "id": "beast-wizard",
+    "name": "Wizard",
+    "grit": 3,
+    "str": 4,
+    "dex": 6,
+    "wil": 8,
+    "attacks": [
+      { "id": "beastattack-etl83t2lrns", "name": "Staff", "damage": 4, "desc": ""}
+    ],
+    "notes": [
+      "Carries a Grimoire with d4-1 random Spells, and d4-1 random Rituals.",
+      "A dabbler in arcane forces beyond their own understanding.",
+      "Blissfully unaware of danger both posed to others, and to themselves."
+    ],
+    "wants": "To unlock the power of the cosmos with mystic secrets.",
+    "found": "Accidentally summoning horrors from beyond the mortal plane."
   }
 ]

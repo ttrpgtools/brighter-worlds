@@ -1,7 +1,9 @@
 <script>
   import SidebarSection from './SidebarSection.svelte';
 </script>
-
+<svelte:head>
+  <title>GM Tools :: Brighter Worlds Online</title>
+</svelte:head>
 <div class="flex flex-col gap-4">
   <SidebarSection title="Rules of Combat">
     <div id="rules-of-combat" class="prose dark:prose-invert prose-sm prose-h1:font-subtitle">

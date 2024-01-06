@@ -33,6 +33,9 @@
     }
   }
 </script>
+<svelte:head>
+  <title>Scenes :: Brighter Worlds Online</title>
+</svelte:head>
 <SceneDialog bind:this={sceneDialog} on:delete={remove} />
 <div class="flex flex-col gap-4">
   <SidebarSection title="Custom Scenes" addable on:click={newScene} open>
