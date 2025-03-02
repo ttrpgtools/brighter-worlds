@@ -16,7 +16,7 @@
         "id": "ability-T4KroGq36Ht",
         "type": "core",
         "name": "Potion Making",
-        "desc": "A potion is a liquid substance consumed or applied in some way to create a magical effect.\n\nYou can distill plants, minerals, animal parts, and other ingredients into potion components. With the necessary components, you can brew doses of any potion whose recipe you know.\n\nWith time and effort you can develop new potion recipes. Explain the desired effects along with the proposed recipe. A potion recipe must contain at least two dissimilar components along with a brewing process. Brewing will usually take at least an hour and will produce 3 doses of the potion.\n\nAny potion effect is possible, but the required components and process may be esoteric or prohibitive.\n\nThe GM will tell you if it will work, or if one or more more of the following are true:\n\n- It will require one or more additional components.\n- It requires a laborious, time consuming, or difficult to achieve brewing process.\n- It takes a large amount of raw materials to produce a single dose.\n- It creates an unstable, volatile potion that must be used quickly or lose its efficacy.\n- The process is uncertain, and the final effect will depend on a random roll.\n- It will have an unintended side effect when consumed."
+        "desc": "A potion is a liquid substance consumed or applied in some way to create a magical effect.\n\nYou can distill plants, minerals, animal parts, and other ingredients into potion components. With the necessary components, you can brew doses of any potion whose recipe you know.\n\nWith time and effort you can develop new potion recipes. Explain the desired effects along with the proposed recipe. A potion recipe must contain at least two dissimilar components along with a brewing process. Brewing will usually take at least an hour and will produce 3 doses of the potion.\n\nAny potion effect is possible, but the required components and process may be esoteric or prohibitive.\n\nBased on your proposed recipe the GM will tell you if it will work, or if one or more more of the following are true:\n\n- It will require one or more additional components.\n- It requires a laborious, time consuming, or difficult to achieve brewing process.\n- It takes a large amount of raw materials to produce a single dose.\n- It creates an unstable, volatile potion that must be used quickly or lose its efficacy.\n- The process is uncertain, and the final effect will depend on a random roll.\n- It will have an unintended side effect when consumed."
       },
       {
         "id": "ability-pId4TB77H6iZ0vQoQLKm",
@@ -103,7 +103,7 @@
     "name": "Archivist",
     "tagline": "A collector and collator of knowledge.",
     "for": "For players who like to keep notes and read lore.",
-    "desc": "A collector of information, a keeper of stories, a traveling source of knowledge.\n\nYou start with your **Archive** (*bulky*) a tome which contains your accumulated knowledge. If you obtain Spells or Rituals in the future, this book also acts as a Grimoire which can store magic.\n\nTwo Topics of information are already stored within your Archive. The first two times you access your **Deep Lore** note down the relevent Topic.",
+    "desc": "A collector of information, a keeper of stories, a traveling source of knowledge.\n\nYou start with your **Archive** (*bulky*) a tome which contains your accumulated knowledge. If you obtain Spells or Rituals in the future, this book also acts as a Grimoire which can store magic.\n\nTwo Topics of information are already stored within your Archive. The first two times you access your **Deep Lore** note down the relevant Topic.",
     "equipment": [
       { "name": "Your Archive", "desc": "Acts as a Grimoire that also stores your Topics. Starts with one Topic of information based on your prior studies and one ritual of your choice.", "bulky": true, "enableMagic": true }
     ],
@@ -128,7 +128,7 @@
         "id": "ability-Je3E95zYpeVWxrx",
         "type": "advanced",
         "name": "Monster Manual",
-        "desc": "Thoroughly examine a creature to record it as a Topic in your Archive. When you take ten minutes to review your notes you, and any who listen, gain +1 armor against those creatures the next time your encounter them, and can easily identify any weaknesses."
+        "desc": "Thoroughly examine a creature to record it as a Topic in your Archive. When you take ten minutes to review your notes you, and any who listen to you lecture on the subject, gain +1 armor against those creatures the next time your encounter them, and can easily identify any weaknesses."
       },
       {
         "id": "ability-Fl1Cq8wGLLtwXK",
@@ -211,7 +211,7 @@
         "id": "ability-oZUNYHmsuoCugkQWK",
         "type": "core",
         "name": "No Body to Love",
-        "desc": "Your **Lack of Flesh** grants you +1 Armor against physical damage.\n\nYour **Fearsome Visage** will be initially frightening to most creatures, unless you take measures to obscure your form.\n\nYou do not require food, water, or sleep and as long as your skull remains intact you cannot fully die.\n\nDirect Damage you suffer never overflows, instead Critical Damage causes a limb (or other significant part of your body) to fly off in addition to stepping down the relevant die. You don’t restore Attribute Dice by resting, but instead by replacing lost or damaged bones.\n\nIf you willingly detach a limb, you remain in control of it (but are still at risk of losing STR if those detached parts are broken)."
+        "desc": "Your **Lack of Flesh** grants you +1 Armor against physical damage.\n\nYour **Fearsome Visage** will be initially frightening to most creatures, unless you take measures to obscure your form.\n\nYou do not require food, water, or sleep and as long as your skull remains intact you cannot fully die.\n\nDirect Damage you suffer never overflows. When you suffer a Wound one of your limbs (or other significant part of your body) is broken off in addition to stepping down the relevant die. You don’t restore Attributes by resting, but instead by replacing lost or damaged bones.\n\nIf you willingly detach a limb, you remain in control of it (but are still at risk of losing STR if those detached parts are broken)."
       },
       {
         "id": "ability-MSHeE9fRPF",
@@ -235,7 +235,7 @@
         "id": "ability-l1cgWRrEGQih",
         "type": "advanced",
         "name": "Skeleton Crew",
-        "desc": "Animate a dead creature's skeleton as a mount, minion, or pet. It has stats as it did in life, but falls apart and must be reanimated upon taking Critical Damage. Follows orders but otherwise has the intelligence of a moderately bright dog. You can maintain a number of animated skeletons equal to the number of Advanced Abilities you have."
+        "desc": "Animate a dead creature's skeleton as a mount, minion, or pet. It has stats as it did in life, but falls apart permanently upon being Wounded. Follows orders but otherwise has the intelligence of a moderately bright dog. You can maintain a number of animated skeletons equal to the number of Advanced Abilities you have."
       }
     ],
     "info": ""
@@ -259,7 +259,7 @@
         "id": "ability-yheXvd5Q3a4dI",
         "type": "core",
         "name": "One With The Water",
-        "desc": "You are equally at home in water as you are on land. You can freely control a volume of water about the same size as yourself, if employed as a weapon it deals d6 damage."
+        "desc": "You are equally at home in water as you are on land. You can freely control a volume of water about the same size as yourself, and if employed as a weapon it deals d6 damage."
       },
       {
         "id": "ability-okdz7qxV4GY",
@@ -498,7 +498,7 @@
         "id": "ability-ha0c4cfA8o",
         "type": "advanced",
         "name": "Living Legend",
-        "desc": "Choose your name, Oath, or a Eulogy Entry you haven't previously chosen and put a tick next to it. Based on the chosen element, force a strong reaction from an NPC: pick two from Fear, Hate, Respect, and Adoration. The GM will pick one of those two to be true."
+        "desc": "Choose your Name, Oath, Vow or a Eulogy Entry you haven't previously chosen and put a tick next to it. Based on the chosen element, force a strong reaction from an NPC: pick two from Fear, Hate, Respect, and Adoration. The GM will pick one of those to be true."
       },
       {
         "id": "ability-uQ3tbvrG4C",
@@ -533,7 +533,7 @@
         "id": "ability-WgN2wz0bGxQ",
         "type": "core",
         "name": "Grimblade",
-        "desc": "You have a mystical weapon capable of storing spells (but not rituals) as though it were a Grimoire. It is any type of melee weapon, made of some unusual material. Your Grimblade is indestructible and you always know where it is.\n\n### Grimblade\n\nYour Grimblade acts as a Grimoire which can only store spells. It can take the form of engraving arcane words onto the flat of a great two handed blade, embedding mystic energy into the crystalline head of a massive hammer, or simply bashing people about the head with a very large book.\n\n### Kinetic Spellcasting\n\nIf you deal Direct Damage (this does not require Critical Damage) with your Grimblade you may immediately cast a spell ignoring the usual costs. You do not set your Grit to zero or make a Save. You can still cast spells from it as usual, but if you cast a spell while at zero Grit you roll the Save with your STR rather than your WIL."
+        "desc": "You have a mystical weapon capable of storing spells (but not rituals) as though it were a Grimoire. It is any type of melee weapon, made of some unusual material. Your Grimblade is indestructible and you always know where it is.\n\n### Grimblade\n\nYour Grimblade acts as a Grimoire which can only store spells. It can take the form of engraving arcane words onto the flat of a great two handed blade, embedding mystic energy into the crystalline head of a massive hammer, or simply bashing people about the head with a very large book.\n\n### Kinetic Spellcasting\n\nIf you deal Direct Damage (not necessarily a Wound) with your Grimblade you may immediately cast a spell ignoring the usual costs. You do not set your Grit to zero or make a Save. You can still cast spells from it as usual, but if you cast a spell while at zero Grit you roll the Save with your STR rather than your WIL."
       },
       {
         "id": "ability-2hSXpe4gys1petRbfTZr",
@@ -646,7 +646,7 @@
         "id": "ability-cqcAwHfJzhK",
         "type": "advanced",
         "name": "Snap",
-        "desc": "Recall your clone to yourself, or yourself to your clone from any distance. Anyone touching you while you do so is carried along."
+        "desc": "Set your Grit to zero to instantly recall your clone to yourself, or yourself to your clone from any distance. Anyone touching you while you do so is carried along, although they may get a Save to break contact beforehand. You can only do this if you’re not already at zero Grit."
       },
       {
         "id": "ability-5Iifb8xa8x3lgCew",

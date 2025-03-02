@@ -11,15 +11,15 @@
   export let type: string;
 
   const dispatch = createEventDispatcher<{roll: {pair: Pair; index: number}}>();
-  let flair = '';
+  let flair: string | Item = '';
   let item: Item;
   let flairRoll = 0;
   let itemRoll = 0;
   let both = false;
-  let flairTable: RollableTable<string>;
+  let flairTable: RollableTable<string | Item>;
   let itemTable: RollableTable<Item>;
 
-  type Pair = [string | undefined, Item | undefined];
+  type Pair = [string | Item | undefined, Item | undefined];
   let pair: Pair = [undefined, undefined];
 
   $: {
@@ -49,7 +49,7 @@
     }
   }
 
-  function handleFlair(ev: CustomEvent<TableRoll<string>>) {
+  function handleFlair(ev: CustomEvent<TableRoll<string | Item>>) {
     flair = ev.detail.value[0];
     flairRoll = ev.detail.roll;
   }
@@ -66,7 +66,7 @@
   </div>
   <div class="flex justify-center gap-4 mb-6 flex-wrap">
     <div class="w-full max-w-sm">
-      <RollableTable options={gear.flair} title="Flair" once {die} on:roll={handleFlair} bind:this={flairTable} />
+      <RollableTable options={gear.flair} title="Flair" once {die} on:roll={handleFlair} bind:this={flairTable} let:opt>{#if typeof opt === 'string'}{opt}{:else}{opt.name} {#if opt.damage}<span class="ml-1 inline-block relative -top-px">(<Die which={opt.damage} size="h-4 w-4" /> d{opt.damage})</span>{/if}{/if}</RollableTable>
     </div>
     <div class="w-full max-w-sm">
       <RollableTable options={gear.items} title="Item" once {die} on:roll={handleItem} bind:this={itemTable} let:opt>{opt.name} {#if opt.damage}<span class="ml-1 inline-block relative -top-px">(<Die which={opt.damage} size="h-4 w-4" /> d{opt.damage})</span>{/if}</RollableTable>

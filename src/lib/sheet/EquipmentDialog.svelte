@@ -19,6 +19,7 @@
     desc: string;
     image: string;
     bulky: boolean;
+    depleted: boolean;
     damage: DieValue | 0;
     blast: boolean;
     enableMagic: boolean;
@@ -44,6 +45,7 @@
       damage: 0,
       blast: false,
       bulky: false,
+      depleted: false,
       enableMagic: false,
       armor: '',
       quantity: '',
@@ -64,7 +66,6 @@
         desc: item.desc,
         bulky: item.bulky,
         blast: item.blast,
-        enableMagic: item.enableMagic
       }
       if (item.damage !== 0) {
         proper.damage = item.damage;
@@ -126,6 +127,9 @@
     <div class="flex gap-4 items-center flex-wrap mt-4">
       <div class="flex gap-2 items-center">
         <Toggle bind:value={itemForm.bulky} /> Bulky 
+      </div>
+      <div class="flex gap-2 items-center">
+        <Toggle bind:value={itemForm.depleted} /> Depleted 
       </div>
       <!-- <div class="flex gap-2 items-center">
         <Toggle bind:value={itemForm.enableMagic} /> Enable Magic 

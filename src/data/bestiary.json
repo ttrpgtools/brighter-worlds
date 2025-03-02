@@ -23,8 +23,8 @@
       "Wandering from place to place finding ways to make coin with continually variable morals.",
       "Roll on the STR Equipment table to see what unique weapons they wield."
     ],
-    "wants": "Adventure.",
-    "found": "Anywhere adventure calls."
+    "wants": "Filthy lucre.",
+    "found": "Delving into dangerous places in search of said lucre."
   },
   {
     "id": "beast-alligator",
@@ -70,7 +70,7 @@
       }
     ],
     "notes": [
-      "Constantly ornery and aggressive, goose-like creature.",
+      "A perpetually smoldering, ornery, and aggressive goose.",
       "Popular with travelers as its death flare cooks its meat perfectly."
     ],
     "wants": "Respect and bread crumbs.",
@@ -164,7 +164,7 @@
     "notes": [
       "Makes enhanced Morale Saves as long as their Master lives.",
       "Prone to getting overly attached to the nearest source of mystical maleficence.",
-      "Fiercly devoted right up until they become sniveling cowards when faced with immediate threats."
+      "Fiercely devoted right up until they become sniveling cowards when faced with immediate threats."
     ],
     "wants": "To serve a worthy master, but is willing to settle for almost anything.",
     "found": "Incompetently carrying out dastardly deeds."
@@ -178,7 +178,7 @@
     "dex": 6,
     "wil": 8,
     "attacks": [
-      { "id": "beastattack-ohlorionwdrmaaec", "name": "Bite", "damage": 10, "desc": "consumes a memory and restores d6 Grit on Critical Damage"}
+      { "id": "beastattack-ohlorionwdrmaaec", "name": "Bite", "damage": 10, "desc": "consumes a memory and restores d6 Grit on Wounds"}
     ],
     "notes": [
       "Hulking mass of scrolls and books, an incredible if deadly repository of knowledge.",
@@ -253,7 +253,7 @@
     "dex": 6,
     "wil": 8,
     "attacks": [
-      { "id": "beastattack-iomsetrosmhmse", "name": "Blood Sucking Proboscis", "damage": 8, "desc": "steps up STR on Critical Damage"}
+      { "id": "beastattack-iomsetrosmhmse", "name": "Blood Sucking Proboscis", "damage": 8, "desc": "steps up STR on Wounds"}
     ],
     "notes": [
       "A mosquito-cat hybrid the size of a cow.",
@@ -278,7 +278,7 @@
       "Smells strongly of rotting flesh.",
       "Not a predator, but highly territorial of scavenged kills.",
       "Has d10 heads, and can regenerate lost heads by consuming a creature’s heart.",
-      "Special: On Critical Damage loses a head instead of losing STR. Dies only when all heads are removed."
+      "Special: On taking a Wound loses a head instead of losing attributes. Dies only when all heads are removed."
     ],
     "wants": "Some tasty, sun warmed organ meat. As a snack.",
     "found": "Fiercely defending a found corpse from threats (real or imagined)."

@@ -6,7 +6,7 @@
   import Button from "$lib/Button.svelte";
   import { gearManager } from '$lib/data/gear-manager';
   import ItemFlair from "./ItemFlair.svelte";
-  import { filterEmpty } from "$lib/util/array";
+  import { defined, filterEmpty } from "$lib/util/array";
   import { onlyEquipment } from "$lib/util/guards";
 
   const [wizard, builder] = getWizard();
@@ -26,7 +26,7 @@
     gearManager.loadList();
   }
 
-  type Pair = [string | undefined, Item | undefined];
+  type Pair = [string | Item | undefined, Item | undefined];
   let allPairs: Pair[] = [];
   let extras: EquipmentChoice[];
 
@@ -45,7 +45,16 @@
 
   function combine(pair: Pair) {
     if (!pair[0] || pair[1] == null) return;
-    const item = {...pair[1], name: `${pair[0]} ${pair[1].name}`} as Item;
+    if (typeof pair[0] === 'string') {
+      return {...pair[1], name: `${pair[0]} ${pair[1].name}`} as Item;
+    }
+    const desc = [pair[1].desc, pair[0].desc].filter(defined).join(' ');
+    const item = {
+      ...pair[0],
+      ...pair[1],
+      name: `${pair[0].name} ${pair[1].name}`
+    } satisfies Item;
+    if (desc) item.desc = desc;
     return item;
   }
 </script>

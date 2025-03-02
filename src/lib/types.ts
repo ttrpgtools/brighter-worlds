@@ -1,9 +1,9 @@
-import type { status } from "./const";
+import type { status } from './const';
 
 export const EMPTY: unique symbol = Symbol();
 
-function hasEmptySymbol(obj: unknown): obj is {[EMPTY]: boolean}  {
-  return Object.getOwnPropertySymbols(obj).some(s => s === EMPTY);
+function hasEmptySymbol(obj: unknown): obj is { [EMPTY]: boolean } {
+  return Object.getOwnPropertySymbols(obj).some((s) => s === EMPTY);
 }
 
 export function isEmpty(obj: unknown) {
@@ -22,7 +22,7 @@ export type DieValue = 4 | 6 | 8 | 10 | 12;
 
 export type DieMod = 'impair' | 'enhance';
 
-export type DieRollSet = DieValue[] & {mod?: DieMod};
+export type DieRollSet = DieValue[] & { mod?: DieMod };
 
 export type Attr = 'str' | 'dex' | 'wil';
 
@@ -49,21 +49,30 @@ export interface UsableEntity extends Entity {
 
 export type MagicType = 'spell' | 'ritual';
 
-export interface Item extends UsableEntity {
-  bulky?: boolean;
-  armor?: number;
-  fragile?: boolean;
-  quantity?: number;
-  quantFormula?: string;
-  enableMagic?: boolean | { type: MagicType | 'all', count?: number }
-}
-
 export interface Ritual extends UsableEntity {
   type: 'ritual';
 }
 
 export interface Spell extends UsableEntity {
   type: 'spell';
+}
+
+export type MagicCapacity = {
+  charges?: Attribute;
+  spell?: Spell | Spell[];
+  ritual?: Ritual | Ritual[];
+};
+
+export type MagicSource<T extends MagicType> = {};
+
+export interface Item extends UsableEntity {
+  unequiped?: boolean;
+  bulky?: boolean;
+  armor?: number;
+  fragile?: boolean;
+  quantity?: number;
+  quantFormula?: string;
+  magic?: MagicCapacity;
 }
 
 export type Magic = Spell | Ritual;
@@ -133,15 +142,19 @@ export interface Character {
   calling: Entity;
   abilities: Ability[];
   eulogy: EulogyStanza[];
-  spells: Spell[];
-  rituals: Ritual[];
+  spells?: Spell[];
+  rituals?: Ritual[];
   notes?: string;
   settings?: SheetSettings;
   created: number;
   sortkey: number;
 }
 
-export interface Attrs { str: DieValue; dex: DieValue; wil: DieValue; };
+export interface Attrs {
+  str: DieValue;
+  dex: DieValue;
+  wil: DieValue;
+}
 
 export interface CharacterSummary extends Attrs {
   id: string;
@@ -153,14 +166,14 @@ export interface CharacterSummary extends Attrs {
 
 interface BaseNpc extends Entity {
   armor?: number;
-  notes: string[],
-  wants?: string,
-  found?: string,
+  notes: string[];
+  wants?: string;
+  found?: string;
 }
 
 export interface NpcStats extends BaseNpc, Attrs {
   grit: number;
-  attacks: UsableEntity[],
+  attacks: UsableEntity[];
 }
 
 export interface NpcInstance extends BaseNpc {
@@ -204,7 +217,7 @@ export interface DamageForm {
   type: Attr;
 }
 
-export type Status = typeof status[keyof typeof status]
+export type Status = (typeof status)[keyof typeof status];
 
 export interface DamageDetails {
   armor: number;
@@ -294,7 +307,6 @@ export interface RemoteCtaReplyMessage extends BaseRemoteMessage {
 
 export type RemoteMessage = RemoteRollMessage | RemoteTextMessage | RemoteEmbedMessage;
 
-
 export type HandlerFn = (msg: RemoteMessage) => void;
 
 export interface TableRoll<T> {
@@ -307,7 +319,7 @@ export interface TableRoll<T> {
 
 export interface StartingGearOptions {
   name: string;
-  flair: string[];
+  flair: (string | Item)[];
   items: Item[];
 }
 
@@ -320,7 +332,7 @@ export interface StartingGear {
 
 export interface CallingEnhancements extends Entity {
   type: string;
-  options: {name: string; desc: string}[];
+  options: { name: string; desc: string }[];
 }
 
 export interface CallingEnhancement {
@@ -342,13 +354,13 @@ export type Cta = RollCta;
 
 export interface DiscordEmbed {
   title?: string;
-  author?: { name: string, icon_url?: string; };
+  author?: { name: string; icon_url?: string };
   description?: string;
   url?: string;
   color?: number;
   cta?: Cta[];
-  footer?: { text: string; icon_url?: string; }
+  footer?: { text: string; icon_url?: string };
   image?: { url: string };
-  fields: { name: string, value: string, inline?: boolean }[];
+  fields: { name: string; value: string; inline?: boolean }[];
   meta?: string;
 }

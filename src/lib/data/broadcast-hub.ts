@@ -78,6 +78,7 @@ export function requestRollCall() {
 }
 
 export function rerequest() {
+  console.log(`[bch] rerequest`, !!rollcallChannel);
   rollcallChannel?.postMessage({ type: 'request' });
 }
 
