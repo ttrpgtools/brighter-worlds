@@ -1,3 +1,4 @@
+import { purple } from 'tailwindcss/colors'
 const config = {
 	content: ['./src/**/*.{html,js,svelte,ts}'],
 	darkMode: 'class',
@@ -10,6 +11,9 @@ const config = {
       },
 			borderWidth: {
 				'3': '3px',
+			},
+			colors: {
+				primary: purple,
 			},
 			aria: {
 				current: 'current="page"'

@@ -3,9 +3,23 @@
   import { blur, scale } from 'svelte/transition';
   import { portal } from './util/portal';
 
-  export let maxWidth = 'max-w-md';
-  export let title = '';
-  export let scrollable = true;
+  interface Props {
+    maxWidth?: string;
+    title?: string;
+    scrollable?: boolean;
+    pretitle?: import('svelte').Snippet;
+    children?: import('svelte').Snippet<[any]>;
+    footer?: import('svelte').Snippet;
+  }
+
+  let {
+    maxWidth = 'max-w-md',
+    title = '',
+    scrollable = true,
+    pretitle,
+    children,
+    footer
+  }: Props = $props();
   type T = $$Generic;
 
   const dialog = createDialog({ label: title });
@@ -54,19 +68,19 @@
 <div class="relative z-10 contents" use:portal hidden>
   {#if $dialog.expanded}
     
-    <!-- svelte-ignore a11y-click-events-have-key-events -->
-    <div role="none" class="fixed inset-0 bg-purple-500 bg-opacity-20" on:click={() => close()} transition:blur />
+    <!-- svelte-ignore a11y_click_events_have_key_events -->
+    <div role="none" class="fixed inset-0 bg-purple-500 bg-opacity-20" onclick={() => close()} transition:blur></div>
 
     <div class="fixed inset-0">
       <div class="flex min-h-full items-center justify-center p-4 text-center">
         <div class="w-full {maxWidth} max-h-[calc(100vh-2rem)] transform rounded-2xl bg-white dark:bg-gray-900 p-6 text-left align-middle shadow-xl transition-all flex flex-col" use:dialog.modal transition:scale={{start: 0.5}}>
           <div class="{scrollable ? 'overflow-y-auto' : ''} h-full -mx-6 px-6 pb-6">
-            <slot name="pretitle"></slot>
+            {@render pretitle?.()}
             {#if !!title}<h3 class="text-lg font-medium leading-6 text-center">{title}</h3>{/if}
-            <slot {close} {open}></slot>
+            {@render children?.({ close, open, })}
           </div>
           <div>
-            <slot name="footer"></slot>
+            {@render footer?.()}
           </div>
         </div>
       </div>

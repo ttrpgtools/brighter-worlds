@@ -1,10 +1,15 @@
 <script lang="ts">
-  import HomeLink from "$lib/HomeLink.svelte";
-import MenuLink from "$lib/MenuLink.svelte";
-  import type { PageData } from "./$types";
-  import Magic from "./Magic.svelte";
-  export let data: PageData;
+  import HomeLink from '$lib/HomeLink.svelte';
+  import MenuLink from '$lib/MenuLink.svelte';
+  import type { PageData } from './$types';
+  import Magic from './Magic.svelte';
+  interface Props {
+    data: PageData;
+  }
+
+  let { data }: Props = $props();
 </script>
+
 <svelte:head>
   <title>Magna Arcana :: Brighter Worlds Online</title>
 </svelte:head>
@@ -15,13 +20,13 @@ import MenuLink from "$lib/MenuLink.svelte";
   <h3 class="font-subtitle text-3xl mb-4 text-purple-800 dark:text-purple-300">Spells</h3>
   <div class="max-w-prose mb-6">
     {#each data.spells as spell (spell.id)}
-    <Magic magic={spell} />
+      <Magic magic={spell} />
     {/each}
   </div>
   <h3 class="font-subtitle text-3xl mb-4 text-purple-800 dark:text-purple-300">Rituals</h3>
   <div class="max-w-prose mb-6">
     {#each data.rituals as ritual (ritual.id)}
-    <Magic magic={ritual} />
+      <Magic magic={ritual} />
     {/each}
   </div>
   <MenuLink href="/" icon="logo-leaf">Home</MenuLink>

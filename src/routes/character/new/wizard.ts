@@ -1,5 +1,16 @@
-import type { Ability, Attrs, Calling, CallingEnhancement, Character, CharacterChoice, HasChoices, Item, Spell, Ritual } from '$lib/types';
-import fsm from 'svelte-fsm';
+import type {
+  Ability,
+  Attrs,
+  Calling,
+  CallingEnhancement,
+  Character,
+  CharacterChoice,
+  HasChoices,
+  Item,
+  Spell,
+  Ritual
+} from '$lib/types';
+import { fsm } from '$lib/util/fsm.svelte';
 import { createSheet } from '$lib/data/sheet-manager';
 import { get, writable, type Writable } from 'svelte/store';
 import { goto } from '$app/navigation';
@@ -15,13 +26,23 @@ export const STEP = {
   CALLING: 'calling',
   ATTRIBUTES: 'attributes',
   ABILITIES: 'abilities',
-  ENHANCEMENTS: `enhancements`,
+  ENHANCEMENTS: 'enhancements',
   COMPANION: 'companion',
   EQUIPMENT: 'equipment',
   MAGIC: 'magic',
-  EULOGY: 'eulogy',
-  DONE: 'done',
+  DONE: 'done'
 } as const;
+
+type WizardSteps = (typeof STEP)[keyof typeof STEP];
+type WizardActions =
+  | 'setCalling'
+  | 'setAttrs'
+  | 'setAbilities'
+  | 'setEnhancements'
+  | 'setCompanion'
+  | 'setEquipment'
+  | 'setMagic'
+  | 'reset';
 
 function pickRandom<T>(arr: T[]) {
   const which = roll(arr.length) - 1;
@@ -29,17 +50,19 @@ function pickRandom<T>(arr: T[]) {
 }
 
 function createWizard(builder: Builder, intern: HasChoices) {
-  return fsm(STEP.CALLING, {
+  return fsm<WizardSteps, WizardActions>(STEP.CALLING, {
     [STEP.CALLING]: {
       _enter() {
         // NOOP
       },
       setCalling(calling: Calling, spells: Spell[], rituals: Ritual[]) {
-        const core = calling.abilities.filter(x => x.type === 'core');
+        const core = calling.abilities.filter((x) => x.type === 'core');
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const staticCompanions = calling.abilities.filter(x => x.type === 'companion').map(({choices, ...ab}) => ab as Ability);
-        const allChoices = (calling.choices ?? []).concat(core.flatMap(x => x.choices ?? []))
-        builder.update(b => ({
+        const staticCompanions = calling.abilities
+          .filter((x) => x.type === 'companion')
+          .map(({ choices, ...ab }) => ab as Ability);
+        const allChoices = (calling.choices ?? []).concat(core.flatMap((x) => x.choices ?? []));
+        builder.update((b) => ({
           ...b,
           choices: allChoices,
           calling: {
@@ -49,9 +72,13 @@ function createWizard(builder: Builder, intern: HasChoices) {
           },
           equipment: calling.equipment,
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          abilities: staticCompanions.concat(core.map(({choices, ...ab}) => ab)),
-          spells: (calling.spells ?? []).map(x => x === '?' ? pickRandom(spells) : spells.find(y => y.id === x)).filter(defined),
-          rituals: (calling.rituals ?? []).map(x => x === '?' ? pickRandom(rituals) : rituals.find(y => y.id === x)).filter(defined),
+          abilities: staticCompanions.concat(core.map(({ choices, ...ab }) => ab)),
+          spells: (calling.spells ?? [])
+            .map((x) => (x === '?' ? pickRandom(spells) : spells.find((y) => y.id === x)))
+            .filter(defined),
+          rituals: (calling.rituals ?? [])
+            .map((x) => (x === '?' ? pickRandom(rituals) : rituals.find((y) => y.id === x)))
+            .filter(defined)
         }));
         intern.choices = allChoices;
         return STEP.ATTRIBUTES;
@@ -60,17 +87,17 @@ function createWizard(builder: Builder, intern: HasChoices) {
     [STEP.ATTRIBUTES]: {
       setAttrs(attrs: Attrs) {
         const grit = calculateGrit(attrs.dex, attrs.wil);
-        builder.update(b => ({
+        builder.update((b) => ({
           ...b,
           grit: { current: grit, max: grit },
           str: { current: attrs.str, max: attrs.str },
           dex: { current: attrs.dex, max: attrs.dex },
-          wil: { current: attrs.wil, max: attrs.wil },
-        }))
-        if (intern.choices?.some(x => x.choose === 'enhancement' && !x.linked)) {
+          wil: { current: attrs.wil, max: attrs.wil }
+        }));
+        if (intern.choices?.some((x) => x.choose === 'enhancement' && !x.linked)) {
           return STEP.ENHANCEMENTS;
         }
-        if (intern.choices?.some(x => x.choose === 'linked')) {
+        if (intern.choices?.some((x) => x.choose === 'linked')) {
           return STEP.COMPANION;
         }
         return STEP.EQUIPMENT;
@@ -78,21 +105,24 @@ function createWizard(builder: Builder, intern: HasChoices) {
     },
     [STEP.ABILITIES]: {
       setAbilities(abils: (Ability & HasChoices)[]) {
-        const [abilityChoices, abilities] = abils.reduce((p, {choices, ...rest}) => ([
-          [...p[0], ...(choices ?? [])],
-          [...p[1], rest as Ability]
-        ]), [[] as CharacterChoice[], [] as Ability[]]);
+        const [abilityChoices, abilities] = abils.reduce(
+          (p, { choices, ...rest }) => [
+            [...p[0], ...(choices ?? [])],
+            [...p[1], rest as Ability]
+          ],
+          [[] as CharacterChoice[], [] as Ability[]]
+        );
         const allChoices = (intern.choices ?? []).concat(abilityChoices);
-        builder.update(b => ({
+        builder.update((b) => ({
           ...b,
           choices: allChoices,
-          abilities: [...(b.abilities ?? []), ...abilities],
+          abilities: [...(b.abilities ?? []), ...abilities]
         }));
         intern.choices = allChoices;
-        if (allChoices.some(x => x.choose === 'enhancement' && !x.linked)) {
+        if (allChoices.some((x) => x.choose === 'enhancement' && !x.linked)) {
           return STEP.ENHANCEMENTS;
         }
-        if (allChoices.some(x => x.choose === 'linked')) {
+        if (allChoices.some((x) => x.choose === 'linked')) {
           return STEP.COMPANION;
         }
         return STEP.EQUIPMENT;
@@ -100,14 +130,17 @@ function createWizard(builder: Builder, intern: HasChoices) {
     },
     [STEP.ENHANCEMENTS]: {
       setEnhancements(enhancements: CallingEnhancement[]) {
-        const newAbilities = enhancements.map(x => ({id: id(), name: x.name, desc: x.desc, type: 'enhance', details: x.type} as Ability));
-        intern.choices = intern.choices?.filter(x => x.choose !== 'enhancement');
-        builder.update(b => ({
+        const newAbilities = enhancements.map(
+          (x) =>
+            ({ id: id(), name: x.name, desc: x.desc, type: 'enhance', details: x.type }) as Ability
+        );
+        intern.choices = intern.choices?.filter((x) => x.choose !== 'enhancement');
+        builder.update((b) => ({
           ...b,
           abilities: newAbilities.concat(b.abilities ?? []),
-          choices: intern.choices,
+          choices: intern.choices
         }));
-        if (intern.choices?.some(x => x.choose === 'linked')) {
+        if (intern.choices?.some((x) => x.choose === 'linked')) {
           return STEP.COMPANION;
         }
         return STEP.EQUIPMENT;
@@ -116,23 +149,32 @@ function createWizard(builder: Builder, intern: HasChoices) {
     [STEP.COMPANION]: {
       setCompanion(companion: Partial<Character>) {
         const [compId] = createSheet(companion);
-        builder.update(b => ({
+        builder.update((b) => ({
           ...b,
-          abilities: [{id: id(), name: companion.name ?? 'Companion', desc: `<a href="/character/${compId}" class="text-purple-700 dark:text-purple-300" target="_blank">${companion.name || `Companion`}'s Sheet</a>`, type: 'companion', details: companion.calling?.name ?? ''}, ...(b.abilities ?? [])]
+          abilities: [
+            {
+              id: id(),
+              name: companion.name ?? 'Companion',
+              desc: `<a href="/character/${compId}" class="text-purple-700 dark:text-purple-300" target="_blank">${companion.name || `Companion`}'s Sheet</a>`,
+              type: 'companion',
+              details: companion.calling?.name ?? ''
+            },
+            ...(b.abilities ?? [])
+          ]
         }));
         return STEP.EQUIPMENT;
       }
     },
     [STEP.EQUIPMENT]: {
       setEquipment(eq: Item[]) {
-        const remainingChoices = (intern.choices ?? []).filter(x => x.choose !== 'equipment');
-        builder.update(b => ({
+        const remainingChoices = (intern.choices ?? []).filter((x) => x.choose !== 'equipment');
+        builder.update((b) => ({
           ...b,
           equipment: (b.equipment ?? []).concat(eq),
-          choices: remainingChoices,
+          choices: remainingChoices
         }));
         intern.choices = remainingChoices;
-        if (intern.choices?.some(x => x.choose === 'magic')) {
+        if (intern.choices?.some((x) => x.choose === 'magic')) {
           return STEP.MAGIC;
         }
         return STEP.DONE;
@@ -140,12 +182,12 @@ function createWizard(builder: Builder, intern: HasChoices) {
     },
     [STEP.MAGIC]: {
       setMagic(spells: Spell[], rituals: Ritual[]) {
-        const remainingChoices = (intern.choices ?? []).filter(x => x.choose !== 'magic');
-        builder.update(b => ({
+        const remainingChoices = (intern.choices ?? []).filter((x) => x.choose !== 'magic');
+        builder.update((b) => ({
           ...b,
           choices: remainingChoices,
           spells: (b.spells || []).concat(spells),
-          rituals: (b.rituals || []).concat(rituals),
+          rituals: (b.rituals || []).concat(rituals)
         }));
         intern.choices = remainingChoices;
         return STEP.DONE;
@@ -153,7 +195,7 @@ function createWizard(builder: Builder, intern: HasChoices) {
     },
     [STEP.DONE]: {
       _enter() {
-        const {choices, ...char} = get(builder);
+        const { choices, ...char } = get(builder);
         if (choices?.length) {
           // Warn?
         }
@@ -166,9 +208,9 @@ function createWizard(builder: Builder, intern: HasChoices) {
         builder.set({});
         return STEP.CALLING;
       },
-      _enter({to}) {
-          goto(`/character/new/${String(to)}`);
-      },
+      _enter({ to }) {
+        goto(`/character/new/${String(to)}`);
+      }
     }
   });
 }

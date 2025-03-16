@@ -1,4 +1,4 @@
-<script lang="ts" context="module">
+<script lang="ts" module>
 import type { DieValue } from "$lib/types";
 import D4, { value as d4 } from "./D4.svelte";
 import D6, { value as d6 } from "./D6.svelte";
@@ -18,10 +18,15 @@ export function knownDie(sides: number): sides is DieValue {
 }
 </script>
 <script lang="ts">
-export let which: DieValue | DieValue[];
-export let size = 'h-6 w-6';
-$: first = Array.isArray(which) ? which[0] : which;
+  interface Props {
+    which: DieValue | DieValue[];
+    size?: string;
+  }
+
+  let { which, size = 'h-6 w-6' }: Props = $props();
+let first = $derived(Array.isArray(which) ? which[0] : which);
 </script>
 {#if dMap.has(first)}
-<svelte:component this={dMap.get(first)} {size}/>
+{@const SvelteComponent = dMap.get(first)}
+<SvelteComponent {size}/>
 {/if}

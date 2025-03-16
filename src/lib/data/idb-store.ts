@@ -1,22 +1,28 @@
-import { writable, type Updater, type Writable } from "svelte/store";
-import { createBroadcastStore } from "./broadcast-store";
+import { writable, type Updater, type Writable } from 'svelte/store';
+import { createBroadcastStore } from './broadcast-store';
 import { get, set as kvset, del, entries } from 'idb-keyval';
-import { createAsyncStore, type AsyncWritable } from "./async-load-store";
-import { isEmpty, setEmpty } from "$lib/types";
+import { createAsyncStore, type AsyncWritable } from './async-load-store';
+import { isEmpty, setEmpty } from '$lib/types';
 export { del };
 export interface LazyWritable<T> extends Writable<T> {
   load: () => Promise<boolean>;
   init: boolean;
 }
 
-export function createIdbStore<T>(dbKey: string, initialValue: T, crossTab = true): AsyncWritable<T> {
+export function createIdbStore<T>(
+  dbKey: string,
+  initialValue: T,
+  crossTab = true
+): AsyncWritable<T> {
   if (typeof window === 'undefined' || !window.indexedDB) {
     return createAsyncStore<T>(writable(initialValue), Promise.resolve(initialValue));
   }
   const broadcastKey = `idb-data:${dbKey}`;
-  const internal = crossTab ? createBroadcastStore<T>(broadcastKey, initialValue) : writable<T>(initialValue);
+  const internal = crossTab
+    ? createBroadcastStore<T>(broadcastKey, initialValue)
+    : writable<T>(initialValue);
 
-  const loaded = get<T>(dbKey).then(value => {
+  const loaded = get<T>(dbKey).then((value) => {
     if (value != null) {
       internal.set(value);
     } else if (initialValue != null) {
@@ -53,13 +59,14 @@ export function createIdbStore<T>(dbKey: string, initialValue: T, crossTab = tru
     ...internal,
     set,
     update,
-  }
+    loaded
+  };
 }
 
 export async function filteredValues<T>(fn: (key: IDBValidKey) => boolean): Promise<T[]> {
   if (typeof window === 'undefined' || !window.indexedDB) {
     return [];
-  }    
+  }
   const all = await entries();
   const some = (all ?? []).filter(([key]) => fn(key)).map(([, val]) => val);
   return some;

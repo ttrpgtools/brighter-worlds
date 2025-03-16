@@ -1,29 +1,39 @@
 <script lang="ts">
-  import { STEP, getWizard } from "../wizard";
-  import { goto } from "$app/navigation";
-  import { browser } from "$app/environment";
-  import Button from "$lib/Button.svelte";
-  import type { Ability, Character } from "$lib/types";
-  import type { PageData } from "./$types";
-  import { onlyEnhancement, onlyLinked } from "$lib/util/guards";
-  import GroupInputs from "$lib/GroupInputs.svelte";
-  import { id } from "$lib/rolling/id";
+  import { STEP, getWizard } from '../wizard';
+  import { goto } from '$app/navigation';
+  import { browser } from '$app/environment';
+  import Button from '$lib/ui/button.svelte';
+  import type { Ability, Character } from '$lib/types';
+  import type { PageData } from './$types';
+  import { onlyEnhancement, onlyLinked } from '$lib/util/guards';
+  import GroupInputs from '$lib/GroupInputs.svelte';
+  import { id } from '$lib/rolling/id';
 
   const [wizard, builder] = getWizard();
 
-  export let data: PageData;
+  interface Props {
+    data: PageData;
+  }
 
-  if ($wizard !== STEP.COMPANION && browser) {
+  let { data }: Props = $props();
+
+  if (wizard.current !== STEP.COMPANION && browser) {
     goto(`/character/new`);
   }
 
   let linked = $builder.choices?.filter(onlyLinked);
-  let myEnhance = $builder.choices?.filter(onlyEnhancement).filter(x => x.linked) ?? [];
+  let myEnhance = $builder.choices?.filter(onlyEnhancement).filter((x) => x.linked) ?? [];
   let temp = '';
-  let compCalling = linked && linked.length ? (temp = linked[0].id, data.companions.find(x => x.id === temp)) : undefined;
+  let compCalling =
+    linked && linked.length
+      ? ((temp = linked[0].id), data.companions.find((x) => x.id === temp))
+      : undefined;
   let compEnhance = compCalling?.choices?.filter(onlyEnhancement) ?? [];
   let totalEnhance = compEnhance.length + myEnhance.length;
-  const companion: Partial<Character> = { name: '' }; 
+  const companion: Partial<Character> & { name: string; abilities: Ability[] } = $state({
+    name: '',
+    abilities: []
+  });
   if (compCalling) {
     companion.grit = { current: compCalling.grit ?? 3, max: compCalling.grit ?? 3 };
     companion.str = { current: compCalling.attrs?.str ?? 4, max: compCalling.attrs?.str ?? 4 };
@@ -37,22 +47,33 @@
     companion.equipment = compCalling.equipment;
     companion.abilities = [];
   }
-  const options = data.enhancements?.options.map(x => ({id: id(), ...x, details: data.enhancements?.type, type: 'enhance'} as Ability));
+  const options = data.enhancements?.options.map(
+    (x) => ({ id: id(), ...x, details: data.enhancements?.type, type: 'enhance' }) as Ability
+  );
   function forward() {
-    wizard.setCompanion(companion);
+    wizard.send('setCompanion', companion);
   }
 </script>
+
 <div class="flex flex-col gap-6 items-center">
   <h3 class="max-w-prose text-2xl font-subtitle">Build-a-Companion</h3>
   <p class="max-w-prose">Fluffy or fierce?</p>
-  
-  <input type="text" name="name" placeholder="Name" bind:value={companion.name} class="rounded-full dark:bg-gray-900 dark:text-white focus:ring-purple-500 focus:border-purple-500 w-full">
-  
+
+  <input
+    type="text"
+    name="name"
+    placeholder="Name"
+    bind:value={companion.name}
+    class="rounded-full dark:bg-gray-900 dark:text-white focus:ring-purple-500 focus:border-purple-500 w-full"
+  />
+
   {#if options && totalEnhance}
-  <p class="max-w-prose">{data.enhancements?.desc} ({totalEnhance})</p>
-  <GroupInputs {options} max={totalEnhance} bind:selected={companion.abilities} let:opt>
-  {opt.desc}
-  </GroupInputs>
+    <p class="max-w-prose">{data.enhancements?.desc} ({totalEnhance})</p>
+    <GroupInputs {options} max={totalEnhance} bind:selected={companion.abilities}>
+      {#snippet children({ opt })}
+        {opt.desc}
+      {/snippet}
+    </GroupInputs>
   {/if}
-  <Button on:click={forward}>Next</Button>
+  <Button onclick={forward}>Next</Button>
 </div>

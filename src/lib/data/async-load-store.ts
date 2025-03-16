@@ -1,12 +1,13 @@
-import type { Updater, Writable } from "svelte/store";
+import type { Updater, Writable } from 'svelte/store';
 
 export interface AsyncWritable<T> extends Writable<T> {
   set: (value: T) => Promise<void>;
   update: (fn: Updater<T>) => Promise<void>;
+  loaded: Promise<void>;
 }
 
 export function createAsyncStore<T>(internal: Writable<T>, load: Promise<T>): AsyncWritable<T> {
-  const loaded = load.then(value => {
+  const loaded = load.then((value) => {
     if (value != null) {
       internal.set(value);
     }
@@ -26,5 +27,6 @@ export function createAsyncStore<T>(internal: Writable<T>, load: Promise<T>): As
     ...internal,
     update,
     set,
-  }
+    loaded
+  };
 }

@@ -1,6 +1,10 @@
 <script lang="ts">
-  export let name: string;
-  export let pronouns: string;
+  interface Props {
+    name: string;
+    pronouns: string;
+  }
+
+  let { name = $bindable(), pronouns = $bindable() }: Props = $props();
 </script>
 <div class="relative lg:col-span-2 flex-1 bg-white dark:bg-gray-900 p-0 shadow-xl dark:shadow-purple-400/20 ring-1 ring-gray-900/5 rounded-lg flex flex-row gap-4 items-end">
   <div class="flex-1 flex-grow h-full w-3/4">

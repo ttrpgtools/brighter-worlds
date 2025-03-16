@@ -68,6 +68,7 @@ export type MagicSource<T extends MagicType> = {};
 export interface Item extends UsableEntity {
   unequiped?: boolean;
   bulky?: boolean;
+  depleted?: boolean;
   armor?: number;
   fragile?: boolean;
   quantity?: number;
@@ -194,6 +195,7 @@ export interface Scene extends Entity {
 export interface Encounter extends Entity {
   [EMPTY]?: boolean | undefined;
   npcs: NpcStats[];
+  desc: string;
 }
 
 export interface Calling extends Entity, HasChoices {

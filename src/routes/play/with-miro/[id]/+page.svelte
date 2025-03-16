@@ -6,13 +6,13 @@
   onMount(() => {
     Split(['#mappanel', '#logpanel', '#sheetpanel'], {
       sizes: [50, 25, 25],
-      gutterSize: 8,
+      gutterSize: 8
     });
     window.addEventListener('message', handleMessage);
   });
 
-  let showImage = '';
-  function handleMessage(evt: MessageEvent<{type: string; data: string}>) {
+  let showImage = $state('');
+  function handleMessage(evt: MessageEvent<{ type: string; data: string }>) {
     if (evt.data.type === 'showImage') {
       showImage = evt.data.data;
     }
@@ -20,23 +20,37 @@
   function closeImg() {
     showImage = '';
   }
-  export let data: PageData;
+  interface Props {
+    data: PageData;
+  }
+
+  let { data }: Props = $props();
 </script>
-<div class="flex h-screen h-[100svh]">
+
+<div class="flex h-[100svh]">
   <div id="mappanel">
-    <iframe src={`https://miro.com/app/live-embed/${data.id}/${data.query}`} frameborder="0" scrolling="no" allow="fullscreen; clipboard-read; clipboard-write" allowfullscreen title="Map" id="mapframe" class="h-full w-full"></iframe>
+    <iframe
+      src={`https://miro.com/app/live-embed/${data.id}/${data.query}`}
+      frameborder="0"
+      scrolling="no"
+      allow="fullscreen; clipboard-read; clipboard-write"
+      allowfullscreen
+      title="Map"
+      id="mapframe"
+      class="h-full w-full"
+    ></iframe>
   </div>
   <div id="logpanel">
     <iframe src="/play/log/" title="Game log" id="logframe" class="h-full w-full"></iframe>
   </div>
   <div id="sheetpanel">
-    <iframe src="/character/" title="Character Sheet" id="sheetframe" class="h-full w-full"></iframe>
+    <iframe src="/character/" title="Character Sheet" id="sheetframe" class="h-full w-full"
+    ></iframe>
   </div>
 </div>
 {#if showImage}
-<ModalImg url={showImage} on:click={closeImg} />
+  <ModalImg url={showImage} onclick={closeImg} />
 {/if}
-
 
 <style>
   :global(.gutter) {
