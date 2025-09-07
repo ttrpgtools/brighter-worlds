@@ -24,7 +24,7 @@
     broadcastRoll,
     broadcastScene
   } from '$lib/data/channel-child';
-  import { send } from '$lib/bus';
+  import { bus, send } from '$lib/bus';
   import type { PageData } from './$types';
   import IconButton from '$lib/IconButton.svelte';
   import SheetSettings from '$lib/sheet/SheetSettings.svelte';
@@ -61,6 +61,7 @@
 
   onMount(() => {
     const unsubs: (() => void)[] = [];
+    unsubs.push(bus.on('bridge:open', (x) => console.log('bridge open', x)));
     unsubs.push(broadcast.subscribe((msg) => console.log(`[Sheet] Broadcast received`, msg)));
     unsubs.push(
       registerForRollCall((here) =>

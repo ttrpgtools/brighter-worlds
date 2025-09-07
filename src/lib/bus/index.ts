@@ -60,7 +60,9 @@ export function setSender(fn: ((data: any) => void) | null) {
 }
 
 export function send(data: any, options?: { throwIfOffline?: boolean }) {
+  console.log('[bus] attempting to send', data);
   if (_post) {
+    console.log('[bus] sending...');
     _post(data);
     return true;
   }
