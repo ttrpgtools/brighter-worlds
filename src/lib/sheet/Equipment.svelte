@@ -196,9 +196,9 @@
                     die={item.damage}
                     direction={-1}
                     {onroll}
-                    >{#snippet children({ events, damage })}
+                    >{#snippet children({ cprops, damage })}
                       <button
-                        use:events
+                        {...cprops}
                         type="button"
                         class="inline-flex items-center text-sm font-medium leading-5"
                         ><Die which={damage} /></button

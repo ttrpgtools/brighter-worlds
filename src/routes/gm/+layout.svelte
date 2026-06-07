@@ -4,6 +4,7 @@
   import MenuLink from '$lib/MenuLink.svelte';
   import type { Cta, DieMod, DieValue, Entity, Item, NpcInstance } from '$lib/types';
   import { setGmContext } from '$lib/util/gm';
+  import { snapshotState } from '$lib/util/snapshot.svelte';
   import { fly } from 'svelte/transition';
   import GmLink from './GmLink.svelte';
   import GmTools from './GmTools.svelte';
@@ -19,7 +20,6 @@
     getRollLog,
     removeRoll,
     clearRollLog,
-    type PlaymatItem,
   } from './playmat';
   import { rollResponses } from './gmtools';
   interface Props {
@@ -34,29 +34,59 @@
 
   let tools: GmTools | undefined = $state();
 
-  function npcRoll(name: string) {
-    return (data: { dice: DieValue[]; name: string }) => tools?.basicRoll(data, name);
+  function getNpcItem(itemId: string) {
+    const item = mat.items.find((current) => current.id === itemId);
+    return item?.type === 'npc' ? item : undefined;
+  }
+
+  function getItemItem(itemId: string) {
+    const item = mat.items.find((current) => current.id === itemId);
+    return item?.type === 'item' ? item : undefined;
+  }
+
+  function setNpcItem(itemId: string, npc: NpcInstance) {
+    const item = getNpcItem(itemId);
+    if (item) updateItem(mat, { ...item, npc });
+  }
+
+  function setItemItem(itemId: string, itemValue: Item) {
+    const item = getItemItem(itemId);
+    if (item) updateItem(mat, { ...item, item: itemValue });
+  }
+
+  function npcRoll(itemId: string) {
+    return (data: { dice: DieValue[]; name: string }) => {
+      const item = getNpcItem(itemId);
+      tools?.basicRoll(data, item?.npc.name ?? 'NPC');
+    };
   }
   function shareScene(scene: Entity) {
     return () => tools?.shareScene(scene);
   }
-  function shareNpc(npc: Entity) {
-    return () => tools?.shareNpc(npc);
+  function shareNpc(itemId: string) {
+    return () => {
+      const item = getNpcItem(itemId);
+      if (item) tools?.shareNpc(item.npc);
+    };
   }
-  function shareItem(item: Item) {
-    return () => tools?.shareItem(item);
+  function sharePlaymatItem(itemId: string) {
+    return () => {
+      const item = getItemItem(itemId);
+      if (item) tools?.shareItem(item.item);
+    };
   }
   function callToAction(cta: Cta) {
     const value = tools?.formulaRoll(cta.formula, `Requested ${cta.formula}`, 'GM');
     if (value && cta.meta) rollResponses.emit({ id: cta.meta, result: value });
   }
-  function takeDamage(npc: NpcInstance, item: PlaymatItem) {
+  function takeDamage(itemId: string) {
     return async (mod?: DieMod) => {
+      const item = getNpcItem(itemId);
+      if (!item) return;
+
+      const npc = structuredClone(snapshotState(item.npc));
       await tools?.takeDamage(npc, mod);
-      if (item.type === 'npc') {
-        item.npc = npc;
-        updateItem(mat, item);
-      }
+      setNpcItem(itemId, npc);
     };
   }
 </script>
@@ -104,11 +134,11 @@
           <button type="button" onclick={() => {}}
             ><h3 class="font-subtitle text-2xl">The Play Mat</h3></button
           >
-          {#if $mat.length}
+          {#if mat.items.length}
             <DeleteButton onconfirm={() => clearMat(mat)} confirmText="Click again to clear mat" />
           {/if}
         </div>
-        {#each $mat as item}
+        {#each mat.items as item (item.id)}
           {#if item.type === 'scene'}
             <Scene
               scene={item.scene}
@@ -117,17 +147,17 @@
             />
           {:else if item.type === 'npc'}
             <NpcSheet
-              bind:npc={item.npc}
+              bind:npc={() => item.npc, (npc) => setNpcItem(item.id, npc)}
               ondelete={() => removeItem(mat, item)}
-              onshare={shareNpc(item.npc)}
-              onroll={npcRoll(item.npc.name)}
-              ondamage={takeDamage(item.npc, item)}
+              onshare={shareNpc(item.id)}
+              onroll={npcRoll(item.id)}
+              ondamage={takeDamage(item.id)}
             />
           {:else if item.type === 'item'}
             <ItemBlock
-              item={item.item}
+              bind:item={() => item.item, (itemValue) => setItemItem(item.id, itemValue)}
               ondelete={() => removeItem(mat, item)}
-              onshare={shareItem(item.item)}
+              onshare={sharePlaymatItem(item.id)}
             />
           {/if}
         {/each}

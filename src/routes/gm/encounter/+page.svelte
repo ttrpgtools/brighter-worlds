@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Encounter } from '$lib/types';
-  import { encounters } from '$lib/data/encounter-manager';
+  import { getEncounters } from '$lib/data/encounter-manager';
   import { onMount } from 'svelte';
   import type { PageData } from './$types';
   import AutoTextarea from '$lib/AutoTextarea.svelte';
@@ -23,11 +23,12 @@
 
   let npcDialog: NpcDialog | undefined = $state();
 
+  const encounters = getEncounters();
   const list = encounters.list;
   const mat = getPlaymat();
   const bestiary = getNpcs();
 
-  let allNpcs = $derived(data.npcs.concat($bestiary));
+  let allNpcs = $derived(data.npcs.concat(bestiary.items));
 
   let loading = $state(true);
 
@@ -40,20 +41,20 @@
   }
 
   function removeEncounter(eid: string) {
-    $list = $list.filter((x) => x.id !== eid);
+    encounters.deleteEncounter(eid);
     const { [eid]: estate, ...rest } = $encounterStates;
     $encounterStates = rest;
   }
 
   function removeNpc(nid: string, eid: number) {
-    $list[eid].npcs = $list[eid].npcs.filter((x) => x.id !== nid);
+    list.items[eid].npcs = list.items[eid].npcs.filter((x) => x.id !== nid);
   }
 
   async function addNpc(encounter: number) {
     const stats = await npcDialog?.select();
     if (stats) {
-      const copy = $state(structuredClone($state.snapshot(stats)));
-      $list[encounter].npcs = append($list[encounter].npcs, copy);
+      const copy = structuredClone($state.snapshot(stats));
+      list.items[encounter].npcs = append(list.items[encounter].npcs, copy);
     }
   }
 
@@ -69,7 +70,7 @@
 
 <aside class="flex flex-col gap-4 w-full">
   <div class="flex flex-col gap-4 w-full max-w-4xl">
-    {#each $list as encounter, eindex}
+    {#each list.items as encounter, eindex}
       <Disclosable
         short
         bind:open={

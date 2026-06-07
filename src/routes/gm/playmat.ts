@@ -1,4 +1,5 @@
 import { getNpcInstance } from '$lib/data/encounter-manager';
+import { getPersistedCollectionContext } from '$lib/data/persisted-collection.svelte';
 import { getContextStore } from '$lib/data/settings';
 import { id } from '$lib/rolling/id';
 import type {
@@ -10,7 +11,6 @@ import type {
   RollResult,
   Scene,
 } from '$lib/types';
-import { update } from '$lib/util/array';
 
 interface PMScene {
   id: string;
@@ -40,13 +40,11 @@ export type RollLog = { ids: Set<string>; list: LogRollItem[] };
 
 const PLAYMAT_KEY = 'bw-playmat';
 const ROLLLOG_KEY = 'bw-rolllog2';
-export const getPlaymat = getContextStore<Playmat>(PLAYMAT_KEY, []);
+export const getPlaymat = getPersistedCollectionContext<PlaymatItem>(PLAYMAT_KEY);
 export const getRollLog = getContextStore<RollLog>(ROLLLOG_KEY, { ids: new Set(), list: [] });
 
 function add(mat: ReturnType<typeof getPlaymat>, item: PlaymatItem) {
-  const newId = id();
-  item.id = newId;
-  mat.update((list) => [...list, item]);
+  mat.appendItem(item);
 }
 
 export function addNpc(mat: ReturnType<typeof getPlaymat>, npc: NpcInstance) {
@@ -67,16 +65,15 @@ export function addEncounter(mat: ReturnType<typeof getPlaymat>, enc: Encounter)
 }
 
 export function updateItem(mat: ReturnType<typeof getPlaymat>, item: PlaymatItem) {
-  mat.update((list) => update(list, item));
+  mat.updateItem(item);
 }
 
 export function removeItem(mat: ReturnType<typeof getPlaymat>, item: PlaymatItem | string) {
-  const id = typeof item === 'string' ? item : item.id;
-  mat.update((list) => list.filter((x) => x.id !== id));
+  mat.removeItem(item);
 }
 
 export function clearMat(mat: ReturnType<typeof getPlaymat>) {
-  mat.set([]);
+  mat.clear();
 }
 
 // --------------------------

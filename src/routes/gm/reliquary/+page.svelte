@@ -2,6 +2,7 @@
   import { rollFormula } from '$lib/rolling/roll';
   import Equipment from '$lib/sheet/Equipment.svelte';
   import type { Item } from '$lib/types';
+  import { snapshotState } from '$lib/util/snapshot.svelte';
   import SidebarSection from '../SidebarSection.svelte';
   import { addItem, getPlaymat } from '../playmat';
   import type { PageData } from './$types';
@@ -16,7 +17,7 @@
   let mat = getPlaymat();
 
   function addToMat(item: Item) {
-    const cloned = structuredClone(item);
+    const cloned = structuredClone(snapshotState(item));
     if (cloned.quantFormula) {
       cloned.quantity = rollFormula(cloned.quantFormula);
     }
@@ -30,7 +31,7 @@
 <div class="flex flex-col gap-4">
   <SidebarSection title="Custom Items" open>
     <Equipment
-      bind:equipment={$reliquary}
+      bind:equipment={reliquary.items}
       title="Relics"
       hideArmor
       selectable

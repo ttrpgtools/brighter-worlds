@@ -18,7 +18,10 @@
 
   function reroll() {
     if (item.quantFormula) {
-      item.quantity = rollFormula(item.quantFormula);
+      item = {
+        ...item,
+        quantity: rollFormula(item.quantFormula),
+      };
     }
   }
 </script>

@@ -1,6 +1,6 @@
 <script lang="ts">
   import Disclosable from '$lib/Disclosable.svelte';
-  import { getNpcInstance, encounters } from '$lib/data/encounter-manager';
+  import { getEncounters, getNpcInstance } from '$lib/data/encounter-manager';
   import type { CustomRolltableDef, DiscordEmbed, RolltableOption, TableRoll } from '$lib/types';
   import { isEncounter, isNpc } from '$lib/util/validate';
   import CustomRolltable from '../CustomRolltable.svelte';
@@ -42,9 +42,9 @@
   let { data }: Props = $props();
 
   const bestiary = getNpcs();
-  let allNpcs = $derived(data.npcs.concat($bestiary));
+  let allNpcs = $derived(data.npcs.concat(bestiary.items));
   const relicList = getRelics();
-  const encList = encounters.list;
+  const encounters = getEncounters();
 
   let tableDialog: RolltableDialog | undefined = $state();
 
@@ -176,12 +176,12 @@
 <RolltableDialog
   bind:this={tableDialog}
   npcList={allNpcs}
-  encList={$encList}
-  relicList={$relicList}
+  encList={encounters.list.items}
+  relicList={relicList.items}
 />
 <div class="flex flex-col gap-4">
   <SidebarSection title="Custom Roll Tables" open addable onclick={addCustom}>
-    {#each $tables as table}
+    {#each tables.items as table}
       <div class="relative group/table">
         <button
           type="button"

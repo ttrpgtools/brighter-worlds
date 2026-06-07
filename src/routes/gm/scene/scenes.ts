@@ -1,5 +1,5 @@
-import { getCollectionContextStore } from '$lib/data/settings';
+import { getPersistedCollectionContext } from '$lib/data/persisted-collection.svelte';
 import type { Scene } from '$lib/types';
 
 const SCENES_KEY = 'bw-gm-scenes';
-export const getScenes = getCollectionContextStore<Scene>(SCENES_KEY);
+export const getScenes = getPersistedCollectionContext<Scene>(SCENES_KEY);

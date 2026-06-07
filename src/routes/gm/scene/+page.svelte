@@ -39,7 +39,7 @@
 <SceneDialog bind:this={sceneDialog} ondelete={remove} />
 <div class="flex flex-col gap-4">
   <SidebarSection title="Custom Scenes" addable onclick={newScene} open>
-    {#each $scenes as scene}
+    {#each scenes.items as scene}
       <div class="flex justify-between items-center">
         <button type="button" class="cursor-pointer" onclick={() => add(scene)}>{scene.name}</button
         >

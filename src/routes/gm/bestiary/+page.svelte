@@ -44,7 +44,7 @@
 </svelte:head>
 <div class="flex flex-col gap-4">
   <SidebarSection title="Custom NPCs" open addable onclick={createNpc}>
-    {#each $bestiary as npc (npc.id)}
+    {#each bestiary.items as npc (npc.id)}
       <Disclosable overflowable short>
         {#snippet header()}
           <input

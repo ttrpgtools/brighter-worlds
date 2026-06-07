@@ -7,12 +7,13 @@ import {
   type SheetSettings,
 } from '$lib/types';
 import { writable, type Updater, type Writable } from 'svelte/store';
-import { get } from 'svelte/store';
-import { createIdbStore } from './idb-store';
+import { getContext, hasContext, setContext } from 'svelte';
+import { PersistedCollection } from './persisted-collection.svelte';
 import { getContextStore } from './settings';
 
 const KEY = 'bw-encounters';
 const SETTINGS_KEY = 'bw-encounters-settings';
+const ENCOUNTERS_CONTEXT = 'bw-encounters-manager';
 
 export function getNpcInstance(stats: NpcStats) {
   const empty: NpcInstance = {
@@ -55,19 +56,19 @@ const defaultSettings: SheetSettings = {
 
 export const getEncountersSettings = getContextStore(SETTINGS_KEY, defaultSettings);
 
-class EncounterManager {
-  public list = createIdbStore<Encounter[]>(KEY, [], false);
+export class EncounterManager {
+  public list = new PersistedCollection<Encounter>(KEY);
   private encCache = new Map<string, Writable<Encounter>>();
 
   async create(): Promise<[string, Writable<Encounter>]> {
     const fresh = getEmptyEncounter();
-    this.list.update((current) => [...current, fresh]);
+    this.list.appendItem(fresh);
     const enc = this.getEncounter(fresh.id, fresh);
     return [fresh.id, enc];
   }
 
   deleteEncounter(id: string) {
-    this.list.update((current) => current.filter((x) => x.id !== id));
+    this.list.removeItem(id);
     this.encCache.delete(id);
   }
 
@@ -81,8 +82,7 @@ class EncounterManager {
     if (fresh) {
       encounter = fresh;
     } else {
-      const encounters = get(this.list);
-      const existing = encounters.find((x) => x.id === id);
+      const existing = this.list.items.find((x) => x.id === id);
       if (!existing) {
         throw new Error('Encounter not found');
       }
@@ -97,14 +97,7 @@ class EncounterManager {
   private createEncounterStore(encounter: Encounter): Writable<Encounter> {
     const internal = writable(encounter);
     const save = (value: Encounter) => {
-      this.list.update((current) => {
-        const index = current.findIndex((item) => item.id === value.id);
-        if (index === -1) return [...current, value];
-
-        const next = current.slice();
-        next[index] = value;
-        return next;
-      });
+      this.list.updateItem(value);
     };
 
     return {
@@ -124,4 +117,13 @@ class EncounterManager {
   }
 }
 
-export const encounters = new EncounterManager();
+export function getEncounters() {
+  let manager: EncounterManager;
+  if (!hasContext(ENCOUNTERS_CONTEXT)) {
+    manager = new EncounterManager();
+    setContext(ENCOUNTERS_CONTEXT, manager);
+  } else {
+    manager = getContext(ENCOUNTERS_CONTEXT);
+  }
+  return manager;
+}

@@ -20,6 +20,33 @@
   let { npc = $bindable(), onshare, ondamage, ondelete, onroll }: Props = $props();
   let src = $derived(typeof npc.image === 'string' ? npc.image : '');
 
+  function setNpc<K extends keyof NpcInstance>(key: K, value: NpcInstance[K]) {
+    npc = { ...npc, [key]: value };
+  }
+
+  function setAttribute(
+    which: 'str' | 'dex' | 'wil',
+    current: NpcInstance[typeof which]['current'],
+  ) {
+    npc = {
+      ...npc,
+      [which]: {
+        ...npc[which],
+        current,
+      },
+    };
+  }
+
+  function setGrit(current: number) {
+    npc = {
+      ...npc,
+      grit: {
+        ...npc.grit,
+        current,
+      },
+    };
+  }
+
   function takeDamage(ev: { dice: DieRollSet }) {
     ondamage(ev.dice.mod);
   }
@@ -39,7 +66,7 @@
         type="text"
         class="w-full border-0 relative py-1 top-0.5 dark:bg-gray-900 placeholder-shown:bg-gray-100 dark:placeholder-shown:bg-black focus:border-purple-600 focus:ring-0 font-subtitle text-xl h-full"
         placeholder="Name"
-        bind:value={npc.name}
+        bind:value={() => npc.name, (value) => setNpc('name', value)}
       />
       <div class="absolute inset-y-0 gap-3 right-0 flex items-center">
         <Button size="icon" icon="share" onclick={onshare} />
@@ -56,32 +83,32 @@
             min="0"
             max="12"
             class="block accent-purple-500 text-lg py-2 px-3 rounded-md border-gray-300 bg-white dark:bg-gray-900 dark:hover:bg-gray-800 dark:border-gray-600 shadow-sm focus:border-purple-500 focus:ring-purple-500"
-            bind:value={npc.grit.current}
+            bind:value={() => npc.grit.current, setGrit}
           />
           <DieSelector
-            bind:current={npc.str.current}
+            bind:current={() => npc.str.current, (value) => setAttribute('str', value)}
             nullable
             invalid={npc.str.current > npc.str.max}
           />
           <DieSelector
-            bind:current={npc.dex.current}
+            bind:current={() => npc.dex.current, (value) => setAttribute('dex', value)}
             nullable
             invalid={npc.dex.current > npc.dex.max}
           />
           <DieSelector
-            bind:current={npc.wil.current}
+            bind:current={() => npc.wil.current, (value) => setAttribute('wil', value)}
             nullable
             invalid={npc.wil.current > npc.wil.max}
           />
 
           <RollSelector class="justify-self-center" label="" die={4} onroll={takeDamage}>
-            {#snippet children({ events })}
+            {#snippet children({ cprops })}
               <button
                 aria-label="Take d4 Damage"
-                use:events
+                {...cprops}
                 type="button"
                 class="inline-flex items-center rounded-full border border-transparent bg-purple-300 dark:bg-purple-700 px-4 py-2 text-xs font-medium shadow-sm hover:bg-purple-200 dark:hover:bg-purple-800 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-900"
-                title="Take d4 Damage"><Icon icon="damage" /></button
+                title="Take d4 Damage"><Icon icon="damage" class="size-5" /></button
               >
             {/snippet}
           </RollSelector>
@@ -91,9 +118,9 @@
             die={npc.str.current || 4}
             {onroll}
           >
-            {#snippet children({ events })}
+            {#snippet children({ cprops })}
               <button
-                use:events
+                {...cprops}
                 type="button"
                 title="Roll STR Save"
                 class="font-subtitle text-xl bg-purple-300 dark:bg-purple-700 hover:bg-purple-200 dark:hover:bg-purple-800 rounded-full px-2 pt-2 pb-1 w-16 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-900"
@@ -107,9 +134,9 @@
             die={npc.dex.current || 4}
             {onroll}
           >
-            {#snippet children({ events })}
+            {#snippet children({ cprops })}
               <button
-                use:events
+                {...cprops}
                 type="button"
                 title="Roll DEX Save"
                 class="font-subtitle text-xl bg-purple-300 dark:bg-purple-700 hover:bg-purple-200 dark:hover:bg-purple-800 rounded-full px-2 pt-2 pb-1 w-16 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-900"
@@ -123,9 +150,9 @@
             die={npc.wil.current || 4}
             {onroll}
           >
-            {#snippet children({ events })}
+            {#snippet children({ cprops })}
               <button
-                use:events
+                {...cprops}
                 type="button"
                 title="Roll WIL Save"
                 class="font-subtitle text-xl bg-purple-300 dark:bg-purple-700 hover:bg-purple-200 dark:hover:bg-purple-800 rounded-full px-2 pt-2 pb-1 w-16 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-900"
@@ -143,7 +170,7 @@
                   type="button"
                   title="Clear status"
                   aria-label="Clear status"
-                  onclick={() => (npc.status = '')}
+                  onclick={() => setNpc('status', '')}
                   class="rounded-md bg-purple-900 p-0.5 text-white shadow-sm hover:bg-purple-700 focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-purple-600"
                 >
                   <svg
@@ -164,9 +191,9 @@
       </div>
       <div class="flex flex-col gap-4">
         <Equipment
-          bind:equipment={npc.attacks}
+          bind:equipment={() => npc.attacks, (value) => setNpc('attacks', value)}
           title="Attacks"
-          bind:baseArmor={npc.armor}
+          bind:baseArmor={() => npc.armor, (value) => setNpc('armor', value)}
           class="flex-1"
           {onroll}
           flat
