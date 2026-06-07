@@ -6,7 +6,7 @@ import {
   type NpcStats,
   type SheetSettings,
 } from '$lib/types';
-import { writable, type Writable } from 'svelte/store';
+import { writable, type Updater, type Writable } from 'svelte/store';
 import { get } from 'svelte/store';
 import { createIdbStore } from './idb-store';
 import { getContextStore } from './settings';
@@ -68,29 +68,59 @@ class EncounterManager {
 
   deleteEncounter(id: string) {
     this.list.update((current) => current.filter((x) => x.id !== id));
+    this.encCache.delete(id);
   }
 
   getEncounter(id: string, fresh?: Encounter) {
-    const enc = writable(getEmptyEncounter());
     const saved = this.encCache.get(id);
     if (saved != null) {
       return saved;
     }
+
+    let encounter: Encounter;
     if (fresh) {
-      enc.set(fresh);
+      encounter = fresh;
     } else {
       const encounters = get(this.list);
-      const encounter = encounters.find((x) => x.id === id);
-      if (!encounter) {
-        throw 'NOT FOUND';
+      const existing = encounters.find((x) => x.id === id);
+      if (!existing) {
+        throw new Error('Encounter not found');
       }
-      enc.set(encounter);
+      encounter = existing;
     }
-    enc.subscribe(() => {
-      this.list.update((current) => current); // Bounce to write.
-    });
+
+    const enc = this.createEncounterStore(encounter);
     this.encCache.set(id, enc);
     return enc;
+  }
+
+  private createEncounterStore(encounter: Encounter): Writable<Encounter> {
+    const internal = writable(encounter);
+    const save = (value: Encounter) => {
+      this.list.update((current) => {
+        const index = current.findIndex((item) => item.id === value.id);
+        if (index === -1) return [...current, value];
+
+        const next = current.slice();
+        next[index] = value;
+        return next;
+      });
+    };
+
+    return {
+      subscribe: internal.subscribe,
+      set(value: Encounter) {
+        internal.set(value);
+        save(value);
+      },
+      update(updater: Updater<Encounter>) {
+        internal.update((current) => {
+          const next = updater(current);
+          save(next);
+          return next;
+        });
+      },
+    };
   }
 }
 

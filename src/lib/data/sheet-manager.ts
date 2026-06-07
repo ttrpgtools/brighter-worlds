@@ -1,6 +1,6 @@
 import { id } from '$lib/rolling/id';
 import { type Character, type CharacterSummary, EMPTY } from '$lib/types';
-import type { Writable } from 'svelte/store';
+import type { Updater, Writable } from 'svelte/store';
 import { get } from 'svelte/store';
 import { clear, getAll, getter } from './storage';
 import { createIdbStore, del, filteredValues } from './idb-store';
@@ -83,6 +83,27 @@ function extractSummary(char: Partial<Character>): CharacterSummary {
   };
 }
 
+function withSummaryUpdates(
+  sheet: AsyncWritable<Character>,
+  list: Writable<CharacterSummary[] | undefined>,
+): AsyncWritable<Character> {
+  sheet.loaded.then(() => {
+    list.update(refreshSummaries(get(sheet)));
+  });
+
+  return {
+    ...sheet,
+    async set(value: Character) {
+      await sheet.set(value);
+      list.update(refreshSummaries(value));
+    },
+    async update(updater: Updater<Character>) {
+      await sheet.update(updater);
+      list.update(refreshSummaries(get(sheet)));
+    },
+  };
+}
+
 const refreshSummaries = (char: Character) => (current: CharacterSummary[] | undefined) => {
   if (!current) return current;
   const index = current.findIndex((x) => x.id === char.id);
@@ -137,20 +158,15 @@ export function loadSheet(
 ) {
   if (cache && cache.has(id)) {
     const stored = cache.get(id);
-    if (stored) return stored;
+    if (stored) return list ? withSummaryUpdates(stored, list) : stored;
   }
   const empty = getEmptySheet();
   empty.id = id;
   const sheet = createIdbStore<Character>(`${SHEET_KEY_PREFIX}${id}`, empty);
-  if (list) {
-    sheet.subscribe((char) => {
-      list.update(refreshSummaries(char));
-    });
-  }
   if (cache) {
     cache.set(id, sheet);
   }
-  return sheet;
+  return list ? withSummaryUpdates(sheet, list) : sheet;
 }
 
 export function createSheet(
