@@ -9,7 +9,7 @@
   import EulogyNotes from '$lib/sheet/EulogyNotes.svelte';
   import MenuLink from '$lib/MenuLink.svelte';
   import { getList, getSheetCache, loadSheet, tryMigrate } from '$lib/data/sheet-manager';
-  import { onMount } from 'svelte';
+  import { onMount, untrack } from 'svelte';
   import { SAVE_GOAL, status } from '$lib/const';
   import Magic from '$lib/sheet/Magic.svelte';
   import { armor, burdened, isFunctional } from '$lib/util/character';
@@ -59,7 +59,11 @@
 
   const list = getList();
   const cache = getSheetCache();
-  const character = loadSheet(data.id, list, cache);
+  const character = loadSheet(
+    untrack(() => data.id),
+    list,
+    cache
+  );
   tryMigrate(loadStatus, cache).then(() => loadStatus.set(''));
 
   onMount(() => {
@@ -246,11 +250,17 @@
     dice?.show('Damage', results.dice, results.msg);
   }
 
-  let isDeprived = $derived($character.statuses.has(status.DEPRIVED));
-  let isBurdened = $derived(burdened($character.equipment));
-  let isSharing = $derived(
-    $character.settings?.rollToBridge !== false || $character.settings?.rollToDiscord
-  );
+  function isDeprived() {
+    return $character.statuses.has(status.DEPRIVED);
+  }
+
+  function isBurdened() {
+    return burdened($character.equipment);
+  }
+
+  function isSharing() {
+    return $character.settings?.rollToBridge !== false || $character.settings?.rollToDiscord;
+  }
 </script>
 
 <svelte:head>
@@ -307,7 +317,7 @@
       class="relative rounded-lg bg-white shadow-xl dark:bg-gray-900 dark:shadow-purple-400/20 ring-1 ring-gray-900/5 md:h-[25rem] flex flex-col gap-6"
     >
       <div class="px-4 py-5 sm:px-6 flex flex-col gap-4 h-full">
-        <Grit bind:value={$character.grit} {isDeprived} {isBurdened} />
+        <Grit bind:value={$character.grit} isDeprived={isDeprived()} isBurdened={isBurdened()} />
         <Attribute
           name="str"
           value={$character.str}
@@ -337,7 +347,7 @@
       bind:equipment={$character.equipment}
       onroll={damage}
       class="md:h-[25rem]"
-      {isSharing}
+      isSharing={isSharing()}
       onshare={shareItem}
     />
     <Magic
@@ -347,7 +357,7 @@
       castable
       oncast={cast}
       type={'spell'}
-      {isSharing}
+      isSharing={isSharing()}
       onshare={shareMagic}
     />
     <Magic
@@ -355,7 +365,7 @@
       bind:magicList={$character.rituals}
       onroll={damage}
       type={'ritual'}
-      {isSharing}
+      isSharing={isSharing()}
       onshare={shareMagic}
     />
     <Calling

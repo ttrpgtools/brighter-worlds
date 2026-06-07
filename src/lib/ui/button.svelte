@@ -59,15 +59,21 @@
     children,
     ...restProps
   }: ButtonProps = $props();
+
+  let normalizedClassName = $derived(cn(className));
 </script>
 
 {#if href}
-  <a class={cn(buttonVariants({ variant, size, className }))} {href} {...restProps}>
+  <a class={buttonVariants({ variant, size, class: normalizedClassName })} {href} {...restProps}>
     {#if icon}<Icon {icon} class={cn('size-5', iconClass)} />{/if}
     {@render children?.()}
   </a>
 {:else}
-  <button class={cn(buttonVariants({ variant, size, className }))} {type} {...restProps}>
+  <button
+    class={buttonVariants({ variant, size, class: normalizedClassName })}
+    {type}
+    {...restProps}
+  >
     {#if icon}<Icon {icon} class={cn('size-5', iconClass)} />{/if}
     {@render children?.()}
   </button>

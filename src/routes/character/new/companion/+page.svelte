@@ -8,6 +8,7 @@
   import { onlyEnhancement, onlyLinked } from '$lib/util/guards';
   import GroupInputs from '$lib/GroupInputs.svelte';
   import { id } from '$lib/rolling/id';
+  import { untrack } from 'svelte';
 
   const [wizard, builder] = getWizard();
 
@@ -24,9 +25,11 @@
   let linked = $builder.choices?.filter(onlyLinked);
   let myEnhance = $builder.choices?.filter(onlyEnhancement).filter((x) => x.linked) ?? [];
   let temp = '';
+  const companionData = untrack(() => data.companions);
+  const enhancementData = untrack(() => data.enhancements);
   let compCalling =
     linked && linked.length
-      ? ((temp = linked[0].id), data.companions.find((x) => x.id === temp))
+      ? ((temp = linked[0].id), companionData.find((x) => x.id === temp))
       : undefined;
   let compEnhance = compCalling?.choices?.filter(onlyEnhancement) ?? [];
   let totalEnhance = compEnhance.length + myEnhance.length;
@@ -47,8 +50,8 @@
     companion.equipment = compCalling.equipment;
     companion.abilities = [];
   }
-  const options = data.enhancements?.options.map(
-    (x) => ({ id: id(), ...x, details: data.enhancements?.type, type: 'enhance' }) as Ability
+  const options = enhancementData?.options.map(
+    (x) => ({ id: id(), ...x, details: enhancementData?.type, type: 'enhance' }) as Ability
   );
   function forward() {
     wizard.send('setCompanion', companion);
@@ -68,7 +71,7 @@
   />
 
   {#if options && totalEnhance}
-    <p class="max-w-prose">{data.enhancements?.desc} ({totalEnhance})</p>
+    <p class="max-w-prose">{enhancementData?.desc} ({totalEnhance})</p>
     <GroupInputs {options} max={totalEnhance} bind:selected={companion.abilities}>
       {#snippet children({ opt })}
         {opt.desc}

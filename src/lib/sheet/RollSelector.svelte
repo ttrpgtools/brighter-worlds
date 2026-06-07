@@ -3,14 +3,10 @@
   import type { DieRollSet, DieValue } from '$lib/types';
   import { add } from '$lib/util/hold';
   import { fly } from 'svelte/transition';
-  import { createPopover } from 'svelte-headlessui';
-  import { onClickOutside } from '$lib/util/on-click-outside';
+  import { Popover } from 'bits-ui';
   import { getSettings } from '$lib/data/settings';
   import { cn, type ClassNameValue } from '$lib/util/tw';
   import type { Action } from 'svelte/action';
-
-  const popover = createPopover({ label: 'Modifiers' });
-  const setupCloser = onClickOutside(() => popover.close(), true);
 
   interface Props {
     label: string;
@@ -44,33 +40,35 @@
   }: Props = $props();
 
   const settings = getSettings();
+  let popoverOpen = $state(false);
+  let anchor: HTMLElement | null = $state(null);
 
   function roll(pev: MouseEvent) {
     //const pev = ev.detail;
-    popover.close();
+    popoverOpen = false;
     const dice = getModifiedDice(pev, die as DieValue);
     onroll({ dice, name: label });
   }
   function rollEnhance() {
     const dice = getEnhanced(die);
-    popover.close();
+    popoverOpen = false;
     onroll({ dice, name: label });
   }
   function rollImpair() {
     const dice = getImpaired();
-    popover.close();
+    popoverOpen = false;
     onroll({ dice, name: label });
   }
   function showSelector(ev: Event) {
     ev.preventDefault();
-    popover.open();
+    popoverOpen = true;
   }
   function handleClick(ev: MouseEvent) {
-    if (ev.button === 2 && !$popover.expanded) {
-      popover.open();
+    if (ev.button === 2 && !popoverOpen) {
+      popoverOpen = true;
     } else if (
       $settings.desktopMode ||
-      $popover.expanded ||
+      popoverOpen ||
       ev.altKey ||
       ev.ctrlKey ||
       ev.shiftKey ||
@@ -79,7 +77,7 @@
       roll(ev);
       ev.preventDefault();
     } else {
-      popover.open();
+      popoverOpen = true;
     }
   }
   const cprops = { onclick: handleClick, oncontextmenu: showSelector };
@@ -99,30 +97,18 @@
       }
     };
   }
-  function manageCloser(node: HTMLElement) {
-    let removeFn: (() => void) | undefined;
-    popover.subscribe(({ expanded }) => {
-      if (expanded) {
-        removeFn = setupCloser(node);
-      } else if (removeFn != null) {
-        removeFn();
-        removeFn = undefined;
-      }
-    });
-  }
 </script>
 
 <div class={cn(['flex', klass])}>
-  <div class="relative" use:manageCloser>
-    {#if $popover.expanded}
-      <div
-        class={cn([
-          'absolute z-10 flex gap-2 top-1/2 -translate-y-1/2',
-          direction === 1
-            ? posCls || `left-full translate-x-2`
-            : posCls || `right-full -translate-x-2`,
-          direction === 1 ? 'flex-row' : 'flex-row-reverse'
-        ])}
+  <div class="relative" bind:this={anchor}>
+    <Popover.Root bind:open={popoverOpen}>
+      <Popover.Content
+        customAnchor={anchor}
+        trapFocus={false}
+        side={direction === 1 ? 'right' : 'left'}
+        align="center"
+        sideOffset={8}
+        class={cn(['z-10 flex gap-2', posCls, direction === 1 ? 'flex-row' : 'flex-row-reverse'])}
       >
         <button
           aria-label="+"
@@ -150,8 +136,8 @@
             /></svg
           ></button
         >
-      </div>
-    {/if}
+      </Popover.Content>
+    </Popover.Root>
     {@render children?.({ events, damage: die, cprops })}
   </div>
 </div>

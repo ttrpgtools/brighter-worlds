@@ -1,7 +1,6 @@
 <script lang="ts">
-  import { createDialog } from 'svelte-headlessui';
+  import { Dialog } from 'bits-ui';
   import { blur, scale } from 'svelte/transition';
-  import { portal } from './util/portal';
 
   interface Props {
     maxWidth?: string;
@@ -22,12 +21,12 @@
   }: Props = $props();
   type T = $$Generic;
 
-  const dialog = createDialog({ label: title });
   let resolve: ((value?: any) => void) | undefined;
+  let expanded = $state(false);
 
   function lock() {
     Object.assign(document.body.style, {
-      'padding-right': `${window.innerWidth - document.documentElement.clientWidth}px`,
+      'padding-right': `${window.innerWidth - document.documentElement.clientWidth}px`
     });
     document.body.classList.add('overflow-hidden');
   }
@@ -41,7 +40,7 @@
     return new Promise<T | undefined>((res) => {
       resolve = res;
       lock();
-      dialog.open();
+      expanded = true;
     });
   }
 
@@ -50,40 +49,57 @@
       resolve(value);
       resolve = undefined;
     }
-    dialog.close();
+    expanded = false;
     unlock();
   }
 
-  dialog.subscribe(({expanded}) => {
-    if (!expanded) {
+  function handleOpenChange(open: boolean) {
+    expanded = open;
+    if (open) {
+      lock();
+    } else {
       if (resolve != null) {
         resolve();
-        unlock();
         resolve = undefined;
       }
+      unlock();
     }
-  });
+  }
 </script>
 
-<div class="relative z-10 contents" use:portal hidden>
-  {#if $dialog.expanded}
-    
-    <!-- svelte-ignore a11y_click_events_have_key_events -->
-    <div role="none" class="fixed inset-0 bg-purple-500 bg-opacity-20" onclick={() => close()} transition:blur></div>
+<Dialog.Root bind:open={expanded} onOpenChange={handleOpenChange}>
+  <Dialog.Portal>
+    {#if expanded}
+      <Dialog.Overlay>
+        {#snippet child({ props })}
+          <div {...props} class="fixed inset-0 bg-purple-500 bg-opacity-20" transition:blur></div>
+        {/snippet}
+      </Dialog.Overlay>
 
-    <div class="fixed inset-0">
-      <div class="flex min-h-full items-center justify-center p-4 text-center">
-        <div class="w-full {maxWidth} max-h-[calc(100vh-2rem)] transform rounded-2xl bg-white dark:bg-gray-900 p-6 text-left align-middle shadow-xl transition-all flex flex-col" use:dialog.modal transition:scale={{start: 0.5}}>
-          <div class="{scrollable ? 'overflow-y-auto' : ''} h-full -mx-6 px-6 pb-6">
-            {@render pretitle?.()}
-            {#if !!title}<h3 class="text-lg font-medium leading-6 text-center">{title}</h3>{/if}
-            {@render children?.({ close, open, })}
-          </div>
-          <div>
-            {@render footer?.()}
-          </div>
+      <div class="fixed inset-0">
+        <div class="flex min-h-full items-center justify-center p-4 text-center">
+          <Dialog.Content>
+            {#snippet child({ props })}
+              <div
+                {...props}
+                class="w-full {maxWidth} max-h-[calc(100vh-2rem)] transform rounded-2xl bg-white dark:bg-gray-900 p-6 text-left align-middle shadow-xl transition-all flex flex-col"
+                transition:scale={{ start: 0.5 }}
+              >
+                <div class="{scrollable ? 'overflow-y-auto' : ''} h-full -mx-6 px-6 pb-6">
+                  {@render pretitle?.()}
+                  {#if !!title}<Dialog.Title class="text-lg font-medium leading-6 text-center"
+                      >{title}</Dialog.Title
+                    >{/if}
+                  {@render children?.({ close, open })}
+                </div>
+                <div>
+                  {@render footer?.()}
+                </div>
+              </div>
+            {/snippet}
+          </Dialog.Content>
         </div>
       </div>
-    </div>
-  {/if}
-</div>
+    {/if}
+  </Dialog.Portal>
+</Dialog.Root>

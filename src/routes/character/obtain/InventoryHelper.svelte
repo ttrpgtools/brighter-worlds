@@ -2,6 +2,7 @@
   import { loadSheet } from '$lib/data/sheet-manager';
   import { isEmpty, type Item } from '$lib/types';
   import { append, update } from '$lib/util/array';
+  import { untrack } from 'svelte';
 
   interface Props {
     id: string;
@@ -10,7 +11,7 @@
 
   let { id, item }: Props = $props();
 
-  const chosen = loadSheet(id);
+  const chosen = loadSheet(untrack(() => id));
   let ok = $state(false);
   async function go() {
     await chosen.loaded;

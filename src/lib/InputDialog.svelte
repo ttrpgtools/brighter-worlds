@@ -74,7 +74,7 @@
     </div>
   {/snippet}
   <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-  <div role="dialog" class="mt-5" use:focusFirst onkeydown={onEnter(handleKeys)}>
+  <div role="dialog" tabindex="-1" class="mt-5" use:focusFirst onkeydown={onEnter(handleKeys)}>
     {@render children?.()}
   </div>
   {#snippet footer()}

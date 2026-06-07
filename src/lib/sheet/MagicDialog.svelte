@@ -17,7 +17,9 @@
 
   let { magicList = $bindable([]), type }: Props = $props();
 
-  const builtin: Magic[] = type === 'spell' ? spellManager.getAll() : ritualManager.getAll();
+  const builtin: Magic[] = $derived(
+    type === 'spell' ? spellManager.getAll() : ritualManager.getAll()
+  );
 
   let selectedMagic: T | undefined = $state();
 
