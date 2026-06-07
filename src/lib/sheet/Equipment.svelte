@@ -85,7 +85,11 @@
 </script>
 
 <Card class={clazz} inside={flat}>
-  <EquipmentDialog bind:equipment bind:this={dialog} {allowFormula} />
+  <EquipmentDialog
+    bind:equipment={() => equipment, (value) => (equipment = value)}
+    bind:this={dialog}
+    {allowFormula}
+  />
   <InputDialog bind:this={baseArmorDialog} form={baseArmorForm}>
     <form class="flex gap-4 items-center">
       <label for="basearmor-{instanceId}">Base Armor</label>

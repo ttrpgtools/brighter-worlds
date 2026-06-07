@@ -32,6 +32,10 @@
 
   const flipDurationMs = 200;
 
+  $effect(() => {
+    listInternal = list;
+  });
+
   function handleSort(ev: CustomEvent<DndEvent<T>>) {
     listInternal = ev.detail.items;
   }
