@@ -1,7 +1,12 @@
 <script lang="ts">
-  import Disclosable from '$lib/Disclosable.svelte';
   import { getEncounters, getNpcInstance } from '$lib/data/encounter-manager';
-  import type { CustomRolltableDef, DiscordEmbed, RolltableOption, TableRoll } from '$lib/types';
+  import type {
+    CustomRolltableDef,
+    DieValue,
+    DiscordEmbed,
+    RolltableOption,
+    TableRoll,
+  } from '$lib/types';
   import { isEncounter, isNpc } from '$lib/util/validate';
   import CustomRolltable from '../CustomRolltable.svelte';
   import SidebarSection from '../SidebarSection.svelte';
@@ -34,6 +39,9 @@
   } from '$lib/const';
   import { formatEncounterRoll } from '$lib/util/share';
   import { onMount } from 'svelte';
+  import Friends from './Friends.svelte';
+  import TravelRolls from './TravelRolls.svelte';
+  import type { FriendRollResult } from './friend-state.svelte';
 
   interface Props {
     data: PageData;
@@ -64,6 +72,7 @@
 
   let encounterTable: CustomRolltable | undefined = $state();
   let reactionTable: CustomRolltable | undefined = $state();
+  let friendsTool: Friends | undefined = $state();
   const customTables: Record<string, CustomRolltable> = $state({});
 
   let mat = getPlaymat();
@@ -108,6 +117,24 @@
 
   function addRemote(embed: DiscordEmbed) {
     addRemoteRoll(log, { embed });
+  }
+
+  function addLoggedRoll(label: string, result: number, dice: DieValue[] = []) {
+    addLocalRoll(log, {
+      result,
+      dice,
+      label,
+    });
+  }
+
+  function addFriendRoll(roll: FriendRollResult) {
+    addLoggedRoll(`Friend Die: ${roll.friend?.name ?? `empty slot ${roll.roll}`}`, roll.roll, [
+      roll.die,
+    ]);
+  }
+
+  async function rollFriendFromTravel() {
+    return await friendsTool?.rollFriend();
   }
 
   async function addCustom() {
@@ -229,9 +256,8 @@
     />
   </SidebarSection>
 
-  <SidebarSection title="Pending">
-    <Disclosable title="Travel Rolls">Coming soon...</Disclosable>
-
-    <Disclosable title="Friends!">Coming soon...</Disclosable>
+  <SidebarSection title="Hexcrawl" open>
+    <TravelRolls onlog={addLoggedRoll} rollFriend={rollFriendFromTravel} />
+    <Friends npcList={allNpcs} onroll={addFriendRoll} bind:this={friendsTool} />
   </SidebarSection>
 </div>
