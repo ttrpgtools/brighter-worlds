@@ -12,15 +12,26 @@ import type {
 } from '$lib/types';
 import { fsm } from '$lib/util/fsm.svelte';
 import { createSheet } from '$lib/data/sheet-manager';
-import { get, writable, type Writable } from 'svelte/store';
 import { goto } from '$app/navigation';
 import { id } from '$lib/rolling/id';
 import { roll } from '$lib/rolling/roll';
 import { defined } from '$lib/util/array';
-import { getContext, hasContext, setContext } from 'svelte';
+import { getContext, hasContext, onMount, setContext } from 'svelte';
 import { calculateGrit } from '$lib/util/grit';
 
-type Builder = Writable<Partial<Character> & HasChoices>;
+class WizardBuilder {
+  sheet: Partial<Character> & HasChoices = $state({});
+
+  set(value: Partial<Character> & HasChoices) {
+    this.sheet = value;
+  }
+
+  update(updater: (value: Partial<Character> & HasChoices) => Partial<Character> & HasChoices) {
+    this.sheet = updater(this.sheet);
+  }
+}
+
+type Builder = WizardBuilder;
 
 export const STEP = {
   CALLING: 'calling',
@@ -148,16 +159,17 @@ function createWizard(builder: Builder, intern: HasChoices) {
     },
     [STEP.COMPANION]: {
       setCompanion(companion: Partial<Character>) {
-        const [compId] = createSheet(companion);
+        const companionSheet = $state.snapshot(companion);
+        const [compId] = createSheet(companionSheet);
         builder.update((b) => ({
           ...b,
           abilities: [
             {
               id: id(),
-              name: companion.name ?? 'Companion',
-              desc: `<a href="/character/${compId}" class="text-purple-700 dark:text-purple-300" target="_blank">${companion.name || `Companion`}'s Sheet</a>`,
+              name: companionSheet.name ?? 'Companion',
+              desc: `<a href="/character/${compId}" class="text-purple-700 dark:text-purple-300" target="_blank">${companionSheet.name || `Companion`}'s Sheet</a>`,
               type: 'companion',
-              details: companion.calling?.name ?? '',
+              details: companionSheet.calling?.name ?? '',
             },
             ...(b.abilities ?? []),
           ],
@@ -195,7 +207,7 @@ function createWizard(builder: Builder, intern: HasChoices) {
     },
     [STEP.DONE]: {
       _enter() {
-        const { choices, ...char } = get(builder);
+        const { choices, ...char } = $state.snapshot(builder.sheet);
         if (choices?.length) {
           // Warn?
         }
@@ -220,7 +232,7 @@ const SHEET_WIZARD = 'bw-wizard-sheet';
 export function getWizard() {
   let wizard: [ReturnType<typeof createWizard>, Builder];
   if (!hasContext(SHEET_WIZARD)) {
-    const builder = writable<Partial<Character> & HasChoices>({});
+    const builder = new WizardBuilder();
     const intern: HasChoices = {
       choices: [],
     };
@@ -230,4 +242,12 @@ export function getWizard() {
     wizard = getContext(SHEET_WIZARD);
   }
   return wizard;
+}
+
+export function guardWizardStep(wizard: ReturnType<typeof createWizard>, expected: WizardSteps) {
+  onMount(() => {
+    if (wizard.current !== expected) {
+      goto('/character/new');
+    }
+  });
 }

@@ -1,7 +1,5 @@
 <script lang="ts">
-  import { STEP, getWizard } from '../wizard';
-  import { goto } from '$app/navigation';
-  import { browser } from '$app/environment';
+  import { STEP, getWizard, guardWizardStep } from '../wizard.svelte';
   import Button from '$lib/ui/button.svelte';
   import type { Ability, Character } from '$lib/types';
   import type { PageData } from './$types';
@@ -18,26 +16,26 @@
 
   let { data }: Props = $props();
 
-  if (wizard.current !== STEP.COMPANION && browser) {
-    goto(`/character/new`);
-  }
+  guardWizardStep(wizard, STEP.COMPANION);
 
-  let linked = $builder.choices?.filter(onlyLinked);
-  let myEnhance = $builder.choices?.filter(onlyEnhancement).filter((x) => x.linked) ?? [];
-  let temp = '';
+  let linked = $derived(builder.sheet.choices?.filter(onlyLinked));
+  let myEnhance = $derived(
+    builder.sheet.choices?.filter(onlyEnhancement).filter((x) => x.linked) ?? [],
+  );
   const companionData = untrack(() => data.companions);
   const enhancementData = untrack(() => data.enhancements);
-  let compCalling =
-    linked && linked.length
-      ? ((temp = linked[0].id), companionData.find((x) => x.id === temp))
-      : undefined;
-  let compEnhance = compCalling?.choices?.filter(onlyEnhancement) ?? [];
-  let totalEnhance = compEnhance.length + myEnhance.length;
+  let compCalling = $derived(
+    linked?.length ? companionData.find((x) => x.id === linked[0].id) : undefined,
+  );
+  let compEnhance = $derived(compCalling?.choices?.filter(onlyEnhancement) ?? []);
+  let totalEnhance = $derived(compEnhance.length + myEnhance.length);
   const companion: Partial<Character> & { name: string; abilities: Ability[] } = $state({
     name: '',
     abilities: [],
   });
-  if (compCalling) {
+  let initializedCallingId = $state<string>();
+  $effect(() => {
+    if (!compCalling || initializedCallingId === compCalling.id) return;
     companion.grit = { current: compCalling.grit ?? 3, max: compCalling.grit ?? 3 };
     companion.str = { current: compCalling.attrs?.str ?? 4, max: compCalling.attrs?.str ?? 4 };
     companion.dex = { current: compCalling.attrs?.dex ?? 4, max: compCalling.attrs?.dex ?? 4 };
@@ -49,7 +47,8 @@
     };
     companion.equipment = compCalling.equipment;
     companion.abilities = [];
-  }
+    initializedCallingId = compCalling.id;
+  });
   const options = enhancementData?.options.map(
     (x) => ({ id: id(), ...x, details: enhancementData?.type, type: 'enhance' }) as Ability,
   );

@@ -3,6 +3,7 @@ import { createBroadcastStore } from './broadcast-store';
 import { get, set as kvset, del, entries } from 'idb-keyval';
 import { createAsyncStore, type AsyncWritable } from './async-load-store';
 import { isEmpty, setEmpty } from '$lib/types';
+import { snapshotState } from '$lib/util/snapshot.svelte';
 export { del };
 export interface LazyWritable<T> extends Writable<T> {
   load: () => Promise<boolean>;
@@ -26,7 +27,7 @@ export function createIdbStore<T>(
     if (value != null) {
       internal.set(value);
     } else if (initialValue != null) {
-      kvset(dbKey, initialValue);
+      kvset(dbKey, snapshotState(initialValue));
       if (isEmpty(initialValue) && setEmpty(initialValue, false)) {
         internal.set(initialValue);
       }
@@ -39,8 +40,9 @@ export function createIdbStore<T>(
       return;
     }
     await loaded;
-    kvset(dbKey, value);
-    internal.set(value);
+    const snapshot = snapshotState(value);
+    kvset(dbKey, snapshot);
+    internal.set(snapshot);
   }
   async function update(fn: Updater<T>) {
     await loaded;
@@ -50,8 +52,9 @@ export function createIdbStore<T>(
         console.warn('updating empty', dbKey);
         return value;
       }
-      kvset(dbKey, result);
-      return result;
+      const snapshot = snapshotState(result);
+      kvset(dbKey, snapshot);
+      return snapshot;
     });
   }
 

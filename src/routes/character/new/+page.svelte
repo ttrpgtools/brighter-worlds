@@ -2,7 +2,7 @@
   import type { Calling } from '$lib/types';
   import MenuLink from '$lib/MenuLink.svelte';
   import CallingSummary from './CallingSummary.svelte';
-  import { STEP, getWizard } from './wizard';
+  import { STEP, getWizard } from './wizard.svelte';
   import type { PageData } from './$types';
   import HomeLink from '$lib/HomeLink.svelte';
   interface Props {

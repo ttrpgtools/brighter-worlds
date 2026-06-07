@@ -1,7 +1,6 @@
 <script lang="ts">
   import type { Item, EquipmentChoice } from '$lib/types';
-  import { STEP, getWizard } from '../wizard';
-  import { goto } from '$app/navigation';
+  import { STEP, getWizard, guardWizardStep } from '../wizard.svelte';
   import { browser } from '$app/environment';
   import Button from '$lib/ui/button.svelte';
   import { gearManager } from '$lib/data/gear-manager';
@@ -11,9 +10,7 @@
 
   const [wizard, builder] = getWizard();
 
-  if (wizard.current !== STEP.EQUIPMENT && browser) {
-    goto(`/character/new`);
-  }
+  guardWizardStep(wizard, STEP.EQUIPMENT);
 
   const gearTables = gearManager.list;
   function forward() {
@@ -27,7 +24,7 @@
 
   type Pair = [string | Item | undefined, Item | undefined];
   let allPairs: Pair[] = $state([]);
-  let extras: EquipmentChoice[] = $derived(($builder.choices ?? []).filter(onlyEquipment));
+  let extras: EquipmentChoice[] = $derived((builder.sheet.choices ?? []).filter(onlyEquipment));
 
   function setPair({ pair, index }: { pair: Pair; index: number }) {
     allPairs[index] = pair;
@@ -69,27 +66,27 @@
 
 <ItemFlair
   gear={$gearTables.str}
-  die={$builder.str?.max ?? 4}
+  die={builder.sheet.str?.max ?? 4}
   onroll={setPair}
   index={0}
   type="str"
 />
 <ItemFlair
   gear={$gearTables.dex}
-  die={$builder.dex?.max ?? 4}
+  die={builder.sheet.dex?.max ?? 4}
   onroll={setPair}
   index={1}
   type="dex"
 />
 <ItemFlair
   gear={$gearTables.wil}
-  die={$builder.wil?.max ?? 4}
+  die={builder.sheet.wil?.max ?? 4}
   onroll={setPair}
   index={2}
   type="wil"
 />
 {#if extras.length}
-  <div class="text-lg mb-4">Extra Equipment from the {$builder.calling?.name} Calling</div>
+  <div class="text-lg mb-4">Extra Equipment from the {builder.sheet.calling?.name} Calling</div>
   {#each extras as table, ti}
     <ItemFlair
       gear={$gearTables[table.type]}

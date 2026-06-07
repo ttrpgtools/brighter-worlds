@@ -1,18 +1,14 @@
 <script lang="ts">
   import DieSelector from '$lib/sheet/DieSelector.svelte';
   import type { Attrs, DieValue } from '$lib/types';
-  import { STEP, getWizard } from '../wizard';
-  import { goto } from '$app/navigation';
-  import { browser } from '$app/environment';
+  import { STEP, getWizard, guardWizardStep } from '../wizard.svelte';
   import Button from '$lib/ui/button.svelte';
   import Die from '$lib/dice/Die.svelte';
   import { calculateGrit } from '$lib/util/grit';
 
   const [wizard] = getWizard();
 
-  if (wizard.current !== STEP.ATTRIBUTES && browser) {
-    goto(`/character/new`);
-  }
+  guardWizardStep(wizard, STEP.ATTRIBUTES);
 
   function forward() {
     wizard.send('setAttrs', attrs);

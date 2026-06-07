@@ -1,7 +1,5 @@
 <script lang="ts">
-  import { STEP, getWizard } from '../wizard';
-  import { goto } from '$app/navigation';
-  import { browser } from '$app/environment';
+  import { STEP, getWizard, guardWizardStep } from '../wizard.svelte';
   import Button from '$lib/ui/button.svelte';
   import type { PageData } from './$types';
   import GroupInputs from '$lib/GroupInputs.svelte';
@@ -16,14 +14,12 @@
   let { data }: Props = $props();
   let advanced = $derived(
     data.list
-      .find((x) => x.id === $builder.calling?.id)
+      .find((x) => x.id === builder.sheet.calling?.id)
       ?.abilities.filter((x) => x.type === 'advanced') ?? [],
   );
   let chosen: (Ability & HasChoices)[] = $state([]);
 
-  if (wizard.current !== STEP.ABILITIES && browser) {
-    goto(`/character/new`);
-  }
+  guardWizardStep(wizard, STEP.ABILITIES);
 
   function forward() {
     wizard.send('setAbilities', chosen);

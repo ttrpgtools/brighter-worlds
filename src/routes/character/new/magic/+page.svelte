@@ -1,7 +1,5 @@
 <script lang="ts">
-  import { STEP, getWizard } from '../wizard';
-  import { goto } from '$app/navigation';
-  import { browser } from '$app/environment';
+  import { STEP, getWizard, guardWizardStep } from '../wizard.svelte';
   import Button from '$lib/ui/button.svelte';
   import type { Ritual, Spell } from '$lib/types';
   import type { PageData } from './$types';
@@ -17,23 +15,21 @@
 
   let { data }: Props = $props();
 
-  if (wizard.current !== STEP.MAGIC && browser) {
-    goto(`/character/new`);
-  }
+  guardWizardStep(wizard, STEP.MAGIC);
   const spellsNeeded =
-    $builder.choices?.filter(onlyMagic).filter((x) => x.type === 'spell').length ?? 0;
+    builder.sheet.choices?.filter(onlyMagic).filter((x) => x.type === 'spell').length ?? 0;
   const ritualsNeeded =
-    $builder.choices?.filter(onlyMagic).filter((x) => x.type === 'ritual').length ?? 0;
+    builder.sheet.choices?.filter(onlyMagic).filter((x) => x.type === 'ritual').length ?? 0;
   let spells: Spell[] = $state([]);
   let rituals: Ritual[] = $state([]);
   function forward() {
     wizard.send('setMagic', spells, rituals);
   }
   let spellPartition = $derived(
-    partition(data.spells, (x) => !$builder.spells?.some((y) => y.id === x.id)),
+    partition(data.spells, (x) => !builder.sheet.spells?.some((y) => y.id === x.id)),
   );
   let ritualPartition = $derived(
-    partition(data.rituals, (x) => !$builder.rituals?.some((y) => y.id === x.id)),
+    partition(data.rituals, (x) => !builder.sheet.rituals?.some((y) => y.id === x.id)),
   );
 </script>
 

@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { get, writable, type Updater } from 'svelte/store';
 import type { Character, CharacterSummary } from '$lib/types';
+import { createRuneProxy } from '$lib/util/snapshot.fixture.svelte';
 
 vi.mock('./idb-store', () => ({
   createIdbStore<T>(_key: string, initialValue: T) {
@@ -73,6 +74,17 @@ describe('loadSheet', () => {
         sortkey: 456,
       },
     ]);
+  });
+
+  it('refreshes summaries from rune-backed sheet values', async () => {
+    const { loadSheet } = await import('./sheet-manager');
+    const list = writable<CharacterSummary[] | undefined>([summary]);
+    const sheet = loadSheet('character-1', list);
+    const proxiedCharacter = createRuneProxy(character('Rune Name'));
+
+    await sheet.set(proxiedCharacter);
+
+    expect(get(list)?.[0].name).toBe('Rune Name');
   });
 
   it('refreshes the character summary when a sheet is updated', async () => {

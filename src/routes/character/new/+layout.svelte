@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { getWizard } from './wizard';
+  import { getWizard } from './wizard.svelte';
   interface Props {
     children?: import('svelte').Snippet;
   }

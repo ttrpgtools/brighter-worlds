@@ -1,7 +1,5 @@
 <script lang="ts">
-  import { STEP, getWizard } from '../wizard';
-  import { goto } from '$app/navigation';
-  import { browser } from '$app/environment';
+  import { STEP, getWizard, guardWizardStep } from '../wizard.svelte';
   import Button from '$lib/ui/button.svelte';
   import type { CallingEnhancement } from '$lib/types';
   import type { PageData } from './$types';
@@ -17,12 +15,10 @@
 
   let { data }: Props = $props();
 
-  if (wizard.current !== STEP.ENHANCEMENTS && browser) {
-    goto(`/character/new`);
-  }
+  guardWizardStep(wizard, STEP.ENHANCEMENTS);
   const enhancements: CallingEnhancement[][] = $state([]);
   const groupedChoices =
-    $builder.choices
+    builder.sheet.choices
       ?.filter(onlyEnhancement)
       .filter((x) => !x.linked)
       .reduce((p, c) => p.set(c.table, (p.get(c.table) ?? 0) + 1), new Map<string, number>()) ??
