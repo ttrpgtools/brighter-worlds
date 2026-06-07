@@ -35,7 +35,7 @@
   let totalEnhance = compEnhance.length + myEnhance.length;
   const companion: Partial<Character> & { name: string; abilities: Ability[] } = $state({
     name: '',
-    abilities: []
+    abilities: [],
   });
   if (compCalling) {
     companion.grit = { current: compCalling.grit ?? 3, max: compCalling.grit ?? 3 };
@@ -45,13 +45,13 @@
     companion.calling = {
       id: compCalling.id,
       name: compCalling.name,
-      desc: compCalling.tagline
+      desc: compCalling.tagline,
     };
     companion.equipment = compCalling.equipment;
     companion.abilities = [];
   }
   const options = enhancementData?.options.map(
-    (x) => ({ id: id(), ...x, details: enhancementData?.type, type: 'enhance' }) as Ability
+    (x) => ({ id: id(), ...x, details: enhancementData?.type, type: 'enhance' }) as Ability,
   );
   function forward() {
     wizard.send('setCompanion', companion);

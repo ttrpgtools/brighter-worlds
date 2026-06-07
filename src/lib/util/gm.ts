@@ -1,4 +1,4 @@
-import { getContext, hasContext, setContext } from "svelte";
+import { getContext, hasContext, setContext } from 'svelte';
 
 const gmContextKey = 'bw-is-gm-context';
 

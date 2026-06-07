@@ -70,8 +70,8 @@
         embed: {
           title: evt.detail.message.replaceAll('peer', 'game'),
           fields: [],
-          color: COLOR_NPC
-        }
+          color: COLOR_NPC,
+        },
       });
     }
   }
@@ -94,8 +94,8 @@
         addToLog(log, {
           embed: {
             title: `Left game.`,
-            fields: []
-          }
+            fields: [],
+          },
         });
       } else {
         sesh.connect($gameId, currentName ?? '');
@@ -106,7 +106,7 @@
       sesh.addEventListener('data', handleData);
       sesh.addEventListener(
         'error',
-        distinctUntilChanged(handleError, (x) => (x as CustomEvent<Error>)?.detail?.message)
+        distinctUntilChanged(handleError, (x) => (x as CustomEvent<Error>)?.detail?.message),
       );
     }
   }

@@ -1,4 +1,3 @@
-
 export const status = {
   CATATONIC: 'catatonic',
   DEAD: 'dead',

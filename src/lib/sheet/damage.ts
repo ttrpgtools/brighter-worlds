@@ -1,8 +1,8 @@
-import { stepDown } from "$lib/dice";
-import { bestRoll } from "$lib/rolling/roll";
-import type { DamageForm, DieValue, DamageDetails, DamageResults, DieRollSet } from "$lib/types";
+import { stepDown } from '$lib/dice';
+import { bestRoll } from '$lib/rolling/roll';
+import type { DamageForm, DieValue, DamageDetails, DamageResults, DieRollSet } from '$lib/types';
 import { status } from '$lib/const';
-import { getModDiceSet } from "$lib/rolling/modifier";
+import { getModDiceSet } from '$lib/rolling/modifier';
 
 const ENDGAME = {
   str: { msg: 'You died.', status: status.DEAD },
@@ -14,7 +14,7 @@ export function calculateDamage(character: DamageDetails, howmuch: DamageForm | 
   if (howmuch == null || howmuch.damage === '') return;
   const dmgType = character.type ?? howmuch.type;
   const allDmg = howmuch.damage.split(/[#*,\s]+/);
-  const allAmt = allDmg.map(x => parseInt(x, 10)).filter(x => !Number.isNaN(x) && x !== 0);
+  const allAmt = allDmg.map((x) => parseInt(x, 10)).filter((x) => !Number.isNaN(x) && x !== 0);
   if (allAmt.length === 0) return;
   let unmitigated = 0;
   if (!howmuch.bypassArmor) {
@@ -25,7 +25,7 @@ export function calculateDamage(character: DamageDetails, howmuch: DamageForm | 
   } else {
     unmitigated = allAmt.reduce((p, c) => p + c, 0);
   }
-  
+
   const result: DamageResults = { msg: '', dice: [], type: dmgType };
   if (!howmuch.bypassGrit) {
     if (character.grit > 0) {

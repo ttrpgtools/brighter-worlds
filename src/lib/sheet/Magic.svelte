@@ -30,7 +30,7 @@
     onroll,
     oncast,
     onshare,
-    type
+    type,
   }: Props = $props();
 
   let dialog: MagicDialog<T> | undefined = $state();

@@ -27,6 +27,6 @@ export function createAsyncStore<T>(internal: Writable<T>, load: Promise<T>): As
     ...internal,
     update,
     set,
-    loaded
+    loaded,
   };
 }

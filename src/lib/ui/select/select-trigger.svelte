@@ -15,7 +15,7 @@
   bind:ref
   class={cn(
     'border-gray-300 dark:border-gray-600 bg-background bg-white dark:bg-gray-900 dark:hover:bg-gray-800 py-2 px-3 text-left shadow-sm focus:border-purple-500 focus:ring-purple-500 flex gap-2 w-full items-center justify-between cursor-default rounded-md border text-sm focus:outline-none focus:ring-2 focus:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1',
-    className
+    className,
   )}
   {...restProps}
 >

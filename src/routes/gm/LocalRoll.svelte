@@ -7,7 +7,7 @@
 
   let { item, ondelete }: Props = $props();
   let diceStr = $derived(
-    item.roll.dice.length ? ` (${item.roll.dice.map((s) => `d${s}`).join(' | ')})` : ``
+    item.roll.dice.length ? ` (${item.roll.dice.map((s) => `d${s}`).join(' | ')})` : ``,
   );
 </script>
 

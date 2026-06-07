@@ -13,7 +13,7 @@
 
   function newForm() {
     return {
-      status: ''
+      status: '',
     } as StatusForm;
   }
 

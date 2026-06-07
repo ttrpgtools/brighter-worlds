@@ -30,10 +30,10 @@
     wizard.send('setMagic', spells, rituals);
   }
   let spellPartition = $derived(
-    partition(data.spells, (x) => !$builder.spells?.some((y) => y.id === x.id))
+    partition(data.spells, (x) => !$builder.spells?.some((y) => y.id === x.id)),
   );
   let ritualPartition = $derived(
-    partition(data.rituals, (x) => !$builder.rituals?.some((y) => y.id === x.id))
+    partition(data.rituals, (x) => !$builder.rituals?.some((y) => y.id === x.id)),
   );
 </script>
 

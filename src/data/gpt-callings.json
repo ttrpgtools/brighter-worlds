@@ -49,10 +49,7 @@
       "name": "Animal Companion",
       "description": "You have formed a special bond with a creature. It will follow your commands and is unfailingly loyal. Should the worst happen, your companion will return to your side from beyond the Black River as a ghost. You can spend your own XP on your companion as you would on yourself."
     },
-    "you_start_with": [
-      "Your Companion",
-      "A Bag of Beast Snacks (whatever your companion prefers)"
-    ],
+    "you_start_with": ["Your Companion", "A Bag of Beast Snacks (whatever your companion prefers)"],
     "animal_companion_abilities": [
       {
         "name": "Big",
@@ -275,10 +272,7 @@
       "name": "One With The Water",
       "description": "You are equally at home in water as you are on land. You can freely control a volume of water about the same size as yourself, if employed as a weapon it deals d6 damage."
     },
-    "you_start_with": [
-      "A waterskin",
-      "A small, impossible token from your Patron"
-    ],
+    "you_start_with": ["A waterskin", "A small, impossible token from your Patron"],
     "water_blessing": [
       {
         "name": "Fluid Form",
@@ -330,11 +324,7 @@
       "Core Ability": {
         "Words of God": "Gods can speak only truth. When you speak with the words of your god if the words are not true, your god’s power will attempt to make it true. Define the Domain of your god."
       },
-      "You Start With": [
-        "Your Small God",
-        "A d8 Domain Die",
-        "Holy Vestments"
-      ],
+      "You Start With": ["Your Small God", "A d8 Domain Die", "Holy Vestments"],
       "Words of God": {
         "description": "When you attempt to make something true by speaking with the words of your god, you risk the universe rejecting your statement.",
         "start": "Start with your Domain die, then adjust based on your intended outcome. If the die would step below a d4 the statement is impossible, if it would step above a d12 it happens without a roll. Otherwise, roll it as a normal Save.",

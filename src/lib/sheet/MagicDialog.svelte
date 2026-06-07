@@ -18,7 +18,7 @@
   let { magicList = $bindable([]), type }: Props = $props();
 
   const builtin: Magic[] = $derived(
-    type === 'spell' ? spellManager.getAll() : ritualManager.getAll()
+    type === 'spell' ? spellManager.getAll() : ritualManager.getAll(),
   );
 
   let selectedMagic: T | undefined = $state();
@@ -38,7 +38,7 @@
       if (magic != null) {
         return {
           ...magic,
-          damage: magic.damage ?? 0
+          damage: magic.damage ?? 0,
         } as MagicForm;
       }
     }
@@ -46,7 +46,7 @@
       name: '',
       desc: '',
       damage: 0,
-      blast: false
+      blast: false,
     } as MagicForm;
   }
 
@@ -64,7 +64,7 @@
         type,
         name: item.name,
         desc: item.desc,
-        blast: item.blast
+        blast: item.blast,
       } as T;
       if (item.damage !== 0) {
         proper.damage = item.damage;

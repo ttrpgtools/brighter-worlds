@@ -20,13 +20,13 @@
 
   const attrs: Attrs = $state({ str: 4, dex: 4, wil: 4 });
   let strdice = $derived(
-    [4].concat([6, 8].filter((d) => d !== attrs.dex && d !== attrs.wil)) as DieValue[]
+    [4].concat([6, 8].filter((d) => d !== attrs.dex && d !== attrs.wil)) as DieValue[],
   );
   let dexdice = $derived(
-    [4].concat([6, 8].filter((d) => d !== attrs.str && d !== attrs.wil)) as DieValue[]
+    [4].concat([6, 8].filter((d) => d !== attrs.str && d !== attrs.wil)) as DieValue[],
   );
   let wildice = $derived(
-    [4].concat([6, 8].filter((d) => d !== attrs.dex && d !== attrs.str)) as DieValue[]
+    [4].concat([6, 8].filter((d) => d !== attrs.dex && d !== attrs.str)) as DieValue[],
   );
 
   let grit = $derived(calculateGrit(attrs.dex, attrs.wil));

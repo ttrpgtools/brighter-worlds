@@ -10,7 +10,7 @@
           handleOut: () => void;
           confirming: boolean;
           ready: boolean;
-        }
+        },
       ]
     >;
   }

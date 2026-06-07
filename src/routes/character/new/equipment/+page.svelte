@@ -42,7 +42,7 @@
     const item = {
       ...pair[0],
       ...pair[1],
-      name: `${pair[0].name} ${pair[1].name}`
+      name: `${pair[0].name} ${pair[1].name}`,
     } satisfies Item;
     if (desc) item.desc = desc;
     return item;

@@ -1,14 +1,14 @@
-import { id } from "$lib/rolling/id";
-import { type Character, type CharacterSummary, EMPTY } from "$lib/types";
-import type { Writable } from "svelte/store";
+import { id } from '$lib/rolling/id';
+import { type Character, type CharacterSummary, EMPTY } from '$lib/types';
+import type { Writable } from 'svelte/store';
 import { get } from 'svelte/store';
-import { clear, getAll, getter } from "./storage";
-import { createIdbStore, del, filteredValues } from "./idb-store";
-import { download } from "$lib/util/download";
-import { createBroadcastStore } from "./broadcast-store";
-import { getContext, hasContext, setContext } from "svelte";
-import type { AsyncWritable } from "./async-load-store";
-import { sortByNumber } from "$lib/util/sort";
+import { clear, getAll, getter } from './storage';
+import { createIdbStore, del, filteredValues } from './idb-store';
+import { download } from '$lib/util/download';
+import { createBroadcastStore } from './broadcast-store';
+import { getContext, hasContext, setContext } from 'svelte';
+import type { AsyncWritable } from './async-load-store';
+import { sortByNumber } from '$lib/util/sort';
 
 const LIST_KEY = 'bw-sheet-list';
 const SHEET_KEY_PREFIX = 'bw-sheet-';
@@ -65,7 +65,7 @@ export function deleteSheet(id: string, list?: Writable<CharacterSummary[] | und
   if (list) {
     list.update((current) => {
       if (!current) return current;
-      return current.filter(x => x.id !== id);
+      return current.filter((x) => x.id !== id);
     });
   }
 }
@@ -85,7 +85,7 @@ function extractSummary(char: Partial<Character>): CharacterSummary {
 
 const refreshSummaries = (char: Character) => (current: CharacterSummary[] | undefined) => {
   if (!current) return current;
-  const index = current.findIndex(x => x.id === char.id);
+  const index = current.findIndex((x) => x.id === char.id);
   if (index < 0) return current;
   return [...current.slice(0, index), extractSummary(char), ...current.slice(index + 1)];
 };
@@ -103,16 +103,20 @@ export function getList() {
 
 export type SheetCache = Map<string, AsyncWritable<Character>>;
 
-export function loadList(list: Writable<CharacterSummary[] | undefined>, cache: SheetCache, status: Writable<string>) {
+export function loadList(
+  list: Writable<CharacterSummary[] | undefined>,
+  cache: SheetCache,
+  status: Writable<string>,
+) {
   tryMigrate(status, cache).then(() => {
-    status.set('Loading...')
-    filteredValues<Character>(k => k.toString().startsWith(SHEET_KEY_PREFIX))
-    .then(some => some.map(extractSummary))
-    .then(sum => {
-      sum.sort(sortByNumber<CharacterSummary>('created'));
-      list.set(sum);
-      status.set('');
-    });
+    status.set('Loading...');
+    filteredValues<Character>((k) => k.toString().startsWith(SHEET_KEY_PREFIX))
+      .then((some) => some.map(extractSummary))
+      .then((sum) => {
+        sum.sort(sortByNumber<CharacterSummary>('created'));
+        list.set(sum);
+        status.set('');
+      });
   });
 }
 
@@ -126,7 +130,11 @@ export function getSheetCache() {
   return getContext<SheetCache>(SHEET_CACHE);
 }
 
-export function loadSheet(id: string, list?: Writable<CharacterSummary[] | undefined>, cache?: SheetCache) {
+export function loadSheet(
+  id: string,
+  list?: Writable<CharacterSummary[] | undefined>,
+  cache?: SheetCache,
+) {
   if (cache && cache.has(id)) {
     const stored = cache.get(id);
     if (stored) return stored;
@@ -135,7 +143,7 @@ export function loadSheet(id: string, list?: Writable<CharacterSummary[] | undef
   empty.id = id;
   const sheet = createIdbStore<Character>(`${SHEET_KEY_PREFIX}${id}`, empty);
   if (list) {
-    sheet.subscribe(char => {
+    sheet.subscribe((char) => {
       list.update(refreshSummaries(char));
     });
   }
@@ -145,23 +153,33 @@ export function loadSheet(id: string, list?: Writable<CharacterSummary[] | undef
   return sheet;
 }
 
-export function createSheet(char: Partial<Character>, list?: Writable<CharacterSummary[] | undefined>, cache?: SheetCache): [string, Writable<Character>] {
+export function createSheet(
+  char: Partial<Character>,
+  list?: Writable<CharacterSummary[] | undefined>,
+  cache?: SheetCache,
+): [string, Writable<Character>] {
   const newId = id();
   char.id = newId;
   if (list) {
     list.update((current) => {
       if (!current) return current;
-      return [...current, extractSummary(char)]
+      return [...current, extractSummary(char)];
     });
   }
   const sheet = loadSheet(newId, list, cache);
-  sheet.update(c => ({...c, ...char, [EMPTY]: false, created: Date.now(), sortkey: Date.now()}));
+  sheet.update((c) => ({
+    ...c,
+    ...char,
+    [EMPTY]: false,
+    created: Date.now(),
+    sortkey: Date.now(),
+  }));
   return [newId, sheet];
 }
 
 export async function downloadSheet(id: string) {
   const sheet = loadSheet(id);
-  await sheet.update(x => x);
+  await sheet.update((x) => x);
   const char = get(sheet);
   const payload = JSON.stringify(char, replaceSheet, 2);
   download(payload, `bwo-${char.name || 'Unnamed'}.json`);
@@ -189,16 +207,24 @@ export async function uploadSheet(json: string, list?: Writable<CharacterSummary
 export async function tryMigrate(status: Writable<string>, cache?: SheetCache) {
   if (typeof window === 'undefined') return;
   const oldList = getter<CharacterSummary[]>(LIST_KEY) || [];
-  const orderMap = oldList.reduce((p,c,i) => ({...p, [c.id]: i + 1 }), {} as Record<string, number>);
-  const allChars = getAll<Character>(key => key.startsWith(SHEET_KEY_PREFIX) && key !== LIST_KEY, reviveSheet);
+  const orderMap = oldList.reduce(
+    (p, c, i) => ({ ...p, [c.id]: i + 1 }),
+    {} as Record<string, number>,
+  );
+  const allChars = getAll<Character>(
+    (key) => key.startsWith(SHEET_KEY_PREFIX) && key !== LIST_KEY,
+    reviveSheet,
+  );
   if (allChars.length > 0) status.set('Migrating...');
-  await Promise.all(allChars.map((char, ai) => {
-    const id = char.id;
-    char.created = orderMap[id] ?? ai + 1;
-    char.sortkey = orderMap[id] ?? ai + 1;
-    const sheet = loadSheet(id, undefined, cache);
-    clear(`${SHEET_KEY_PREFIX}${id}`);
-    return sheet.set(char);
-  }));
+  await Promise.all(
+    allChars.map((char, ai) => {
+      const id = char.id;
+      char.created = orderMap[id] ?? ai + 1;
+      char.sortkey = orderMap[id] ?? ai + 1;
+      const sheet = loadSheet(id, undefined, cache);
+      clear(`${SHEET_KEY_PREFIX}${id}`);
+      return sheet.set(char);
+    }),
+  );
   clear(LIST_KEY);
 }

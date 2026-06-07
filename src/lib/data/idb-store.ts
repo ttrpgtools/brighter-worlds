@@ -12,7 +12,7 @@ export interface LazyWritable<T> extends Writable<T> {
 export function createIdbStore<T>(
   dbKey: string,
   initialValue: T,
-  crossTab = true
+  crossTab = true,
 ): AsyncWritable<T> {
   if (typeof window === 'undefined' || !window.indexedDB) {
     return createAsyncStore<T>(writable(initialValue), Promise.resolve(initialValue));
@@ -59,7 +59,7 @@ export function createIdbStore<T>(
     ...internal,
     set,
     update,
-    loaded
+    loaded,
   };
 }
 

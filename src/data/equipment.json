@@ -1,7 +1,5 @@
 {
-  "starting": [
-    { "name": "Coins", "quantity": 50, "bulky": false }
-  ],
+  "starting": [{ "name": "Coins", "quantity": 50, "bulky": false }],
   "str": {
     "name": "Weapons",
     "flair": [

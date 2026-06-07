@@ -1,4 +1,4 @@
-import type { DieMod, DieRollSet, DieValue } from "$lib/types";
+import type { DieMod, DieRollSet, DieValue } from '$lib/types';
 
 function flat(value: DieValue | DieValue[]): DieRollSet {
   return Array.isArray(value) ? value : [value];
@@ -18,7 +18,7 @@ export function getModDiceSet(value: DieValue | DieValue[], mod?: DieMod) {
 }
 
 export function getEnhanced(value: DieValue | DieValue[]): DieRollSet {
-  const drs = [...(flat(value)), 12] as DieRollSet;
+  const drs = [...flat(value), 12] as DieRollSet;
   drs.mod = 'enhance';
   return drs;
 }

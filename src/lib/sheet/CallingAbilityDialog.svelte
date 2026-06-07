@@ -5,7 +5,7 @@
     AbilityType,
     CallingEnhancement,
     CallingEnhancements,
-    HasChoices
+    HasChoices,
   } from '$lib/types';
   import { id } from '$lib/rolling/id';
   import { append, defined, remove, update } from '$lib/util/array';
@@ -51,7 +51,7 @@
         chosen = [];
         chosenEnhancements = [];
         return availableAbilities.length ? 'abilities' : 'companion';
-      }
+      },
     },
     abilities: {
       _enter() {
@@ -69,7 +69,7 @@
               ?.filter(onlyEnhancement)
               .reduce(
                 (p, c) => p.set(c.table, (p.get(c.table) ?? 0) + 1),
-                new Map<string, number>()
+                new Map<string, number>(),
               ) ?? new Map<string, number>();
           availableEnhancements = Array.from(enhancementMap.keys() ?? [])
             .map((x) => enhancements.find((y) => y.id === x))
@@ -84,7 +84,7 @@
       },
       next() {
         return availableEnhancements.length ? 'enhancement' : 'done';
-      }
+      },
     },
     companion: {
       _enter() {
@@ -93,7 +93,7 @@
       tab(which: AbilityType) {
         return which === 'advanced' ? 'abilities' : 'companion';
       },
-      next: 'done'
+      next: 'done',
     },
     enhancement: {
       _enter() {
@@ -103,7 +103,7 @@
         const previous = new Set(
           abilities
             .filter((x) => x.type === 'enhance' && x.details === first.type)
-            .map((x) => x.name)
+            .map((x) => x.name),
         );
         currentEnhancementOpts =
           currentEnhancement?.options
@@ -115,26 +115,26 @@
       next() {
         const newAbilities = chosenEnhancements.map(
           (x) =>
-            ({ id: id(), name: x.name, desc: x.desc, type: 'enhance', details: x.type }) as Ability
+            ({ id: id(), name: x.name, desc: x.desc, type: 'enhance', details: x.type }) as Ability,
         );
         localChosen = [...newAbilities, ...localChosen];
         return availableEnhancements.length ? 'esave' : 'done';
-      }
+      },
     },
     esave: {
       _enter() {
         ui.debounce(2, 'next');
       },
-      next: 'enhancement'
+      next: 'enhancement',
     },
     done: {
       _enter() {
         dialog?.close(form);
-      }
+      },
     },
     '*': {
-      reset: 'init'
-    }
+      reset: 'init',
+    },
   });
 
   function newForm(id?: string) {
@@ -142,7 +142,7 @@
       const item = abilities.find((x) => x.id === id);
       if (item != null) {
         return {
-          ...item
+          ...item,
         } as AbilityForm;
       }
     }
@@ -150,7 +150,7 @@
       name: '',
       desc: '',
       type: availableAbilities.length ? 'advanced' : 'companion',
-      details: ''
+      details: '',
     } as AbilityForm;
   }
 
@@ -164,7 +164,7 @@
           ...item,
           details: item.details,
           name: item.name || '[no name]',
-          id: item.id || id()
+          id: item.id || id(),
         };
         return [proper];
       }

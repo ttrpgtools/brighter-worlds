@@ -17,7 +17,7 @@
     scrollable = true,
     pretitle,
     children,
-    footer
+    footer,
   }: Props = $props();
   type T = $$Generic;
 
@@ -26,7 +26,7 @@
 
   function lock() {
     Object.assign(document.body.style, {
-      'padding-right': `${window.innerWidth - document.documentElement.clientWidth}px`
+      'padding-right': `${window.innerWidth - document.documentElement.clientWidth}px`,
     });
     document.body.classList.add('overflow-hidden');
   }

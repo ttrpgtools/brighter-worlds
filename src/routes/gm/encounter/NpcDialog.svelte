@@ -14,7 +14,7 @@
 
   function newForm() {
     return {
-      selected: undefined
+      selected: undefined,
     } as DialogForm;
   }
 

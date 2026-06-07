@@ -25,7 +25,7 @@
     once = false,
     onclick,
     onroll,
-    children
+    children,
   }: Props = $props();
 
   let rolled: number = $state(0);
@@ -73,7 +73,7 @@
   let shuffle = $state(0);
   export async function getResult(
     preRoll?: number,
-    animate = false
+    animate = false,
   ): Promise<TableRoll<T> | undefined> {
     shuffle = 0;
     highlighted = new Set();
@@ -106,7 +106,7 @@
             }
             return p;
           },
-          [[], []] as [T[], number[]]
+          [[], []] as [T[], number[]],
         );
     highlighted = new Set(indices);
     if (selected != null) {
@@ -125,7 +125,7 @@
   let sides = $derived(Math.min(die ?? options.length, options.length));
   let dieSides = $derived(advanced ? formulaDie() : sides);
   let dieLabel = $derived(
-    knownDie(dieSides) ? '' : dieSides !== 0 ? `d${dieSides}` : formula || 'Roll'
+    knownDie(dieSides) ? '' : dieSides !== 0 ? `d${dieSides}` : formula || 'Roll',
   );
 </script>
 

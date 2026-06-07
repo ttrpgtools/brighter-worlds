@@ -14,7 +14,7 @@
     headerPadding = true,
     class: classProp = undefined,
     header,
-    children
+    children,
   }: Props = $props();
 
   let needHeader = $derived(!!title || header);
@@ -31,7 +31,7 @@
       <div
         class={[
           inside ? `pb-5` : `px-4 py-5 sm:px-6`,
-          'flex flex-wrap items-center justify-between sm:flex-nowrap'
+          'flex flex-wrap items-center justify-between sm:flex-nowrap',
         ]}
       >
         {@render header()}

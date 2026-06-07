@@ -15,8 +15,7 @@ interface noWindow {
 }
 
 // so it doesn't throw if no window or matchMedia
-const w: Window | noWindow =
-  typeof window !== 'undefined' ? window : { screen: {}, navigator: {} };
+const w: Window | noWindow = typeof window !== 'undefined' ? window : { screen: {}, navigator: {} };
 const matchMedia = (w.matchMedia || (() => ({ matches: false }))).bind(w);
 
 // passive events test
@@ -52,8 +51,7 @@ const touchEventInWindow = 'TouchEvent' in w;
 // a mouse only device (touchEventInWindow true, but onTouchStartInWindow false)
 // so the touchEventInWindow check needs to include an coarse pointer media query
 export const supportsTouchEvents: boolean =
-  onTouchStartInWindow ||
-  (touchEventInWindow && matchMedia('(any-pointer: coarse)').matches);
+  onTouchStartInWindow || (touchEventInWindow && matchMedia('(any-pointer: coarse)').matches);
 
 const hasTouch = (w.navigator.maxTouchPoints || 0) > 0 || supportsTouchEvents;
 
@@ -103,16 +101,16 @@ export const deviceType: 'mouseOnly' | 'touchOnly' | 'hybrid' =
   hasTouch && (hasAnyHoverOrAnyFinePointer || !hasCoarsePrimaryPointer)
     ? 'hybrid'
     : hasTouch
-    ? 'touchOnly'
-    : 'mouseOnly';
+      ? 'touchOnly'
+      : 'mouseOnly';
 
 export const primaryInput: 'mouse' | 'touch' =
   deviceType === 'mouseOnly'
     ? 'mouse'
     : deviceType === 'touchOnly'
-    ? 'touch'
-    : // if the device is a hybrid, then if the primary pointer is coarse
-    // assume the primaryInput is touch, otherwise assume it's mouse
-    hasCoarsePrimaryPointer
-    ? 'touch'
-    : 'mouse';
+      ? 'touch'
+      : // if the device is a hybrid, then if the primary pointer is coarse
+        // assume the primaryInput is touch, otherwise assume it's mouse
+        hasCoarsePrimaryPointer
+        ? 'touch'
+        : 'mouse';

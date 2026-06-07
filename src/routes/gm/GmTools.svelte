@@ -17,14 +17,14 @@
     Item,
     NpcInstance,
     RemoteCtaReplyMessage,
-    RemoteEmbedMessage
+    RemoteEmbedMessage,
   } from '$lib/types';
   import { armor } from '$lib/util/character';
   import {
     sendToDiscord,
     sendSceneToDiscord,
     sendItemToDiscord,
-    sendNpcToDiscord
+    sendNpcToDiscord,
   } from '$lib/util/discord';
   import type { Readable } from 'svelte/store';
   import { addLocalRoll, addRemoteRoll, getRollLog } from './playmat';
@@ -51,10 +51,10 @@
             id: id(),
             type: 'roll',
             formula: roll.formula,
-            meta: roll.name
-          }
+            meta: roll.name,
+          },
         ],
-        'Can someone...'
+        'Can someone...',
       );
       const rem = { id: id(), name: '', type: 'embed' as const, embed: cta };
       addRemoteRoll(log, rem);
@@ -84,7 +84,7 @@
     addLocalRoll(log, {
       dice: sides,
       result: best,
-      label: `${name}: ${label}`
+      label: `${name}: ${label}`,
     });
   }
 
@@ -98,7 +98,7 @@
     addLocalRoll(log, {
       dice: f.dice,
       result: value,
-      label: `${name}: ${label ?? formula}`
+      label: `${name}: ${label ?? formula}`,
     });
     return value;
   }
@@ -109,7 +109,7 @@
       armor: armor(npc.attacks) + (npc.armor || 0),
       statuses: new Set(npc.status ? [npc.status] : []),
       grit: npc.grit.current,
-      dice: { str: npc.str.current, dex: npc.dex.current, wil: npc.wil.current }
+      dice: { str: npc.str.current, dex: npc.dex.current, wil: npc.wil.current },
     };
 
     const results = await damageDialog?.getDamage(chinfo);
@@ -132,7 +132,7 @@
         `${results.type.toUpperCase()} save against ${results.dd ?? '?'} direct damage.`,
         $encountersSettings.discordWebhook,
         results.dice,
-        npc.name
+        npc.name,
       );
     }
     if ($encountersSettings?.rollToBridge !== false && results.save) {
@@ -141,7 +141,7 @@
         results.save,
         `${results.type.toUpperCase()} save against ${results.dd ?? '?'} direct damage.`,
         results.dice,
-        npc.name
+        npc.name,
       );
       roll.title = npc.name;
       session?.send({ id: id(), name: '', type: 'embed', embed: roll });
@@ -152,7 +152,7 @@
       addLocalRoll(log, {
         dice: results.dice,
         result: results.save,
-        label: `${npc.name}: ${results.type.toUpperCase()} save against ${results.dd ?? '?'} direct damage.`
+        label: `${npc.name}: ${results.type.toUpperCase()} save against ${results.dd ?? '?'} direct damage.`,
       });
     }
   }
@@ -219,8 +219,8 @@
       addRemoteRoll(log, {
         embed: {
           title: `${evt.detail.name || 'Player'} joined.`,
-          fields: []
-        }
+          fields: [],
+        },
       });
       evt.detail.connection?.send({
         id: id(),
@@ -228,8 +228,8 @@
         type: 'embed',
         embed: {
           fields: [],
-          title: `Game joined. Welcome to Brighter Worlds ${evt.detail.name}`
-        }
+          title: `Game joined. Welcome to Brighter Worlds ${evt.detail.name}`,
+        },
       });
     }
   }
@@ -240,8 +240,8 @@
       addRemoteRoll(log, {
         embed: {
           title: `${evt.detail.name || 'Player'} left.`,
-          fields: []
-        }
+          fields: [],
+        },
       });
     }
   }

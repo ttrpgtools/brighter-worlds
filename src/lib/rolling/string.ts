@@ -1,11 +1,10 @@
-import type { StringDistribution } from "./types";
-import { integer } from "./die";
+import type { StringDistribution } from './types';
+import { integer } from './die';
 
 // tslint:disable:unified-signatures
 
 // has 2**x chars, for faster uniform distribution
-const DEFAULT_STRING_POOL =
-  "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-";
+const DEFAULT_STRING_POOL = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-';
 
 /**
  * Returns a distribution that returns a random string using numbers,
@@ -22,12 +21,12 @@ export function string(pool: string): StringDistribution;
 export function string(pool: string = DEFAULT_STRING_POOL): StringDistribution {
   const poolLength = pool.length;
   if (!poolLength) {
-    throw new Error("Expected pool not to be an empty string");
+    throw new Error('Expected pool not to be an empty string');
   }
 
   const distribution = integer(0, poolLength - 1);
   return (engine, length) => {
-    let result = "";
+    let result = '';
     for (let i = 0; i < length; ++i) {
       const j = distribution(engine);
       result += pool.charAt(j);

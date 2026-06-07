@@ -8,21 +8,21 @@ const config = {
       fontFamily: {
         title: ['Ander Brush', 'serif'],
         symbol: ['Ander Symbols', 'serif'],
-        subtitle: ['Fanwood', 'serif']
+        subtitle: ['Fanwood', 'serif'],
       },
       borderWidth: {
-        3: '3px'
+        3: '3px',
       },
       colors: {
-        primary: purple
+        primary: purple,
       },
       aria: {
-        current: 'current="page"'
-      }
-    }
+        current: 'current="page"',
+      },
+    },
   },
 
-  plugins: [require('@tailwindcss/forms'), require('@tailwindcss/typography')]
+  plugins: [require('@tailwindcss/forms'), require('@tailwindcss/typography')],
 };
 
 module.exports = config;

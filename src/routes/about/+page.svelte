@@ -42,8 +42,8 @@
     <p>
       Throughout the application we use icons to represent various dice that it is possible to roll.
       Sometimes these are labeled, other times they appear on their own. These are those icons in
-      case you have issues with them. The number after the <strong>d</strong> is the number of sides
-      on that die.
+      case you have issues with them. The number after the <strong>d</strong> is the number of sides on
+      that die.
     </p>
     <div class="flex gap-6 sm:gap-8 justify-center p-4">
       {#each dice as die}

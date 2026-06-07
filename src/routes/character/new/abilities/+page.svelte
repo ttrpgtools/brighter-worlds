@@ -17,7 +17,7 @@
   let advanced = $derived(
     data.list
       .find((x) => x.id === $builder.calling?.id)
-      ?.abilities.filter((x) => x.type === 'advanced') ?? []
+      ?.abilities.filter((x) => x.type === 'advanced') ?? [],
   );
   let chosen: (Ability & HasChoices)[] = $state([]);
 

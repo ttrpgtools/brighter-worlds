@@ -44,7 +44,7 @@
             ? item.quantFormula
             : item.quantity
               ? item.quantity.toString()
-              : ''
+              : '',
         } as ItemForm;
       }
     }
@@ -57,7 +57,7 @@
       depleted: false,
       enableMagic: false,
       armor: '',
-      quantity: ''
+      quantity: '',
     } as ItemForm;
   }
 
@@ -75,7 +75,7 @@
         desc: item.desc,
         bulky: item.bulky,
         blast: item.blast,
-        depleted: item.depleted
+        depleted: item.depleted,
       };
       if (item.damage !== 0) {
         proper.damage = item.damage;

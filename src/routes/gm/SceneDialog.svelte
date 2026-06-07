@@ -20,7 +20,7 @@
       name: '',
       desc: '',
       image: '',
-      gmnotes: ''
+      gmnotes: '',
     } as DialogForm;
   }
 
@@ -31,7 +31,7 @@
       name,
       desc,
       image,
-      gmnotes
+      gmnotes,
     } as DialogForm;
   }
 
@@ -48,7 +48,7 @@
         name: item.name,
         desc: item.desc,
         image: item.image,
-        icon: 'nav-scenes'
+        icon: 'nav-scenes',
       } as Scene;
       if (item.gmnotes) {
         core.gmnotes = item.gmnotes;

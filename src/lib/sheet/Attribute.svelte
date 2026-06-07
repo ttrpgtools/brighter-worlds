@@ -16,7 +16,7 @@
     value = $bindable({ current: 4, max: 4 }),
     onchange,
     ondamage,
-    onroll
+    onroll,
   }: Props = $props();
 
   function takeDamage(data: { dice: DieRollSet; name: string }) {

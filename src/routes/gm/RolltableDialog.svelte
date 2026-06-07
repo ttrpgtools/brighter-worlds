@@ -7,7 +7,7 @@
     RolltableOption,
     Encounter,
     Item,
-    Entity
+    Entity,
   } from '$lib/types';
   import Button from '$lib/ui/button.svelte';
 
@@ -49,7 +49,7 @@
       id: id(),
       name: '',
       formula: '',
-      options: []
+      options: [],
     } as DialogForm;
   }
 
@@ -63,14 +63,14 @@
             value:
               encList.find((x) => x.id === opt.value.id) ??
               relicList.find((x) => x.id === opt.value.id) ??
-              npcList.find((x) => x.id === opt.value.id)
-          }
+              npcList.find((x) => x.id === opt.value.id),
+          },
     );
     return {
       id,
       name,
       formula,
-      options: realOptions
+      options: realOptions,
     } as DialogForm;
   }
 
@@ -86,7 +86,7 @@
         id: item.id,
         name: item.name,
         formula: item.formula,
-        options: item.options.map((opt) => ({ ...opt, trigger: parseTrigger(opt.trigger) }))
+        options: item.options.map((opt) => ({ ...opt, trigger: parseTrigger(opt.trigger) })),
       } as CustomRolltableDef;
     }
   }

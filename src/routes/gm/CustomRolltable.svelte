@@ -17,7 +17,7 @@
     const tableRoll: TableRoll<RolltableOption> = {
       title,
       roll: Array.isArray(opt.trigger) ? opt.trigger[0] : opt.trigger,
-      value: [opt]
+      value: [opt],
     };
     onroll(tableRoll);
   }

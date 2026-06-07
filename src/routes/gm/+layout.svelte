@@ -19,7 +19,7 @@
     getRollLog,
     removeRoll,
     clearRollLog,
-    type PlaymatItem
+    type PlaymatItem,
   } from './playmat';
   import { rollResponses } from './gmtools';
   interface Props {

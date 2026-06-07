@@ -24,7 +24,7 @@
             onclick: (ev: MouseEvent) => void;
             oncontextmenu: (ev: Event) => void;
           };
-        }
+        },
       ]
     >;
   }
@@ -36,7 +36,7 @@
     posCls = '',
     class: klass = '',
     onroll,
-    children
+    children,
   }: Props = $props();
 
   const settings = getSettings();
@@ -94,7 +94,7 @@
         removeClick();
         removeContext();
         //holdAction.destroy();
-      }
+      },
     };
   }
 </script>

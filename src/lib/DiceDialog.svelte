@@ -12,7 +12,7 @@
     label: string,
     rolls: DieValue[] = [],
     subtext = '',
-    titleClasses = ''
+    titleClasses = '',
   ) {
     title = label;
     dice = rolls;

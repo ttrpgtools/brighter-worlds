@@ -13,7 +13,7 @@
     addLocalRoll,
     getPlaymat,
     getRollLog,
-    addRemoteRoll
+    addRemoteRoll,
   } from '../playmat';
   import type { PageData } from './$types';
   import { getNpcs } from '../bestiary/npcs';
@@ -30,7 +30,7 @@
     REACTION_ROLL_NEUTRAL,
     REACTION_ROLL_POS,
     REACTION_ROLL_VNEG,
-    REACTION_ROLL_VPOS
+    REACTION_ROLL_VPOS,
   } from '$lib/const';
   import { formatEncounterRoll } from '$lib/util/share';
   import { onMount } from 'svelte';
@@ -51,7 +51,7 @@
   const encounterOpts: RolltableOption[] = [
     { type: 'text', value: ENCOUNTER_ROLL_YES, trigger: 1 },
     { type: 'text', value: ENCOUNTER_ROLL_SIGNS, trigger: [2, 3] },
-    { type: 'text', value: ENCOUNTER_ROLL_NO, trigger: [4, 6] }
+    { type: 'text', value: ENCOUNTER_ROLL_NO, trigger: [4, 6] },
   ];
 
   const reactionOpts: RolltableOption[] = [
@@ -59,7 +59,7 @@
     { type: 'text', value: REACTION_ROLL_POS, trigger: [4, 6] },
     { type: 'text', value: REACTION_ROLL_NEUTRAL, trigger: 7 },
     { type: 'text', value: REACTION_ROLL_NEG, trigger: [8, 10] },
-    { type: 'text', value: REACTION_ROLL_VNEG, trigger: [11, 12] }
+    { type: 'text', value: REACTION_ROLL_VNEG, trigger: [11, 12] },
   ];
 
   let encounterTable: CustomRolltable | undefined = $state();
@@ -85,7 +85,7 @@
     return {
       result: roll.roll,
       dice: roll.dice ?? [],
-      label: `${roll.title}: ${first.type === 'text' ? first.value : first.value.name}`
+      label: `${roll.title}: ${first.type === 'text' ? first.value : first.value.name}`,
     };
   }
 
@@ -144,7 +144,7 @@
       }
       const [reactionRoll, roll] = await Promise.all([
         reactionTable?.getResult(),
-        customTables[table.id].getResult()
+        customTables[table.id].getResult(),
       ]);
       const reaction =
         reactionRoll && reactionRoll.value.length ? ` (${reactionRoll.value[0].value})` : '';

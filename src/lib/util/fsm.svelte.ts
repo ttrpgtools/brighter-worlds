@@ -1,5 +1,5 @@
 export type FSMLifecycleFn<StatesT extends string, EventsT extends string> = (
-  meta: LifecycleFnMeta<StatesT, EventsT>
+  meta: LifecycleFnMeta<StatesT, EventsT>,
 ) => void;
 
 export type LifecycleFnMeta<StatesT extends string, EventsT extends string> = {
@@ -48,7 +48,7 @@ export type Transition<StatesT extends string, EventsT extends string> = {
 
 export function fsm<StatesT extends string, EventsT extends string>(
   initial: StatesT,
-  states: Transition<StatesT, EventsT>
+  states: Transition<StatesT, EventsT>,
 ) {
   let current = $state<StatesT>(initial);
 
@@ -104,6 +104,6 @@ export function fsm<StatesT extends string, EventsT extends string>(
       await new Promise((resolve) => (timeout[event] = setTimeout(resolve, wait)));
       delete timeout[event];
       return new Promise((resolve) => resolve(this.send(event, ...args)));
-    }
+    },
   };
 }

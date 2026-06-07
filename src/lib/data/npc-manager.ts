@@ -16,12 +16,12 @@ class NpcManager extends JsonDataManager<NpcStats> {
         {
           id: 'beastattack-default',
           name: 'Weapon',
-          damage: 6
-        }
+          damage: 6,
+        },
       ],
       notes: [],
       found: 'Anywhere',
-      wants: 'Something'
+      wants: 'Something',
     } as NpcStats;
   }
 }

@@ -85,8 +85,8 @@
     "dex": 10,
     "wil": 8,
     "attacks": [
-      { "id": "beastattack-ohsgietngsoheitgn", "name": "Claws", "damage": [8, 8], "desc": ""},
-      { "id": "beastattack-oasiengseohtignmh", "name": "Bite", "damage": 10, "desc": ""}
+      { "id": "beastattack-ohsgietngsoheitgn", "name": "Claws", "damage": [8, 8], "desc": "" },
+      { "id": "beastattack-oasiengseohtignmh", "name": "Bite", "damage": 10, "desc": "" }
     ],
     "notes": [
       "Long limbs carry it disturbingly quickly across any surface.",
@@ -104,7 +104,7 @@
     "dex": 8,
     "wil": 6,
     "attacks": [
-      { "id": "beastattack-oinsegnsfrnsfog", "name": "Scavenged Weapon", "damage": 6, "desc": ""}
+      { "id": "beastattack-oinsegnsfrnsfog", "name": "Scavenged Weapon", "damage": 6, "desc": "" }
     ],
     "notes": [
       "Weird little guys.",
@@ -122,8 +122,13 @@
     "dex": 8,
     "wil": 8,
     "attacks": [
-      { "id": "beastattack-seotignlrfdmg", "name": "Claws", "damage": 6, "desc": ""},
-      { "id": "beastattack-oiftmgbosetim", "name": "Bite", "damage": 6, "desc": "deals Direct Damage to WIL on odd damage rolls."}
+      { "id": "beastattack-seotignlrfdmg", "name": "Claws", "damage": 6, "desc": "" },
+      {
+        "id": "beastattack-oiftmgbosetim",
+        "name": "Bite",
+        "damage": 6,
+        "desc": "deals Direct Damage to WIL on odd damage rolls."
+      }
     ],
     "notes": [
       "A cat who lost all nine of its lives, then somehow one more.",
@@ -141,7 +146,13 @@
     "dex": 8,
     "wil": 10,
     "attacks": [
-      { "id": "beastattack-soeitgnsoheimsh", "name": "Somnolescent Dust", "damage": 6, "blast": true, "desc": "deals Direct Damage to WIL. Enhanced if target is tricked by illusions."}
+      {
+        "id": "beastattack-soeitgnsoheimsh",
+        "name": "Somnolescent Dust",
+        "damage": 6,
+        "blast": true,
+        "desc": "deals Direct Damage to WIL. Enhanced if target is tricked by illusions."
+      }
     ],
     "notes": [
       "Hides itself while projecting an illusion of a trustworthy figure.",
@@ -159,7 +170,7 @@
     "dex": 4,
     "wil": 4,
     "attacks": [
-      { "id": "beastattack-oisnsioefgsgfdu8", "name": "Dagger", "damage": 6, "desc": ""}
+      { "id": "beastattack-oisnsioefgsgfdu8", "name": "Dagger", "damage": 6, "desc": "" }
     ],
     "notes": [
       "Makes enhanced Morale Saves as long as their Master lives.",
@@ -178,7 +189,12 @@
     "dex": 6,
     "wil": 8,
     "attacks": [
-      { "id": "beastattack-ohlorionwdrmaaec", "name": "Bite", "damage": 10, "desc": "consumes a memory and restores d6 Grit on Wounds"}
+      {
+        "id": "beastattack-ohlorionwdrmaaec",
+        "name": "Bite",
+        "damage": 10,
+        "desc": "consumes a memory and restores d6 Grit on Wounds"
+      }
     ],
     "notes": [
       "Hulking mass of scrolls and books, an incredible if deadly repository of knowledge.",
@@ -219,7 +235,7 @@
     "dex": 6,
     "wil": 6,
     "attacks": [
-      { "id": "beastattack-89sgs98ngdnote", "name": "Rusty Weapon", "damage": 6, "desc": ""}
+      { "id": "beastattack-89sgs98ngdnote", "name": "Rusty Weapon", "damage": 6, "desc": "" }
     ],
     "notes": [
       "A collection of dead bones animated through evil magicks, confluence of dark energies, unfinished business, or other arcane happenstance."
@@ -235,7 +251,7 @@
     "dex": 8,
     "wil": 6,
     "attacks": [
-      { "id": "beastattack-qwdtqwvseciohn", "name": "Grabby Paws", "damage": 6, "desc": ""}
+      { "id": "beastattack-qwdtqwvseciohn", "name": "Grabby Paws", "damage": 6, "desc": "" }
     ],
     "notes": [
       "Six legged raccoon-like creature.",
@@ -253,7 +269,12 @@
     "dex": 6,
     "wil": 8,
     "attacks": [
-      { "id": "beastattack-iomsetrosmhmse", "name": "Blood Sucking Proboscis", "damage": 8, "desc": "steps up STR on Wounds"}
+      {
+        "id": "beastattack-iomsetrosmhmse",
+        "name": "Blood Sucking Proboscis",
+        "damage": 8,
+        "desc": "steps up STR on Wounds"
+      }
     ],
     "notes": [
       "A mosquito-cat hybrid the size of a cow.",
@@ -272,7 +293,12 @@
     "dex": 8,
     "wil": 6,
     "attacks": [
-      { "id": "beastattack-horhrmhormohimase", "name": "Bite", "damage": 6, "desc": "for each head"}
+      {
+        "id": "beastattack-horhrmhormohimase",
+        "name": "Bite",
+        "damage": 6,
+        "desc": "for each head"
+      }
     ],
     "notes": [
       "Smells strongly of rotting flesh.",
@@ -290,9 +316,7 @@
     "str": 4,
     "dex": 6,
     "wil": 8,
-    "attacks": [
-      { "id": "beastattack-etl83t2lrns", "name": "Staff", "damage": 4, "desc": ""}
-    ],
+    "attacks": [{ "id": "beastattack-etl83t2lrns", "name": "Staff", "damage": 4, "desc": "" }],
     "notes": [
       "Carries a Grimoire with d4-1 random Spells, and d4-1 random Rituals.",
       "A dabbler in arcane forces beyond their own understanding.",

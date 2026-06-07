@@ -1,6 +1,5 @@
-import type { DieValue, DiscordEmbed, Entity, Item } from "$lib/types";
-import { formatItem, formatNpc, formatRoll, formatScene } from "./share";
-
+import type { DieValue, DiscordEmbed, Entity, Item } from '$lib/types';
+import { formatItem, formatNpc, formatRoll, formatScene } from './share';
 
 /* interface DiscordWebhookMessage {
   username?: string;
@@ -16,8 +15,8 @@ async function discordRequest(body: string, hook: string) {
     mode: 'cors',
     body,
     headers: {
-      'Content-Type': 'application/json'
-    }
+      'Content-Type': 'application/json',
+    },
   });
   return res.status === 204;
 }
@@ -27,16 +26,21 @@ async function sendEmbed(embed: DiscordEmbed, hook: string, user?: string) {
     username: user ?? 'Brighter Worlds',
     avatar_url: 'https://brighterworlds.app/apple-touch-icon.png',
     allowed_mentions: {
-      parse: []
+      parse: [],
     },
-    embeds: [
-      embed
-    ]
+    embeds: [embed],
   });
   return await discordRequest(body, hook);
 }
 
-export async function sendToDiscord(name: string, result: number, label: string, hook: string, dice: DieValue[] = [], character?: string) {
+export async function sendToDiscord(
+  name: string,
+  result: number,
+  label: string,
+  hook: string,
+  dice: DieValue[] = [],
+  character?: string,
+) {
   const roll = formatRoll(name, result, label, dice, character);
   return await sendEmbed(roll, hook, character);
 }

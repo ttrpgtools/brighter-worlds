@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { createSheetCache, getList } from "$lib/data/sheet-manager";
+  import { createSheetCache, getList } from '$lib/data/sheet-manager';
   interface Props {
     children?: import('svelte').Snippet;
   }
@@ -8,4 +8,5 @@
   getList();
   createSheetCache();
 </script>
+
 {@render children?.()}

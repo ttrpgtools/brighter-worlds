@@ -8,7 +8,7 @@
     CharacterChoice,
     DieRollSet,
     Entity,
-    HasChoices
+    HasChoices,
   } from '$lib/types';
   import { onEnter } from '$lib/util/handlers';
   import { capitalize } from '$lib/util/string';
@@ -33,10 +33,10 @@
 
   let callingData: Calling | undefined = $derived(callingList.find((x) => x.id === calling.id));
   let advancedAbilities: (Ability & HasChoices)[] = $derived(
-    (callingData?.abilities ?? []).filter((x) => x.type === 'advanced')
+    (callingData?.abilities ?? []).filter((x) => x.type === 'advanced'),
   );
   let availableAbilities: (Ability & HasChoices)[] = $derived(
-    advancedAbilities.filter((x) => !abilities.some((y) => y.id === x.id))
+    advancedAbilities.filter((x) => !abilities.some((y) => y.id === x.id)),
   );
 </script>
 
@@ -105,7 +105,7 @@
                 >{capitalize(
                   ability.type === 'enhance' || ability.type === 'companion'
                     ? (ability.details ?? '')
-                    : ability.type
+                    : ability.type,
                 )}</span
               >
               {#if ability.damage}<RollSelector

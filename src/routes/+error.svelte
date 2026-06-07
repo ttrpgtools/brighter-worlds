@@ -3,6 +3,7 @@
   import HomeLink from '$lib/HomeLink.svelte';
   import MenuLink from '$lib/MenuLink.svelte';
 </script>
+
 <HomeLink />
 <main class="p-4 sm:p-8 flex flex-col items-center gap-2">
   <h2 class="font-title text-4xl text-center">{$page.status}</h2>

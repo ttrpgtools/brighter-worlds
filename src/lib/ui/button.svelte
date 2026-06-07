@@ -15,20 +15,20 @@
         ghost: 'hover:bg-primary-100 dark:hover:bg-primary-900',
         link: 'text-primary-500 underline-offset-4 hover:underline',
         status:
-          'rounded border text-sm text-gray-700 dark:text-gray-300 shadow-sm focus:ring-purple-500 border-gray-300 bg-white dark:bg-gray-900 dark:border-gray-600'
+          'rounded border text-sm text-gray-700 dark:text-gray-300 shadow-sm focus:ring-purple-500 border-gray-300 bg-white dark:bg-gray-900 dark:border-gray-600',
       },
       size: {
         default: 'px-6 pt-2 pb-2.5',
         sm: 'px-2.5 py-1.5',
         lg: 'h-16 px-8',
         icon: 'h-10 w-10',
-        tight: 'p-1'
-      }
+        tight: 'p-1',
+      },
     },
     defaultVariants: {
       variant: 'default',
-      size: 'default'
-    }
+      size: 'default',
+    },
   });
 
   export type ButtonVariant = VariantProps<typeof buttonVariants>['variant'];

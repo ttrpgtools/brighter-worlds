@@ -17,7 +17,7 @@
     addable = false,
     class: classProp = undefined,
     onclick,
-    children
+    children,
   }: Props = $props();
 </script>
 

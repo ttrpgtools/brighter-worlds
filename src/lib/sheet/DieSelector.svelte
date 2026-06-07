@@ -17,7 +17,7 @@
     nullable = false,
     invalid = false,
     dice = [4, 6, 8, 10, 12],
-    onchange
+    onchange,
   }: Props = $props();
 
   function stringToDie(v: string) {

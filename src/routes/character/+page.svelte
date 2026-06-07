@@ -5,7 +5,7 @@
     uploadSheet,
     downloadSheet,
     getList,
-    getSheetCache
+    getSheetCache,
   } from '$lib/data/sheet-manager';
   import MenuLink from '$lib/MenuLink.svelte';
   import Card from '$lib/ui/card.svelte';

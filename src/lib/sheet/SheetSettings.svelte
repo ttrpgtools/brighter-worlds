@@ -13,7 +13,7 @@
   let { settings = $bindable(), title = 'Sheet Settings' }: Props = $props();
   let showDelete = false;
   let form = $state({
-    ...(settings ?? DEF)
+    ...(settings ?? DEF),
   });
   let valid = $derived(!form.rollToDiscord || form.discordWebhook?.startsWith(DISCORD_API_BASE));
 

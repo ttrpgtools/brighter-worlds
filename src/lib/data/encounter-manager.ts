@@ -1,9 +1,15 @@
-import { id } from "$lib/rolling/id";
-import {EMPTY, type Encounter, type NpcInstance, type NpcStats, type SheetSettings } from "$lib/types";
-import { writable, type Writable } from "svelte/store";
+import { id } from '$lib/rolling/id';
+import {
+  EMPTY,
+  type Encounter,
+  type NpcInstance,
+  type NpcStats,
+  type SheetSettings,
+} from '$lib/types';
+import { writable, type Writable } from 'svelte/store';
 import { get } from 'svelte/store';
-import { createIdbStore } from "./idb-store";
-import { getContextStore } from "./settings";
+import { createIdbStore } from './idb-store';
+import { getContextStore } from './settings';
 
 const KEY = 'bw-encounters';
 const SETTINGS_KEY = 'bw-encounters-settings';
@@ -18,7 +24,7 @@ export function getNpcInstance(stats: NpcStats) {
     wil: { current: stats.wil, max: stats.wil },
     status: '',
     armor: stats.armor ?? 0,
-    attacks: stats.attacks.map(att => ({
+    attacks: stats.attacks.map((att) => ({
       ...att,
       id: `beastattack-${id()}`,
     })),
@@ -55,13 +61,13 @@ class EncounterManager {
 
   async create(): Promise<[string, Writable<Encounter>]> {
     const fresh = getEmptyEncounter();
-    this.list.update((current) => ([...current, fresh]));
+    this.list.update((current) => [...current, fresh]);
     const enc = this.getEncounter(fresh.id, fresh);
     return [fresh.id, enc];
   }
 
   deleteEncounter(id: string) {
-    this.list.update((current) => current.filter(x => x.id !== id));
+    this.list.update((current) => current.filter((x) => x.id !== id));
   }
 
   getEncounter(id: string, fresh?: Encounter) {
@@ -74,14 +80,14 @@ class EncounterManager {
       enc.set(fresh);
     } else {
       const encounters = get(this.list);
-      const encounter = encounters.find(x => x.id === id);
+      const encounter = encounters.find((x) => x.id === id);
       if (!encounter) {
         throw 'NOT FOUND';
       }
       enc.set(encounter);
     }
     enc.subscribe(() => {
-      this.list.update(current => current); // Bounce to write.
+      this.list.update((current) => current); // Bounce to write.
     });
     this.encCache.set(id, enc);
     return enc;

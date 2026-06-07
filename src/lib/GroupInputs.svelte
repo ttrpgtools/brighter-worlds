@@ -19,7 +19,7 @@
     options,
     selected = $bindable(),
     hideUnavailable = false,
-    children
+    children,
   }: Props = $props();
   let optionMap = $derived(new Map(options.map((x) => [x.name, x])));
   let onlyDeselect = $derived(selected.length === max);

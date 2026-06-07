@@ -101,4 +101,4 @@
 
 ## Before
 
-Haven't really been keeping track, but in general, all of the sheet design and most of the basic functionality. If it can be done now and it isn't listed above, then it is safe to say it came *before*.
+Haven't really been keeping track, but in general, all of the sheet design and most of the basic functionality. If it can be done now and it isn't listed above, then it is safe to say it came _before_.

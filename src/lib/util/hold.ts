@@ -2,19 +2,19 @@ export function add<T extends keyof HTMLElementEventMap>(
   node: HTMLElement,
   evt: T,
   handler: (ev: HTMLElementEventMap[T]) => void,
-  capture?: boolean
+  capture?: boolean,
 ): () => void;
 export function add(
   node: HTMLElement,
   evt: string,
   handler: EventListenerOrEventListenerObject,
-  capture?: boolean
+  capture?: boolean,
 ): () => void;
 export function add(
   node: HTMLElement,
   evt: string,
   handler: EventListenerOrEventListenerObject,
-  capture?: boolean
+  capture?: boolean,
 ): () => void {
   node.addEventListener(evt, handler, capture);
   return () => node.removeEventListener(evt, handler, capture);
@@ -42,7 +42,7 @@ export function hold(node: HTMLElement) {
       console.log('IS CLOSE');
       setTimeout(
         () => node.dispatchEvent(new CustomEvent(time > DELAY ? 'hold' : 'tap', { detail: ev })),
-        250
+        250,
       );
     }
     //document.documentElement.addEventListener('click', nope, {capture: true, once: true});
@@ -66,7 +66,7 @@ export function hold(node: HTMLElement) {
         }
         done(close(clientX, clientY, ev.clientX, ev.clientY), Date.now() - startTime, ev);
         runAll(unsubs);
-      })
+      }),
     );
     unsubs.push(
       add(node, 'lostpointercapture', () => {
@@ -76,13 +76,13 @@ export function hold(node: HTMLElement) {
           console.log('LOST CLEARED');
         }
         runAll(unsubs);
-      })
+      }),
     );
     unsubs.push(
       add(node, 'pointermove', (ev) => {
         currX = ev.clientX;
         currY = ev.clientY;
-      })
+      }),
     );
     //timer = setTimeout(() => done(close(clientX, clientY, currX, currY)), DELAY);
   }
@@ -91,6 +91,6 @@ export function hold(node: HTMLElement) {
   return {
     destroy() {
       removeDownHandler();
-    }
+    },
   };
 }

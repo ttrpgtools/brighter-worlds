@@ -10,7 +10,7 @@ export function roll(sides: number) {
 
 export function rolls(sides: number, count = 5) {
   const roller = die(sides);
-  return Array.from(Array(count), () => roller(browserCrypto))
+  return Array.from(Array(count), () => roller(browserCrypto));
 }
 
 export function bestRoll(dice: number[]) {
@@ -25,7 +25,9 @@ function parseFactor(factor: string) {
   const [count, sides] = factor.split('d');
   if (!sides) return 0;
   console.log(`count = ${count} sides = ${sides}`);
-  const value = rolls(parseInt(sides, 10), parseInt(count || '1', 10)).reduce((p, c) => p + c, 0) * (neg ? -1 : 1);
+  const value =
+    rolls(parseInt(sides, 10), parseInt(count || '1', 10)).reduce((p, c) => p + c, 0) *
+    (neg ? -1 : 1);
   console.log(value);
   return value;
 }
@@ -40,7 +42,7 @@ function parseTerm(term: string) {
 }
 
 /**
- * 
+ *
  * @param formula A simple dice formula.
  */
 export function rollFormula(formula: string) {

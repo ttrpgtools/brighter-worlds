@@ -9,7 +9,7 @@
   let {
     value = $bindable({ current: 0, max: 0 }),
     isDeprived = false,
-    isBurdened = false
+    isBurdened = false,
   }: Props = $props();
   function rest() {
     if (!isDeprived && !isBurdened) {

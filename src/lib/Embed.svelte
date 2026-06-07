@@ -19,7 +19,7 @@
     showMeta = false,
     oncta,
     ondelete,
-    onimageclick
+    onimageclick,
   }: Props = $props();
   /*
 export interface DiscordEmbed {

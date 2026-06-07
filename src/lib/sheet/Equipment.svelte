@@ -39,7 +39,7 @@
     class: clazz = '',
     onroll,
     onselect,
-    onshare
+    onshare,
   }: Props = $props();
   const instanceId = id();
 

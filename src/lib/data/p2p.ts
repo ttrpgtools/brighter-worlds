@@ -11,7 +11,7 @@ export class Session extends EventTarget {
   private makeConn: (to: string, name: string) => void;
   constructor(public gm: boolean = false) {
     super();
-    const me = new Peer((null as unknown) as string , {debug: 3});
+    const me = new Peer(null as unknown as string, { debug: 3 });
     const ccounter = writable(0);
     const sid = writable('');
     this.count = readonly(ccounter);
@@ -26,11 +26,13 @@ export class Session extends EventTarget {
     me.on('connection', (dc) => {
       console.log('RECEIVED CONNECTION', dc.metadata);
       this.addConnection(dc, ccounter);
-      this.dispatchEvent(new CustomEvent('status', {
-        detail: `New connection from ${dc.metadata.name}`,
-      }));
+      this.dispatchEvent(
+        new CustomEvent('status', {
+          detail: `New connection from ${dc.metadata.name}`,
+        }),
+      );
     });
-    me.on('error', err => {
+    me.on('error', (err) => {
       console.error('PEER ERROR', err);
       this.dispatchEvent(new CustomEvent('error', { detail: err }));
     });
@@ -40,23 +42,25 @@ export class Session extends EventTarget {
     this.makeConn = (to: string, name: string) => {
       const dc = this.me.connect(to, {
         metadata: {
-          name
+          name,
         },
         reliable: true,
       });
       this.addConnection(dc, ccounter);
-    }
+    };
   }
 
   send(data: RemoteEmbedMessage | RemoteCtaReplyMessage) {
     console.log('SEND to', this.connections.length, 'connections');
-    this.connections.forEach(dc => {
+    this.connections.forEach((dc) => {
       console.log('SEND TO', dc);
       dc.send(data);
     });
-    this.dispatchEvent(new CustomEvent('data', {
-      detail: data
-    }));
+    this.dispatchEvent(
+      new CustomEvent('data', {
+        detail: data,
+      }),
+    );
   }
 
   connect(to: string, name: string) {
@@ -72,7 +76,7 @@ export class Session extends EventTarget {
 
   disconnect() {
     console.log('Disconnecting', this.connections.length, 'connections');
-    this.connections.forEach(dc => {
+    this.connections.forEach((dc) => {
       dc.close();
     });
   }
@@ -92,49 +96,57 @@ export class Session extends EventTarget {
       this.connections.push(dc);
       cnt?.set(this.connections.length);
       if (this.gm) {
-        this.dispatchEvent(new CustomEvent('join', {
-          detail: {
-            name: dc.metadata?.name,
-            connection: dc,
-          }
-        }))
+        this.dispatchEvent(
+          new CustomEvent('join', {
+            detail: {
+              name: dc.metadata?.name,
+              connection: dc,
+            },
+          }),
+        );
       }
     });
-    dc.on('data', data => {
+    dc.on('data', (data) => {
       console.log('DATA', data);
-      this.dispatchEvent(new CustomEvent('data', {
-        detail: {
-          name: this.gm ? dc.metadata?.name : 'GM',
-          data
-        }
-      }));
+      this.dispatchEvent(
+        new CustomEvent('data', {
+          detail: {
+            name: this.gm ? dc.metadata?.name : 'GM',
+            data,
+          },
+        }),
+      );
     });
-    dc.on('error', err => {
+    dc.on('error', (err) => {
       console.error('CONNECTION ERROR', err);
-      this.connections = this.connections.filter(x => x.connectionId !== dc.connectionId);
+      this.connections = this.connections.filter((x) => x.connectionId !== dc.connectionId);
       cnt?.set(this.connections.length);
       if (this.gm) {
-        this.dispatchEvent(new CustomEvent('leave', {
-          detail: {
-            name: dc.metadata?.name,
-            error: true,
-          }
-        }))
+        this.dispatchEvent(
+          new CustomEvent('leave', {
+            detail: {
+              name: dc.metadata?.name,
+              error: true,
+            },
+          }),
+        );
       }
     });
     dc.on('close', () => {
       console.log('CONNECTION CLOSED', dc.metadata);
-      this.connections = this.connections.filter(x => x.connectionId !== dc.connectionId);
+      this.connections = this.connections.filter((x) => x.connectionId !== dc.connectionId);
       cnt?.set(this.connections.length);
       if (this.gm) {
-        this.dispatchEvent(new CustomEvent('leave', {
-          detail: {
-            name: dc.metadata?.name,
-            error: false,
-          }
-        }))
+        this.dispatchEvent(
+          new CustomEvent('leave', {
+            detail: {
+              name: dc.metadata?.name,
+              error: false,
+            },
+          }),
+        );
       }
-    })
+    });
   }
 }
 
@@ -146,7 +158,7 @@ export function joinSession(id: string, name: string) {
   const session = new Session();
   //setTimeout(() => {
   //  console.log('DONE WAITING');
-    session.connect(id, name);
+  session.connect(id, name);
   //}, 2000);
   return session;
 }

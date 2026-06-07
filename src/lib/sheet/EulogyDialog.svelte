@@ -23,14 +23,14 @@
       const item = eulogy.find((x) => x.id === id);
       if (item != null) {
         return {
-          ...item
+          ...item,
         } as EulogyStanza;
       }
     }
     return {
       message: '',
       xp: true,
-      spent: false
+      spent: false,
     } as StanzaForm;
   }
 
@@ -44,7 +44,7 @@
     if (item != null) {
       const proper: EulogyStanza = {
         ...item,
-        id: item.id || id()
+        id: item.id || id(),
       };
       return proper;
     }

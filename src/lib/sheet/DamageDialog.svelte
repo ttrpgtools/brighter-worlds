@@ -10,7 +10,7 @@
     bypassGrit: false,
     bypassArmor: false,
     overflow: true,
-    type: 'str'
+    type: 'str',
   });
   let saveType = $state('');
 

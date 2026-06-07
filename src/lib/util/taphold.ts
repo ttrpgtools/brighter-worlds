@@ -36,6 +36,6 @@ export function taphold(node: HTMLElement, interval = 500) {
     destroy() {
       node.removeEventListener('mousedown', tapAndHold);
       node.removeEventListener('touchstart', tapAndHold);
-    }
+    },
   };
 }

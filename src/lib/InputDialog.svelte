@@ -31,7 +31,7 @@
     okBtnAction = () => close(form),
     valid = true,
     ondelete,
-    children
+    children,
   }: Props = $props();
   let comp: DialogBase<T> | undefined = $state();
 

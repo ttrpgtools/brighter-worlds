@@ -8,15 +8,24 @@
       { "name": "Big", "desc": "Step up STR and Attack." },
       { "name": "Fast", "desc": "Step up DEX and gain +2 Grit" },
       { "name": "Clever", "desc": "Step up WIL, it can communicate with anyone flawlessly." },
-      { "name": "Vicious", "desc": "Step up Attack, and gain an extra effect (e.g. poison, armor piercing, blast, etc.)." },
+      {
+        "name": "Vicious",
+        "desc": "Step up Attack, and gain an extra effect (e.g. poison, armor piercing, blast, etc.)."
+      },
       { "name": "Flying", "desc": "Through wings or other means." },
       { "name": "Tiny", "desc": "+2 Grit, can be easily concealed." },
       { "name": "Invertebrate", "desc": "No bones! +2 Grit and can fit into nearly any space." },
       { "name": "Durable", "desc": "+1 Armor (scales, plates, evasion, exoskeleton, etc.)." },
       { "name": "Marsupial", "desc": "Has a pouch which can carry a single bulky item." },
-      { "name": "Perceptive", "desc": "Has some enhanced sense (smelling, hearing, echolocation, electroception, dowsing, night vision, etc.)" },
+      {
+        "name": "Perceptive",
+        "desc": "Has some enhanced sense (smelling, hearing, echolocation, electroception, dowsing, night vision, etc.)"
+      },
       { "name": "Tricky", "desc": "+2 Grit and a special skill." },
-      { "name": "Special", "desc": "Some other unique thing (good at digging, chromatophores, is a swarm, etc.)" }
+      {
+        "name": "Special",
+        "desc": "Some other unique thing (good at digging, chromatophores, is a swarm, etc.)"
+      }
     ]
   },
   {
@@ -26,7 +35,10 @@
     "type": "improvement",
     "options": [
       { "name": "Deadly", "desc": "Step up damage die." },
-      { "name": "Heavy", "desc": "Step up damage die, add bulky. Effective at damaging structures." },
+      {
+        "name": "Heavy",
+        "desc": "Step up damage die, add bulky. Effective at damaging structures."
+      },
       { "name": "Capsule", "desc": "Delivers a liquid on Direct Damage" },
       { "name": "Ranged", "desc": "Attacks at a distance." },
       { "name": "Ethereal", "desc": "Deals Direct Damage to WIL, injures non-physical targets." },
@@ -39,7 +51,10 @@
       { "name": "Transforming", "desc": "Swaps between types." },
       { "name": "Concealed", "desc": "Collapses or hides." },
       { "name": "Sentient", "desc": "Has a mind of its own." },
-      { "name": "Detecting", "desc": "Sense a specific thing, or grant a specific type of perception." },
+      {
+        "name": "Detecting",
+        "desc": "Sense a specific thing, or grant a specific type of perception."
+      },
       { "name": "Special", "desc": "A unique quality or ability." }
     ]
   },
@@ -49,13 +64,30 @@
     "desc": "Choose the blessing your Patron grants you.",
     "type": "blessing",
     "options": [
-      { "name": "Fluid Form", "desc": "Freely transform into water and back into your normal state." },
-      { "name": "Font of Self", "desc": "You can produce water at will, the same volume you can control per hour." },
-      { "name": "Water Sight", "desc": "Once per day when you immerse yourself in a body of water you may ask your Patron one question about something that water touches." },
-      { "name": "Thermo Regulation", "desc": "Freely change the state of water within your control (between gas, liquid, and solid). If used offensively, step up the damage your One With the Water deals." },
-      { "name": "Tip Of The Iceberg", "desc": "Your volume of water you can control expands 10 fold." },
-      { "name": "Healing Waters", "desc": "Your water instantly stabilizes wounds and cleanses poisons. Six hours of contact fully restores a single Attribute." }
-      
+      {
+        "name": "Fluid Form",
+        "desc": "Freely transform into water and back into your normal state."
+      },
+      {
+        "name": "Font of Self",
+        "desc": "You can produce water at will, the same volume you can control per hour."
+      },
+      {
+        "name": "Water Sight",
+        "desc": "Once per day when you immerse yourself in a body of water you may ask your Patron one question about something that water touches."
+      },
+      {
+        "name": "Thermo Regulation",
+        "desc": "Freely change the state of water within your control (between gas, liquid, and solid). If used offensively, step up the damage your One With the Water deals."
+      },
+      {
+        "name": "Tip Of The Iceberg",
+        "desc": "Your volume of water you can control expands 10 fold."
+      },
+      {
+        "name": "Healing Waters",
+        "desc": "Your water instantly stabilizes wounds and cleanses poisons. Six hours of contact fully restores a single Attribute."
+      }
     ]
   },
   {
@@ -66,10 +98,22 @@
     "options": [
       { "name": "Honesty", "desc": "You may not tell a lie, or engage in dishonest tactics." },
       { "name": "Poverty", "desc": "You may not own money, gold, or gems." },
-      { "name": "Mercy", "desc": "You must accept offers of surrender, and you must honor good faith requests for assistance." },
-      { "name": "Stability", "desc": "You must complete any task, journey, or quest you undertake." },
-      { "name": "Nonviolence", "desc": "You may never initiate violence unless it is in defense of yourself or another." },
-      { "name": "Observance", "desc": "You must complete a ritual or task (something inconvenient) in each location you visit." }
+      {
+        "name": "Mercy",
+        "desc": "You must accept offers of surrender, and you must honor good faith requests for assistance."
+      },
+      {
+        "name": "Stability",
+        "desc": "You must complete any task, journey, or quest you undertake."
+      },
+      {
+        "name": "Nonviolence",
+        "desc": "You may never initiate violence unless it is in defense of yourself or another."
+      },
+      {
+        "name": "Observance",
+        "desc": "You must complete a ritual or task (something inconvenient) in each location you visit."
+      }
     ]
   },
   {
@@ -79,11 +123,26 @@
     "type": "boon",
     "options": [
       { "name": "By Will Sustained", "desc": "You do not need to eat, drink, breathe, or sleep." },
-      { "name": "Unsullied Truth", "desc": "You always know if someone is lying, or if something is hidden by illusion or glamour in your presence." },
-      { "name": "Can’t Stop Won’t Stop", "desc": "Direct Damage you suffer never overflows your current die. After you take a Wound restore your Grit to Max." },
-      { "name": "Weapon of Faith", "desc": "Choose an improvement from the Artificer’s Improvement list (Pg 27). Weapons you hold gain that Improvement." },
-      { "name": "Healing Touch", "desc": "Stabilize a wound immediately. With a night’s focus completely restore an Attribute to Max." },
-      { "name": "Minor Miracle", "desc": "You have the ability to perform a minor miracle related to your devotion." }
+      {
+        "name": "Unsullied Truth",
+        "desc": "You always know if someone is lying, or if something is hidden by illusion or glamour in your presence."
+      },
+      {
+        "name": "Can’t Stop Won’t Stop",
+        "desc": "Direct Damage you suffer never overflows your current die. After you take a Wound restore your Grit to Max."
+      },
+      {
+        "name": "Weapon of Faith",
+        "desc": "Choose an improvement from the Artificer’s Improvement list (Pg 27). Weapons you hold gain that Improvement."
+      },
+      {
+        "name": "Healing Touch",
+        "desc": "Stabilize a wound immediately. With a night’s focus completely restore an Attribute to Max."
+      },
+      {
+        "name": "Minor Miracle",
+        "desc": "You have the ability to perform a minor miracle related to your devotion."
+      }
     ]
   },
   {

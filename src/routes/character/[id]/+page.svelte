@@ -22,7 +22,7 @@
     broadcastItem,
     broadcastMagic,
     broadcastRoll,
-    broadcastScene
+    broadcastScene,
   } from '$lib/data/channel-child';
   import type { PageData } from './$types';
   import Button from '$lib/ui/button.svelte';
@@ -48,7 +48,7 @@
   const FAILED_CAST_FAIL = 2;
   const failedCast = [
     { value: FAILED_CAST_FAIL, label: `Spell Fails` },
-    { value: FAILED_CAST_UNC, label: `Fall Unconscious` }
+    { value: FAILED_CAST_UNC, label: `Fall Unconscious` },
   ];
   let failedRoll = $state(0);
 
@@ -62,7 +62,7 @@
   const character = loadSheet(
     untrack(() => data.id),
     list,
-    cache
+    cache,
   );
   tryMigrate(loadStatus, cache).then(() => loadStatus.set(''));
 
@@ -73,8 +73,8 @@
       registerForRollCall((here) =>
         $character.name
           ? here($character.id, $character.name)
-          : setTimeout(() => here($character.id, $character.name), 200)
-      )
+          : setTimeout(() => here($character.id, $character.name), 200),
+      ),
     );
     return () => {
       unsubs.forEach((x) => x());
@@ -99,7 +99,7 @@
         label,
         $character.settings.discordWebhook,
         sides,
-        $character.name
+        $character.name,
       );
     }
   }
@@ -108,7 +108,7 @@
     sides: DieValue[],
     label: string = '',
     rollValue?: number,
-    titleClass = ''
+    titleClass = '',
   ) {
     if (rollValue == null && sides.length === 0) return;
     const best = rollValue ?? bestRoll(sides);
@@ -144,7 +144,7 @@
       await dice?.show(
         'Non Functional',
         [],
-        `Your status indicates you may not be 'casting capable' at the moment`
+        `Your status indicates you may not be 'casting capable' at the moment`,
       );
       return;
     }
@@ -175,7 +175,7 @@
             [$character.wil.current],
             `WIL Save Failed. You've lost all will and have become catatonic`,
             wilSave,
-            'text-rose-500'
+            'text-rose-500',
           );
         } else {
           failedRoll = wilSave;
@@ -210,8 +210,8 @@
       dice: {
         str: $character.str.current,
         dex: $character.dex.current,
-        wil: $character.wil.current
-      }
+        wil: $character.wil.current,
+      },
     };
 
     const results = await damageDialog?.getDamage(chinfo);
@@ -234,7 +234,7 @@
         `${type.toUpperCase()} save against ${results.dd ?? '?'} direct damage.`,
         $character.settings.discordWebhook,
         results.dice,
-        $character.name
+        $character.name,
       );
     }
     if ($character.settings?.rollToBridge !== false && results.save) {
@@ -243,7 +243,7 @@
         results.save,
         `${type.toUpperCase()} save against ${results.dd ?? '?'} direct damage.`,
         results.dice,
-        $character.name
+        $character.name,
       );
     }
     console.log(`Take Damage Result Dice`, results.dice);

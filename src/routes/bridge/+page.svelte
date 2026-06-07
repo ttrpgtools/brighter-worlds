@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { onMount } from "svelte";
-  import type { RemoteMessage } from "$lib/types";
-  import { broadcast } from "$lib/data/channel-child";
+  import { onMount } from 'svelte';
+  import type { RemoteMessage } from '$lib/types';
+  import { broadcast } from '$lib/data/channel-child';
 
   let port2: MessagePort | undefined;
 
@@ -10,7 +10,7 @@
     window.addEventListener('message', initPort);
     const unlisten = broadcast.subscribe(broadcastHandle);
     if (window.parent && window.parent !== window) {
-      window.parent.postMessage({type: 'init'}, '*');
+      window.parent.postMessage({ type: 'init' }, '*');
     }
 
     return () => {

@@ -1,9 +1,9 @@
-import type { PageLoad } from "./$types";
+import type { PageLoad } from './$types';
 
-export const load: PageLoad = async function() {
+export const load: PageLoad = async function () {
   return {
-    layout: { showFooter: false, showMenu: false }
+    layout: { showFooter: false, showMenu: false },
   };
-}
+};
 
 export const ssr = false;

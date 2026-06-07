@@ -18,7 +18,7 @@
     textValue = $bindable(''),
     placeholder = '',
     onselect,
-    children: childrenProp
+    children: childrenProp,
   }: Props = $props();
 
   let selectedName = $state('');
@@ -32,8 +32,8 @@
       opt.name
         .toLowerCase()
         .replace(/\s+/g, '')
-        .includes(textValue.toLowerCase().replace(/\s+/g, ''))
-    )
+        .includes(textValue.toLowerCase().replace(/\s+/g, '')),
+    ),
   );
 
   function selectName(name: string) {

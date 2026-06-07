@@ -20,7 +20,7 @@
         onclick={handleClick}
         class={[
           'inline-flex items-center rounded-full border border-transparent bg-rose-300 dark:bg-rose-700 px-2.5 pt-2 pb-2.5 font-medium shadow-sm hover:bg-rose-200 dark:hover:bg-rose-800 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-900',
-          confirming && `text-white bg-rose-500 hover:bg-rose-500 active:bg-rose-500`
+          confirming && `text-white bg-rose-500 hover:bg-rose-500 active:bg-rose-500`,
         ]}
       >
         {#if subChild}{@render subChild()}{:else}Confirm{/if}

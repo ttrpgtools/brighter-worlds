@@ -6,7 +6,7 @@
   onMount(() => {
     Split(['#mappanel', '#logpanel', '#sheetpanel'], {
       sizes: [50, 25, 25],
-      gutterSize: 8
+      gutterSize: 8,
     });
     window.addEventListener('message', handleMessage);
   });

@@ -9,5 +9,5 @@ export function distinctUntilChanged<T>(handler: (x: T) => void, select?: (x: T)
       last = curr;
       handler(x);
     }
-  }
+  };
 }

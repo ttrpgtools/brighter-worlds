@@ -3,7 +3,7 @@
     dndzone,
     type DndEvent,
     SHADOW_ITEM_MARKER_PROPERTY_NAME,
-    type TransformDraggedElementFunction
+    type TransformDraggedElementFunction,
   } from 'svelte-dnd-action';
   import { flip } from 'svelte/animate';
   import type { Identifiable } from './types';
@@ -25,7 +25,7 @@
     transformDraggedElement = () => {},
     class: listClass = '',
     shadow,
-    children
+    children,
   }: Props = $props();
 
   let listInternal: T[] = $state(list);
@@ -54,7 +54,7 @@
     flipDurationMs,
     dragDisabled: !draggable,
     dropTargetStyle: {},
-    transformDraggedElement
+    transformDraggedElement,
   }}
   onconsider={handleSort}
   onfinalize={finalize}

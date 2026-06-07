@@ -1,8 +1,8 @@
 <script lang="ts">
-import type { Character } from "$lib/types";
-	interface Props {
-		character: Character;
-	}
+  import type { Character } from '$lib/types';
+  interface Props {
+    character: Character;
+  }
 
-	let { character }: Props = $props();
+  let { character }: Props = $props();
 </script>

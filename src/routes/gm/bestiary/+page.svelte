@@ -29,7 +29,7 @@
       wil: 4,
       grit: 3,
       armor: 0,
-      attacks: []
+      attacks: [],
     });
   }
 

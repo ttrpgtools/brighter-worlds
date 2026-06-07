@@ -19,7 +19,7 @@
     msg = '',
     titleClass = '',
     msgClass = '',
-    choices
+    choices,
   }: Props = $props();
   let comp: DialogBase<T> | undefined = $state();
   export async function open() {

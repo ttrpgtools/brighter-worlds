@@ -2,11 +2,14 @@ import { defined } from '$lib/util/array';
 import { writable, type Updater, type Writable } from 'svelte/store';
 
 export function getter<T>(key: string, reviver?: (key: string, value: unknown) => any): T | null {
-  const strout = window.localStorage.getItem(key) || "null";
+  const strout = window.localStorage.getItem(key) || 'null';
   return JSON.parse(strout, reviver) as T;
 }
 
-export function getAll<T>(keyFilter: (key: string) => boolean, reviver?: (key: string, value: unknown) => any) : T[] {
+export function getAll<T>(
+  keyFilter: (key: string) => boolean,
+  reviver?: (key: string, value: unknown) => any,
+): T[] {
   if (typeof window === 'undefined') return [];
   const count = window.localStorage.length;
   const keys: string[] = [];
@@ -16,10 +19,14 @@ export function getAll<T>(keyFilter: (key: string) => boolean, reviver?: (key: s
       keys.push(key);
     }
   }
-  return keys.map(k => getter<T>(k, reviver)).filter(defined);
+  return keys.map((k) => getter<T>(k, reviver)).filter(defined);
 }
 
-export function setter<T>(key: string, value: T | null, replacer?: (key: string, value: unknown) => any) {
+export function setter<T>(
+  key: string,
+  value: T | null,
+  replacer?: (key: string, value: unknown) => any,
+) {
   if (value === undefined) {
     value = null;
   }
@@ -31,7 +38,7 @@ export function setter<T>(key: string, value: T | null, replacer?: (key: string,
 export function factory<T>(key: string, defaultValue: T) {
   const startingValue = getter<T>(key) || defaultValue;
   const wstore = writable<T>(startingValue);
-  wstore.subscribe(value => {
+  wstore.subscribe((value) => {
     setter(key, value);
   });
   return wstore;
@@ -43,8 +50,8 @@ export interface LazyWritable<T> extends Writable<T> {
 }
 
 export interface FactoryOpts {
-  reviver?: (key: string, value: unknown) => any,
-  replacer?: (key: string, value: unknown) => any,
+  reviver?: (key: string, value: unknown) => any;
+  replacer?: (key: string, value: unknown) => any;
 }
 
 /**
@@ -87,7 +94,7 @@ export function lazyFactory<T>(key: string, initialValue?: T, opts?: FactoryOpts
       return result;
     });
   }
-  
+
   return {
     ...internal,
     set,
@@ -96,7 +103,7 @@ export function lazyFactory<T>(key: string, initialValue?: T, opts?: FactoryOpts
     get init() {
       return init;
     },
-  }
+  };
 }
 
 /**
