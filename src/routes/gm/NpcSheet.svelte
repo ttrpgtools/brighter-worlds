@@ -30,7 +30,7 @@
   short
   imgalt={`Photo of ${npc.name}`}
   imgsrc={src}
-  imgclass="lg:rounded-bl-lg max-h-[9rem] self-end"
+  imgclass="lg:rounded-bl-lg max-h-36 self-end"
 >
   {#snippet header()}
     <div class="relative w-full flex items-center">
@@ -144,7 +144,7 @@
                   title="Clear status"
                   aria-label="Clear status"
                   onclick={() => (npc.status = '')}
-                  class="rounded-md bg-purple-900 p-0.5 text-white shadow-sm hover:bg-purple-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-600"
+                  class="rounded-md bg-purple-900 p-0.5 text-white shadow-sm hover:bg-purple-700 focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-purple-600"
                 >
                   <svg
                     class="h-5 w-5 rotate-45"

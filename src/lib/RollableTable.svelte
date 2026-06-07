@@ -136,7 +136,7 @@
         ><h3 class="text-xl font-subtitle leading-6">{title}</h3></button
       >
     </div>
-    <div class="flex-shrink-0">
+    <div class="shrink-0">
       <div class="flex gap-4 items-center">
         <button
           type="button"

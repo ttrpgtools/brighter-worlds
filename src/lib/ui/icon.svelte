@@ -11,7 +11,7 @@
 </script>
 
 {#if icon}
-  <svg preserveAspectRatio="xMidYMid meet" class={cn(`m-0 !mt-0 inline-block size-4`, className)}
+  <svg preserveAspectRatio="xMidYMid meet" class={cn(`m-0 mt-0! inline-block size-4`, className)}
     ><use xlink:href={href} {href} /></svg
   >
 {/if}

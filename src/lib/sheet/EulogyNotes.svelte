@@ -20,7 +20,7 @@
 </script>
 
 <EulogyDialog bind:eulogy bind:this={dialog} />
-<Tabs.Root value="epitaph" class="md:h-[25rem] lg:order-2">
+<Tabs.Root value="epitaph" class="md:h-100 lg:order-2">
   <Card class="md:h-full" headerPadding={false}>
     {#snippet header()}
       <Tabs.List class="flex items-center w-full">

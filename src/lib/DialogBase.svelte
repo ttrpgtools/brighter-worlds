@@ -72,7 +72,7 @@
     {#if expanded}
       <Dialog.Overlay>
         {#snippet child({ props })}
-          <div {...props} class="fixed inset-0 bg-purple-500 bg-opacity-20" transition:blur></div>
+          <div {...props} class="fixed inset-0 bg-purple-500/20" transition:blur></div>
         {/snippet}
       </Dialog.Overlay>
 

@@ -33,7 +33,7 @@
 </div>
 <div class="rounded-md bg-yellow-100 dark:bg-amber-800 p-4 mb-6 max-w-prose">
   <div class="flex">
-    <div class="flex-shrink-0">
+    <div class="shrink-0">
       <svg
         class="h-5 w-5 text-yellow-400"
         xmlns="http://www.w3.org/2000/svg"

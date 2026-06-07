@@ -45,13 +45,13 @@
           <DropdownMenu.Content
             sideOffset={8}
             align="end"
-            class="z-50 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white dark:bg-black shadow-xl dark:shadow-purple-400/20 ring-1 ring-purple-500 ring-opacity-5 focus:outline-none"
+            class="z-50 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white dark:bg-black shadow-xl dark:shadow-purple-400/20 ring-1 ring-purple-500/5 focus:outline-none"
           >
             <div class="px-1 py-1">
               <DropdownMenu.Item
                 onSelect={toggleMode}
                 textValue="Switch color mode"
-                class="group flex gap-2 rounded-md items-center w-full px-2 py-2 text-sm text-gray-900 dark:text-white data-[highlighted]:bg-purple-500 data-[highlighted]:text-white"
+                class="group flex gap-2 rounded-md items-center w-full px-2 py-2 text-sm text-gray-900 dark:text-white data-highlighted:bg-purple-500 data-highlighted:text-white"
               >
                 <Icon icon={darkMode ? `sun` : `moon`} />
                 Switch to {darkMode ? `light` : `dark`} mode
@@ -59,7 +59,7 @@
               <DropdownMenu.Item
                 onSelect={toggleDesktop}
                 textValue="Switch desktop mode"
-                class="group flex gap-2 rounded-md items-center w-full px-2 py-2 text-sm text-gray-900 dark:text-white data-[highlighted]:bg-purple-500 data-[highlighted]:text-white"
+                class="group flex gap-2 rounded-md items-center w-full px-2 py-2 text-sm text-gray-900 dark:text-white data-highlighted:bg-purple-500 data-highlighted:text-white"
               >
                 <Icon icon={$settings.desktopMode ? `mobile` : `desktop`} />
                 Switch to {$settings.desktopMode ? `mobile` : `desktop`} mode

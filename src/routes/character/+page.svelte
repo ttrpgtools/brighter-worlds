@@ -59,10 +59,10 @@
 <main class="p-8 flex flex-col items-center gap-2">
   <h2 class="font-title text-4xl text-center">Choose Your Adventurer</h2>
   <div class="font-symbol text-6xl">A</div>
-  <div class="flex justify-center flex-wrap gap-4 mb-6 w-full max-w-screen-2xl">
+  <div class="flex justify-center flex-wrap gap-4 mb-6 w-full max-w-(--breakpoint-2xl)">
     {#if $list && $list.length}
       {#each $list as sheet (sheet.id)}
-        <Card class="w-full sm:w-1/3 min-w-[22rem]">
+        <Card class="w-full sm:w-1/3 min-w-88">
           <div class="flex flex-col gap-4">
             <div class="flex justify-center text-4xl font-title">
               {sheet.name || '?'}

@@ -68,7 +68,7 @@
         -->
 
     <Select.Content
-      class="max-h-64 min-w-16 overflow-auto rounded-md bg-white dark:bg-gray-900 py-1 text-base shadow-lg dark:shadow-purple-400/20 ring-1 ring-black dark:ring-gray-300 ring-opacity-5 focus:outline-none sm:text-sm"
+      class="max-h-64 min-w-16 overflow-auto rounded-md bg-white dark:bg-gray-900 py-1 text-base shadow-lg dark:shadow-purple-400/20 ring-1 ring-black/5 dark:ring-gray-300/5 focus:outline-none sm:text-sm"
     >
       {#if nullable}
         <Select.Item value="0">

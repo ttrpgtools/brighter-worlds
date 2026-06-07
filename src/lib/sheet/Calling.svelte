@@ -49,7 +49,7 @@
     {enhancements}
   />
 {/if}
-<Card class="md:h-[25rem]">
+<Card class="md:h-100">
   {#snippet header()}
     <div class="flex items-center gap-2 w-full">
       <h3 class="text-xl font-subtitle leading-6">{calling.name}</h3>

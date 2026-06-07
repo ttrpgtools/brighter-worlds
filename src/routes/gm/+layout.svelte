@@ -61,7 +61,7 @@
   }
 </script>
 
-<main class="flex flex-col min-h-[100svh] lg:h-[100svh]">
+<main class="flex flex-col min-h-svh lg:h-svh">
   <header class="shrink-0 bg-gray-300 dark:bg-gray-900">
     <div class="mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
       <h1 class="font-title text-3xl flex-1 flex gap-4 items-center">
@@ -79,7 +79,7 @@
   <!-- 3 column wrapper -->
   <div class="mx-auto w-full grow lg:flex xl:px-2 lg:h-[calc(100svh-4rem)]">
     <div
-      class="shrink-0 flex flex-col border-b border-gray-200 dark:border-gray-600 px-4 py-6 sm:px-6 lg:w-[26rem] lg:border-r lg:border-b-0 lg:pr-8 xl:pr-6 lg:h-full"
+      class="shrink-0 flex flex-col border-b border-gray-200 dark:border-gray-600 px-4 py-6 sm:px-6 lg:w-104 lg:border-r lg:border-b-0 lg:pr-8 xl:pr-6 lg:h-full"
     >
       <!-- Left column area -->
       <div class="flex flex-row gap-1 border-b border-purple-700 dark:border-purple-300">

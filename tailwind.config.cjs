@@ -1,8 +1,6 @@
 const { purple } = require('tailwindcss/colors');
 
 const config = {
-  content: ['./src/**/*.{html,js,svelte,ts}'],
-  darkMode: 'class',
   theme: {
     extend: {
       fontFamily: {
@@ -22,7 +20,7 @@ const config = {
     },
   },
 
-  plugins: [require('@tailwindcss/forms'), require('@tailwindcss/typography')],
+  plugins: [],
 };
 
 module.exports = config;

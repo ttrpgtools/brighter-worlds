@@ -83,13 +83,13 @@
         </svg>
       </Combobox.Trigger>
       <Combobox.Content
-        class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white dark:bg-gray-900 py-1 text-base shadow-lg dark:shadow-purple-400/20 ring-1 ring-black dark:ring-gray-500 ring-opacity-5 focus:outline-none sm:text-sm"
+        class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white dark:bg-gray-900 py-1 text-base shadow-lg dark:shadow-purple-400/20 ring-1 ring-black/5 dark:ring-gray-500/5 focus:outline-none sm:text-sm"
       >
         {#each filtered as value}
           <Combobox.Item
             value={value.name}
             label={value.name}
-            class="relative cursor-default select-none py-2 px-3 text-gray-900 dark:text-white data-[highlighted]:bg-purple-700 data-[highlighted]:text-white dark:data-[highlighted]:bg-purple-300 dark:data-[highlighted]:text-gray-900"
+            class="relative cursor-default select-none py-2 px-3 text-gray-900 dark:text-white data-highlighted:bg-purple-700 data-highlighted:text-white dark:data-highlighted:bg-purple-300 dark:data-highlighted:text-gray-900"
           >
             {#snippet children({ selected, highlighted })}
               <div class="flex gap-2">

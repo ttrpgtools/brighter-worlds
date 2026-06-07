@@ -6,7 +6,7 @@
 <svelte:head>
   <title>Brighter Worlds Online</title>
 </svelte:head>
-<main class="p-8 flex flex-col items-center justify-center gap-2 min-h-screen min-h-[100svh]">
+<main class="p-8 flex flex-col items-center justify-center gap-2 min-h-svh">
   <h2 class="font-title text-4xl text-center">Welcome to</h2>
   <h1 class="font-title text-6xl text-center">
     <a href="https://brighterworldsrpg.com" class="text-purple-700 dark:text-purple-300"

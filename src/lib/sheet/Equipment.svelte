@@ -72,7 +72,7 @@
   }
   let draggable = $state(false);
   function transformDraggedElement(el?: HTMLElement) {
-    el?.classList.add('!border-transparent');
+    el?.classList.add('border-transparent!');
   }
   async function setBaseArmor() {
     if (baseArmor == null) return;
@@ -104,13 +104,13 @@
     <div class="">
       <h3 class="text-xl font-subtitle leading-6">{title}</h3>
     </div>
-    <div class="flex-shrink-0">
+    <div class="shrink-0">
       <div class="flex gap-4 items-center">
         {#if equipment.length > 1 || selectable}
           <Button
             size="icon"
             icon="edit-order"
-            class={draggable ? `p-1 !bg-emerald-300 dark:!bg-emerald-700` : `p-1`}
+            class={draggable ? `p-1 bg-emerald-300! dark:bg-emerald-700!` : `p-1`}
             onclick={() => (draggable = !draggable)}
           />
         {/if}
@@ -144,13 +144,11 @@
           {draggable}
           bind:list={equipment}
           class="{flat ? `-mt-5` : `-my-5`} divide-y divide-gray-200 dark:divide-gray-600"
-          itemClass="py-3 relative !visible group"
+          itemClass="py-3 relative visible! group"
           {transformDraggedElement}
         >
           {#snippet children({ item })}
-            <div
-              class="flex items-center gap-4 group-data-[is-dnd-shadow-item]:invisible group/item"
-            >
+            <div class="flex items-center gap-4 group-data-is-dnd-shadow-item:invisible group/item">
               <div class="min-w-0 flex-1 flex gap-2 items-center relative">
                 {#if draggable}<Icon icon="grip-v" />{/if}
                 <button
@@ -175,7 +173,7 @@
                       iconClass="size-4"
                       onclick={() => addQuantity(item, 1)}
                     />
-                    <span class="inline-block min-w-[2rem] text-center">{item.quantity}</span>
+                    <span class="inline-block min-w-8 text-center">{item.quantity}</span>
                     <Button
                       size="tight"
                       icon="down"
@@ -211,7 +209,7 @@
             </div>
             {#if item.desc}<p
                 use:toggleHeight
-                class="text-sm group-data-[is-dnd-shadow-item]:invisible text-gray-600 dark:text-gray-400"
+                class="text-sm group-data-is-dnd-shadow-item:invisible text-gray-600 dark:text-gray-400"
               >
                 {item.desc}
               </p>{/if}

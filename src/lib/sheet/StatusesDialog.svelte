@@ -52,7 +52,7 @@
       name="status"
       placeholder="Custom status"
       bind:value={form.status}
-      class="rounded-full dark:bg-gray-900 dark:text-white focus:ring-purple-500 focus:border-purple-500 flex-grow"
+      class="rounded-full dark:bg-gray-900 dark:text-white focus:ring-purple-500 focus:border-purple-500 grow"
     />
     <div class="grid grid-cols-2 gap-3">
       {#each statusList as stat}

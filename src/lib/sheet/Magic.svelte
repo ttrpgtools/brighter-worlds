@@ -44,23 +44,23 @@
   }
   let draggable = $state(false);
   function transformDraggedElement(el?: HTMLElement) {
-    el?.classList.add('!border-transparent');
+    el?.classList.add('border-transparent!');
   }
 </script>
 
 <MagicDialog bind:magicList {type} bind:this={dialog} />
-<Card class="md:h-[25rem] lg:order-2">
+<Card class="md:h-100 lg:order-2">
   {#snippet header()}
     <div class="">
       <h3 class="text-xl font-subtitle leading-6">{title}</h3>
     </div>
-    <div class="flex-shrink-0">
+    <div class="shrink-0">
       <div class="flex gap-4 items-center">
         {#if magicList.length > 1}
           <Button
             size="icon"
             icon="edit-order"
-            class={draggable ? `p-1 !bg-emerald-300 dark:!bg-emerald-700` : `p-1`}
+            class={draggable ? `p-1 bg-emerald-300! dark:bg-emerald-700!` : `p-1`}
             onclick={() => (draggable = !draggable)}
           />
         {/if}
@@ -75,12 +75,12 @@
         {draggable}
         bind:list={magicList}
         class="-my-5 divide-y divide-gray-200 dark:divide-gray-600"
-        itemClass="py-3 relative !visible group"
+        itemClass="py-3 relative visible! group"
         {transformDraggedElement}
       >
         {#snippet children({ item: arcana })}
           <div
-            class="flex items-center gap-4 h-6 group/item group-data-[is-dnd-shadow-item]:invisible"
+            class="flex items-center gap-4 h-6 group/item group-data-is-dnd-shadow-item:invisible"
           >
             <div class="min-w-0 flex-1 flex gap-4 relative items-center">
               {#if draggable}<Icon icon="grip-v" />{/if}
@@ -121,7 +121,7 @@
           </div>
           {#if arcana.desc}<p
               use:toggleHeight
-              class="text-sm group-data-[is-dnd-shadow-item]:invisible text-gray-600 dark:text-gray-400"
+              class="text-sm group-data-is-dnd-shadow-item:invisible text-gray-600 dark:text-gray-400"
             >
               {arcana.desc}
             </p>{/if}

@@ -130,7 +130,7 @@
 </script>
 
 <DiceDialog bind:this={die} />
-<div class="px-4 py-6 sm:px-6 flex flex-col gap-4 overflow-y-auto h-[100dvh]">
+<div class="px-4 py-6 sm:px-6 flex flex-col gap-4 overflow-y-auto h-dvh">
   <div class=" flex flex-row justify-between items-center">
     <h3 class="text-2xl font-bold">Narrator</h3>
     <div class="flex gap-2 items-center">
@@ -164,7 +164,7 @@
         >
       {/if}
     </div>
-    <div class=" min-w-[2rem]">
+    <div class=" min-w-8">
       {#if $log?.list?.length}
         <DeleteButton
           size="w-4 h-4"

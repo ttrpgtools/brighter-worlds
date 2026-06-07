@@ -85,7 +85,7 @@
       name="message"
       placeholder="Message"
       bind:value={form.message}
-      class="rounded-full dark:bg-gray-900 dark:text-white focus:ring-purple-500 focus:border-purple-500 flex-grow"
+      class="rounded-full dark:bg-gray-900 dark:text-white focus:ring-purple-500 focus:border-purple-500 grow"
     />
     <div class="flex gap-4 items-center flex-wrap mt-4">
       <div class="flex gap-2 items-center">

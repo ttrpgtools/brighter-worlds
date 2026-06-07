@@ -1,4 +1,10 @@
-/* Write your global styles here, in PostCSS syntax */
+@import 'tailwindcss';
+@config "../tailwind.config.cjs";
+@plugin "@tailwindcss/forms";
+@plugin "@tailwindcss/typography";
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Write your global styles here, in CSS syntax */
 @font-face {
   font-family: 'Ander Brush';
   src: local('Ander Brush'), url('/fonts/ander-brush.woff');
@@ -68,9 +74,6 @@ body > img[src^='https://pass.brighterworlds.app'] {
   top: 0;
 }
 
-@tailwind base;
-@tailwind components;
-
 .list-bw {
   @apply relative;
 }
@@ -81,5 +84,3 @@ body > img[src^='https://pass.brighterworlds.app'] {
   top: -0.5em;
   @apply font-symbol text-purple-500 absolute left-0;
 }
-
-@tailwind utilities;

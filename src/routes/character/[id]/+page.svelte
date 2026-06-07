@@ -292,12 +292,12 @@
 >
   <!-- <img src="/img/beams.jpg" alt="" class="absolute top-1/2 left-1/2 max-w-none -translate-x-1/2 -translate-y-1/2" width="1308" /> -->
   <div
-    class="absolute inset-0 bg-[url(/img/grid.svg)] dark:invert bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]"
+    class="absolute inset-0 bg-[url(/img/grid.svg)] dark:invert bg-center mask-[linear-gradient(180deg,white,rgba(255,255,255,0))]"
   ></div>
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
     <div class="flex gap-2 items-center md:items-start">
       <div><Button size="icon" icon="cog" onclick={openSettings} /></div>
-      <div class="relative justify-self-center text-center flex-grow">
+      <div class="relative justify-self-center text-center grow">
         <h1 class="text-4xl font-title">Brighter Worlds</h1>
         <span class="md:block font-symbol text-6xl hidden h-4 relative -top-6 text-purple-500"
           >j</span
@@ -314,7 +314,7 @@
     </div>
     <Name bind:name={$character.name} bind:pronouns={$character.pronouns} />
     <div
-      class="relative rounded-lg bg-white shadow-xl dark:bg-gray-900 dark:shadow-purple-400/20 ring-1 ring-gray-900/5 md:h-[25rem] flex flex-col gap-6"
+      class="relative rounded-lg bg-white shadow-xl dark:bg-gray-900 dark:shadow-purple-400/20 ring-1 ring-gray-900/5 md:h-100 flex flex-col gap-6"
     >
       <div class="px-4 py-5 sm:px-6 flex flex-col gap-4 h-full">
         <Grit bind:value={$character.grit} isDeprived={isDeprived()} isBurdened={isBurdened()} />
@@ -346,7 +346,7 @@
     <Equipment
       bind:equipment={$character.equipment}
       onroll={damage}
-      class="md:h-[25rem]"
+      class="md:h-100"
       isSharing={isSharing()}
       onshare={shareItem}
     />

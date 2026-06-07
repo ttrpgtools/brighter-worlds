@@ -1,5 +1,5 @@
 <script lang="ts">
-  import '../app.postcss';
+  import '../app.css';
   import Footer from '$lib/Footer.svelte';
   import { page } from '$app/state';
   import { getEncounterStates, getTabManager } from '$lib/data/ui-state';

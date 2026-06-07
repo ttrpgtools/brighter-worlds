@@ -45,7 +45,7 @@
       disabled={!form.rollToDiscord}
       placeholder="Discord Webhook"
       bind:value={form.discordWebhook}
-      class="rounded-full dark:bg-gray-900 dark:text-white focus:ring-purple-500 focus:border-purple-500 flex-grow disabled:!bg-gray-200 dark:disabled:!bg-gray-800 disabled:cursor-not-allowed"
+      class="rounded-full dark:bg-gray-900 dark:text-white focus:ring-purple-500 focus:border-purple-500 grow disabled:bg-gray-200! dark:disabled:bg-gray-800! disabled:cursor-not-allowed"
     />
   </form>
 </InputDialog>

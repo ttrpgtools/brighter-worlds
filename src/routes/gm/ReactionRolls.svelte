@@ -34,7 +34,7 @@
     <div class="pr-2">
       <h3 class="text-xl font-subtitle leading-6">Reaction Roll</h3>
     </div>
-    <div class="flex-shrink-0 ml-auto">
+    <div class="shrink-0 ml-auto">
       <button
         type="button"
         onclick={rollReaction}

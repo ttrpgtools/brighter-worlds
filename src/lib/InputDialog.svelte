@@ -82,7 +82,7 @@
       <Button disabled={!valid} onclick={okBtnAction}>{okBtnLabel}</Button>
       <Button variant="ghost" onclick={() => close()}>Cancel</Button>
       {#if showDelete}
-        <div class="flex-grow"></div>
+        <div class="grow"></div>
         <DeleteButton onconfirm={handleDelete}></DeleteButton>
       {/if}
     </div>

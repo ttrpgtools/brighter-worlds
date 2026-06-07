@@ -27,7 +27,7 @@
   let { data }: Props = $props();
 </script>
 
-<div class="flex h-[100svh]">
+<div class="flex h-svh">
   <div id="mappanel">
     <iframe
       src={`https://miro.com/app/live-embed/${data.id}/${data.query}`}

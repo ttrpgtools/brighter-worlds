@@ -23,7 +23,7 @@
     class="helper absolute opacity-0 invisible group-hover:visible group-hover:opacity-100 group-hover:delay-500 transition-opacity text-center z-10 bg-gray-200 dark:bg-black border-0 rounded text-sm top-1/2 left-0 translate-y-full px-2 py-1 w-max"
   >
     <span
-      class="nib absolute z-10 w-0 h-0 top-0 left-4 border-x-[0.5rem] border-b-[0.5rem] border-t-0 border-x-transparent border-t-transparent border-b-gray-200 dark:border-b-black -translate-y-[90%]"
+      class="nib absolute z-10 w-0 h-0 top-0 left-4 border-x-8 border-b-8 border-t-0 border-x-transparent border-t-transparent border-b-gray-200 dark:border-b-black translate-y-[-90%]"
     ></span>
     {title}
   </span>

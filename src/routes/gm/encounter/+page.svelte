@@ -80,7 +80,7 @@
           <div class="pr-2">
             <h3 class="text-xl font-subtitle leading-6">{encounter.name || `(unnamed)`}</h3>
           </div>
-          <div class="flex-shrink-0 ml-auto">
+          <div class="shrink-0 ml-auto">
             <DeleteButton onconfirm={() => removeEncounter(encounter.id)} size="w-3 h-3" />
           </div>
         {/snippet}

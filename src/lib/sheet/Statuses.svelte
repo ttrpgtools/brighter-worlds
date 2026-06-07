@@ -26,7 +26,7 @@
 <!-- <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="-ml-0.5 mr-2 h-4 w-4 text-gray-400 dark:text-gray-500" class:!text-purple-800={isDeprived} class:dark:!text-purple-100={isDeprived}></svg> -->
 <StatusesDialog bind:statuses bind:this={dialog} />
 <div class="flex overflow-y-auto">
-  <div class="flex items-center gap-2 flex-wrap flex-grow">
+  <div class="flex items-center gap-2 flex-wrap grow">
     <StatusButton
       onclick={() => toggleStatus(status.DEPRIVED)}
       status="deprived"

@@ -157,7 +157,7 @@
             <option value="entity">entity</option>
           </select>
         </div>
-        <div class="flex-1 flex-shrink">
+        <div class="flex-1 shrink">
           {#if form.options[oi].type === 'text'}
             <input
               type="text"
