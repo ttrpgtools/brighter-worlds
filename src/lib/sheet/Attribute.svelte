@@ -27,9 +27,9 @@
 
 <div class="grid grid-cols-5 items-center">
   <RollSelector label="{displayName} Save" die={value.current || 4} {onroll}>
-    {#snippet children({ events })}
+    {#snippet children({ cprops })}
       <button
-        use:events
+        {...cprops}
         type="button"
         title="Roll {displayName} Save"
         class="font-subtitle text-xl bg-purple-300 dark:bg-purple-700 hover:bg-purple-200 dark:hover:bg-purple-800 rounded-full px-2 pt-2 pb-1 w-16 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-900"

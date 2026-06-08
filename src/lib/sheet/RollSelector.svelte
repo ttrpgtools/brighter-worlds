@@ -1,12 +1,9 @@
 <script lang="ts">
   import { getEnhanced, getImpaired, getModifiedDice } from '$lib/rolling/modifier';
   import type { DieRollSet, DieValue } from '$lib/types';
-  import { add } from '$lib/util/hold';
   import { fly } from 'svelte/transition';
-  import { Popover } from 'bits-ui';
   import { getSettings } from '$lib/data/settings';
   import { cn, type ClassNameValue } from '$lib/util/tw';
-  import type { Action } from 'svelte/action';
 
   interface Props {
     label: string;
@@ -18,7 +15,6 @@
     children: import('svelte').Snippet<
       [
         {
-          events: Action;
           damage: DieValue | DieValue[];
           cprops: {
             onclick: (ev: MouseEvent) => void;
@@ -41,34 +37,44 @@
 
   const settings = getSettings();
   let popoverOpen = $state(false);
-  let anchor: HTMLElement | null = $state(null);
+  let selectorOpen = false;
+
+  function setSelectorOpen(open: boolean) {
+    selectorOpen = open;
+    popoverOpen = open;
+  }
 
   function roll(pev: MouseEvent) {
     //const pev = ev.detail;
-    popoverOpen = false;
+    pev.stopPropagation();
+    setSelectorOpen(false);
     const dice = getModifiedDice(pev, die as DieValue);
     onroll({ dice, name: label });
   }
-  function rollEnhance() {
+  function rollEnhance(ev?: MouseEvent) {
+    ev?.stopPropagation();
     const dice = getEnhanced(die);
-    popoverOpen = false;
+    setSelectorOpen(false);
     onroll({ dice, name: label });
   }
-  function rollImpair() {
+  function rollImpair(ev?: MouseEvent) {
+    ev?.stopPropagation();
     const dice = getImpaired();
-    popoverOpen = false;
+    setSelectorOpen(false);
     onroll({ dice, name: label });
   }
   function showSelector(ev: Event) {
     ev.preventDefault();
-    popoverOpen = true;
+    ev.stopPropagation();
+    setSelectorOpen(true);
   }
   function handleClick(ev: MouseEvent) {
-    if (ev.button === 2 && !popoverOpen) {
-      popoverOpen = true;
+    ev.stopPropagation();
+    if (ev.button === 2 && !selectorOpen) {
+      setSelectorOpen(true);
     } else if (
       $settings.desktopMode ||
-      popoverOpen ||
+      selectorOpen ||
       ev.altKey ||
       ev.ctrlKey ||
       ev.shiftKey ||
@@ -77,38 +83,41 @@
       roll(ev);
       ev.preventDefault();
     } else {
-      popoverOpen = true;
+      setSelectorOpen(true);
     }
   }
+  function closeSelector() {
+    if (!selectorOpen) return;
+    setSelectorOpen(false);
+  }
   const cprops = { onclick: handleClick, oncontextmenu: showSelector };
-  function events(node: HTMLElement) {
-    //const holdAction = hold(node);
-    //const removeTap = add(node, 'tap', roll);
-    //const removeHold = add(node, 'hold', () => popover.open());
-    const removeClick = add(node, 'click', handleClick);
-    const removeContext = add(node, 'contextmenu', showSelector);
-    return {
-      destroy() {
-        //removeTap();
-        //removeHold();
-        removeClick();
-        removeContext();
-        //holdAction.destroy();
-      },
+
+  function closeOnOutsideClick(node: HTMLElement) {
+    function close(ev: Event) {
+      if (!selectorOpen) return;
+      if (ev.target instanceof Node && node.contains(ev.target)) return;
+      closeSelector();
+    }
+
+    document.addEventListener('pointerdown', close, true);
+    document.addEventListener('contextmenu', close, true);
+
+    return () => {
+      document.removeEventListener('pointerdown', close, true);
+      document.removeEventListener('contextmenu', close, true);
     };
   }
 </script>
 
 <div class={cn(['flex', klass])}>
-  <div class="relative" bind:this={anchor}>
-    <Popover.Root bind:open={popoverOpen}>
-      <Popover.Content
-        customAnchor={anchor}
-        trapFocus={false}
-        side={direction === 1 ? 'right' : 'left'}
-        align="center"
-        sideOffset={8}
-        class={cn(['z-10 flex gap-2', posCls, direction === 1 ? 'flex-row' : 'flex-row-reverse'])}
+  <div class="relative" {@attach closeOnOutsideClick}>
+    {#if popoverOpen}
+      <div
+        class={cn([
+          'absolute top-1/2 z-10 flex -translate-y-1/2 gap-2',
+          direction === 1 ? 'left-full ml-2 flex-row' : 'right-full mr-2 flex-row-reverse',
+          posCls,
+        ])}
       >
         <button
           aria-label="+"
@@ -136,8 +145,8 @@
             /></svg
           ></button
         >
-      </Popover.Content>
-    </Popover.Root>
-    {@render children?.({ events, damage: die, cprops })}
+      </div>
+    {/if}
+    {@render children?.({ damage: die, cprops })}
   </div>
 </div>
