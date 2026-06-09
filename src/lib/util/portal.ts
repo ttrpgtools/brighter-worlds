@@ -1,4 +1,3 @@
-
 export function portal(el: HTMLElement) {
   document.body.appendChild(el);
   el.hidden = false;
@@ -8,6 +7,6 @@ export function portal(el: HTMLElement) {
       if (el.parentNode) {
         el.parentNode.removeChild(el);
       }
-    }
-  }
+    },
+  };
 }

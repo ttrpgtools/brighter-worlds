@@ -1,7 +1,10 @@
-import { add } from "./hold"
+import { add } from './hold';
 
-export function onClickOutside(fn: (event: Event) => void, light = false): (node: HTMLElement) => (() => void) {
-  return node => {
+export function onClickOutside(
+  fn: (event: Event) => void,
+  light = false,
+): (node: HTMLElement) => () => void {
+  return (node) => {
     function handler(event: Event) {
       if ((event as PointerEvent).pointerType === '') return; // ignore space as click
       if (!node.contains(event.target as Node) && node.clientWidth) {
@@ -13,6 +16,6 @@ export function onClickOutside(fn: (event: Event) => void, light = false): (node
       }
     }
 
-    return add(document.documentElement, 'click', handler, true)
-  }
+    return add(document.documentElement, 'click', handler, true);
+  };
 }

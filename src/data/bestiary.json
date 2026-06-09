@@ -1,5 +1,32 @@
 [
   {
+    "id": "beast-adventurer",
+    "name": "Adventurer",
+    "grit": 5,
+    "str": 6,
+    "dex": 6,
+    "wil": 6,
+    "attacks": [
+      {
+        "id": "beastattack-eitnawtnawldrtnawd",
+        "name": "Melee",
+        "damage": 8
+      },
+      {
+        "id": "beastattack-eitnawtnawldrtnawd234523",
+        "name": "Ranged",
+        "damage": 6
+      }
+    ],
+    "notes": [
+      "Jack of all trades, problem solver, mercenry, handyman.",
+      "Wandering from place to place finding ways to make coin with continually variable morals.",
+      "Roll on the STR Equipment table to see what unique weapons they wield."
+    ],
+    "wants": "Filthy lucre.",
+    "found": "Delving into dangerous places in search of said lucre."
+  },
+  {
     "id": "beast-alligator",
     "name": "Alligator",
     "grit": 3,
@@ -43,11 +70,140 @@
       }
     ],
     "notes": [
-      "Constantly ornery and aggressive, goose-like creature.",
+      "A perpetually smoldering, ornery, and aggressive goose.",
       "Popular with travelers as its death flare cooks its meat perfectly."
     ],
     "wants": "Respect and bread crumbs.",
     "found": "Harassing random passersby."
+  },
+  {
+    "id": "beast-",
+    "name": "Fourteen Eyed Watcher",
+    "grit": 6,
+    "armor": 1,
+    "str": 8,
+    "dex": 10,
+    "wil": 8,
+    "attacks": [
+      { "id": "beastattack-ohsgietngsoheitgn", "name": "Claws", "damage": [8, 8], "desc": "" },
+      { "id": "beastattack-oasiengseohtignmh", "name": "Bite", "damage": 10, "desc": "" }
+    ],
+    "notes": [
+      "Long limbs carry it disturbingly quickly across any surface.",
+      "Arrives at locations prior to momentous events, which has garnered it a reputation as a harbinger of doom.",
+      "If killed, a new Watcher reappears at the next new moon."
+    ],
+    "wants": "To witness change.",
+    "found": "Eyes glinting in the night, peering unsettlingly at whatever has attracted its attention."
+  },
+  {
+    "id": "beast-goblin",
+    "name": "Goblin",
+    "grit": 3,
+    "str": 6,
+    "dex": 8,
+    "wil": 6,
+    "attacks": [
+      { "id": "beastattack-oinsegnsfrnsfog", "name": "Scavenged Weapon", "damage": 6, "desc": "" }
+    ],
+    "notes": [
+      "Weird little guys.",
+      "Cheerful hedonists.",
+      "Not inherently hostile to others, but will respond with enthusiastic violence if attacked."
+    ],
+    "wants": "All that is best in life.",
+    "found": "In places they have no business being in."
+  },
+  {
+    "id": "beast-half-dead-cat",
+    "name": "Half-Dead Cat",
+    "grit": 3,
+    "str": 4,
+    "dex": 8,
+    "wil": 8,
+    "attacks": [
+      { "id": "beastattack-seotignlrfdmg", "name": "Claws", "damage": 6, "desc": "" },
+      {
+        "id": "beastattack-oiftmgbosetim",
+        "name": "Bite",
+        "damage": 6,
+        "desc": "deals Direct Damage to WIL on odd damage rolls."
+      }
+    ],
+    "notes": [
+      "A cat who lost all nine of its lives, then somehow one more.",
+      "Half ethereal, unaffected by physical things unless it wants to be.",
+      "Having a Half-Dead Cat cross your path is considered to be good luck."
+    ],
+    "wants": "All the things a normal cat wants, if a normal cat was capable of sharpening its claws on your soul.",
+    "found": "Hunting mice, then toying with their souls."
+  },
+  {
+    "id": "beast-incubus-butterfly",
+    "name": "Incubus Butterfly",
+    "grit": 2,
+    "str": 4,
+    "dex": 8,
+    "wil": 10,
+    "attacks": [
+      {
+        "id": "beastattack-soeitgnsoheimsh",
+        "name": "Somnolescent Dust",
+        "damage": 6,
+        "blast": true,
+        "desc": "deals Direct Damage to WIL. Enhanced if target is tricked by illusions."
+      }
+    ],
+    "notes": [
+      "Hides itself while projecting an illusion of a trustworthy figure.",
+      "If an illusion is suspected, it can be broken with a WIL save versus the Butterfly.",
+      "Sustains itself by drinking sleepers’ dreams by extending its proboscis through their ear."
+    ],
+    "wants": "To sup upon your dreams.",
+    "found": "Luring unsuspecting travelers to an area already saturated with its Dust."
+  },
+  {
+    "id": "beast-mook",
+    "name": "Mook",
+    "grit": 1,
+    "str": 4,
+    "dex": 4,
+    "wil": 4,
+    "attacks": [
+      { "id": "beastattack-oisnsioefgsgfdu8", "name": "Dagger", "damage": 6, "desc": "" }
+    ],
+    "notes": [
+      "Makes enhanced Morale Saves as long as their Master lives.",
+      "Prone to getting overly attached to the nearest source of mystical maleficence.",
+      "Fiercely devoted right up until they become sniveling cowards when faced with immediate threats."
+    ],
+    "wants": "To serve a worthy master, but is willing to settle for almost anything.",
+    "found": "Incompetently carrying out dastardly deeds."
+  },
+  {
+    "id": "beast-notiavore",
+    "name": "Notiavore",
+    "grit": 6,
+    "armor": 2,
+    "str": 10,
+    "dex": 6,
+    "wil": 8,
+    "attacks": [
+      {
+        "id": "beastattack-ohlorionwdrmaaec",
+        "name": "Bite",
+        "damage": 10,
+        "desc": "consumes a memory and restores d6 Grit on Wounds"
+      }
+    ],
+    "notes": [
+      "Hulking mass of scrolls and books, an incredible if deadly repository of knowledge.",
+      "Bladed weapons and fire bypass Armor.",
+      "Able to teleport between libraries.",
+      "Summon copies of things from consumed books and memories with its quill."
+    ],
+    "wants": "Your most cherished memory.",
+    "found": "Lurking in the dark corners of libraries and scriptoriums."
   },
   {
     "id": "beast-screaming-ghost",
@@ -72,81 +228,20 @@
     "found": "Wherever people were killed in brutal ways."
   },
   {
-    "id": "beast-",
-    "name": "Fourteen Eyed Watcher",
-    "grit": 6,
-    "armor": 1,
-    "str": 8,
-    "dex": 10,
-    "wil": 8,
-    "attacks": [
-      { "id": "beastattack-ohsgietngsoheitgn", "name": "Claws", "damage": 8, "extra": 8, "desc": ""},
-      { "id": "beastattack-oasiengseohtignmh", "name": "Bite", "damage": 10, "desc": ""}
-    ],
-    "notes": [
-      "Long limbs carry it disturbingly quickly across any surface.",
-      "Arrives at locations prior to momentous events, which has garnered it a reputation as a harbinger of doom.",
-      "If killed, a new Watcher reappears at the next new moon."
-    ],
-    "wants": "To witness change.",
-    "found": "Eyes glinting in the night, peering unsettlingly at whatever has attracted its attention."
-  },
-  {
-    "id": "beast-half-dead-cat",
-    "name": "Half-Dead Cat",
+    "id": "beast-skeleton",
+    "name": "Skeleton",
     "grit": 3,
-    "str": 4,
-    "dex": 8,
-    "wil": 8,
-    "attacks": [
-      { "id": "beastattack-seotignlrfdmg", "name": "Claws", "damage": 6, "desc": ""},
-      { "id": "beastattack-oiftmgbosetim", "name": "Bite", "damage": 6, "desc": "deals Direct Damage to WIL on odd damage rolls."}
-    ],
-    "notes": [
-      "A cat who lost all nine of its lives, then somehow one more.",
-      "Half ethereal, unaffected by physical things unless it wants to be.",
-      "Having a Half-Dead Cat cross your path is considered to be good luck."
-    ],
-    "wants": "All the things a normal cat wants, if a normal cat was capable of sharpening its claws on your soul.",
-    "found": "Hunting mice, then toying with their souls."
-  },
-  {
-    "id": "beast-incubus-butterfly",
-    "name": "Incubus Butterfly",
-    "grit": 2,
-    "str": 4,
-    "dex": 8,
-    "wil": 10,
-    "attacks": [
-      { "id": "beastattack-soeitgnsoheimsh", "name": "Somnolescent Dust", "damage": 6, "blast": true, "desc": "deals Direct Damage to WIL. Enhanced if target is tricked by illusions."}
-    ],
-    "notes": [
-      "Hides itself while projecting an illusion of a trustworthy figure.",
-      "If an illusion is suspected, it can be broken with a WIL save versus the Butterfly.",
-      "Sustains itself by drinking sleepers’ dreams by extending its proboscis through their ear."
-    ],
-    "wants": "To sup upon your dreams.",
-    "found": "Luring unsuspecting travelers to an area already saturated with its Dust."
-  },
-  {
-    "id": "beast-notiavore",
-    "name": "Notiavore",
-    "grit": 6,
-    "armor": 2,
-    "str": 10,
+    "str": 6,
     "dex": 6,
-    "wil": 8,
+    "wil": 6,
     "attacks": [
-      { "id": "beastattack-ohlorionwdrmaaec", "name": "Bite", "damage": 10, "desc": "consumes a memory and restores d6 Grit on Critical Damage"}
+      { "id": "beastattack-89sgs98ngdnote", "name": "Rusty Weapon", "damage": 6, "desc": "" }
     ],
     "notes": [
-      "Hulking mass of scrolls and books, an incredible if deadly repository of knowledge.",
-      "Bladed weapons and fire bypass Armor.",
-      "Able to teleport between libraries.",
-      "Summon copies of things from consumed books and memories with its quill."
+      "A collection of dead bones animated through evil magicks, confluence of dark energies, unfinished business, or other arcane happenstance."
     ],
-    "wants": "Your most cherished memory.",
-    "found": "Lurking in the dark corners of libraries and scriptoriums."
+    "wants": "To feel the warmth of life again.",
+    "found": "Repeating the actions its body would have taken in life."
   },
   {
     "id": "beast-snackoon",
@@ -156,7 +251,7 @@
     "dex": 8,
     "wil": 6,
     "attacks": [
-      { "id": "beastattack-qwdtqwvseciohn", "name": "Grabby Paws", "damage": 6, "desc": ""}
+      { "id": "beastattack-qwdtqwvseciohn", "name": "Grabby Paws", "damage": 6, "desc": "" }
     ],
     "notes": [
       "Six legged raccoon-like creature.",
@@ -174,7 +269,12 @@
     "dex": 6,
     "wil": 8,
     "attacks": [
-      { "id": "beastattack-iomsetrosmhmse", "name": "Blood Sucking Proboscis", "damage": 8, "desc": "steps up STR on Critical Damage"}
+      {
+        "id": "beastattack-iomsetrosmhmse",
+        "name": "Blood Sucking Proboscis",
+        "damage": 8,
+        "desc": "steps up STR on Wounds"
+      }
     ],
     "notes": [
       "A mosquito-cat hybrid the size of a cow.",
@@ -193,15 +293,36 @@
     "dex": 8,
     "wil": 6,
     "attacks": [
-      { "id": "beastattack-horhrmhormohimase", "name": "Bite", "damage": 6, "desc": "for each head"}
+      {
+        "id": "beastattack-horhrmhormohimase",
+        "name": "Bite",
+        "damage": 6,
+        "desc": "for each head"
+      }
     ],
     "notes": [
       "Smells strongly of rotting flesh.",
       "Not a predator, but highly territorial of scavenged kills.",
       "Has d10 heads, and can regenerate lost heads by consuming a creature’s heart.",
-      "Special: On Critical Damage loses a head instead of losing STR. Dies only when all heads are removed."
+      "Special: On taking a Wound loses a head instead of losing attributes. Dies only when all heads are removed."
     ],
     "wants": "Some tasty, sun warmed organ meat. As a snack.",
     "found": "Fiercely defending a found corpse from threats (real or imagined)."
+  },
+  {
+    "id": "beast-wizard",
+    "name": "Wizard",
+    "grit": 3,
+    "str": 4,
+    "dex": 6,
+    "wil": 8,
+    "attacks": [{ "id": "beastattack-etl83t2lrns", "name": "Staff", "damage": 4, "desc": "" }],
+    "notes": [
+      "Carries a Grimoire with d4-1 random Spells, and d4-1 random Rituals.",
+      "A dabbler in arcane forces beyond their own understanding.",
+      "Blissfully unaware of danger both posed to others, and to themselves."
+    ],
+    "wants": "To unlock the power of the cosmos with mystic secrets.",
+    "found": "Accidentally summoning horrors from beyond the mortal plane."
   }
 ]

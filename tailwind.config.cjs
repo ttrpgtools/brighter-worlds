@@ -1,24 +1,26 @@
-const config = {
-	content: ['./src/**/*.{html,js,svelte,ts}'],
-	darkMode: 'class',
-	theme: {
-		extend: {
-			fontFamily: {
-        'title': ['Ander Brush', 'serif'],
-        'symbol': ['Ander Symbols', 'serif'],
-        'subtitle': ['Fanwood', 'serif']
-      },
-			borderWidth: {
-				'3': '3px',
-			},
-		}
-	},
+const { purple } = require('tailwindcss/colors');
 
-	plugins: [
-		require('@tailwindcss/forms'),
-		require('@tailwindcss/typography'),
-		require('@tailwindcss/line-clamp'),
-	]
+const config = {
+  theme: {
+    extend: {
+      fontFamily: {
+        title: ['Ander Brush', 'serif'],
+        symbol: ['Ander Symbols', 'serif'],
+        subtitle: ['Fanwood', 'serif'],
+      },
+      borderWidth: {
+        3: '3px',
+      },
+      colors: {
+        primary: purple,
+      },
+      aria: {
+        current: 'current="page"',
+      },
+    },
+  },
+
+  plugins: [],
 };
 
 module.exports = config;

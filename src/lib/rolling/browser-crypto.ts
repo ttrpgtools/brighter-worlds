@@ -1,5 +1,5 @@
-import type { Engine } from "./types";
-import { Int32Array } from "./int32-array";
+import type { Engine } from './types';
+import { Int32Array } from './int32-array';
 
 let data: Int32Array | null = null;
 const COUNT = 128;
@@ -24,5 +24,5 @@ export const browserCrypto: Engine = {
       index = 0;
     }
     return data![index++] | 0;
-  }
+  },
 };

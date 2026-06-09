@@ -1,56 +1,49 @@
 {
+  "starting": [{ "name": "Coins", "quantity": 50, "bulky": false }],
   "str": {
     "name": "Weapons",
     "flair": [
-      "Bloodstained",
-      "Repaired",
-      "Hand Me Down",
-      "Rugged",
-      "Antique",
-      "Colorful",
-      "Well Maintained",
-      "Blackened",
+      "Haunted",
+      "Heirloom",
       "Ornate",
-      "Glowing"
+      "Antique",
+      "Silver",
+      "Silent",
+      { "name": "Returning", "desc": "Can be called to hand." },
+      "Mystic (is a random spell scroll)"
     ],
     "items": [
-      { "name": "Stiletto", "damage": 6 },
-      { "name": "Staff", "damage": 6 },
       { "name": "Whip", "damage": 6 },
-      { "name": "Rapier", "damage": 6 },
-      { "name": "Bow", "damage": 6 },
+      { "name": "Bow", "damage": 6, "desc": "Ranged." },
+      { "name": "Sword", "damage": 8 },
       { "name": "Spear", "damage": 8 },
       { "name": "Axe", "damage": 8 },
       { "name": "Flail", "damage": 8 },
-      { "name": "Longsword", "damage": 10, "bulky": true },
-      { "name": "War Hammer", "damage": 10, "bulky": true }
+      { "name": "War Hammer", "damage": 10, "bulky": true },
+      { "name": "Longsword", "damage": 10, "bulky": true }
     ]
   },
   "dex": {
     "name": "Tools",
     "flair": [
-      "Durable",
       "Flexible",
       "Limited Edition",
-      "Luxury",
       "Mini",
       "Collapsible",
       "Concealable",
       "Wearable",
       "Multi Function",
-      "Weaponized"
+      { "name": "Weaponized", "damage": 6 }
     ],
     "items": [
-      { "name": "10ft Pole" },
       { "name": "Bucket" },
       { "name": "Prybar" },
-      { "name": "Torch" },
-      { "name": "Compass" },
+      { "name": "10ft Pole" },
       { "name": "Oil Flask" },
       { "name": "Lockpick Set" },
       { "name": "Rope (100ft)" },
       { "name": "Air Bladder" },
-      { "name": "Lantern" }
+      { "name": "Compass" }
     ]
   },
   "wil": {
@@ -59,22 +52,18 @@
       "Stolen",
       "Refurbished",
       "Old Fashioned",
-      "Skeletal",
       "Crystalline",
       "Translucent",
-      "Oversized",
-      "Self Cleaning",
+      "Self-Cleaning",
       "Ethereal",
       "Floating"
     ],
     "items": [
-      { "name": "Key" },
+      { "name": "Hat" },
       { "name": "Flask" },
       { "name": "Cloak" },
-      { "name": "Hat" },
-      { "name": "Map" },
-      { "name": "Pipe (w/ tobacco)" },
       { "name": "Spyglass" },
+      { "name": "Pipe (w/ tobacco)" },
       { "name": "Donkey (carries 4 bulky items)" },
       { "name": "Random Ritual Scroll" },
       { "name": "Random Spell Scroll" }

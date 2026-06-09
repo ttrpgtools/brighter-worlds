@@ -1,38 +1,67 @@
 <script lang="ts">
-  import { createEventDispatcher, tick } from "svelte";
-  import Card from "./Card.svelte";
-  import Die, { knownDie } from "./dice/Die.svelte";
-  import { rolls } from "./rolling/roll";
-  import type { TableRoll, DieValue } from "./types";
+  import { hasTrigger, isSimpleRollFormula } from './util/validate';
+  import Card from './ui/card.svelte';
+  import Die, { knownDie } from './dice/Die.svelte';
+  import { roll, rollFormula, rolls } from './rolling/roll';
+  import type { TableRoll } from './types';
+  import type { Snippet } from 'svelte';
+  import * as Popover from '$lib/ui/popover';
+  import Icon from './ui/icon.svelte';
 
   type T = $$Generic;
-  export let options: T[];
-  export let title: string;
-  export let die: DieValue | undefined = undefined;
-  export let once = false;
+  interface Props {
+    options: T[];
+    title: string;
+    die?: number | undefined;
+    formula?: string | undefined;
+    once?: boolean;
+    onroll?: (roll: TableRoll<T>) => void;
+    onclick?: () => void;
+    menu?: Snippet<[() => void]>;
+    children?: Snippet<[any]>;
+  }
 
-  let rolled: number = 0;
-  
-  const dispatch = createEventDispatcher<{roll: TableRoll<T>}>();
+  let {
+    options,
+    title,
+    die = undefined,
+    formula = undefined,
+    once = false,
+    onclick,
+    onroll,
+    menu,
+    children,
+  }: Props = $props();
 
-  $: sides = Math.min(die ?? options.length, options.length);
+  let menuOpen = $state(false);
 
-  function alt(i: number) {
-    const last = i === (options.length - 1) ? 'rounded-b-lg' : '';
-    return (i + 1) === rolled
+  let rolled: number = $state(0);
+  let highlighted = $state(new Set<number>());
+
+  function alt(i: number, h: Set<number>) {
+    const last = i === options.length - 1 ? 'rounded-b-lg' : '';
+    return h.has(i)
       ? `bg-purple-700 text-white dark:bg-purple-300 dark:text-gray-900 ${last}`
-      : (i % 2 !== 0 ? `bg-gray-200 dark:bg-gray-800 ${last}` : last);
+      : i % 2 !== 0
+        ? `bg-gray-200 dark:bg-gray-800 ${last}`
+        : last;
+  }
+
+  function formulaDie() {
+    return advanced && isSimpleRollFormula(formula ?? '')
+      ? parseInt(formula?.replace(/1?d/, '') ?? '0', 10)
+      : 0;
   }
 
   function snap(r: number) {
     if (r < 0) return 0;
-    if (r > sides || r > options.length) return Math.min(sides, options.length);
+    if (!advanced && r > sides) return sides;
     return r;
   }
 
   const SHUFFLE_DELAY = 90;
   function waitFor(spot: number) {
-    return new Promise<number>(res => setTimeout(() => res(spot), SHUFFLE_DELAY));
+    return new Promise<number>((res) => setTimeout(() => res(spot), SHUFFLE_DELAY));
   }
 
   function* waitOn(spots: number[]) {
@@ -48,41 +77,112 @@
   }
 
   const SHUFFLE_COUNT = 10;
-  let shuffle = 0;
-  export async function rollTable(preRoll?: number) {
+  let shuffle = $state(0);
+  export async function getResult(
+    preRoll?: number,
+    animate = false,
+  ): Promise<TableRoll<T> | undefined> {
     shuffle = 0;
+    highlighted = new Set();
     if (preRoll != null) {
       rolled = snap(preRoll);
     } else {
       rolled = 0;
-      const shuffles = rolls(sides, SHUFFLE_COUNT);
-      const final = shuffles[0];
-      // Await Animation
-      await doShuffle(shuffles);
+      const final = advanced ? rollFormula(formula ?? '') : roll(sides);
+      if (animate) {
+        const shuffles = rolls(options.length, SHUFFLE_COUNT);
+        // Await Animation
+        await doShuffle(shuffles);
+      }
       rolled = final;
+      shuffle = 0;
+      console.log(`Rolled = ${rolled}`);
     }
-    const selected = options[rolled - 1];
+    const [selected, indices] = !advanced
+      ? [[options[rolled - 1]], [rolled - 1]]
+      : options.reduce(
+          (p, opt, ci) => {
+            const trigger = hasTrigger(opt) ? opt.trigger : ci + 1;
+            const range = Array.isArray(trigger);
+            if (
+              (range && trigger[0] <= rolled && rolled <= trigger[1]) ||
+              (!range && trigger === rolled)
+            ) {
+              p[0].push(opt);
+              p[1].push(ci);
+            }
+            return p;
+          },
+          [[], []] as [T[], number[]],
+        );
+    highlighted = new Set(indices);
     if (selected != null) {
-      const tRoll = { roll: rolled, value: selected };
-      dispatch('roll', tRoll);
+      console.log('dieSides', dieSides);
+      if (knownDie(dieSides)) {
+        return { roll: rolled, value: selected, title, dice: [dieSides] };
+      }
+      return { roll: rolled, value: selected, title, total: dieSides };
     }
   }
+  export async function rollTable(preRoll?: number) {
+    const troll = await getResult(preRoll, true);
+    if (troll) onroll?.(troll);
+  }
+  let advanced = $derived(formula != null && formula.length);
+  let sides = $derived(Math.min(die ?? options.length, options.length));
+  let dieSides = $derived(advanced ? formulaDie() : sides);
+  let dieLabel = $derived(
+    knownDie(dieSides) ? '' : dieSides !== 0 ? `d${dieSides}` : formula || 'Roll',
+  );
 </script>
+
 <Card>
-  <svelte:fragment slot="header">
-    <div class="pr-2">
-      <h3 class="text-xl font-subtitle leading-6">{title}</h3>
+  {#snippet header()}
+    <div class="pr-2 flex items-center">
+      {#if menu}
+        <Popover.Root bind:open={menuOpen}>
+          <Popover.Trigger
+            aria-label="Table actions"
+            class="size-6 -left-2 relative flex items-center justify-center"
+          >
+            <Icon icon="dots" class="size-5" />
+          </Popover.Trigger>
+          <Popover.Content align="start">
+            {@render menu(() => (menuOpen = false))}
+          </Popover.Content>
+        </Popover.Root>
+      {/if}
+      <button type="button" {onclick}
+        ><h3 class="text-xl font-subtitle leading-6">{title}</h3></button
+      >
     </div>
-    <div class="flex-shrink-0">
+    <div class="shrink-0">
       <div class="flex gap-4 items-center">
-        <button type="button" on:click={() => (!once || rolled === 0) && rollTable()} disabled={once && rolled > 0} class="relative inline-flex items-center rounded-full disabled:cursor-not-allowed bg-purple-300 dark:bg-purple-700 p-1 font-medium shadow-sm hover:bg-purple-200 dark:hover:bg-purple-800 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-900">{#if knownDie(sides)}<Die which={sides} />{:else}Roll{/if}</button>
+        <button
+          type="button"
+          onclick={() => (!once || rolled === 0) && rollTable()}
+          disabled={once && rolled > 0}
+          class="relative inline-flex items-center {knownDie(dieSides)
+            ? `rounded-full`
+            : `rounded-md`} disabled:cursor-not-allowed bg-purple-300 dark:bg-purple-700 p-1 font-medium shadow-sm hover:bg-purple-200 dark:hover:bg-purple-800 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-900"
+          >{#if knownDie(dieSides)}<Die which={dieSides} />{:else}{dieLabel}{/if}</button
+        >
       </div>
     </div>
-  </svelte:fragment>
-  <ul class="-mx-4 -my-5 sm:-m-6 rounded-b-lg relative">
-    <div class="absolute py-2 px-4 sm:px-6 border-2 border-purple-400 dark:border-purple-600 w-full" class:rounded-b-lg={shuffle === options.length} class:hidden={shuffle === 0} style:transform={`translateY(${(shuffle - 1) * 100}%)`}>&nbsp;</div>
+  {/snippet}
+  <ul class="-mx-4 -my-5 sm:-mx-6 rounded-b-lg relative">
+    <div
+      class="absolute py-2 px-4 sm:px-6 border-2 border-purple-400 dark:border-purple-600 w-full"
+      class:rounded-b-lg={shuffle === options.length}
+      class:hidden={shuffle === 0}
+      style:transform={`translateY(${(shuffle - 1) * 100}%)`}
+    >
+      &nbsp;
+    </div>
     {#each options as opt, oi}
-    <li class="py-2 px-4 sm:px-6 border-2 border-transparent {alt(oi)} {rolled === (oi + 1) ? 'bg-purple-700 text-white dark:bg-purple-300 dark:text-gray-900' : ''}"><slot {opt}>{opt}</slot></li>
+      <li class="py-2 px-4 sm:px-6 border-2 border-transparent {alt(oi, highlighted)}">
+        {#if children}{@render children({ opt })}{:else}{opt}{/if}
+      </li>
     {/each}
   </ul>
 </Card>

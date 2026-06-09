@@ -1,16 +1,16 @@
 <script lang="ts">
-  import { onMount } from "svelte";
-  import type { RemoteMessage } from "$lib/types";
-  import { broadcast } from "$lib/data/channel-child";
+  import { onMount } from 'svelte';
+  import type { RemoteMessage } from '$lib/types';
+  import { broadcast } from '$lib/data/channel-child';
 
   let port2: MessagePort | undefined;
 
   onMount(() => {
     console.log('[Bridge] Mounting');
     window.addEventListener('message', initPort);
-    const unlisten = broadcast.addListener(broadcastHandle);
+    const unlisten = broadcast.subscribe(broadcastHandle);
     if (window.parent && window.parent !== window) {
-      window.parent.postMessage({type: 'init'}, '*');
+      window.parent.postMessage({ type: 'init' }, '*');
     }
 
     return () => {
@@ -29,7 +29,7 @@
 
   function channelReceive(ev: MessageEvent<RemoteMessage>) {
     if (ev && ev.data) {
-      broadcast.send(ev.data);
+      broadcast.set(ev.data);
     }
   }
 

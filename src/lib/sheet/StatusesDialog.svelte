@@ -1,11 +1,11 @@
 <script lang="ts">
-  import InputDialog from "$lib/InputDialog.svelte";
-  import { KNOWN_STATUSES, status } from "$lib/const";
-  import StatusButton from "./StatusButton.svelte";
+  import InputDialog from '$lib/InputDialog.svelte';
+  import { KNOWN_STATUSES, status } from '$lib/const';
+  import StatusButton from './StatusButton.svelte';
 
-  export let statuses = new Set<string>();
+  let { statuses = $bindable(new Set<string>()) } = $props();
 
-  const statusList = Array.from(KNOWN_STATUSES.values()).map(x => ({ name: x }));
+  const statusList = Array.from(KNOWN_STATUSES.values()).map((x) => ({ name: x }));
 
   interface StatusForm {
     status: string;
@@ -17,13 +17,13 @@
     } as StatusForm;
   }
 
-  let dialog: InputDialog<StatusForm>;
-  let title = '';
-  let showDelete = false;
-  let form: StatusForm = newForm();
+  let dialog: InputDialog<StatusForm> | undefined = $state();
+  let title = $state('');
+  let showDelete = $state(false);
+  let form: StatusForm = $state(newForm());
 
   async function formResults() {
-    const item = await dialog.open();
+    const item = await dialog?.open();
     if (item != null) {
       return item.status.toLowerCase();
     }
@@ -41,16 +41,23 @@
   }
 
   function pick(status: string) {
-    dialog.close({status});
+    dialog?.close({ status });
   }
 </script>
-<InputDialog {title} {showDelete} dice={[]} bind:this={dialog} form={form}>
+
+<InputDialog {title} {showDelete} dice={[]} bind:this={dialog} {form}>
   <form class="text-center flex flex-col gap-3">
-    <input type="text" name="status" placeholder="Custom status" bind:value={form.status} class="rounded-full dark:bg-gray-900 dark:text-white focus:ring-purple-500 focus:border-purple-500 flex-grow">
+    <input
+      type="text"
+      name="status"
+      placeholder="Custom status"
+      bind:value={form.status}
+      class="rounded-full dark:bg-gray-900 dark:text-white focus:ring-purple-500 focus:border-purple-500 grow"
+    />
     <div class="grid grid-cols-2 gap-3">
       {#each statusList as stat}
         {#if stat.name !== status.DEPRIVED && !statuses.has(stat.name)}
-        <StatusButton status={stat.name} enabled={false} size="1.5rem" gap="gap-3" on:click={() => pick(stat.name)} />
+          <StatusButton status={stat.name} enabled={false} onclick={() => pick(stat.name)} />
         {/if}
       {/each}
     </div>
