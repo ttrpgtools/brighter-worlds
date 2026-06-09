@@ -4,6 +4,9 @@
   import Die, { knownDie } from './dice/Die.svelte';
   import { roll, rollFormula, rolls } from './rolling/roll';
   import type { TableRoll } from './types';
+  import type { Snippet } from 'svelte';
+  import * as Popover from '$lib/ui/popover';
+  import Icon from './ui/icon.svelte';
 
   type T = $$Generic;
   interface Props {
@@ -14,7 +17,8 @@
     once?: boolean;
     onroll?: (roll: TableRoll<T>) => void;
     onclick?: () => void;
-    children?: import('svelte').Snippet<[any]>;
+    menu?: Snippet<[() => void]>;
+    children?: Snippet<[any]>;
   }
 
   let {
@@ -25,8 +29,11 @@
     once = false,
     onclick,
     onroll,
+    menu,
     children,
   }: Props = $props();
+
+  let menuOpen = $state(false);
 
   let rolled: number = $state(0);
   let highlighted = $state(new Set<number>());
@@ -131,7 +138,20 @@
 
 <Card>
   {#snippet header()}
-    <div class="pr-2">
+    <div class="pr-2 flex items-center">
+      {#if menu}
+        <Popover.Root bind:open={menuOpen}>
+          <Popover.Trigger
+            aria-label="Table actions"
+            class="size-6 -left-2 relative flex items-center justify-center"
+          >
+            <Icon icon="dots" class="size-5" />
+          </Popover.Trigger>
+          <Popover.Content align="start">
+            {@render menu(() => (menuOpen = false))}
+          </Popover.Content>
+        </Popover.Root>
+      {/if}
       <button type="button" {onclick}
         ><h3 class="text-xl font-subtitle leading-6">{title}</h3></button
       >

@@ -84,3 +84,18 @@ body > img[src^='https://pass.brighterworlds.app'] {
   top: -0.5em;
   @apply font-symbol text-purple-500 absolute left-0;
 }
+
+:root {
+  --popover: 0 0% 100%;
+  --popover-foreground: 224 71.4% 4.1%;
+}
+
+html.dark {
+  --popover: 224 71.4% 4.1%;
+  --popover-foreground: 210 20% 98%;
+}
+
+@theme {
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+}

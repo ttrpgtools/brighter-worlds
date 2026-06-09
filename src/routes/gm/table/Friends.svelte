@@ -1,14 +1,15 @@
 <script lang="ts">
   import InputDialog from '$lib/InputDialog.svelte';
   import { Die } from '$lib/dice';
-  import type { DieValue, NpcStats } from '$lib/types';
+  import type { NpcStats } from '$lib/types';
   import Button from '$lib/ui/button.svelte';
   import Card from '$lib/ui/card.svelte';
   import { getFriends, type FriendRollResult, type FriendSlot } from './friend-state.svelte';
 
   interface Props {
     npcList?: NpcStats[];
-    onroll?: (result: FriendRollResult) => void;
+    onroll?: (result: FriendRollResult, noMat: boolean) => void;
+    onadd?: (friend: FriendSlot) => void;
   }
 
   interface FriendForm {
@@ -19,7 +20,7 @@
     sourceNpcId: string;
   }
 
-  let { npcList = [], onroll }: Props = $props();
+  let { npcList = [], onroll, onadd }: Props = $props();
 
   const friends = getFriends();
 
@@ -78,7 +79,7 @@
     return false;
   }
 
-  export async function rollFriend() {
+  export async function rollFriend(noMat = false) {
     const result = friends.rollFriend();
     selectedIndex = result.roll;
     if (result.empty) {
@@ -91,7 +92,7 @@
       empty: !finalSlot,
     };
     friends.lastRoll = finalResult;
-    onroll?.(finalResult);
+    onroll?.(finalResult, noMat);
     return finalResult;
   }
 
@@ -100,14 +101,10 @@
     dialog?.close();
   }
 
-  function selectedClass(index: number) {
+  function slotClass(index: number) {
     return selectedIndex === index
       ? 'border-purple-500 bg-purple-100 dark:bg-purple-950'
       : 'border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-950';
-  }
-
-  function dieLabel(die: DieValue) {
-    return `d${die}`;
   }
 </script>
 
@@ -146,12 +143,8 @@
             <option value={npc.id}>{npc.name}</option>
           {/each}
         </select>
-        <Button
-          size="sm"
-          variant="outline"
-          icon="person"
-          disabled={!form.sourceNpcId}
-          onclick={useNpcName}>Use</Button
+        <Button size="sm" variant="outline" disabled={!form.sourceNpcId} onclick={useNpcName}
+          >Use</Button
         >
       </div>
     {/if}
@@ -162,53 +155,54 @@
   {#snippet header()}
     <div class="pr-2">
       <h3 class="text-xl font-subtitle leading-6">Friends!</h3>
-      <div class="mt-1 text-sm text-gray-600 dark:text-gray-300">
-        Friend die: {dieLabel(friends.roster.die)}
-      </div>
     </div>
-    <Button icon="d6" onclick={rollFriend}>Roll</Button>
+    <button
+      type="button"
+      aria-label="Roll Friend die"
+      title="Roll Friend die"
+      onclick={() => rollFriend()}
+      class="inline-flex items-center rounded-full bg-purple-300 p-1 shadow-sm transition hover:bg-purple-200 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-purple-700 dark:hover:bg-purple-800"
+    >
+      <Die which={friends.roster.die} size="h-5 w-5" />
+    </button>
   {/snippet}
 
-  <div class="flex flex-col gap-4">
-    {#if friends.lastRoll}
-      <div
-        class="rounded-lg border border-purple-200 bg-purple-50 px-3 py-2 text-sm dark:border-purple-800 dark:bg-purple-950"
-      >
-        <div class="flex items-center gap-2">
-          <Die which={friends.lastRoll.die} />
-          <span>
-            Slot {friends.lastRoll.roll}: {friends.lastRoll.friend?.name ?? 'New Friend'}
-          </span>
-        </div>
-      </div>
-    {/if}
-
-    <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
+  <div class="flex flex-col gap-2">
+    <div class="flex flex-col gap-2">
       {#each slotIndexes as index}
         {@const slot = friends.getSlot(index)}
-        <button
-          type="button"
-          onclick={() => editSlot(index)}
-          class="min-h-20 rounded-lg border p-3 text-left transition hover:border-purple-400 {selectedClass(
-            index,
-          )}"
-        >
-          <div class="flex items-start gap-3">
-            <div
-              class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gray-100 text-sm font-medium dark:bg-gray-800"
-            >
-              {index}
-            </div>
-            <div class="min-w-0 flex-1">
-              <div class="truncate font-medium">
+        <div class="flex gap-2">
+          <button
+            type="button"
+            onclick={() => editSlot(index)}
+            class="min-h-11 flex-1 rounded-lg border px-3 py-2 text-left transition hover:border-purple-400 {slotClass(
+              index,
+            )}"
+          >
+            <div class="flex items-center gap-3">
+              <div
+                class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gray-100 text-sm font-medium dark:bg-gray-800"
+              >
+                {index}
+              </div>
+              <div class="min-w-0 flex-1 truncate font-medium">
                 {slot?.name ?? 'Empty'}
               </div>
-              <div class="line-clamp-2 text-sm text-gray-600 dark:text-gray-300">
-                {slot?.notes || (slot ? 'No notes' : 'Click to add a Friend')}
-              </div>
             </div>
-          </div>
-        </button>
+          </button>
+          {#if slot && onadd}
+            <div class="flex items-center">
+              <Button
+                aria-label="Add Friend to playmat"
+                title="Add Friend to playmat"
+                size="tight"
+                icon="plus"
+                iconClass="size-4"
+                onclick={() => onadd?.(slot)}
+              />
+            </div>
+          {/if}
+        </div>
       {/each}
     </div>
   </div>

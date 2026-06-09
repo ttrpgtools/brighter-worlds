@@ -6,11 +6,15 @@ import type {
   Encounter,
   Item,
   LogRoll,
+  MatAddable,
   NpcInstance,
   RemoteEmbedMessage,
   RollResult,
+  RolltableOption,
   Scene,
+  TableRoll,
 } from '$lib/types';
+import { isEncounter, isNpc } from '$lib/util/validate';
 
 interface PMScene {
   id: string;
@@ -62,6 +66,33 @@ export function addScene(mat: ReturnType<typeof getPlaymat>, scene: Scene) {
 export function addEncounter(mat: ReturnType<typeof getPlaymat>, enc: Encounter) {
   addScene(mat, { ...enc, icon: 'nav-encounter' });
   enc.npcs?.forEach((n) => addNpc(mat, getNpcInstance(n)));
+}
+
+export function addPayload(mat: ReturnType<typeof getPlaymat>, addable: MatAddable) {
+  if (addable.kind === 'item') {
+    addItem(mat, addable.payload);
+  } else if (addable.kind === 'npc') {
+    addNpc(mat, addable.payload);
+  } else if (addable.kind === 'scene') {
+    addScene(mat, addable.payload);
+  }
+}
+
+export function getAddableFromTableRoll(
+  roll: TableRoll<RolltableOption> | undefined,
+): MatAddable | undefined {
+  if (!roll?.value.length) return;
+  const first = roll.value[0];
+  if (first.type !== 'entity') return;
+  const ent = first.value;
+  if (isNpc(ent)) {
+    return { kind: 'npc', payload: getNpcInstance(ent) } satisfies MatAddable;
+  } else if (isEncounter(ent)) {
+    const inst = { ...ent, id: id() };
+    return { kind: 'encounter', payload: inst };
+  } else {
+    return { kind: 'item', payload: ent } satisfies MatAddable;
+  }
 }
 
 export function updateItem(mat: ReturnType<typeof getPlaymat>, item: PlaymatItem) {

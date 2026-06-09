@@ -1,132 +1,80 @@
 <script lang="ts">
   import { Die } from '$lib/dice';
-  import { roll } from '$lib/rolling/roll';
-  import type { DieValue } from '$lib/types';
-  import Button from '$lib/ui/button.svelte';
+  import type { DieValue, DiscordEmbed } from '$lib/types';
   import Card from '$lib/ui/card.svelte';
+  import Toggle from '$lib/ui/toggle.svelte';
   import type { FriendRollResult } from './friend-state.svelte';
+  import {
+    d6,
+    encounterActivities,
+    encounterSubjects,
+    isFriendResult,
+    rollTravel as getTravelRoll,
+    rollTravelSubject,
+    type TravelResult,
+    type TravelEncounterResult,
+    type EncounterInfo,
+  } from './hexcrawl';
+  import { formatTravelEncounterRoll, formatTravelRoll } from '$lib/util/share';
+  import { weather } from './weather.svelte';
 
   interface Props {
     onlog?: (label: string, result: number, dice?: DieValue[]) => void;
+    onembed?: (embed: DiscordEmbed) => void;
+    onencounter?: (travel: TravelResult, enc: EncounterInfo) => void;
     rollFriend?: () => Promise<FriendRollResult | undefined>;
   }
 
-  interface TravelResult {
-    weatherDie: number;
-    activityDie: number;
-    encounter: boolean;
-    weather: string;
-    hexActivity: string;
-  }
+  let { onlog, onencounter, onembed, rollFriend }: Props = $props();
 
-  interface TravelEncounterResult {
-    subjectDie: number;
-    subjectRolls: number[];
-    activityDie: number;
-    subject: string;
-    activity: string;
-    intensified: boolean;
-    roadAdjusted: boolean;
-    withSubjectDie?: number;
-    withSubject?: string;
-  }
-
-  let { onlog, rollFriend }: Props = $props();
-
-  let travel: TravelResult | undefined = $state();
-  let encounter: TravelEncounterResult | undefined = $state();
-  let preRolledWeather: number | undefined = $state();
   let road = $state(false);
 
-  const weatherResults = [
-    'Weather: 1',
-    'Weather: 2',
-    'Weather: 3',
-    'Weather: 4',
-    'Weather: 5',
-    'Weather: 6',
-  ];
-
-  const hexActivity = [
-    'Recent activity, roll Encounter',
-    'Nearby activity, roll Encounter',
-    'Weather on the horizon, pre-roll weather',
-    'Local normality',
-    'Local normality',
-    'Local weirdness',
-  ];
-
-  const encounterSubjects = [
-    'Friend!',
-    'Friend!',
-    'Local Quest',
-    'A Local',
-    'Wildlife or a Local',
-    'Wildlife',
-  ];
-
-  const encounterActivities = [
-    'Traveling',
-    'Hanging Out',
-    'In Trouble',
-    'Working',
-    'Special',
-    'With...',
-  ];
-
-  function d6() {
-    return roll(6);
+  function encounterContext(travel: TravelResult) {
+    if (travel.encounter) return 'Here and now';
+    if (travel.activityDie === 1) return 'Recent activity';
+    if (travel.activityDie === 2) return 'Nearby activity';
+    return '';
   }
 
-  function rollSubject() {
-    const first = d6();
-    if (!road) {
-      return { value: first, rolls: [first], roadAdjusted: false };
-    }
-    const second = d6();
-    return {
-      value: Math.min(first, second),
-      rolls: [first, second],
-      roadAdjusted: true,
-    };
+  function shouldRollEncounter(travel: TravelResult) {
+    return travel.encounter || travel.activityDie === 1 || travel.activityDie === 2;
   }
 
-  function rollTravel() {
-    const weatherDie = preRolledWeather ?? d6();
-    const activityDie = d6();
-    travel = {
-      weatherDie,
-      activityDie,
-      encounter: weatherDie === activityDie,
-      weather: weatherResults[weatherDie - 1],
-      hexActivity: hexActivity[activityDie - 1],
-    };
-    encounter = undefined;
-    preRolledWeather = undefined;
+  async function rollTravel() {
+    const travel = getTravelRoll(weather.upcoming);
+    weather.upcoming = undefined;
 
-    onlog?.(
-      `Travel Roll: ${travel.weather}; ${travel.hexActivity}`,
-      weatherDie + activityDie,
-      [6, 6],
-    );
+    onembed?.(formatTravelRoll(travel));
 
-    if (activityDie === 3) {
+    if (travel.activityDie === 3) {
       preRollWeather();
+    }
+
+    if (shouldRollEncounter(travel)) {
+      await rollEncounter(travel);
     }
   }
 
   function preRollWeather() {
-    preRolledWeather = d6();
-    onlog?.(`Weather: ${preRolledWeather}`, preRolledWeather, [6]);
+    weather.preroll();
+    if (weather.upcoming) {
+      onlog?.(`Prerolled Weather: ${weather.upcomingLabel}`, weather.upcoming, [6]);
+    }
   }
 
-  function rollEncounter() {
-    const subject = rollSubject();
+  async function rollEncounter(travel: TravelResult) {
+    const subject = rollTravelSubject(road);
     const activityDie = d6();
     const withSubjectDie = activityDie === 6 ? d6() : undefined;
     const withSubject = withSubjectDie ? encounterSubjects[withSubjectDie - 1] : undefined;
+    const result = isFriendResult(encounterSubjects[subject.value - 1])
+      ? (await rollFriend?.())?.friend?.name
+      : undefined;
+    const withResult = isFriendResult(withSubject)
+      ? (await rollFriend?.())?.friend?.name
+      : undefined;
 
-    encounter = {
+    const encounter: TravelEncounterResult = {
       subjectDie: subject.value,
       subjectRolls: subject.rolls,
       activityDie,
@@ -134,26 +82,20 @@
       activity: encounterActivities[activityDie - 1],
       intensified: subject.value === activityDie,
       roadAdjusted: subject.roadAdjusted,
+      result,
       withSubjectDie,
       withSubject,
+      withResult,
     };
-
-    const roadNote = subject.roadAdjusted ? `; road rolls ${subject.rolls.join(', ')}` : '';
-    const withNote = withSubject ? ` ${withSubject}` : '';
-    const intensifiedNote = encounter.intensified ? '; intensified' : '';
-    onlog?.(
-      `Travel Encounter: ${encounter.subject} ${encounter.activity}${withNote}${intensifiedNote}${roadNote}`,
-      encounter.subjectDie + activityDie,
-      [6, 6],
-    );
-  }
-
-  async function handleFriendRoll() {
-    await rollFriend?.();
-  }
-
-  function hasFriendResult() {
-    return encounter?.subject === 'Friend!' || encounter?.withSubject === 'Friend!';
+    onencounter?.(travel, {
+      subject: encounter.subject,
+      withSubject: encounter.withSubject ?? '',
+      activity: encounter.activity,
+      tableRoll: undefined,
+      withRoll: undefined,
+      intensified: encounter.intensified,
+      roadRolls: encounter.subjectRolls,
+    });
   }
 </script>
 
@@ -161,95 +103,27 @@
   {#snippet header()}
     <div class="pr-2">
       <h3 class="text-xl font-subtitle leading-6">Travel Rolls</h3>
-      {#if preRolledWeather}
-        <div class="mt-1 text-sm text-gray-600 dark:text-gray-300">
-          Next weather: {preRolledWeather}
-        </div>
-      {/if}
     </div>
-    <Button icon="d6" onclick={rollTravel}>Roll</Button>
+    <button
+      type="button"
+      aria-label="Roll travel"
+      title="Roll travel"
+      onclick={rollTravel}
+      class="inline-flex items-center gap-1 rounded-md bg-purple-300 p-1 shadow-sm transition hover:bg-purple-200 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-purple-700 dark:hover:bg-purple-800"
+    >
+      <Die which={6} size="h-5 w-5" />
+      <Die which={6} size="h-5 w-5" />
+    </button>
   {/snippet}
 
-  <div class="flex flex-col gap-4">
-    <label class="flex items-center gap-2 text-sm">
-      <input
-        type="checkbox"
-        bind:checked={road}
-        class="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
-      />
-      <span>Road encounter: roll subject twice and keep lower</span>
+  <div class="flex flex-col gap-2">
+    <label class="flex items-center justify-between gap-3 text-sm">
+      <span>On the road</span>
+      <Toggle bind:value={road} />
     </label>
-
-    {#if travel}
-      <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
-        <div class="rounded-lg border border-gray-200 p-3 dark:border-gray-700">
-          <div class="mb-2 flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
-            <Die which={6} />
-            Light die
-          </div>
-          <div class="text-lg font-medium">{travel.weather}</div>
-        </div>
-        <div class="rounded-lg border border-gray-200 p-3 dark:border-gray-700">
-          <div class="mb-2 flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
-            <Die which={6} />
-            Dark die
-          </div>
-          <div class="text-lg font-medium">{travel.hexActivity}</div>
-        </div>
-      </div>
-
-      {#if travel.encounter}
-        <div
-          class="rounded-lg border border-purple-200 bg-purple-50 px-3 py-2 text-sm dark:border-purple-800 dark:bg-purple-950"
-        >
-          Matching dice: a Travel Encounter occurs.
-        </div>
-      {/if}
-
-      <div class="flex flex-wrap gap-2">
-        {#if travel.encounter || travel.activityDie === 1 || travel.activityDie === 2}
-          <Button size="sm" icon="nav-encounter" onclick={rollEncounter}>Encounter</Button>
-        {/if}
-        <Button size="sm" variant="outline" icon="d6" onclick={preRollWeather}>
-          Pre-roll weather
-        </Button>
-      </div>
-    {:else}
-      <div class="text-sm text-gray-600 dark:text-gray-300">
-        Roll when traveling to a neighboring hex.
-      </div>
-    {/if}
-
-    {#if encounter}
-      <div class="rounded-lg border border-gray-200 p-3 dark:border-gray-700">
-        <div class="mb-3 flex items-center justify-between gap-3">
-          <h4 class="font-medium">Travel Encounter</h4>
-          {#if encounter.intensified}
-            <span
-              class="rounded-full bg-purple-100 px-2 py-1 text-xs text-purple-900 dark:bg-purple-900 dark:text-purple-100"
-              >Intensified</span
-            >
-          {/if}
-        </div>
-        <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
-          <div>
-            <div class="text-sm text-gray-600 dark:text-gray-300">
-              Subject {#if encounter.roadAdjusted}({encounter.subjectRolls.join(', ')} keep lower){/if}
-            </div>
-            <div class="text-lg font-medium">{encounter.subject}</div>
-          </div>
-          <div>
-            <div class="text-sm text-gray-600 dark:text-gray-300">Activity</div>
-            <div class="text-lg font-medium">
-              {encounter.activity}{#if encounter.withSubject}: {encounter.withSubject}{/if}
-            </div>
-          </div>
-        </div>
-        {#if hasFriendResult() && rollFriend}
-          <div class="mt-3">
-            <Button size="sm" icon="person" onclick={handleFriendRoll}>Roll Friend</Button>
-          </div>
-        {/if}
+    {#if weather.upcomingLabel}
+      <div class="text-xs text-gray-600 dark:text-gray-300">
+        Upcoming weather: {weather.upcomingLabel}
       </div>
     {/if}
   </div>

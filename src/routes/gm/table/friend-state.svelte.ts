@@ -5,7 +5,7 @@ import { id } from '$lib/rolling/id';
 import { roll } from '$lib/rolling/roll';
 import { snapshotState } from '$lib/util/snapshot.svelte';
 import type { DieValue } from '$lib/types';
-import { stepUp } from '$lib/dice';
+import { stepDown, stepUp } from '$lib/dice';
 
 const FRIENDS_KEY = 'bw-gm-friends';
 const FRIENDS_CONTEXT = 'bw-gm-friends-context';
@@ -119,6 +119,7 @@ export class FriendsState {
       ...this.roster,
       slots: this.roster.slots.filter((slot) => slot.index !== index),
     };
+    this.stepDownIfAppropriate();
   }
 
   rollFriend() {
@@ -142,6 +143,17 @@ export class FriendsState {
       this.roster = {
         ...this.roster,
         die: stepUp(this.roster.die),
+      };
+    }
+  }
+  stepDownIfAppropriate() {
+    if (this.roster.die === 4) return;
+    if (this.roster.slots.length >= this.roster.die - 2) return; // Can't possibly be appropriate.
+    if (this.getSlot(this.roster.die) == null && this.getSlot(this.roster.die - 1) == null) {
+      // Last two slots empty.
+      this.roster = {
+        ...this.roster,
+        die: stepDown(this.roster.die) || 4,
       };
     }
   }

@@ -1,9 +1,11 @@
 <script lang="ts">
   import { getEncounters, getNpcInstance } from '$lib/data/encounter-manager';
   import type {
+    Cta,
     CustomRolltableDef,
     DieValue,
     DiscordEmbed,
+    MatAddable,
     RolltableOption,
     TableRoll,
   } from '$lib/types';
@@ -15,10 +17,13 @@
     addEncounter,
     addItem,
     addNpc,
+    addScene,
     addLocalRoll,
     getPlaymat,
     getRollLog,
     addRemoteRoll,
+    addPayload,
+    getAddableFromTableRoll,
   } from '../playmat';
   import type { PageData } from './$types';
   import { getNpcs } from '../bestiary/npcs';
@@ -37,11 +42,25 @@
     REACTION_ROLL_VNEG,
     REACTION_ROLL_VPOS,
   } from '$lib/const';
-  import { formatEncounterRoll } from '$lib/util/share';
+  import {
+    formatEncounterRoll,
+    formatTravelEncounterRoll,
+    formatTravelRoll,
+  } from '$lib/util/share';
   import { onMount } from 'svelte';
   import Friends from './Friends.svelte';
   import TravelRolls from './TravelRolls.svelte';
-  import type { FriendRollResult } from './friend-state.svelte';
+  import type { FriendRollResult, FriendSlot } from './friend-state.svelte';
+  import {
+    d6,
+    encounterActivities,
+    isFriendResult,
+    rollTravel,
+    type EncounterInfo,
+    type TravelResult,
+  } from './hexcrawl';
+  import { weather } from './weather.svelte';
+  import { defined } from '$lib/util/array';
 
   interface Props {
     data: PageData;
@@ -127,14 +146,76 @@
     });
   }
 
-  function addFriendRoll(roll: FriendRollResult) {
+  function addFriendRoll(roll: FriendRollResult, noMat: boolean) {
     addLoggedRoll(`Friend Die: ${roll.friend?.name ?? `empty slot ${roll.roll}`}`, roll.roll, [
       roll.die,
     ]);
+    if (roll.friend != null && !noMat) {
+      addFriendToPlaymat(roll.friend);
+    }
+  }
+
+  function getFriendAddable(friend: FriendSlot) {
+    const npc = friend.sourceNpcId
+      ? allNpcs.find((current) => current.id === friend.sourceNpcId)
+      : undefined;
+    if (npc) {
+      const instance = getNpcInstance(npc);
+      if (instance.name !== friend.name) {
+        instance.name += ` (${friend.name})`;
+      }
+      return { kind: 'npc', payload: instance } satisfies MatAddable;
+    }
+    return {
+      kind: 'scene',
+      payload: {
+        id: id(),
+        name: friend.name,
+        desc: friend.notes || '',
+        icon: 'user',
+      },
+    } satisfies MatAddable;
+  }
+
+  function addFriendToPlaymat(friend: FriendSlot | undefined) {
+    if (!friend) return;
+    addPayload(mat, getFriendAddable(friend));
   }
 
   async function rollFriendFromTravel() {
-    return await friendsTool?.rollFriend();
+    return await friendsTool?.rollFriend(true);
+  }
+
+  function travelEncounterContext(travel: TravelResult) {
+    if (travel.encounter) return 'Here and now';
+    if (travel.activityDie === 1) return 'Recent activity';
+    if (travel.activityDie === 2) return 'Nearby activity';
+    return '';
+  }
+
+  function shouldRollTravelEncounter(travel: TravelResult) {
+    return travel.encounter || travel.activityDie === 1 || travel.activityDie === 2;
+  }
+
+  function rollLabel(roll: TableRoll<RolltableOption> | undefined) {
+    if (!roll?.value.length) return '';
+    const first = roll.value[0];
+    return first.type === 'entity' ? first.value.name : first.value;
+  }
+
+  function addRollEntityToPlaymat(roll: TableRoll<RolltableOption> | undefined) {
+    const addable = getAddableFromTableRoll(roll);
+    if (addable) {
+      addPayload(mat, addable);
+    }
+  }
+
+  async function resolveFriendLabel(
+    label: string,
+  ): Promise<[string | undefined, FriendSlot | undefined]> {
+    if (!isFriendResult(label)) return [undefined, undefined];
+    const roll = await rollFriendFromTravel();
+    return [roll?.friend?.name ?? label, roll?.friend];
   }
 
   async function addCustom() {
@@ -195,6 +276,82 @@
       }
     }
   }
+
+  async function logEncounter(travel: TravelResult, enc: EncounterInfo) {
+    const [result, friend] = await resolveFriendLabel(enc.subject);
+    const [withResult, withFriend] = await resolveFriendLabel(enc.withSubject);
+
+    const addables = [
+      getAddableFromTableRoll(enc.tableRoll),
+      getAddableFromTableRoll(enc.withRoll),
+      friend ? getFriendAddable(friend) : undefined,
+      withFriend ? getFriendAddable(withFriend) : undefined,
+    ].filter(defined);
+    const cta =
+      addables.length && !travel.encounter
+        ? ({
+            id: id(),
+            label: 'Add To Mat',
+            type: 'addToMat',
+            what: addables,
+          } satisfies Cta)
+        : undefined;
+    console.log('CTA', cta);
+
+    addRemote(
+      formatTravelEncounterRoll({
+        context: travelEncounterContext(travel),
+        subject: enc.subject,
+        activity: enc.activity,
+        result,
+        withSubject: enc.withSubject || undefined,
+        withResult,
+        cta,
+        intensified: enc.intensified,
+        roadRolls: enc.roadRolls,
+      }),
+    );
+
+    if (travel.encounter) {
+      addRollEntityToPlaymat(enc.tableRoll);
+      addRollEntityToPlaymat(enc.withRoll);
+      addFriendToPlaymat(friend);
+      addFriendToPlaymat(withFriend);
+    }
+  }
+
+  async function fullTravelRoll(table: CustomRolltableDef) {
+    const travel = rollTravel(weather.upcoming);
+    weather.upcoming = undefined;
+    addRemote(formatTravelRoll(travel));
+
+    if (travel.activityDie === 3) {
+      weather.preroll();
+      if (weather.upcoming) {
+        addLoggedRoll(`Prerolled Weather: ${weather.upcomingLabel}`, weather.upcoming, [6]);
+      }
+    }
+
+    if (!shouldRollTravelEncounter(travel)) return;
+
+    const tableRoll = await customTables[table.id]?.getResult();
+    const subject = rollLabel(tableRoll);
+    if (!subject) return;
+
+    const activityDie = d6();
+    const activity = encounterActivities[activityDie - 1];
+    const withRoll = activityDie === 6 ? await customTables[table.id]?.getResult() : undefined;
+    const withSubject = rollLabel(withRoll);
+
+    await logEncounter(travel, {
+      subject,
+      withSubject,
+      tableRoll,
+      withRoll,
+      activity,
+      intensified: false,
+    });
+  }
 </script>
 
 <svelte:head>
@@ -210,24 +367,6 @@
   <SidebarSection title="Custom Roll Tables" open addable onclick={addCustom}>
     {#each tables.items as table}
       <div class="relative group/table">
-        <button
-          type="button"
-          onclick={() => remove(table)}
-          class="hidden absolute top-2 left-2 text-lg z-20 rounded-full leading-none h-6 w-6 bg-purple-300 dark:bg-purple-900 group-hover/table:flex items-center justify-center"
-          ><span class="relative -top-px">&times;</span></button
-        >
-        <button
-          type="button"
-          onclick={() => requestRoll(table)}
-          class="hidden absolute top-2 left-1/2 -translate-x-1/2 text-lg z-20 rounded-full leading-none h-6 w-6 bg-purple-300 dark:bg-purple-900 group-hover/table:flex items-center justify-center"
-          ><Icon icon="broadcast" /></button
-        >
-        <button
-          type="button"
-          onclick={() => fullEncounterRoll(table)}
-          class="hidden absolute top-2 right-2 text-lg z-20 rounded-full leading-none h-6 w-6 bg-purple-300 dark:bg-purple-900 group-hover/table:flex items-center justify-center"
-          ><Icon icon="nav-encounter" /></button
-        >
         <CustomRolltable
           options={table.options}
           title={table.name}
@@ -235,11 +374,40 @@
           onclick={() => editTable(table)}
           onroll={addOption}
           bind:this={customTables[table.id]}
-        />
+        >
+          {#snippet menu(closeMenu)}
+            <div class="flex flex-col">
+              <button
+                type="button"
+                onclick={() => (requestRoll(table), closeMenu())}
+                class="px-3 py-2 text-left hover:bg-purple-100 dark:hover:bg-purple-950"
+                >Request player roll</button
+              >
+              <button
+                type="button"
+                onclick={() => (fullEncounterRoll(table), closeMenu())}
+                class="px-3 py-2 text-left hover:bg-purple-100 dark:hover:bg-purple-950"
+                >Roll as dungeon encounter</button
+              >
+              <button
+                type="button"
+                onclick={() => (fullTravelRoll(table), closeMenu())}
+                class="px-3 py-2 text-left hover:bg-purple-100 dark:hover:bg-purple-950"
+                >Roll as travel encounter</button
+              >
+              <button
+                type="button"
+                onclick={() => (remove(table), closeMenu())}
+                class="px-3 py-2 text-left text-red-700 hover:bg-red-100 dark:text-red-300 dark:hover:bg-red-950"
+                >Delete table</button
+              >
+            </div>
+          {/snippet}
+        </CustomRolltable>
       </div>
     {/each}
   </SidebarSection>
-  <SidebarSection title="Core Game Tables" open>
+  <SidebarSection title="Dungeon" open>
     <CustomRolltable
       options={encounterOpts}
       title="Dungeon Encounter Roll"
@@ -257,7 +425,17 @@
   </SidebarSection>
 
   <SidebarSection title="Hexcrawl" open>
-    <TravelRolls onlog={addLoggedRoll} rollFriend={rollFriendFromTravel} />
-    <Friends npcList={allNpcs} onroll={addFriendRoll} bind:this={friendsTool} />
+    <TravelRolls
+      onlog={addLoggedRoll}
+      onencounter={logEncounter}
+      onembed={addRemote}
+      rollFriend={rollFriendFromTravel}
+    />
+    <Friends
+      npcList={allNpcs}
+      onroll={addFriendRoll}
+      onadd={addFriendToPlaymat}
+      bind:this={friendsTool}
+    />
   </SidebarSection>
 </div>

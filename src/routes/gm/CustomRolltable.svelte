@@ -1,15 +1,17 @@
 <script lang="ts">
   import RollableTable from '$lib/RollableTable.svelte';
   import type { RolltableOption, TableRoll } from '$lib/types';
+  import type { Snippet } from 'svelte';
   interface Props {
     title: string;
     options: RolltableOption[];
     formula: string;
+    menu?: Snippet<[() => void]>;
     onroll: (res: TableRoll<RolltableOption>) => void;
     onclick?: () => void;
   }
 
-  let { title, options, formula, onroll, onclick }: Props = $props();
+  let { title, options, formula, menu, onroll, onclick }: Props = $props();
 
   let table: RollableTable<RolltableOption> | undefined = $state();
 
@@ -30,7 +32,7 @@
   }
 </script>
 
-<RollableTable {options} {title} {formula} {onroll} {onclick} bind:this={table}>
+<RollableTable {options} {title} {formula} {menu} {onroll} {onclick} bind:this={table}>
   {#snippet children({ opt })}
     <div class="flex gap-2 items-center -ml-4">
       <button

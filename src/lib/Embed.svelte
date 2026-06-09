@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { DiscordEmbed, RollCta } from '$lib/types';
+  import type { Cta, DiscordEmbed } from '$lib/types';
   import { toNiceTimestamp } from '$lib/util/format';
 
   interface Props {
@@ -9,7 +9,7 @@
     showMeta?: boolean;
     ondelete?: () => void;
     onimageclick?: (url?: string) => void;
-    oncta?: (cta: RollCta) => void;
+    oncta?: (cta: Cta) => void;
   }
 
   let {
@@ -99,10 +99,10 @@ export interface DiscordEmbed {
           type="button"
           onclick={() => oncta?.(c)}
           class="rounded-md px-2 py-1 bg-purple-300 dark:bg-purple-700"
-          >{c.label}{#if showMeta}&nbsp;({c.meta}){/if}</button
+          >{c.label}{#if showMeta && c.meta}&nbsp;({c.meta}){/if}</button
         >
       {/each}
     </div>
   {/if}
-  {#if embed.meta && showMeta}<p class="opacity-75 italic">{embed.meta}</p>{/if}
+  {#if embed.meta && showMeta}<p class="opacity-75 italic text-xs">{embed.meta}</p>{/if}
 </div>

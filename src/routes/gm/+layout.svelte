@@ -20,6 +20,7 @@
     getRollLog,
     removeRoll,
     clearRollLog,
+    addPayload,
   } from './playmat';
   import { rollResponses } from './gmtools';
   interface Props {
@@ -76,8 +77,14 @@
     };
   }
   function callToAction(cta: Cta) {
-    const value = tools?.formulaRoll(cta.formula, `Requested ${cta.formula}`, 'GM');
-    if (value && cta.meta) rollResponses.emit({ id: cta.meta, result: value });
+    if (cta.type === 'roll') {
+      const value = tools?.formulaRoll(cta.formula, `Requested ${cta.formula}`, 'GM');
+      if (value && cta.meta) rollResponses.emit({ id: cta.meta, result: value });
+    } else if (cta.type === 'addToMat') {
+      for (const addable of cta.what) {
+        addPayload(mat, addable);
+      }
+    }
   }
   function takeDamage(itemId: string) {
     return async (mod?: DieMod) => {
@@ -186,6 +193,7 @@
                 time={dt}
                 ondelete={() => removeRoll(log, item)}
                 oncta={callToAction}
+                showMeta
               />
             {/if}
           </div>

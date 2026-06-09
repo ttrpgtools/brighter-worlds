@@ -352,7 +352,21 @@ export interface RollCta extends BaseCta {
   formula: string;
 }
 
-export type Cta = RollCta;
+export type MatAddable =
+  | {
+      kind: 'npc';
+      payload: NpcInstance;
+    }
+  | { kind: 'scene'; payload: Scene }
+  | { kind: 'item'; payload: Item }
+  | { kind: 'encounter'; payload: Encounter };
+
+export interface AddToMatCta extends BaseCta {
+  type: 'addToMat';
+  what: MatAddable[];
+}
+
+export type Cta = RollCta | AddToMatCta;
 
 export interface DiscordEmbed {
   title?: string;

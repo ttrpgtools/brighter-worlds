@@ -1,10 +1,16 @@
 import { twMerge, type ClassNameValue as TwMergeClassNameValue } from 'tailwind-merge';
 import type { ClassValue as TailwindVariantsClassValue } from 'tailwind-variants';
+import { type ClassValue, clsx } from 'clsx';
 
-export function cn(...inputs: ClassNameValue[]) {
-  return twMerge(...(inputs as TwMergeClassNameValue[]));
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
 }
-
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type WithoutChild<T> = T extends { child?: any } ? Omit<T, 'child'> : T;
+export type WithoutChildrenOrChild<T> = WithoutChildren<WithoutChild<T>>;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type WithoutChildren<T> = T extends { children?: any } ? Omit<T, 'children'> : T;
+export type WithElementRef<T, U extends HTMLElement = HTMLElement> = T & { ref?: U | null };
 type ClassNameValue = TwMergeClassNameValue | TailwindVariantsClassValue;
 
 export { type ClassNameValue };

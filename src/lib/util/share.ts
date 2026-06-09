@@ -140,3 +140,81 @@ export function formatEncounterRoll(type: string, reaction?: string, label?: str
   }
   return discord;
 }
+
+export interface TravelRollEmbedInput {
+  weather: string;
+  hexActivity: string;
+  encounter: boolean;
+  weatherDie: number;
+  activityDie: number;
+  usedPreRolledWeather?: boolean;
+}
+
+export function formatTravelRoll({
+  weather,
+  hexActivity,
+  encounter,
+  weatherDie,
+  activityDie,
+  usedPreRolledWeather = false,
+}: TravelRollEmbedInput) {
+  const discord: DiscordEmbed = {
+    fields: [
+      { name: 'Weather', value: usedPreRolledWeather ? `${weather} (pre-rolled)` : weather },
+      { name: 'Hex', value: hexActivity },
+      { name: 'Encounter', value: encounter ? 'Here and now' : 'No immediate encounter' },
+    ],
+    color: encounter ? COLOR_DANGER : activityDie <= 2 ? COLOR_WARN : COLOR_ROLL,
+    title: 'Travel Roll',
+    meta: `Light ${weatherDie} | Dark ${activityDie}`,
+  };
+  return discord;
+}
+
+export interface TravelEncounterEmbedInput {
+  context: string;
+  subject: string;
+  activity: string;
+  result?: string;
+  intensified?: boolean;
+  roadRolls?: number[];
+  withSubject?: string;
+  withResult?: string;
+  cta?: Cta;
+}
+
+export function formatTravelEncounterRoll({
+  context,
+  subject,
+  activity,
+  result,
+  intensified = false,
+  roadRolls = [],
+  withSubject,
+  withResult,
+  cta,
+}: TravelEncounterEmbedInput) {
+  const fields = [
+    { name: 'Context', value: context },
+    { name: 'Subject', value: subject },
+    { name: 'Activity', value: withSubject ? `${activity}: ${withSubject}` : activity },
+  ];
+  if (result) fields.push({ name: 'Result', value: result });
+  if (withResult) fields.push({ name: 'With', value: withResult });
+
+  const notes = [
+    intensified ? 'Intensified' : '',
+    roadRolls.length > 1 ? `Road rolls ${roadRolls.join(', ')}` : '',
+  ].filter(Boolean);
+  if (notes.length) fields.push({ name: 'Notes', value: notes.join(' | ') });
+
+  const discord: DiscordEmbed = {
+    fields,
+    color: COLOR_DANGER,
+    title: 'Travel Encounter',
+  };
+  if (cta) {
+    discord.cta = [cta];
+  }
+  return discord;
+}
