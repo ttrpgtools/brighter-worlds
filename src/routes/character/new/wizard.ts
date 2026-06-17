@@ -1,5 +1,17 @@
-import type { Ability, Attrs, Calling, CallingEnhancement, Character, CharacterChoice, HasChoices, Item, Spell, Ritual } from '$lib/types';
+import type {
+  Ability,
+  Attrs,
+  Calling,
+  CallingEnhancement,
+  Character,
+  CharacterChoice,
+  HasChoices,
+  Item,
+  Spell,
+  Ritual
+} from '$lib/types';
 import fsm from 'svelte-fsm';
+import { track } from '$lib/util/track';
 import { manager } from '$lib/data/sheet-manager';
 import { get, writable } from 'svelte/store';
 import { goto } from '$app/navigation';
@@ -22,7 +34,7 @@ export const STEP = {
   EQUIPMENT: 'equipment',
   MAGIC: 'magic',
   EULOGY: 'eulogy',
-  DONE: 'done',
+  DONE: 'done'
 } as const;
 
 function pickRandom<T>(arr: T[]) {
@@ -36,11 +48,13 @@ export const wizard = fsm(STEP.CALLING, {
       // NOOP
     },
     setCalling(calling: Calling, spells: Spell[], rituals: Ritual[]) {
-      const core = calling.abilities.filter(x => x.type === 'core');
+      const core = calling.abilities.filter((x) => x.type === 'core');
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const staticCompanions = calling.abilities.filter(x => x.type === 'companion').map(({choices, ...ab}) => ab as Ability);
-      const allChoices = (calling.choices ?? []).concat(core.flatMap(x => x.choices ?? []))
-      builder.update(b => ({
+      const staticCompanions = calling.abilities
+        .filter((x) => x.type === 'companion')
+        .map(({ choices, ...ab }) => ab as Ability);
+      const allChoices = (calling.choices ?? []).concat(core.flatMap((x) => x.choices ?? []));
+      builder.update((b) => ({
         ...b,
         choices: allChoices,
         calling: {
@@ -50,9 +64,13 @@ export const wizard = fsm(STEP.CALLING, {
         },
         equipment: calling.equipment,
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        abilities: staticCompanions.concat(core.map(({choices, ...ab}) => ab)),
-        spells: (calling.spells ?? []).map(x => x === '?' ? pickRandom(spells) : spells.find(y => y.id === x)).filter(defined),
-        rituals: (calling.rituals ?? []).map(x => x === '?' ? pickRandom(rituals) : rituals.find(y => y.id === x)).filter(defined),
+        abilities: staticCompanions.concat(core.map(({ choices, ...ab }) => ab)),
+        spells: (calling.spells ?? [])
+          .map((x) => (x === '?' ? pickRandom(spells) : spells.find((y) => y.id === x)))
+          .filter(defined),
+        rituals: (calling.rituals ?? [])
+          .map((x) => (x === '?' ? pickRandom(rituals) : rituals.find((y) => y.id === x)))
+          .filter(defined)
       }));
       intern.choices = allChoices;
       return STEP.ATTRIBUTES;
@@ -60,32 +78,35 @@ export const wizard = fsm(STEP.CALLING, {
   },
   [STEP.ATTRIBUTES]: {
     setAttrs(attrs: Attrs) {
-      builder.update(b => ({
+      builder.update((b) => ({
         ...b,
         str: { current: attrs.str, max: attrs.str },
         dex: { current: attrs.dex, max: attrs.dex },
-        wil: { current: attrs.wil, max: attrs.wil },
-      }))
+        wil: { current: attrs.wil, max: attrs.wil }
+      }));
       return STEP.ABILITIES;
     }
   },
   [STEP.ABILITIES]: {
     setAbilities(abils: (Ability & HasChoices)[]) {
-      const [abilityChoices, abilities] = abils.reduce((p, {choices, ...rest}) => ([
-        [...p[0], ...(choices ?? [])],
-        [...p[1], rest as Ability]
-      ]), [[] as CharacterChoice[], [] as Ability[]]);
+      const [abilityChoices, abilities] = abils.reduce(
+        (p, { choices, ...rest }) => [
+          [...p[0], ...(choices ?? [])],
+          [...p[1], rest as Ability]
+        ],
+        [[] as CharacterChoice[], [] as Ability[]]
+      );
       const allChoices = (intern.choices ?? []).concat(abilityChoices);
-      builder.update(b => ({
+      builder.update((b) => ({
         ...b,
         choices: allChoices,
-        abilities: [...(b.abilities ?? []), ...abilities],
+        abilities: [...(b.abilities ?? []), ...abilities]
       }));
       intern.choices = allChoices;
-      if (allChoices.some(x => x.choose === 'enhancement' && !x.linked)) {
+      if (allChoices.some((x) => x.choose === 'enhancement' && !x.linked)) {
         return STEP.ENHANCEMENTS;
       }
-      if (allChoices.some(x => x.choose === 'linked')) {
+      if (allChoices.some((x) => x.choose === 'linked')) {
         return STEP.COMPANION;
       }
       return STEP.EQUIPMENT;
@@ -93,14 +114,17 @@ export const wizard = fsm(STEP.CALLING, {
   },
   [STEP.ENHANCEMENTS]: {
     setEnhancements(enhancements: CallingEnhancement[]) {
-      const newAbilities = enhancements.map(x => ({id: id(), name: x.name, desc: x.desc, type: 'enhance', details: x.type} as Ability));
-      intern.choices = intern.choices?.filter(x => x.choose !== 'enhancement');
-      builder.update(b => ({
+      const newAbilities = enhancements.map(
+        (x) =>
+          ({ id: id(), name: x.name, desc: x.desc, type: 'enhance', details: x.type }) as Ability
+      );
+      intern.choices = intern.choices?.filter((x) => x.choose !== 'enhancement');
+      builder.update((b) => ({
         ...b,
         abilities: newAbilities.concat(b.abilities ?? []),
-        choices: intern.choices,
+        choices: intern.choices
       }));
-      if (intern.choices?.some(x => x.choose === 'linked')) {
+      if (intern.choices?.some((x) => x.choose === 'linked')) {
         return STEP.COMPANION;
       }
       return STEP.EQUIPMENT;
@@ -109,23 +133,32 @@ export const wizard = fsm(STEP.CALLING, {
   [STEP.COMPANION]: {
     setCompanion(companion: Partial<Character>) {
       const [compId] = manager.create(companion);
-      builder.update(b => ({
+      builder.update((b) => ({
         ...b,
-        abilities: [{id: id(), name: companion.name ?? '', desc: `<a href="/character/${compId}" class="text-purple-700 dark:text-purple-300" target="_blank">${companion.name}'s Sheet</a>`, type: 'companion', details: companion.calling?.name ?? ''}, ...(b.abilities ?? [])]
+        abilities: [
+          {
+            id: id(),
+            name: companion.name ?? '',
+            desc: `<a href="/character/${compId}" class="text-purple-700 dark:text-purple-300" target="_blank">${companion.name}'s Sheet</a>`,
+            type: 'companion',
+            details: companion.calling?.name ?? ''
+          },
+          ...(b.abilities ?? [])
+        ]
       }));
       return STEP.EQUIPMENT;
     }
   },
   [STEP.EQUIPMENT]: {
     setEquipment(eq: Item[]) {
-      const remainingChoices = (intern.choices ?? []).filter(x => x.choose !== 'equipment');
-      builder.update(b => ({
+      const remainingChoices = (intern.choices ?? []).filter((x) => x.choose !== 'equipment');
+      builder.update((b) => ({
         ...b,
         equipment: (b.equipment ?? []).concat(eq),
-        choices: remainingChoices,
+        choices: remainingChoices
       }));
       intern.choices = remainingChoices;
-      if (intern.choices?.some(x => x.choose === 'magic')) {
+      if (intern.choices?.some((x) => x.choose === 'magic')) {
         return STEP.MAGIC;
       }
       return STEP.DONE;
@@ -133,12 +166,12 @@ export const wizard = fsm(STEP.CALLING, {
   },
   [STEP.MAGIC]: {
     setMagic(spells: Spell[], rituals: Ritual[]) {
-      const remainingChoices = (intern.choices ?? []).filter(x => x.choose !== 'magic');
-      builder.update(b => ({
+      const remainingChoices = (intern.choices ?? []).filter((x) => x.choose !== 'magic');
+      builder.update((b) => ({
         ...b,
         choices: remainingChoices,
         spells: (b.spells || []).concat(spells),
-        rituals: (b.rituals || []).concat(rituals),
+        rituals: (b.rituals || []).concat(rituals)
       }));
       intern.choices = remainingChoices;
       return STEP.DONE;
@@ -146,10 +179,11 @@ export const wizard = fsm(STEP.CALLING, {
   },
   [STEP.DONE]: {
     _enter() {
-      const {choices, ...char} = get(builder);
+      const { choices, ...char } = get(builder);
       if (choices?.length) {
         // Warn?
       }
+      track(`v1 finish wizard: ${char.calling?.name}`);
       const [newId] = manager.create(char);
       goto(`/character/${newId}/`);
     }
@@ -159,10 +193,8 @@ export const wizard = fsm(STEP.CALLING, {
       builder.set({});
       return STEP.CALLING;
     },
-    _enter({to}) {
-        goto(`/character/new/${String(to)}`);
-    },
+    _enter({ to }) {
+      goto(`/character/new/${String(to)}`);
+    }
   }
 });
-
-
