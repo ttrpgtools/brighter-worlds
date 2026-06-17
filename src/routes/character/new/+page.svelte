@@ -5,6 +5,7 @@
   import { STEP, getWizard } from './wizard.svelte';
   import type { PageData } from './$types';
   import HomeLink from '$lib/HomeLink.svelte';
+  import { track } from '$lib/util/track';
   interface Props {
     data: PageData;
   }
@@ -18,6 +19,7 @@
   }
 
   function startWizard(calling: Calling) {
+    track(`start wizard: ${calling.name}`);
     wizard.send('setCalling', calling, data.spells, data.rituals);
   }
 </script>

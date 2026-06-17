@@ -24,6 +24,11 @@ declare global {
       ) => void;
     }
   }
+  interface Window {
+    fathom?: {
+      trackEvent: (evt: string, opt?: { _value: number }) => void;
+    };
+  }
 }
 
 export {};

@@ -18,6 +18,7 @@ import { roll } from '$lib/rolling/roll';
 import { defined } from '$lib/util/array';
 import { getContext, hasContext, onMount, setContext } from 'svelte';
 import { calculateGrit } from '$lib/util/grit';
+import { track } from '$lib/util/track';
 
 class WizardBuilder {
   sheet: Partial<Character> & HasChoices = $state({});
@@ -211,6 +212,7 @@ function createWizard(builder: Builder, intern: HasChoices) {
         if (choices?.length) {
           // Warn?
         }
+        track(`finish wizard: ${char.calling?.name}`);
         const [newId] = createSheet(char);
         goto(`/character/${newId}/`);
       },

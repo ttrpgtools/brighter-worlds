@@ -23,6 +23,8 @@
     addPayload,
   } from './playmat';
   import { rollResponses } from './gmtools';
+  import { onMount } from 'svelte';
+  import { track } from '$lib/util/track';
   interface Props {
     children?: import('svelte').Snippet;
   }
@@ -34,6 +36,10 @@
   const log = getRollLog();
 
   let tools: GmTools | undefined = $state();
+
+  onMount(() => {
+    track('gm tools mounted');
+  });
 
   function getNpcItem(itemId: string) {
     const item = mat.items.find((current) => current.id === itemId);

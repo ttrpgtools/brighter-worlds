@@ -35,6 +35,7 @@
   import { registerForRollCall } from '$lib/data/broadcast-hub';
   import { stepDown } from '$lib/dice';
   import ChoiceDialog from '$lib/ChoiceDialog.svelte';
+  import { track } from '$lib/util/track';
 
   let loadStatus = writable('Loading...');
 
@@ -76,6 +77,7 @@
           : setTimeout(() => here($character.id, $character.name), 200),
       ),
     );
+    track('character opened');
     return () => {
       unsubs.forEach((x) => x());
     };
