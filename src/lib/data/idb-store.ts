@@ -23,11 +23,11 @@ export function createIdbStore<T>(
     ? createBroadcastStore<T>(broadcastKey, initialValue)
     : writable<T>(initialValue);
 
-  const loaded = get<T>(dbKey).then((value) => {
+  const loaded = get<T>(dbKey).then(async (value) => {
     if (value != null) {
       internal.set(value);
     } else if (initialValue != null) {
-      kvset(dbKey, snapshotState(initialValue));
+      await kvset(dbKey, snapshotState(initialValue));
       if (isEmpty(initialValue) && setEmpty(initialValue, false)) {
         internal.set(initialValue);
       }
@@ -41,11 +41,12 @@ export function createIdbStore<T>(
     }
     await loaded;
     const snapshot = snapshotState(value);
-    kvset(dbKey, snapshot);
+    await kvset(dbKey, snapshot);
     internal.set(snapshot);
   }
   async function update(fn: Updater<T>) {
     await loaded;
+    let persisted = Promise.resolve();
     internal.update((value: T) => {
       const result = fn(value);
       if (result == null || isEmpty(result)) {
@@ -53,9 +54,10 @@ export function createIdbStore<T>(
         return value;
       }
       const snapshot = snapshotState(result);
-      kvset(dbKey, snapshot);
+      persisted = kvset(dbKey, snapshot);
       return snapshot;
     });
+    await persisted;
   }
 
   return {

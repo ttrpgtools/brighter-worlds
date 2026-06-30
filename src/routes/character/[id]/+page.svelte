@@ -31,7 +31,6 @@
   import Icon from '$lib/ui/icon.svelte';
   import Loader from '$lib/Loader.svelte';
   import { writable } from 'svelte/store';
-  import { calculateGrit } from '$lib/util/grit';
   import { registerForRollCall } from '$lib/data/broadcast-hub';
   import { stepDown } from '$lib/dice';
   import ChoiceDialog from '$lib/ChoiceDialog.svelte';
@@ -82,12 +81,6 @@
       unsubs.forEach((x) => x());
     };
   });
-
-  function persist() {
-    const newGrit = calculateGrit($character.dex.max, $character.wil.max);
-    $character.grit.max = newGrit;
-    $character = $character;
-  }
 
   function sendRollExternal(value: number, label: string, sides: DieValue[]) {
     if ($character.settings?.rollToBridge !== false) {
@@ -322,24 +315,21 @@
         <Grit bind:value={$character.grit} isDeprived={isDeprived()} isBurdened={isBurdened()} />
         <Attribute
           name="str"
-          value={$character.str}
+          bind:value={$character.str}
           onroll={(ev) => save(ev, 'STR')}
           ondamage={takeDamage}
-          onchange={persist}
         />
         <Attribute
           name="dex"
-          value={$character.dex}
+          bind:value={$character.dex}
           onroll={(ev) => save(ev, 'DEX')}
           ondamage={takeDamage}
-          onchange={persist}
         />
         <Attribute
           name="wil"
-          value={$character.wil}
+          bind:value={$character.wil}
           onroll={(ev) => save(ev, 'WIL')}
           ondamage={takeDamage}
-          onchange={persist}
         />
         <Statuses bind:statuses={$character.statuses} />
       </div>

@@ -7,14 +7,12 @@
     name: Attr;
     value?: Attribute<DieValue, 0>;
     ondamage: (type: Attr, mod: DieMod | undefined) => void | Promise<void>;
-    onchange: () => void;
     onroll: (data: { dice: DieRollSet; name: string }) => void;
   }
 
   let {
     name,
     value = $bindable({ current: 4, max: 4 }),
-    onchange,
     ondamage,
     onroll,
   }: Props = $props();
