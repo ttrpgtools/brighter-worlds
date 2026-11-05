@@ -16,6 +16,7 @@
   import HomeLink from '$lib/HomeLink.svelte';
   import { get, writable } from 'svelte/store';
   import Loader from '$lib/Loader.svelte';
+  import SheetRecovery from '$lib/SheetRecovery.svelte';
 
   let loadStatus = writable('Loading...');
   const list = getList();
@@ -57,6 +58,7 @@
 </svelte:head>
 <HomeLink />
 <main class="p-8 flex flex-col items-center gap-2">
+  <SheetRecovery />
   <h2 class="font-title text-4xl text-center">Choose Your Adventurer</h2>
   <div class="font-symbol text-6xl">A</div>
   <div class="flex justify-center flex-wrap gap-4 mb-6 w-full max-w-(--breakpoint-2xl)">

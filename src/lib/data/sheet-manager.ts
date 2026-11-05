@@ -2,8 +2,16 @@ import { id } from '$lib/rolling/id';
 import { type Character, type CharacterSummary, EMPTY } from '$lib/types';
 import type { Updater, Writable } from 'svelte/store';
 import { get } from 'svelte/store';
-import { clear, getAll, getter } from './storage';
-import { createIdbStore, del, filteredValues } from './idb-store';
+import {
+  ensureSheetMigration,
+  readLegacyFallback,
+  tombstoneKey,
+  storageFailure,
+  reportRecoveryIssue,
+} from './sheet-recovery';
+import { normalizeLegacySheet } from './legacy-sheet';
+import { transaction } from './storage-transaction';
+import { createIdbStore, filteredEntries } from './idb-store';
 import { download } from '$lib/util/download';
 import { createBroadcastStore } from './broadcast-store';
 import { getContext, hasContext, setContext } from 'svelte';
@@ -59,14 +67,16 @@ function reviveSheet(key: string, value: unknown) {
   return value;
 }
 
-export function deleteSheet(id: string, list?: Writable<CharacterSummary[] | undefined>) {
-  clear(`${SHEET_KEY_PREFIX}${id}`);
-  del(`${SHEET_KEY_PREFIX}${id}`);
-  if (list) {
-    list.update((current) => {
-      if (!current) return current;
-      return current.filter((x) => x.id !== id);
+export async function deleteSheet(id: string, list?: Writable<CharacterSummary[] | undefined>) {
+  try {
+    await ensureSheetMigration();
+    await transaction('readwrite', (store) => {
+      store.put({ version: 1, deletedAt: Date.now() }, tombstoneKey(id));
+      store.delete(`${SHEET_KEY_PREFIX}${id}`);
     });
+    list?.update((current) => current?.filter((x) => x.id !== id));
+  } catch (error) {
+    storageFailure(error);
   }
 }
 
@@ -93,13 +103,15 @@ function withSummaryUpdates(
 
   return {
     ...sheet,
-    async set(value: Character) {
-      await sheet.set(value);
-      list.update(refreshSummaries(value));
+    set(value: Character) {
+      const operation = sheet.set(value).then(() => list.update(refreshSummaries(value)));
+      void operation.catch(() => {});
+      return operation;
     },
-    async update(updater: Updater<Character>) {
-      await sheet.update(updater);
-      list.update(refreshSummaries(get(sheet)));
+    update(updater: Updater<Character>) {
+      const operation = sheet.update(updater).then(() => list.update(refreshSummaries(get(sheet))));
+      void operation.catch(() => {});
+      return operation;
     },
   };
 }
@@ -124,21 +136,40 @@ export function getList() {
 
 export type SheetCache = Map<string, AsyncWritable<Character>>;
 
-export function loadList(
+export async function loadList(
   list: Writable<CharacterSummary[] | undefined>,
   cache: SheetCache,
   status: Writable<string>,
 ) {
-  tryMigrate(status, cache).then(() => {
-    status.set('Loading...');
-    filteredValues<Character>((k) => k.toString().startsWith(SHEET_KEY_PREFIX))
-      .then((some) => some.map(extractSummary))
-      .then((sum) => {
-        sum.sort(sortByNumber<CharacterSummary>('created'));
-        list.set(sum);
-        status.set('');
-      });
-  });
+  status.set('Loading...');
+  try {
+    await tryMigrate(status, cache);
+    const values = await filteredEntries<unknown>(
+      (k) => typeof k === 'string' && k.startsWith(SHEET_KEY_PREFIX) && k !== LIST_KEY,
+    );
+    const summaries: CharacterSummary[] = [];
+    for (const [key, value] of values) {
+      try {
+        summaries.push(
+          extractSummary(
+            normalizeLegacySheet(value, key.toString().slice(SHEET_KEY_PREFIX.length)),
+          ),
+        );
+      } catch {
+        reportRecoveryIssue({
+          key: key.toString(),
+          message: 'This saved record is damaged or has a mismatched ID. It was kept for recovery.',
+        });
+      }
+    }
+    summaries.sort(sortByNumber<CharacterSummary>('created'));
+    list.set(summaries);
+  } catch (error) {
+    storageFailure(error);
+    list.set([]);
+  } finally {
+    status.set('');
+  }
 }
 
 export function createSheetCache() {
@@ -162,7 +193,11 @@ export function loadSheet(
   }
   const empty = getEmptySheet();
   empty.id = id;
-  const sheet = createIdbStore<Character>(`${SHEET_KEY_PREFIX}${id}`, empty);
+  const sheet = createIdbStore<Character>(`${SHEET_KEY_PREFIX}${id}`, empty, true, {
+    beforeLoad: ensureSheetMigration,
+    decode: (value) => normalizeLegacySheet(value, id),
+    fallback: () => readLegacyFallback(id),
+  });
   if (cache) {
     cache.set(id, sheet);
   }
@@ -220,27 +255,7 @@ export async function uploadSheet(json: string, list?: Writable<CharacterSummary
   }
 }
 
-export async function tryMigrate(status: Writable<string>, cache?: SheetCache) {
-  if (typeof window === 'undefined') return;
-  const oldList = getter<CharacterSummary[]>(LIST_KEY) || [];
-  const orderMap = oldList.reduce(
-    (p, c, i) => ({ ...p, [c.id]: i + 1 }),
-    {} as Record<string, number>,
-  );
-  const allChars = getAll<Character>(
-    (key) => key.startsWith(SHEET_KEY_PREFIX) && key !== LIST_KEY,
-    reviveSheet,
-  );
-  if (allChars.length > 0) status.set('Migrating...');
-  await Promise.all(
-    allChars.map((char, ai) => {
-      const id = char.id;
-      char.created = orderMap[id] ?? ai + 1;
-      char.sortkey = orderMap[id] ?? ai + 1;
-      const sheet = loadSheet(id, undefined, cache);
-      clear(`${SHEET_KEY_PREFIX}${id}`);
-      return sheet.set(char);
-    }),
-  );
-  clear(LIST_KEY);
+export async function tryMigrate(status: Writable<string>, _cache?: SheetCache) {
+  status.set('Checking saved characters...');
+  return ensureSheetMigration();
 }

@@ -23,6 +23,7 @@
     "ajv": "^8.20.0",
     "bits-ui": "^2.18.1",
     "clsx": "^2.1.1",
+    "fake-indexeddb": "^6.2.7",
     "idb-keyval": "^6.2.5",
     "peerjs": "^1.5.5",
     "prettier": "^3.8.3",

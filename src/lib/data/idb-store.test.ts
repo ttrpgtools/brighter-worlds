@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { get as storeValue } from 'svelte/store';
 import { createRuneProxy } from '$lib/util/snapshot.fixture.svelte';
 
 const stored = new Map<string, unknown>();
@@ -7,7 +8,8 @@ const setStored = vi.fn(async (key: string, value: unknown) => {
   stored.set(key, value);
 });
 
-vi.mock('idb-keyval', () => ({
+vi.mock('idb-keyval', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('idb-keyval')>()),
   async get<T>(key: string) {
     return stored.get(key) as T | undefined;
   },
@@ -21,6 +23,48 @@ vi.mock('idb-keyval', () => ({
 }));
 
 describe('createIdbStore', () => {
+  it('never persists an empty placeholder merely by opening a missing sheet', async () => {
+    const { createIdbStore } = await import('./idb-store');
+    const { EMPTY } = await import('$lib/types');
+    const store = createIdbStore('missing', { [EMPTY]: true, name: '' }, false);
+    await store.loaded;
+    expect(setStored).not.toHaveBeenCalled();
+  });
+
+  it('keeps newer edits visible while older writes wait and persists them in order', async () => {
+    const { createIdbStore } = await import('./idb-store');
+    const store = createIdbStore('sheet', { name: '' }, false);
+    await store.loaded;
+    let finish: (() => void) | undefined;
+    setStored.mockImplementationOnce(
+      () =>
+        new Promise<void>((resolve) => {
+          finish = resolve;
+        }),
+    );
+    const first = store.set({ name: 'First' });
+    await vi.waitFor(() => expect(finish).toBeDefined());
+    const second = store.set({ name: 'Second' });
+    expect(storeValue(store).name).toBe('Second');
+    finish?.();
+    await first;
+    expect(storeValue(store).name).toBe('Second');
+    await second;
+    expect(stored.get('sheet')).toEqual({ name: 'Second' });
+  });
+
+  it('rejects unavailable browser persistence rather than claiming memory is durable', async () => {
+    vi.stubGlobal('window', {});
+    const { createIdbStore } = await import('./idb-store');
+    const store = createIdbStore('sheet', { name: '' }, false, {
+      fallback: () => ({ name: 'Recoverable' }),
+    });
+    await store.loaded;
+    expect(storeValue(store).name).toBe('Recoverable');
+    await expect(store.set({ name: 'Unsaved edit' })).rejects.toThrow('unavailable');
+    expect(storeValue(store).name).toBe('Unsaved edit');
+  });
+
   beforeEach(() => {
     stored.clear();
     setStored.mockClear();
@@ -91,9 +135,11 @@ describe('createIdbStore', () => {
     const store = createIdbStore('sheet', { id: 'sheet-1', name: '' }, false);
     let finished = false;
 
-    const writing = store.update((sheet) => ({ ...sheet, name: 'Updated' })).then(() => {
-      finished = true;
-    });
+    const writing = store
+      .update((sheet) => ({ ...sheet, name: 'Updated' }))
+      .then(() => {
+        finished = true;
+      });
     await vi.waitFor(() => expect(finishWrite).toBeDefined());
 
     expect(finished).toBe(false);

@@ -18,7 +18,7 @@ vi.mock('./idb-store', () => ({
     };
   },
   del: vi.fn(),
-  filteredValues: vi.fn(async () => []),
+  filteredEntries: vi.fn(async () => []),
 }));
 
 const summary: CharacterSummary = {

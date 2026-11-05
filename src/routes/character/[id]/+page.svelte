@@ -1,5 +1,7 @@
 <script lang="ts">
   import DiceDialog from '$lib/DiceDialog.svelte';
+  import SheetRecovery from '$lib/SheetRecovery.svelte';
+  import { isEmpty } from '$lib/types';
   import { bestRoll } from '$lib/rolling/roll';
   import Name from '$lib/sheet/Name.svelte';
   import type { Attr, DamageDetails, DieMod, DieValue, Item, Magic as MagicType } from '$lib/types';
@@ -64,7 +66,9 @@
     list,
     cache,
   );
-  tryMigrate(loadStatus, cache).then(() => loadStatus.set(''));
+  tryMigrate(loadStatus, cache)
+    .then(() => character.loaded)
+    .finally(() => loadStatus.set(''));
 
   onMount(() => {
     const unsubs: (() => void)[] = [];
@@ -272,6 +276,7 @@
 />
 <SheetSettings bind:this={settingsDialog} bind:settings={$character.settings} />
 <Roller onroll={(die) => showRoll([die])} />
+<SheetRecovery />
 {#if $loadStatus}
   <div class="fixed inset-0 flex items-center justify-center z-50 bg-purple-500/10">
     <div
@@ -282,93 +287,99 @@
     </div>
   </div>
 {/if}
-<div
-  class="relative flex flex-col justify-start overflow-hidden dark:bg-gray-800 pt-6 pb-10 px-4 gap-4"
->
-  <!-- <img src="/img/beams.jpg" alt="" class="absolute top-1/2 left-1/2 max-w-none -translate-x-1/2 -translate-y-1/2" width="1308" /> -->
+{#if !isEmpty($character)}
   <div
-    class="absolute inset-0 bg-[url(/img/grid.svg)] dark:invert bg-center mask-[linear-gradient(180deg,white,rgba(255,255,255,0))]"
-  ></div>
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-    <div class="flex gap-2 items-center md:items-start">
-      <div><Button size="icon" icon="cog" onclick={openSettings} /></div>
-      <div class="relative justify-self-center text-center grow">
-        <h1 class="text-4xl font-title">Brighter Worlds</h1>
-        <span class="md:block font-symbol text-6xl hidden h-4 relative -top-6 text-purple-500"
-          >j</span
-        >
-      </div>
-      <div class="w-8 flex flex-col gap-2">
-        {#if $character.settings?.rollToDiscord}
-          <Icon icon="discord" />
-        {/if}
-        {#if $character.settings?.rollToBridge !== false}
-          <Icon icon="broadcast" />
-        {/if}
-      </div>
-    </div>
-    <Name bind:name={$character.name} bind:pronouns={$character.pronouns} />
+    class="relative flex flex-col justify-start overflow-hidden dark:bg-gray-800 pt-6 pb-10 px-4 gap-4"
+  >
+    <!-- <img src="/img/beams.jpg" alt="" class="absolute top-1/2 left-1/2 max-w-none -translate-x-1/2 -translate-y-1/2" width="1308" /> -->
     <div
-      class="relative rounded-lg bg-white shadow-xl dark:bg-gray-900 dark:shadow-purple-400/20 ring-1 ring-gray-900/5 md:h-100 flex flex-col gap-6"
-    >
-      <div class="px-4 py-5 sm:px-6 flex flex-col gap-4 h-full">
-        <Grit bind:value={$character.grit} isDeprived={isDeprived()} isBurdened={isBurdened()} />
-        <Attribute
-          name="str"
-          bind:value={$character.str}
-          onroll={(ev) => save(ev, 'STR')}
-          ondamage={takeDamage}
-        />
-        <Attribute
-          name="dex"
-          bind:value={$character.dex}
-          onroll={(ev) => save(ev, 'DEX')}
-          ondamage={takeDamage}
-        />
-        <Attribute
-          name="wil"
-          bind:value={$character.wil}
-          onroll={(ev) => save(ev, 'WIL')}
-          ondamage={takeDamage}
-        />
-        <Statuses bind:statuses={$character.statuses} />
+      class="absolute inset-0 bg-[url(/img/grid.svg)] dark:invert bg-center mask-[linear-gradient(180deg,white,rgba(255,255,255,0))]"
+    ></div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div class="flex gap-2 items-center md:items-start">
+        <div><Button size="icon" icon="cog" onclick={openSettings} /></div>
+        <div class="relative justify-self-center text-center grow">
+          <h1 class="text-4xl font-title">Brighter Worlds</h1>
+          <span class="md:block font-symbol text-6xl hidden h-4 relative -top-6 text-purple-500"
+            >j</span
+          >
+        </div>
+        <div class="w-8 flex flex-col gap-2">
+          {#if $character.settings?.rollToDiscord}
+            <Icon icon="discord" />
+          {/if}
+          {#if $character.settings?.rollToBridge !== false}
+            <Icon icon="broadcast" />
+          {/if}
+        </div>
       </div>
-    </div>
+      <Name bind:name={$character.name} bind:pronouns={$character.pronouns} />
+      <div
+        class="relative rounded-lg bg-white shadow-xl dark:bg-gray-900 dark:shadow-purple-400/20 ring-1 ring-gray-900/5 md:h-100 flex flex-col gap-6"
+      >
+        <div class="px-4 py-5 sm:px-6 flex flex-col gap-4 h-full">
+          <Grit bind:value={$character.grit} isDeprived={isDeprived()} isBurdened={isBurdened()} />
+          <Attribute
+            name="str"
+            bind:value={$character.str}
+            onroll={(ev) => save(ev, 'STR')}
+            ondamage={takeDamage}
+          />
+          <Attribute
+            name="dex"
+            bind:value={$character.dex}
+            onroll={(ev) => save(ev, 'DEX')}
+            ondamage={takeDamage}
+          />
+          <Attribute
+            name="wil"
+            bind:value={$character.wil}
+            onroll={(ev) => save(ev, 'WIL')}
+            ondamage={takeDamage}
+          />
+          <Statuses bind:statuses={$character.statuses} />
+        </div>
+      </div>
 
-    <Equipment
-      bind:equipment={$character.equipment}
-      onroll={damage}
-      class="md:h-100"
-      isSharing={isSharing()}
-      onshare={shareItem}
-    />
-    <Magic
-      title="Spells"
-      bind:magicList={$character.spells}
-      onroll={cast}
-      castable
-      oncast={cast}
-      type={'spell'}
-      isSharing={isSharing()}
-      onshare={shareMagic}
-    />
-    <Magic
-      title="Rituals"
-      bind:magicList={$character.rituals}
-      onroll={damage}
-      type={'ritual'}
-      isSharing={isSharing()}
-      onshare={shareMagic}
-    />
-    <Calling
-      calling={$character.calling}
-      bind:abilities={$character.abilities}
-      callingList={data.callings}
-      enhancements={data.enhancements}
-    />
-    <EulogyNotes bind:notes={$character.notes} bind:eulogy={$character.eulogy} />
+      <Equipment
+        bind:equipment={$character.equipment}
+        onroll={damage}
+        class="md:h-100"
+        isSharing={isSharing()}
+        onshare={shareItem}
+      />
+      <Magic
+        title="Spells"
+        bind:magicList={$character.spells}
+        onroll={cast}
+        castable
+        oncast={cast}
+        type={'spell'}
+        isSharing={isSharing()}
+        onshare={shareMagic}
+      />
+      <Magic
+        title="Rituals"
+        bind:magicList={$character.rituals}
+        onroll={damage}
+        type={'ritual'}
+        isSharing={isSharing()}
+        onshare={shareMagic}
+      />
+      <Calling
+        calling={$character.calling}
+        bind:abilities={$character.abilities}
+        callingList={data.callings}
+        enhancements={data.enhancements}
+      />
+      <EulogyNotes bind:notes={$character.notes} bind:eulogy={$character.eulogy} />
+    </div>
   </div>
-</div>
+{:else if !$loadStatus}
+  <p class="relative z-10 p-6 text-center">
+    This character could not be loaded. Your saved records have not been replaced.
+  </p>
+{/if}
 <div class="text-center my-6 flex flex-col items-center">
   <MenuLink href="/character/" icon="nav-characters">All Characters</MenuLink>
 </div>
