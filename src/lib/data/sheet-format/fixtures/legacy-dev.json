@@ -1,0 +1,92 @@
+{
+  "id": "hero_01",
+  "name": "Mara after the journey",
+  "pronouns": "she/her",
+  "grit": {
+    "current": 5,
+    "max": 3
+  },
+  "str": {
+    "current": 0,
+    "max": 6
+  },
+  "dex": {
+    "current": 8,
+    "max": 8
+  },
+  "wil": {
+    "current": 4,
+    "max": 4
+  },
+  "statuses": ["Wounded", "A custom omen"],
+  "calling": {
+    "id": "custom-calling",
+    "name": "Lantern Keeper",
+    "desc": "A custom calling."
+  },
+  "equipment": [
+    {
+      "id": "blade_01",
+      "name": "Moon blade",
+      "desc": "A named heirloom.",
+      "bulky": false,
+      "damage": 6,
+      "extra": 4
+    },
+    {
+      "id": "book_01",
+      "name": "Book of rain",
+      "enableMagic": {
+        "type": "spells",
+        "count": 2
+      }
+    },
+    {
+      "id": "wand_01",
+      "name": "Ember branch",
+      "unequiped": true,
+      "quantity": 2,
+      "quantFormula": "d4+1",
+      "magic": {
+        "charges": {
+          "current": 0,
+          "max": 3
+        },
+        "spell": {
+          "id": "spark_01",
+          "name": "Blue spark",
+          "type": "spell",
+          "damage": [4, 6],
+          "image": "https://example.invalid/spark.webp"
+        }
+      }
+    }
+  ],
+  "abilities": [
+    {
+      "id": "companion_ability",
+      "name": "Pip",
+      "type": "companion",
+      "desc": "<a href=\"/character/pip_01\" class=\"text-purple-700\" target=\"_blank\">Pip's Sheet</a>",
+      "details": "A loyal fox"
+    }
+  ],
+  "eulogy": [
+    {
+      "id": "verse_01",
+      "message": "Found the lost lantern.",
+      "xp": true,
+      "spent": false
+    }
+  ],
+  "spells": [],
+  "rituals": [],
+  "notes": "Custom notes survive.",
+  "settings": {
+    "rollToBridge": true,
+    "rollToDiscord": true,
+    "discordWebhook": "https://example.invalid/private-webhook"
+  },
+  "created": 1683849600000,
+  "sortkey": 42
+}
