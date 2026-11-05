@@ -163,7 +163,8 @@ export function localFingerprint(value: unknown): string {
     if (seen.has(x)) throw new Error('Cyclic saved data requires recovery.');
     seen.add(x);
     let result: unknown;
-    if (x instanceof Set) result = { $set: [...x].map(visit) };
+    if (x instanceof Date) result = { $date: x.getTime() };
+    else if (x instanceof Set) result = { $set: [...x].map(visit) };
     else if (typeof Blob !== 'undefined' && x instanceof Blob) {
       // Never conclude that a legacy JSON image equals persisted Blob bytes.
       throw new Error('Binary data requires a byte comparison.');

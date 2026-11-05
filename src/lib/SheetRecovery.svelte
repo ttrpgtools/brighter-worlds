@@ -1,19 +1,25 @@
 <script lang="ts">
   import { recoveryState, ensureSheetMigration, localRecoveryFile } from '$lib/data/sheet-recovery';
   import { download } from '$lib/util/download';
+  import type { SheetCache } from '$lib/data/sheet-manager';
+  let { cache }: { cache?: SheetCache } = $props();
   let error = $state('');
-  function exportOriginals() {
+  let working = $state(false);
+  async function exportOriginals() {
     if (
       !confirm(
         'This private recovery file contains original records, including any Discord webhook settings. Keep it private. Download it?',
       )
     )
       return;
+    working = true;
     try {
-      download(localRecoveryFile(), 'brighter-worlds-private-recovery.json');
+      download(await localRecoveryFile(cache), 'brighter-worlds-private-recovery.json');
     } catch {
       error =
         'The browser could not read the original records. Keep this page open and check browser storage permissions.';
+    } finally {
+      working = false;
     }
   }
 </script>
@@ -31,7 +37,8 @@
       {/each}
     </ul>
     <p>
-      Original records are kept. You can download them for recovery without saving or signing in.
+      Original records are kept. You can download a private archive for manual recovery without
+      saving or signing in.
     </p>
     <div class="mt-3 flex flex-wrap gap-3">
       <button
@@ -39,8 +46,10 @@
         onclick={() => ensureSheetMigration()}
         disabled={$recoveryState.busy}>Retry storage check</button
       >
-      <button class="rounded border border-current px-3 py-2" onclick={exportOriginals}
-        >Download original records (private)</button
+      <button
+        class="rounded border border-current px-3 py-2"
+        onclick={exportOriginals}
+        disabled={working}>Download original records (private)</button
       >
     </div>
     {#if error}<p role="alert">{error}</p>{/if}

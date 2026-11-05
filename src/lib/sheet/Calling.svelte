@@ -1,5 +1,7 @@
 <script lang="ts">
   import Card from '$lib/ui/card.svelte';
+  import { resolve } from '$app/paths';
+  import { sanitizeDescription } from '$lib/util/sanitize-html';
   import { Die } from '$lib/dice';
   import type {
     Ability,
@@ -124,11 +126,22 @@
                 </RollSelector>{/if}
             </div>
           </div>
+          {#if ability.companionSheetId}
+            <a
+              class="text-sm text-purple-700 underline dark:text-purple-300"
+              href={resolve('/character/[id]', { id: ability.companionSheetId })}
+              >Open companion sheet</a
+            >
+          {:else if ability.unresolvedCompanionId}
+            <p class="text-sm text-amber-700 dark:text-amber-300">
+              Companion sheet was not included in this backup.
+            </p>
+          {/if}
           {#if ability.desc}<p
               use:toggleHeight
               class="text-sm text-gray-600 dark:text-gray-400 overflow-hidden"
             >
-              {@html ability.desc}
+              {@html sanitizeDescription(ability.desc)}
             </p>{/if}
         </li>
       {:else}

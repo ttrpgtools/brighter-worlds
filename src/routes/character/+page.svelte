@@ -1,12 +1,5 @@
 <script lang="ts">
-  import {
-    loadList,
-    deleteSheet,
-    uploadSheet,
-    downloadSheet,
-    getList,
-    getSheetCache,
-  } from '$lib/data/sheet-manager';
+  import { loadList, deleteSheet, getList, getSheetCache } from '$lib/data/sheet-manager';
   import MenuLink from '$lib/MenuLink.svelte';
   import Card from '$lib/ui/card.svelte';
   import { Die } from '$lib/dice/';
@@ -14,13 +7,13 @@
   import ButtonLink from '$lib/ui/button.svelte';
   import Button from '$lib/ui/button.svelte';
   import HomeLink from '$lib/HomeLink.svelte';
-  import { get, writable } from 'svelte/store';
+  import { writable } from 'svelte/store';
   import Loader from '$lib/Loader.svelte';
   import SheetRecovery from '$lib/SheetRecovery.svelte';
+  import SheetBackups from '$lib/SheetBackups.svelte';
 
   let loadStatus = writable('Loading...');
   const list = getList();
-  console.log('LIST', get(list));
   const cache = getSheetCache();
   loadList(list, cache, loadStatus);
 
@@ -28,28 +21,9 @@
     deleteSheet(id, list);
   }
 
-  let files: FileList | undefined = $state();
-  let uploader: HTMLInputElement | undefined = $state();
-  function startUpload() {
-    uploader?.click();
-  }
-  function handOff(ev: ProgressEvent<FileReader>) {
-    const content = ev.target?.result;
-    if (typeof content === 'string') {
-      uploadSheet(content, list);
-    }
-  }
-  function gotFiles() {
-    if (!files) return;
-    for (let fi = 0; fi < files.length; fi += 1) {
-      const file = files[fi];
-      if (file.type !== 'application/json') {
-        continue;
-      }
-      const reader = new FileReader();
-      reader.addEventListener('load', handOff, { once: true });
-      reader.readAsText(file);
-    }
+  let backupTools: SheetBackups | undefined = $state();
+  async function refreshCharacters() {
+    await loadList(list, cache, loadStatus);
   }
 </script>
 
@@ -58,9 +32,10 @@
 </svelte:head>
 <HomeLink />
 <main class="p-8 flex flex-col items-center gap-2">
-  <SheetRecovery />
+  <SheetRecovery {cache} />
   <h2 class="font-title text-4xl text-center">Choose Your Adventurer</h2>
   <div class="font-symbol text-6xl">A</div>
+  <SheetBackups bind:this={backupTools} {cache} onrestore={refreshCharacters} />
   <div class="flex justify-center flex-wrap gap-4 mb-6 w-full max-w-(--breakpoint-2xl)">
     {#if $list && $list.length}
       {#each $list as sheet (sheet.id)}
@@ -103,7 +78,7 @@
                     size="icon"
                     icon="download"
                     title="Download {sheet.name || '?'} (JSON)"
-                    onclick={() => downloadSheet(sheet.id)}
+                    onclick={() => backupTools?.downloadCharacter(sheet.id)}
                   />
                 </div>
               </div>
@@ -121,22 +96,6 @@
   <div class="font-symbol text-5xl">P</div>
   <div class="flex gap-4 items-center">
     <MenuLink href="/character/new" icon="nav-new-char">New Character</MenuLink>
-    <div>
-      <Button
-        size="icon"
-        icon="upload"
-        title="Upload character from JSON file"
-        onclick={startUpload}
-      />
-      <input
-        type="file"
-        class="sr-only"
-        bind:files
-        bind:this={uploader}
-        onchange={gotFiles}
-        accept=".json"
-      />
-    </div>
   </div>
   <MenuLink href="/" icon="logo-leaf">Home</MenuLink>
 </main>

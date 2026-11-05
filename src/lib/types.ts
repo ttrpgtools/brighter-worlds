@@ -81,6 +81,8 @@ export type Magic = Spell | Ritual;
 export type AbilityType = 'core' | 'advanced' | 'companion' | 'enhance';
 
 export interface Ability extends UsableEntity {
+  companionSheetId?: string;
+  unresolvedCompanionId?: string;
   details?: string;
   type: AbilityType;
 }

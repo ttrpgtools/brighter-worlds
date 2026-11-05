@@ -1,8 +1,8 @@
 # Versioned sheets and storage identities
 
-Contract version: **1**. Task: `bwo-integration-contract`. This defines the contract for the migration, backup and account API tasks. It does not switch existing browser storage, run a migration, or change current downloads/uploads.
+Contract version: **1**. Task: `bwo-integration-contract`. This defines the contract used by the implemented portable backup layer. The recoverable legacy migration retains compatible runtime records; it does not switch live browser keys to document envelopes. See [backups.md](backups.md) and [storage-recovery.md](storage-recovery.md).
 
-The machine-readable definitions are [sheet-v1.schema.json](../src/lib/data/sheet-format/sheet-v1.schema.json) and [bundle-v1.schema.json](../src/lib/data/sheet-format/bundle-v1.schema.json), using [JSON Schema 2020-12](https://json-schema.org/draft/2020-12/json-schema-core). Their `$id` URLs are stable identifiers, not published endpoints. [types.ts](../src/lib/data/sheet-format/types.ts) provides independent portable types; it deliberately does not derive the payload by spreading the runtime `Character` type. Ajv is a development dependency for contract tests only.
+The machine-readable definitions are [sheet-v1.schema.json](../src/lib/data/sheet-format/sheet-v1.schema.json) and [bundle-v1.schema.json](../src/lib/data/sheet-format/bundle-v1.schema.json), using [JSON Schema 2020-12](https://json-schema.org/draft/2020-12/json-schema-core). Their `$id` URLs are stable identifiers, not published endpoints. [types.ts](../src/lib/data/sheet-format/types.ts) provides independent portable types; it deliberately does not derive the payload by spreading the runtime `Character` type. Ajv is a development dependency for contract tests and ahead-of-time validator generation; the app imports precompiled validators.
 
 ## Documents and versions
 
@@ -42,7 +42,7 @@ One ability has at most one companion relation. Require a matching companion abi
 
 A bundle uses `format: "brighter-worlds.bundle"`, `version: 1`, an export `id`, `exportedAt` (Unix milliseconds), `source`, ordered `roots`, `sheets`, `assets`, and `unresolvedRelations`. See the [bundle example](../src/lib/data/sheet-format/fixtures/bundle-v1.json). One-sheet downloads use a one-sheet bundle too, making image/dependency handling consistent.
 
-`roots` lists the explicitly selected sheets; `sheets` includes those sheets and the transitive companion closure in deterministic order. `source` reports only origin and storage category. It is descriptive provenance, never a user identity, credential, import destination, trusted messaging target or proof of access. Origin is the exact serialized HTTP(S) origin (no path, query, fragment or credentials), or null for an unknown file source. An exporter must disclose missing companions using `{ sheetId, abilityId, targetSheetId }` entries in `unresolvedRelations` and visibly label the export incomplete. A restore of an incomplete bundle needs an explicit user choice; it must not claim the companion was transferred.
+`roots` lists the explicitly selected sheets; `sheets` includes those sheets and the transitive companion closure in deterministic order. `source` reports only origin and storage category. It is descriptive provenance, never a user identity, credential, import destination, trusted messaging target or proof of access. Origin is the exact serialized HTTP(S) origin (no path, query, fragment or credentials), or null for an unknown file source. An exporter must disclose missing or explicitly unavailable companions using `{ sheetId, abilityId, targetSheetId }` entries in `unresolvedRelations` and visibly label the export incomplete. An unavailable relation remains explicitly blocked even if another selected sheet has the same target ID. A restore of an incomplete bundle needs an explicit user choice; it must not claim the companion was transferred.
 
 Images have one of two representations:
 
@@ -112,15 +112,15 @@ Unversioned source data is **v0 input**, not a valid v1 document. JSON files can
 
 Missing legacy optional fields normalize to pronouns/notes `""`, arrays `[]`, statuses `[]`, relations `[]`, and `createdAt: null`. Missing/malformed grit or attributes, invalid known-field types or ID disagreement with the original storage key are recovery cases requiring an explicit decision; do not invent gameplay values or overwrite a good destination. Recover a missing sheet ID from its storage key only when unambiguous, and journal that decision. Preserve valid zero/false values using presence checks rather than `value || default`.
 
-The legacy upgrader and runtime adapter are intentionally not implemented by this definition task. Their acceptance criteria are:
+The definition task established the following acceptance criteria. The backup implementation now supplies the upgrader/runtime adapters and tests; persistent migration and restore behavior are described in the implementation documents:
 
 1. Normalize the root fixture to the exact v1 fixture, leaving input and raw recovery source unchanged; report exclusions and unresolved relations.
 2. A dev runtime record with actual Set statuses and a Blob image exports to a valid bundle and restores equivalent state and byte-identical images. Known game fields survive; settings and unknown fields remain local.
-3. `serialize → JSON.parse → validate → hydrate → serialize` is stable for normalized v1 data, including empty arrays, zero/false values, user ordering and nested magic. The JSON fixture round trips already run in contract tests; the hydrate/upgrade portions become runtime tests with the next tasks.
+3. `serialize → JSON.parse → validate → hydrate → serialize` is stable for normalized v1 data, including empty arrays, zero/false values, user ordering and nested magic. The JSON fixture round trips already run in contract tests; the hydrate/upgrade portions now run in the backup tests.
 4. Whole-graph copying rewrites parent/companion IDs consistently, repeated transfer is idempotent, and missing/ambiguous dependencies remain visible.
 5. Unsupported versions, invalid/oversized/deep data, invalid images and schema violations leave the original bytes and destination unchanged. Any partial durable progress has a resumable journal and accurate per-record outcomes.
 
-The current contract tests validate the complete examples, rejection cases, fixture graph/attachment integrity and historical field correspondence. They do not claim browser storage migration, cloud saving or UI import is implemented. Run `pnpm test:unit --run src/lib/data/sheet-format/contract.test.ts`.
+The contract tests validate the examples and schema rejection cases; additional backup/migration tests exercise the implemented adapters, transactional storage and restore flows. Cloud saving is still a later task. Run `pnpm test:unit --run src/lib/data/sheet-format/contract.test.ts`.
 
 ## Validation recorded
 

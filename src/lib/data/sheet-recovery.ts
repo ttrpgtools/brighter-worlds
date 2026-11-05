@@ -198,15 +198,7 @@ export function readLegacyFallback(id: string) {
 }
 
 /** Explicit private recovery file, never used by portable exports/imports. */
-export function localRecoveryFile() {
-  const records: { key: string; raw: string | null }[] = [];
-  for (let i = 0; i < window.localStorage.length; i++) {
-    const key = window.localStorage.key(i);
-    if (key?.startsWith(SHEET_PREFIX)) records.push({ key, raw: window.localStorage.getItem(key) });
-  }
-  return JSON.stringify(
-    { format: 'brighter-worlds.private-recovery', version: 1, records },
-    null,
-    2,
-  );
+export async function localRecoveryFile(cache?: import('./sheet-manager').SheetCache) {
+  const { privateRecoveryFile } = await import('./private-recovery');
+  return privateRecoveryFile(cache);
 }

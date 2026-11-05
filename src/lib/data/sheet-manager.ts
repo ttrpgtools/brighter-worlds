@@ -12,7 +12,6 @@ import {
 import { normalizeLegacySheet } from './legacy-sheet';
 import { transaction } from './storage-transaction';
 import { createIdbStore, filteredEntries } from './idb-store';
-import { download } from '$lib/util/download';
 import { createBroadcastStore } from './broadcast-store';
 import { getContext, hasContext, setContext } from 'svelte';
 import type { AsyncWritable } from './async-load-store';
@@ -44,27 +43,6 @@ function getEmptySheet() {
     sortkey: 0,
   };
   return empty;
-}
-
-const STATUSES = 'statuses';
-
-function replaceSheet(key: string, value: unknown) {
-  if (key === STATUSES) {
-    const sval = value as Set<string>;
-    return Array.from(sval.values());
-  }
-  return value;
-}
-
-function reviveSheet(key: string, value: unknown) {
-  if (key === STATUSES) {
-    if (Array.isArray(value)) {
-      return new Set<string>(value);
-    } else {
-      return new Set<string>();
-    }
-  }
-  return value;
 }
 
 export async function deleteSheet(id: string, list?: Writable<CharacterSummary[] | undefined>) {
@@ -162,7 +140,7 @@ export async function loadList(
         });
       }
     }
-    summaries.sort(sortByNumber<CharacterSummary>('created'));
+    summaries.sort(sortByNumber<CharacterSummary>('sortkey'));
     list.set(summaries);
   } catch (error) {
     storageFailure(error);
@@ -228,31 +206,30 @@ export function createSheet(
   return [newId, sheet];
 }
 
-export async function downloadSheet(id: string) {
-  const sheet = loadSheet(id);
-  await sheet.update((x) => x);
-  const char = get(sheet);
-  const payload = JSON.stringify(char, replaceSheet, 2);
-  download(payload, `bwo-${char.name || 'Unnamed'}.json`);
+export async function downloadSheet(id: string, cache?: SheetCache) {
+  const { downloadCharacterBundle } = await import('./sheet-backup');
+  return downloadCharacterBundle(id, cache);
 }
 
 export async function uploadSheet(json: string, list?: Writable<CharacterSummary[] | undefined>) {
-  try {
-    const parsed = JSON.parse(json, reviveSheet);
-    if ('id' in parsed) {
-      delete parsed.id;
-    }
-    if (!('name' in parsed) || !('grit' in parsed) || !('str' in parsed)) {
-      // Fail quietly for now
-      return;
-    }
-    const ok = confirm(`Import character named ${parsed.name || '?'}?`);
-    if (ok) {
-      createSheet(parsed, list);
-    }
-  } catch {
-    // Fail quietly for now
-  }
+  const { prepareBackup, restoreBackup } = await import('./sheet-backup');
+  const prepared = await prepareBackup(json);
+  if (
+    !confirm(
+      `Restore ${prepared.statuses.length} character(s)? Conflicting groups will be copied with new IDs.`,
+    )
+  )
+    return;
+  const result = await restoreBackup(prepared);
+  if (list)
+    await loadList(list, new Map(), {
+      set() {},
+      subscribe() {
+        return () => {};
+      },
+      update() {},
+    });
+  return result;
 }
 
 export async function tryMigrate(status: Writable<string>, _cache?: SheetCache) {

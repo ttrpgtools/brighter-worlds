@@ -38,7 +38,7 @@ There is no Ankh/Aegis integration in this checkout: no auth middleware, account
 
 Source entry points: `src/lib/data/sheet-manager.ts`, `idb-store.ts`, `storage.ts`, `persisted-collection.svelte.ts`, `encounter-manager.ts`, `settings.ts`; `src/routes/character`; `src/routes/gm`; `src/lib/types.ts`.
 
-The v1 document/bundle and storage identity contract is defined in [sheet-format.md](sheet-format.md), with TypeScript types, JSON Schemas and executable compatibility fixtures under `src/lib/data/sheet-format`. This establishes the format for implementation; current browser stores and import/export paths have not been switched.
+The v1 document/bundle and storage identity contract is defined in [sheet-format.md](sheet-format.md), with TypeScript types, JSON Schemas and executable compatibility fixtures under `src/lib/data/sheet-format`. The [migration recovery](storage-recovery.md) and [portable backup/restore](backups.md) implementations now use this contract; live runtime keys remain compatible with the current app. Account integration is still pending.
 
 ## Migration findings
 
@@ -166,4 +166,4 @@ Project ID: `01M6PG92ABGQAX78DVDC3AKNEM`. Each stable key can be passed to `mux 
 | Support account-linked sheets and explicit world/account copies      | `bwo-integration-parallax_linked` | `sync`, `parallax_scope`                             |
 | Scope Brighter Worlds NPC, encounter and table integration           | `bwo-integration-parallax_gm`     | `parallax_scope`                                     |
 
-Audit and hosting inventory have been approved in Mux. The versioned sheet contract is ready for review; DNS, redirect rules and deployment checkpoints are recorded in hosting-inventory.md. Fifteen follow-on implementation/preparation tasks are queued. The cleanup and account-free popup tasks incorporate the owner’s follow-up; Parallax scope now waits for main consolidation. Prerequisite abbreviations above refer to the suffix after `bwo-integration-`.
+Audit and hosting inventory have been approved in Mux. The versioned sheet contract has been approved. Migration recovery and backup/restore are implemented and awaiting review; DNS, redirect rules and deployment checkpoints are recorded in hosting-inventory.md. Thirteen follow-on implementation/preparation tasks remain queued. The cleanup and account-free popup tasks incorporate the owner’s follow-up; Parallax scope now waits for main consolidation. Prerequisite abbreviations above refer to the suffix after `bwo-integration-`.

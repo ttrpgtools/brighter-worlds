@@ -276,7 +276,7 @@
 />
 <SheetSettings bind:this={settingsDialog} bind:settings={$character.settings} />
 <Roller onroll={(die) => showRoll([die])} />
-<SheetRecovery />
+<SheetRecovery {cache} />
 {#if $loadStatus}
   <div class="fixed inset-0 flex items-center justify-center z-50 bg-purple-500/10">
     <div

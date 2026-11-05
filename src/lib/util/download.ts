@@ -1,8 +1,12 @@
 export function download(payload: string, name: string, type = 'application/json') {
   const link = document.createElement('a');
   link.download = name;
-  const blob = new Blob([payload], { type });
-  link.href = URL.createObjectURL(blob);
+  const url = URL.createObjectURL(new Blob([payload], { type }));
+  link.href = url;
+  link.hidden = true;
+  document.body.append(link);
   link.click();
-  URL.revokeObjectURL(link.href);
+  link.remove();
+  // Give browsers time to begin the download before releasing its bytes.
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
