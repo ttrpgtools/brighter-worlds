@@ -1,0 +1,58 @@
+# Optional account authentication and sheet APIs
+
+This implements the server foundation for the Mux Ankh/Aegis task. The next synchronization task owns the account library, explicit save buttons, local/account ownership metadata, save queues and conflict UI. Signing in here does not upload, overwrite or migrate a local sheet. Existing local editing, item links, migration recovery, backups, GM tools and Discord remain available without an account.
+
+## Authentication and access
+
+The implementation follows Ankh's `private/CONSUMER_INTEGRATION.md` and `private/APPLICATION_ACCESS.md`, with Keeper's Call's current server helpers as the reference. `bwo` remains the application identity, and `pc` is the cloud sheet collection. No Kinde SDK, consumer app secret, cross-domain cookie or browser RPC binding is introduced.
+
+- `/auth/login` and `/auth/signup` create a short-lived ticket and redirect to Ankh. Anonymous identity is created only when somebody explicitly starts sign-in/signup. Cookie-free local requests do not contact Ankh. A present cookie is verified afresh on dynamic requests; an outage leaves local pages available and account operations closed.
+- Return paths are constrained to the current origin. Tickets use a **full URL**, preserving root versus dev instead of letting a relative URL choose Ankh's first registered origin. Unknown Pages aliases cannot start sign-in. Supported consumer origins are `https://brighterworlds.app`, `https://dev.brighterworlds.app` and `http://bwo.localhost`.
+- `ankh_login` is redeemed on the server before verifying the old token. The rotated cookie is applied and a 303 removes the completion parameter. A lost RPC response leaves the cookie/code available for Ankh's idempotent retry. A missing/invalid code starts a fresh explicit login; it never authorizes storage.
+- Cookie instructions are applied on success, invalid verification and access denial. Cookies are HttpOnly, host-only (no Domain), and secure on HTTPS/production hosts. Early hook responses retain cookie headers. Auth/personal responses use `no-store` and `no-referrer`.
+- `valid` is identity, not authorization. Protected APIs also require a fresh `access.allowed === true`, matching `appId: bwo`, a live deadline, and a registered account. Missing/stale/foreign access contracts and service outages yield 503. Guests get 401; policy denials get 401/403 as appropriate. No stale allowed decision is cached or reused on failure.
+- Local/browser-owned sheets remain public application functionality. The application-access restriction applies to server-owned account operations. `/account`, `/access`, login, signup and logout remain reachable for a denied account. Account profile fields come from current verification; tokens, permissions and app session data are not returned to the browser.
+- Logout is a POST form with same-origin checks. Its ticket is created before deleting the host-local cookie. RPC failures preserve the cookie for retry. No anonymous cloud records are created, so an Ankh `upgradedFromUserId` does not require a consumer record migration.
+- Public reference pages can still prerender; build-time requests do not use cookies, query parameters or auth RPCs. Account/access pages explicitly disable prerendering.
+
+`PUBLIC_ANKH` defaults to `https://ankh.ttrpg.tools`; `PUBLIC_ANKH_LOCAL` defaults to `http://ankh.localhost` for the registered `.localhost` consumer. These are browser-facing server configuration values, not credentials. The TTRPG Tools account entry in the site menu opens the account/access screen. Profile management uses Ankh's `app=bwo` and a full origin-specific return URL.
+
+## HTTP contract
+
+All storage endpoints require a current verified registered account and application access. Server code derives `{ userId }` from that identity; browser-supplied ownership, app IDs and metadata are rejected on writes. The trusted service binding supplies the application scope. There is no guest cloud access, arbitrary collection selector, automatic overwrite or bulk-import binding.
+
+| Endpoint                      | Input                                                                                    | Result                                                                                                        |
+| ----------------------------- | ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `GET /api/session`            | Host-local cookie, optional                                                              | Safe account/profile/access state; no token or app data. Still available during denial/outage.                |
+| `GET /api/characters`         | `limit` 1–100 (default 50); optional `cursor` as URL-encoded JSON `{ updatedAt, docId }` | `{ characters: [metadata/version/timestamps], nextCursor }`; one bounded page, not an unbounded library scan. |
+| `GET /api/characters/{id}`    | Valid sheet ID                                                                           | `{ sheet: { docId, data, meta, version, createdAt, updatedAt } }`.                                            |
+| `POST /api/characters`        | JSON `{ sheet: SheetDocumentV1 }`                                                        | Create only; 201 with committed storage version/timestamps.                                                   |
+| `PUT /api/characters/{id}`    | JSON `{ sheet: SheetDocumentV1, version: positiveInteger }`                              | Versioned update; ID must match the URL.                                                                      |
+| `DELETE /api/characters/{id}` | JSON `{ version: positiveInteger }`                                                      | Versioned delete. A missing record is an explicit 404.                                                        |
+
+Document `version: 1` is the portable **format version**. The HTTP envelope's `version` is Aegis's **storage revision**. They are independent.
+
+Writes validate the full strict portable schema, depth, UTF-8 size, entity IDs, companion relations and image URLs before RPC. Raw streamed bodies are bounded to 512 KiB plus 1 KiB envelope allowance; sheet data itself is bounded to 512 KiB. Server-derived metadata contains only name, calling, creation time and format version. Companion records remain independent documents in the same account; graph closure, partial progress and explicit migration receipts belong to the synchronization task.
+
+Ordinary HTTP(S) image references remain supported. **Local `bundle-asset` references return 422 `unresolved_images`**, preventing a false successful save with missing bytes. The later sync/image UI must upload them explicitly or retain local/file storage; this implementation does not silently remove images. Aegis's existing image service makes artwork public and square-crops/converts it, so applying it to arbitrary Brighter Worlds sheet/item art needs a deliberate UI choice. There is no image publishing operation here.
+
+Mutations require `application/json` and reject foreign Origin/Sec-Fetch-Site requests. Stable errors include `invalid_request`/`invalid_sheet` (400), `sign_in_required` (401), `application_access_denied` (401/403), `not_found` (404), `exists` or `conflict` (409, conflict includes currentVersion), `payload_too_large` (413), `json_required` (415), `unresolved_images` (422), `storage_quota` (507), and auth/access/storage unavailability (503, retryable). RPC details are not returned. Conflicts are never retried using a freshly fetched version; successful empty libraries are not synthesized on outages. A lost write response must be reconciled by the future sync client rather than blindly overwritten.
+
+## Hosting preparation and remaining rollout checks
+
+Existing hosting remains Cloudflare Pages, with no Wrangler file selected by ordinary `pnpm build`. The public domains, DNS, Pages project and service policies have not changed.
+
+Cloudflare's [Pages project API](https://developers.cloudflare.com/api/resources/pages/subresources/projects/methods/get/) exposes service entrypoints but not service `props`. The installed Wrangler 4.98.0 schema accepts props generically, while its Pages preview conversion writes `service`/`entrypoint` without props. That is not a verified deployment path for Ankh/Aegis's trusted `ctx.props.appId`. Generic local config acceptance is insufficient evidence that deployed Pages preserves it. [Worker service bindings](https://developers.cloudflare.com/workers/wrangler/configuration/#service-bindings) and [context props](https://developers.cloudflare.com/workers/runtime-apis/context/#props) provide the intended mechanism.
+
+`wrangler.worker.toml` is the prepared same-domain Worker alternative:
+
+- `AUTH` → `ankh` / `AuthService`, `STORE` → `aegis` / `Aegis`, each with trusted `props.appId = "bwo"`. No administrative capabilities, app-secret workaround or migration entrypoint is configured.
+- `pnpm build:worker` explicitly selects that config through the adapter. It compiles locally; it does not create a project, deploy or upload. `pnpm build` remains the Pages build.
+- The adapter emits `.assetsignore` excluding `_worker.js`, `_routes.json`, `_headers` and `_redirects`. Server source must never be served as a public asset. Worker requests run through the app first, including account and API paths.
+- No domain routes or preview public URL are configured. There is no authorized routing cutover in this task. First validate the named entrypoints, binding props and policies in a separately authorized dev rollout; then plan moving **dev first**, preserving its origin, deep links and recovery. Root stays on Pages until the later consolidation gate. Do not move to a new ttrpg.tools origin to solve this.
+
+Local Ankh source already registers root/dev/local for `bwo`. A read-only deployed-source request on 6 November UTC (5 November Bermuda) returned **401** with the available Wrangler credential, so deployed registration remains **unverified**. This did not require or make an infrastructure change. Before rollout, use a valid read credential to verify the deployed registration, Ankh application-access contract, Aegis `bwo` allowlist if configured, and both named entrypoints. Actual login, cookie rotation, denial, quota and save-conflict behavior must then be exercised on dev; mocked bindings are not proof of a deployed service configuration.
+
+## Validation
+
+Automated tests exercise healthy unauthenticated local routes, auth outages, missing/expired/foreign access decisions, account denial with refreshed cookies, guest rejection, fresh per-request checks, root/dev/local login targets, unsafe returns, the one permitted empty-ticket retry, completion rotation/retry, denied-account logout, public prerendering, streamed-body/schema rejection, client ownership rejection, account isolation, pagination and versioned storage outcomes. Recorded results: **162 tests in 16 files pass**, `pnpm check` reports **0 errors and 0 warnings**, both `pnpm build` (Pages) and `pnpm build:worker` succeed, and formatting/diff checks pass. Svelte analysis reports no issues for the new account components or menu change. No dev server, real account mutation, real sheet upload or deployment was part of this verification.

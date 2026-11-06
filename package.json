@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "vite dev --port 5155",
     "build": "node scripts/generate-sheet-validators.mjs && vite build",
+    "build:worker": "BWO_WORKER_BUILD=1 pnpm build",
     "preview": "vite preview",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",

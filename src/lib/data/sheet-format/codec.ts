@@ -375,7 +375,7 @@ export async function buildBundle(
   return { bundle, warnings: [...new Set(context.warnings)] };
 }
 
-function imageRefs(value: unknown, refs: string[] = []): string[] {
+export function imageRefs(value: unknown, refs: string[] = []): string[] {
   if (Array.isArray(value)) value.forEach((x) => imageRefs(x, refs));
   else if (value && typeof value === 'object') {
     const raw = record(value);

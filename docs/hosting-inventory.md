@@ -92,3 +92,7 @@ Rollback checkpoints are the exact deployment IDs above plus the DNS/rule/bindin
 ## Remaining validation
 
 No additional GitHub access is needed. The installed Cloudflare credential covers Pages/Worker inventory, and the owner-provided token completed DNS/rule inventory. No further access is needed for the next local migration work. Additional HEAD probes for a sample character path/query returned 403 without a redirect location, so path/query preservation was not established by that probe and remains a browser/release check. The unread optional HTTPS-setting value is documented above. Live sheet mutation, login, browser migration, build execution and preview testing were not part of these read-only requests. No development server was launched.
+
+## Account-service hosting preparation
+
+The account-service implementation adds an explicit `wrangler.worker.toml` alternative without changing the default Pages build or live hosting. Pages documents named service entrypoints, but its published API does not expose the trusted `props` required by Ankh/Aegis; generic Wrangler config acceptance alone does not prove deploy-time preservation. See [account-services.md](account-services.md) for evidence, the tested local Worker build and the same-origin dev-first migration gate. The available Wrangler credential returned 401 for deployed Ankh source verification; local source registration is confirmed, deployed registration is not. No new key, infrastructure mutation, deployment or domain change was performed for this task.
