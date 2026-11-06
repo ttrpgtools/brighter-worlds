@@ -43,7 +43,7 @@
   }: Props = $props();
   const instanceId = id();
 
-  let totalArmor = $derived(armor(equipment) + (baseArmor ?? 0));
+  let totalArmor = $derived(armor(equipment, baseArmor ?? 0));
 
   const getArmorForm = () => ({ armor: baseArmor?.toString() ?? '' });
   let baseArmorForm = $state(getArmorForm());
@@ -194,6 +194,9 @@
                 {#if item.bulky}<span
                     class="inline-flex items-center rounded-full dark:bg-purple-100 px-2.5 py-0.5 text-xs font-medium dark:text-purple-800 bg-purple-800 text-purple-100"
                     >Bulky</span
+                  >{/if}
+                {#if item.armor && item.unequiped}<span
+                    class="text-xs text-gray-500 dark:text-gray-400">Armor inactive</span
                   >{/if}
                 {#if item.damage}<RollSelector
                     label={item.name}

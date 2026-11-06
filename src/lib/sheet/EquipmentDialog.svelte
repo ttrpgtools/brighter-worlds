@@ -25,6 +25,7 @@
     image: string;
     bulky: boolean;
     depleted: boolean;
+    unequiped: boolean;
     damage: DieValue | 0;
     blast: boolean;
     enableMagic: boolean;
@@ -41,9 +42,10 @@
           damage: item.damage ?? 0,
           armor: item.armor ? item.armor.toString() : '',
           depleted: item.depleted ?? false,
+          unequiped: item.unequiped ?? false,
           quantity: item.quantFormula
             ? item.quantFormula
-            : item.quantity
+            : item.quantity != null
               ? item.quantity.toString()
               : '',
         } as ItemForm;
@@ -56,6 +58,7 @@
       blast: false,
       bulky: false,
       depleted: false,
+      unequiped: false,
       enableMagic: false,
       armor: '',
       quantity: '',
@@ -77,6 +80,7 @@
         bulky: item.bulky,
         blast: item.blast,
         depleted: item.depleted,
+        unequiped: item.unequiped,
         ...(item.magic ? { magic: item.magic } : {}),
       };
       if (item.damage !== 0) {
@@ -91,7 +95,7 @@
       if (item.quantity) {
         if (isNumeric(item.quantity.trim())) {
           const quant = parseInt(item.quantity.trim(), 10);
-          if (quant > 0) {
+          if (quant >= 0) {
             proper.quantity = quant;
           }
         } else if (allowFormula && isRollFormula(item.quantity.trim())) {
@@ -169,6 +173,13 @@
       <div class="flex gap-2 items-center">
         <Toggle bind:value={itemForm.depleted} /> Depleted
       </div>
+      {#if Number(itemForm.armor) > 0}
+        <div class="flex gap-2 items-center">
+          <Toggle
+            bind:value={() => !itemForm.unequiped, (active) => (itemForm.unequiped = !active)}
+          /> Armor active
+        </div>
+      {/if}
       <!-- <div class="flex gap-2 items-center">
         <Toggle bind:value={itemForm.enableMagic} /> Enable Magic 
       </div> -->

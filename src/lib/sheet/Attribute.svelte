@@ -3,11 +3,13 @@
   import DieSelector from './DieSelector.svelte';
   import RollSelector from './RollSelector.svelte';
   import Button from '$lib/ui/button.svelte';
+  import { knownDie } from '$lib/dice';
   interface Props {
     name: Attr;
     value?: Attribute<DieValue, 0>;
     ondamage: (type: Attr, mod: DieMod | undefined) => void | Promise<void>;
     onroll: (data: { dice: DieRollSet; name: string }) => void;
+    onmaxchange?: (name: Attr, previous: DieValue, next: DieValue) => void;
   }
 
   let {
@@ -15,16 +17,28 @@
     value = $bindable({ current: 4, max: 4 }),
     ondamage,
     onroll,
+    onmaxchange,
   }: Props = $props();
 
   function takeDamage(data: { dice: DieRollSet; name: string }) {
     ondamage(name, data.dice.mod);
   }
   let displayName = $derived(name.toUpperCase());
+  function setMaximum(next: DieValue) {
+    if (!knownDie(next)) return;
+    const previous = value.max;
+    value = { ...value, max: next };
+    onmaxchange?.(name, previous, next);
+  }
 </script>
 
 <div class="grid grid-cols-5 items-center">
-  <RollSelector label="{displayName} Save" die={value.current || 4} {onroll}>
+  <RollSelector
+    label="{displayName} Save"
+    die={value.current || 4}
+    automaticFailure={value.current === 0}
+    {onroll}
+  >
     {#snippet children({ cprops })}
       <button
         {...cprops}
@@ -45,7 +59,7 @@
       />
     </div>
     <span class="text-2xl text-center">/</span>
-    <DieSelector bind:current={() => value.max, (v) => (value = { ...value, max: v })} />
+    <DieSelector bind:current={() => value.max, setMaximum} />
   </div>
   <div class="flex justify-end text-right">
     <RollSelector label="" direction={-1} die={value.current || 4} onroll={takeDamage}>

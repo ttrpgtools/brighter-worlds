@@ -14,7 +14,8 @@
   import { onMount, untrack } from 'svelte';
   import { SAVE_GOAL, status } from '$lib/const';
   import Magic from '$lib/sheet/Magic.svelte';
-  import { armor, burdened, isFunctional } from '$lib/util/character';
+  import { armor, burdened, isFunctional, loseAttributeStep } from '$lib/util/character';
+  import { gritAfterMaximumChange } from '$lib/util/grit';
   import DamageDialog from '$lib/sheet/DamageDialog.svelte';
   import Calling from '$lib/sheet/Calling.svelte';
   import Statuses from '$lib/sheet/Statuses.svelte';
@@ -33,7 +34,6 @@
   import Loader from '$lib/Loader.svelte';
   import { writable, readable } from 'svelte/store';
   import { registerForRollCall } from '$lib/data/broadcast-hub';
-  import { stepDown } from '$lib/dice';
   import ChoiceDialog from '$lib/ChoiceDialog.svelte';
   import { track } from '$lib/util/track';
 
@@ -145,7 +145,9 @@
 
   function save(data: { dice: DieValue[] }, stat: string) {
     const dice = data.dice;
-    const label = `${stat} Save`;
+    const label = dice.length
+      ? `${stat} Save`
+      : `${stat} Save (automatic failure: Attribute at zero)`;
     const value = bestRoll(dice);
     showRoll(dice, label, value, value >= SAVE_GOAL ? 'text-emerald-500' : 'text-rose-500');
   }
@@ -197,31 +199,23 @@
           await dice?.show(`Cast`, [], name);
         }
       } else {
-        const newWil = stepDown($character.wil.current);
-        if (newWil === 0) {
-          $character.statuses.add(status.CATATONIC);
-          $character.statuses = $character.statuses;
-          await showRoll(
-            [$character.wil.current],
-            `WIL Save Failed. You've lost all will and have become catatonic`,
-            wilSave,
-            'text-rose-500',
-          );
-        } else {
-          failedRoll = wilSave;
-          sendRollExternal(wilSave, 'WIL Save Failed', [$character.wil.current]);
-          const opt = await castDialog?.open();
-          if (opt === FAILED_CAST_UNC) {
-            $character.statuses.add(status.UNCONSCIOUS);
-            $character.statuses = $character.statuses;
-            if (rolledDice.length) {
-              await showRoll(rolledDice, name);
-            } else {
-              await dice?.show(`Cast`, [], name);
-            }
+        failedRoll = wilSave;
+        sendRollExternal(wilSave, 'WIL Save Failed', [$character.wil.current]);
+        const loss = loseAttributeStep($character.wil.current, $character.statuses);
+        $character.wil.current = loss.die;
+        $character.statuses = loss.statuses;
+        const opt = await castDialog?.open();
+        if (opt === FAILED_CAST_UNC) {
+          $character.statuses = new Set([...$character.statuses, status.UNCONSCIOUS]);
+          if (rolledDice.length) {
+            await showRoll(rolledDice, name);
+          } else {
+            await dice?.show(`Cast`, [], name);
           }
         }
-        $character.wil.current = newWil;
+        if (loss.die === 0) {
+          await dice?.show('Incapacitated', [], 'Your WIL is now zero.');
+        }
       }
     }
   }
@@ -257,23 +251,11 @@
     if (results.die != null) {
       $character[type].current = results.die;
     }
-    if ($character.settings?.rollToDiscord && results.save) {
-      sendToDiscord(
-        $character.name,
-        results.save,
-        `${type.toUpperCase()} save against ${results.dd ?? '?'} direct damage.`,
-        $character.settings.discordWebhook,
-        results.dice,
-        $character.name,
-      );
-    }
-    if ($character.settings?.rollToBridge !== false && results.save) {
-      broadcastRoll(
-        $character.name,
-        results.save,
-        `${type.toUpperCase()} save against ${results.dd ?? '?'} direct damage.`,
-        results.dice,
-        $character.name,
+    for (const save of results.saves) {
+      sendRollExternal(
+        save.save,
+        `${type.toUpperCase()} Direct Damage Save against ${save.dd}.`,
+        save.dice,
       );
     }
     console.log(`Take Damage Result Dice`, results.dice);
@@ -285,7 +267,11 @@
   }
 
   function isBurdened() {
-    return burdened($character.equipment);
+    return burdened($character.equipment, $character.abilities);
+  }
+
+  function maximumChanged(attr: Attr, previous: DieValue, next: DieValue) {
+    $character.grit = gritAfterMaximumChange($character.grit, attr, previous, next);
   }
 
   function isSharing() {
@@ -367,18 +353,21 @@
             bind:value={$character.str}
             onroll={(ev) => save(ev, 'STR')}
             ondamage={takeDamage}
+            onmaxchange={maximumChanged}
           />
           <Attribute
             name="dex"
             bind:value={$character.dex}
             onroll={(ev) => save(ev, 'DEX')}
             ondamage={takeDamage}
+            onmaxchange={maximumChanged}
           />
           <Attribute
             name="wil"
             bind:value={$character.wil}
             onroll={(ev) => save(ev, 'WIL')}
             ondamage={takeDamage}
+            onmaxchange={maximumChanged}
           />
           <Statuses bind:statuses={$character.statuses} />
         </div>

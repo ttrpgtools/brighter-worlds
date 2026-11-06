@@ -215,6 +215,7 @@ export interface Calling extends Entity, HasChoices {
 
 export interface DamageForm {
   damage: string;
+  wound?: boolean;
   bypassGrit: boolean;
   bypassArmor: boolean;
   overflow: boolean;
@@ -239,8 +240,7 @@ export interface DamageResults {
   grit?: number;
   die?: DieValue | 0;
   statuses?: Set<string>;
-  save?: number;
-  dd?: number;
+  saves: { dice: DieValue[]; save: number; dd: number }[];
 }
 
 export interface MultiValueOption {

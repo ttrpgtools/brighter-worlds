@@ -48,7 +48,7 @@
       return;
     }
     ev.preventDefault();
-    okBtnAction();
+    if (valid) okBtnAction();
   }
 
   function handleDelete() {

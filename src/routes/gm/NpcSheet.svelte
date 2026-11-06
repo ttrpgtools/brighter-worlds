@@ -116,6 +116,7 @@
             class="justify-self-center"
             label="STR Save"
             die={npc.str.current || 4}
+            automaticFailure={npc.str.current === 0}
             {onroll}
           >
             {#snippet children({ cprops })}
@@ -132,6 +133,7 @@
             class="justify-self-center"
             label="DEX Save"
             die={npc.dex.current || 4}
+            automaticFailure={npc.dex.current === 0}
             {onroll}
           >
             {#snippet children({ cprops })}
@@ -148,6 +150,7 @@
             class="justify-self-center"
             label="WIL Save"
             die={npc.wil.current || 4}
+            automaticFailure={npc.wil.current === 0}
             {onroll}
           >
             {#snippet children({ cprops })}

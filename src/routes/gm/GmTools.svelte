@@ -122,7 +122,7 @@
   export async function takeDamage(npc: NpcInstance, mod?: DieMod) {
     const chinfo: DamageDetails = {
       mod,
-      armor: armor(npc.attacks) + (npc.armor || 0),
+      armor: armor(npc.attacks, npc.armor),
       statuses: new Set(npc.status ? [npc.status] : []),
       grit: npc.grit.current,
       dice: { str: npc.str.current, dex: npc.dex.current, wil: npc.wil.current },
@@ -141,36 +141,30 @@
     if (results.die != null) {
       npc[results.type].current = results.die;
     }
-    if ($encountersSettings?.rollToDiscord && results.save) {
-      sendToDiscord(
-        npc.name,
-        results.save,
-        `${results.type.toUpperCase()} save against ${results.dd ?? '?'} direct damage.`,
-        $encountersSettings.discordWebhook,
-        results.dice,
-        npc.name,
-      );
-    }
-    if ($encountersSettings?.rollToBridge !== false && results.save) {
-      const roll = formatRoll(
-        npc.name,
-        results.save,
-        `${results.type.toUpperCase()} save against ${results.dd ?? '?'} direct damage.`,
-        results.dice,
-        npc.name,
-      );
-      roll.title = npc.name;
-      publish({ id: id(), name: '', type: 'embed', embed: roll });
-    }
-    dice?.show('Damage', results.dice, results.msg);
-
-    if (results.save) {
+    for (const save of results.saves) {
+      const label = `${results.type.toUpperCase()} Direct Damage Save against ${save.dd}.`;
+      if ($encountersSettings?.rollToDiscord) {
+        sendToDiscord(
+          npc.name,
+          save.save,
+          label,
+          $encountersSettings.discordWebhook,
+          save.dice,
+          npc.name,
+        );
+      }
+      if ($encountersSettings?.rollToBridge !== false) {
+        const roll = formatRoll(npc.name, save.save, label, save.dice, npc.name);
+        roll.title = npc.name;
+        publish({ id: id(), name: '', type: 'embed', embed: roll });
+      }
       addLocalRoll(log, {
-        dice: results.dice,
-        result: results.save,
-        label: `${npc.name}: ${results.type.toUpperCase()} save against ${results.dd ?? '?'} direct damage.`,
+        dice: save.dice,
+        result: save.save,
+        label: `${npc.name}: ${label}`,
       });
     }
+    dice?.show('Damage', results.dice, results.msg);
   }
 
   export function basicRoll(data: { dice: DieValue[]; name: string }, npcname = 'NPC') {

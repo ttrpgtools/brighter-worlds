@@ -8,7 +8,7 @@ import type { DieValue } from '$lib/types';
 
 export { D4, D6, D8, D10, D12, Die, knownDie };
 
-export function stepDown(die: DieValue) {
+export function stepDown(die: DieValue): DieValue | 0 {
   if (die === 4) return 0;
   return (die - 2) as DieValue;
 }

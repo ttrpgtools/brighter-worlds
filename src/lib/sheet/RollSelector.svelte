@@ -8,6 +8,7 @@
   interface Props {
     label: string;
     die: DieValue | DieValue[];
+    automaticFailure?: boolean;
     direction?: -1 | 1;
     posCls?: ClassNameValue;
     class?: ClassNameValue;
@@ -28,6 +29,7 @@
   let {
     label,
     die,
+    automaticFailure = false,
     direction = 1,
     posCls = '',
     class: klass = '',
@@ -49,28 +51,42 @@
     pev.stopPropagation();
     setSelectorOpen(false);
     const dice = getModifiedDice(pev, die as DieValue);
-    onroll({ dice, name: label });
+    emitRoll(dice);
+  }
+  function emitRoll(dice: DieRollSet) {
+    onroll(
+      automaticFailure
+        ? { dice: [], name: `${label} (automatic failure: Attribute at zero)` }
+        : { dice, name: label },
+    );
   }
   function rollEnhance(ev?: MouseEvent) {
     ev?.stopPropagation();
     const dice = getEnhanced(die);
     setSelectorOpen(false);
-    onroll({ dice, name: label });
+    emitRoll(dice);
   }
   function rollImpair(ev?: MouseEvent) {
     ev?.stopPropagation();
     const dice = getImpaired();
     setSelectorOpen(false);
-    onroll({ dice, name: label });
+    emitRoll(dice);
   }
   function showSelector(ev: Event) {
     ev.preventDefault();
     ev.stopPropagation();
+    if (automaticFailure) {
+      emitRoll([]);
+      return;
+    }
     setSelectorOpen(true);
   }
   function handleClick(ev: MouseEvent) {
     ev.stopPropagation();
-    if (ev.button === 2 && !selectorOpen) {
+    if (automaticFailure) {
+      setSelectorOpen(false);
+      emitRoll([]);
+    } else if (ev.button === 2 && !selectorOpen) {
       setSelectorOpen(true);
     } else if (
       $settings.desktopMode ||
@@ -111,7 +127,7 @@
 
 <div class={cn(['flex', klass])}>
   <div class="relative" {@attach closeOnOutsideClick}>
-    {#if popoverOpen}
+    {#if popoverOpen && !automaticFailure}
       <div
         class={cn([
           'absolute top-1/2 z-10 flex -translate-y-1/2 gap-2',
