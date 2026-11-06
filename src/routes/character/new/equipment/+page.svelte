@@ -1,11 +1,12 @@
 <script lang="ts">
-  import type { Item, EquipmentChoice } from '$lib/types';
+  import type { EquipmentChoice } from '$lib/types';
   import { STEP, getWizard, guardWizardStep } from '../wizard.svelte';
   import { browser } from '$app/environment';
   import Button from '$lib/ui/button.svelte';
   import { gearManager } from '$lib/data/gear-manager';
   import ItemFlair from './ItemFlair.svelte';
-  import { defined, filterEmpty } from '$lib/util/array';
+  import { filterEmpty } from '$lib/util/array';
+  import { combineStartingGear, type StartingGearPair } from '$lib/data/starting-equipment';
   import { onlyEquipment } from '$lib/util/guards';
 
   const [wizard, builder] = getWizard();
@@ -14,7 +15,9 @@
 
   const gearTables = gearManager.list;
   function forward() {
-    const rolledGear = filterEmpty(allPairs.map(combine));
+    const rolledGear = filterEmpty(
+      allPairs.map((pair) => combineStartingGear($state.snapshot(pair))),
+    );
     wizard.send('setEquipment', [...$gearTables.starting, ...rolledGear]);
   }
 
@@ -22,27 +25,12 @@
     gearManager.loadList();
   }
 
-  type Pair = [string | Item | undefined, Item | undefined];
+  type Pair = StartingGearPair;
   let allPairs: Pair[] = $state([]);
   let extras: EquipmentChoice[] = $derived((builder.sheet.choices ?? []).filter(onlyEquipment));
 
   function setPair({ pair, index }: { pair: Pair; index: number }) {
     allPairs[index] = pair;
-  }
-
-  function combine(pair?: Pair) {
-    if (!pair || !pair[0] || pair[1] == null) return;
-    if (typeof pair[0] === 'string') {
-      return { ...pair[1], name: `${pair[0]} ${pair[1].name}` } as Item;
-    }
-    const desc = [pair[1].desc, pair[0].desc].filter(defined).join(' ');
-    const item = {
-      ...pair[0],
-      ...pair[1],
-      name: `${pair[0].name} ${pair[1].name}`,
-    } satisfies Item;
-    if (desc) item.desc = desc;
-    return item;
   }
 </script>
 
@@ -87,7 +75,7 @@
 />
 {#if extras.length}
   <div class="text-lg mb-4">Extra Equipment from the {builder.sheet.calling?.name} Calling</div>
-  {#each extras as table, ti}
+  {#each extras as table, ti (ti)}
     <ItemFlair
       gear={$gearTables[table.type]}
       die={table.die}

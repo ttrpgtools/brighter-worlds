@@ -18,6 +18,7 @@
   const isGm = isGmContext();
 
   interface ItemForm {
+    magic?: Item['magic'];
     id?: string;
     name: string;
     desc: string;
@@ -76,6 +77,7 @@
         bulky: item.bulky,
         blast: item.blast,
         depleted: item.depleted,
+        ...(item.magic ? { magic: item.magic } : {}),
       };
       if (item.damage !== 0) {
         proper.damage = item.damage;
