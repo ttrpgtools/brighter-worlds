@@ -4,24 +4,29 @@
   import { id } from '$lib/rolling/id';
   import { cloneEditorDraft } from '$lib/util/gm-editor-validation';
   import { validDie } from './template-drafts';
+  import DieSelector from '$lib/sheet/DieSelector.svelte';
+  import Button from '$lib/ui/button.svelte';
+
+  interface DamageDie {
+    key: string;
+    value: DieValue | 0;
+  }
 
   let dialog: InputDialog<UsableEntity> | undefined = $state();
   let draft: UsableEntity = $state({ id: '', name: '' });
-  let damage = $state('');
+  let damage: DamageDie[] = $state([]);
   let editing = $state(false);
   let dirty = $state({ name: false, damage: false });
-  let dice = $derived(
-    damage.trim() ? damage.split(',').map((part) => Number(part.trim().replace(/^d/i, ''))) : [],
-  );
-  let damageValid = $derived(!damage.trim() || dice.every(validDie));
+  let dice = $derived(damage.map((die) => die.value).filter((value) => value !== 0));
+  let damageValid = $derived(damage.every((die) => die.value === 0 || validDie(die.value)));
 
   export async function edit(attack?: UsableEntity) {
     dirty = { name: false, damage: false };
     editing = !!attack;
     draft = attack ? cloneEditorDraft(attack) : { id: id(), name: '', desc: '' };
-    damage = (Array.isArray(draft.damage) ? draft.damage : draft.damage ? [draft.damage] : [])
-      .map((die) => `d${die}`)
-      .join(', ');
+    damage = (
+      Array.isArray(draft.damage) ? draft.damage : draft.damage ? [draft.damage] : [0 as const]
+    ).map((value) => ({ key: id(), value }));
     const result = await dialog?.open();
     if (!result) return;
     const saved = cloneEditorDraft(result);
@@ -56,17 +61,53 @@
       >Description<textarea bind:value={draft.desc} class="rounded-xl dark:bg-gray-900"
       ></textarea></label
     >
-    <label class="flex flex-col gap-1"
-      >Damage dice (optional)<input
-        bind:value={damage}
-        oninput={() => (dirty.damage = true)}
-        placeholder="d6 or d6, d8"
-        class="rounded-full dark:bg-gray-900"
-        aria-invalid={dirty.damage && !damageValid}
-      /></label
-    >
+    <fieldset class="flex flex-col gap-2">
+      <legend class="mb-2">Damage dice (optional)</legend>
+      <div class="flex flex-wrap items-center gap-3">
+        {#each damage as die, index (die.key)}
+          <div class="flex items-center gap-1">
+            <div class="w-24">
+              <DieSelector
+                label={`Damage die ${index + 1}`}
+                nullable
+                bind:current={
+                  () => die.value,
+                  (value) => {
+                    die.value = value;
+                    dirty.damage = true;
+                  }
+                }
+                invalid={dirty.damage && die.value !== 0 && !validDie(die.value)}
+              />
+            </div>
+            {#if damage.length > 1}
+              <Button
+                size="icon-sm"
+                variant="ghost"
+                icon="xmark"
+                aria-label={`Remove damage die ${index + 1}`}
+                onclick={() => {
+                  damage = damage.filter((current) => current.key !== die.key);
+                  dirty.damage = true;
+                }}
+              />
+            {/if}
+          </div>
+        {/each}
+        <Button
+          size="sm"
+          class="text-sm"
+          variant="ghost"
+          icon="plus"
+          onclick={() => {
+            damage = [...damage, { key: id(), value: 0 }];
+            dirty.damage = true;
+          }}>Add die</Button
+        >
+      </div>
+    </fieldset>
     {#if dirty.damage && !damageValid}<p class="text-sm text-red-700 dark:text-red-300">
-        Damage: use d4, d6, d8, d10 or d12, separated by commas.
+        Damage: choose d4, d6, d8, d10 or d12, or no die.
       </p>{/if}
     <label class="flex items-center gap-2"
       ><input type="checkbox" bind:checked={draft.blast} /> Blast</label

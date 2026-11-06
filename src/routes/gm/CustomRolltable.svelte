@@ -2,6 +2,7 @@
   import RollableTable from '$lib/RollableTable.svelte';
   import type { RolltableOption, TableRoll } from '$lib/types';
   import type { Snippet } from 'svelte';
+  import Button from '$lib/ui/button.svelte';
   interface Props {
     title: string;
     options: RolltableOption[];
@@ -35,14 +36,15 @@
 <RollableTable {options} {title} {formula} {menu} {onroll} {onclick} bind:this={table}>
   {#snippet children({ opt })}
     <div class="flex gap-2 items-center -ml-4">
-      <button
-        type="button"
+      <Button
+        size="tight"
+        icon="check"
+        iconClass="size-5"
         aria-label={`Choose result from ${title}: ${opt.type === 'text' ? opt.value : opt.value.name}`}
         title="Choose this result"
         onclick={() => manualRoll(opt)}
-        class="min-h-9 shrink-0 rounded-full px-2 text-xs bg-purple-200 hover:bg-purple-300 dark:bg-purple-800 dark:hover:bg-purple-700"
-        >Choose</button
-      >
+        class="size-7 shrink-0 bg-purple-200 hover:bg-purple-300 dark:bg-purple-800 dark:hover:bg-purple-700"
+      />
       <div class="flex-1 line-clamp-1">
         {#if opt.type === 'entity'}{opt.value.name}{:else}{opt.value}{/if}
       </div>

@@ -1,8 +1,7 @@
 <script lang="ts">
-  import DeleteButton from '$lib/DeleteButton.svelte';
   import Disclosable from '$lib/Disclosable.svelte';
   import Icon from '$lib/ui/icon.svelte';
-  import Button from '$lib/ui/button.svelte';
+  import PlaymatActions from './PlaymatActions.svelte';
   import { rollFormula } from '$lib/rolling/roll';
   import type { Item } from '$lib/types';
 
@@ -28,13 +27,12 @@
 
 <Disclosable imgalt={`Photo of ${item.name}`} imgsrc={src} short>
   {#snippet header()}
-    <h3 class="text-xl font-subtitle leading-6 flex-1 flex items-center gap-2">
-      <Icon icon="nav-relics" /><span class="relative top-0.5">{item.name}</span>
+    <h3 class="min-w-0 text-xl font-subtitle leading-6 flex-1 flex items-center gap-2">
+      <Icon icon="nav-relics" class="shrink-0" /><span class="relative top-0.5 break-words"
+        >{item.name}</span
+      >
     </h3>
-    <div class="ml-auto flex gap-3 items-center">
-      <Button size="icon" icon="share" onclick={onshare} />
-      <DeleteButton onconfirm={ondelete} size="w-3 h-3" />
-    </div>
+    <PlaymatActions name={item.name} kind="item" {onshare} onremove={ondelete} />
   {/snippet}
   <div class="prose dark:prose-invert prose-purple">
     {#if item.quantity}({#if item.quantFormula}<button

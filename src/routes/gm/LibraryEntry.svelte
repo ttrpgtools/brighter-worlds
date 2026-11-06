@@ -43,25 +43,39 @@
   bind:this={entry}
   class="min-w-0 rounded-xl border border-purple-200 p-3 dark:border-purple-800"
 >
-  <h4 class="break-words font-medium">{name || '(unnamed)'}</h4>
-  <div class="mt-2 flex flex-wrap gap-2">
-    <Button size="sm" variant="outline" aria-label={`Edit ${kind} ${name}`} onclick={onedit}
-      >Edit</Button
-    >
-    {#if onadd}
+  <div class="flex items-start justify-between gap-2">
+    <h4 class="min-w-0 flex-1 wrap-break-word py-1 font-medium leading-6">{name || '(unnamed)'}</h4>
+    <div class="flex shrink-0 items-center gap-1">
       <Button
-        size="sm"
-        disabled={addDisabled}
-        aria-label={`Add ${kind} ${name} to Mat`}
-        onclick={onadd}>Add to Mat</Button
-      >
-    {/if}
-    {@render actions?.()}
-    <DeleteButton
-      label={`Delete ${kind} template ${name}`}
-      confirmText="Click again to delete template."
-      onconfirm={deleteTemplate}
-    />
+        size="icon-sm"
+        variant="ghost"
+        icon="pen"
+        iconClass="size-5"
+        title={`Edit ${kind} ${name}`}
+        aria-label={`Edit ${kind} ${name}`}
+        onclick={onedit}
+      />
+      {#if onadd}
+        <Button
+          size="icon-sm"
+          variant="ghost"
+          icon="addtomat"
+          iconClass="size-5"
+          disabled={addDisabled}
+          title={`Add ${kind} ${name} to Mat`}
+          aria-label={`Add ${kind} ${name} to Mat`}
+          onclick={onadd}
+        />
+      {/if}
+      {@render actions?.()}
+      <DeleteButton
+        compact
+        size="size-5"
+        label={`Delete ${kind} template ${name}`}
+        confirmText={`Click again to delete ${kind}.`}
+        onconfirm={deleteTemplate}
+      />
+    </div>
   </div>
   {@render children?.()}
 </div>

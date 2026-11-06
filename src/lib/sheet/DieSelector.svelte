@@ -10,6 +10,7 @@
     invalid?: boolean;
     dice?: DieValue[];
     onchange?: () => void;
+    label?: string;
   }
 
   let {
@@ -18,6 +19,7 @@
     invalid = false,
     dice = [4, 6, 8, 10, 12],
     onchange,
+    label,
   }: Props = $props();
 
   function stringToDie(v: string) {
@@ -40,7 +42,11 @@
       }
     }
   >
-    <Select.Trigger class={[invalid && 'border-red-500 dark:border-red-500 text-red-500']}>
+    <Select.Trigger
+      aria-label={label}
+      aria-invalid={invalid}
+      class={[invalid && 'border-red-500 dark:border-red-500 text-red-500']}
+    >
       {#if current === 0}
         <Icon icon="xmark" class="size-6" />
       {:else}<Die which={current} />{/if}
@@ -78,7 +84,7 @@
           </div>
         </Select.Item>
       {/if}
-      {#each dice as die}
+      {#each dice as die (die)}
         <Select.Item value={die.toString()}>
           <div class="flex items-center gap-2">
             <div class="h-6 w-6"><Die which={die} /></div>

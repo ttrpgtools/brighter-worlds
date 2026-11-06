@@ -1,7 +1,6 @@
 <script lang="ts">
   import DeleteButton from '$lib/DeleteButton.svelte';
   import Embed from '$lib/Embed.svelte';
-  import MenuLink from '$lib/MenuLink.svelte';
   import type { Cta, DieMod, DieValue, Entity, Item, NpcInstance } from '$lib/types';
   import { setGmContext } from '$lib/util/gm';
   import { snapshotState } from '$lib/util/snapshot.svelte';
@@ -25,6 +24,7 @@
   import { rollResponses } from './gmtools';
   import { onMount } from 'svelte';
   import { track } from '$lib/util/track';
+  import { resolve } from '$app/paths';
   interface Props {
     children?: import('svelte').Snippet;
   }
@@ -106,35 +106,41 @@
 
 <main class="flex flex-col min-h-svh lg:h-svh">
   <header class="shrink-0 bg-gray-300 dark:bg-gray-900">
-    <div class="mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
-      <h1 class="font-title text-3xl flex-1 flex gap-4 items-center">
-        <a href="https://brighterworldsrpg.com" class="text-purple-700 dark:text-purple-300"
-          >Brighter Worlds</a
+    <div
+      class="mx-auto flex min-h-16 items-center px-4 py-2 pr-28 sm:px-6 sm:pr-28 lg:px-8 lg:pr-28"
+    >
+      <h1 class="font-title text-xl sm:text-3xl min-w-0 flex flex-wrap gap-2 sm:gap-4 items-center">
+        <a
+          href={resolve('/')}
+          aria-label="Brighter Worlds home"
+          class="text-purple-700 dark:text-purple-300">Brighter Worlds</a
         >
         GM&nbsp;Tools <GmTools bind:this={tools} />
       </h1>
-      <div class="flex items-center gap-x-8">
-        <MenuLink href="/" icon="logo-leaf">Home</MenuLink>
-      </div>
     </div>
   </header>
 
   <!-- 3 column wrapper -->
-  <div class="mx-auto w-full grow lg:flex xl:px-2 lg:h-[calc(100svh-4rem)]">
+  <div class="mx-auto w-full min-h-0 grow lg:flex lg:h-[calc(100svh-4rem)]">
     <div
-      class="shrink-0 flex flex-col border-b border-gray-200 dark:border-gray-600 px-4 py-6 sm:px-6 lg:w-104 lg:border-r lg:border-b-0 lg:pr-8 xl:pr-6 lg:h-full"
+      class="min-h-0 shrink-0 flex flex-col border-b border-gray-200 dark:border-gray-600 lg:w-104 lg:border-r lg:border-b-0 lg:h-full"
     >
       <!-- Left column area -->
-      <div class="flex flex-row gap-1 border-b border-purple-700 dark:border-purple-300">
+      <nav
+        aria-label="GM tools"
+        class="flex shrink-0 gap-1 border-b border-purple-700 dark:border-purple-300 px-4 pt-4 sm:px-6"
+      >
         <GmLink href="/gm" icon="nav-rungame" title="Run Game"></GmLink>
         <GmLink href="/gm/scene" icon="nav-scenes" title="Scenes"></GmLink>
         <GmLink href="/gm/encounter" icon="nav-encounter" title="Encounters"></GmLink>
         <GmLink href="/gm/bestiary" icon="nav-bestiary" title="Bestiary"></GmLink>
         <GmLink href="/gm/table" icon="nav-tables" title="Tables"></GmLink>
         <GmLink href="/gm/reliquary" icon="nav-relics" title="Reliquary"></GmLink>
-      </div>
-      <div class="overflow-y-auto pt-4 lg:pr-3">
-        {@render children?.()}
+      </nav>
+      <div class="min-h-0 flex-1 overflow-y-auto">
+        <div class="px-4 py-4 sm:px-6">
+          {@render children?.()}
+        </div>
       </div>
     </div>
     <!-- Left sidebar & main wrapper -->
@@ -148,7 +154,11 @@
             ><h3 class="font-subtitle text-2xl">The Play Mat</h3></button
           >
           {#if mat.items.length}
-            <DeleteButton onconfirm={() => clearMat(mat)} confirmText="Click again to clear mat" />
+            <DeleteButton
+              label="Clear the Play Mat"
+              onconfirm={() => clearMat(mat)}
+              confirmText="Click again to clear mat"
+            />
           {/if}
         </div>
         {#each mat.items as item (item.id)}
@@ -182,6 +192,7 @@
           <h3 class="font-subtitle text-2xl">The Roll Log</h3>
           {#if $log.list.length}
             <DeleteButton
+              label="Clear the Roll Log"
               onconfirm={() => clearRollLog(log)}
               confirmText="Click again to clear log"
             />

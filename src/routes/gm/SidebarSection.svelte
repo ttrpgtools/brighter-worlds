@@ -38,6 +38,7 @@
     {#if addable}
       <Button
         size="sm"
+        class="text-sm"
         aria-label={`New ${title.replace(/^Custom /, '')}`}
         onclick={(event) => {
           event.preventDefault();

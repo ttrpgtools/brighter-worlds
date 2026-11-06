@@ -22,6 +22,7 @@
         sm: 'px-2.5 py-1.5',
         lg: 'h-16 px-8',
         icon: 'h-10 w-10',
+        'icon-sm': 'size-8 p-1',
         tight: 'p-1',
       },
     },

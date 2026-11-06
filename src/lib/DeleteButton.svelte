@@ -4,6 +4,7 @@
     confirmText?: string;
     label?: string;
     size?: string;
+    compact?: boolean;
     onconfirm: () => void;
   }
 
@@ -11,11 +12,12 @@
     confirmText = 'Click again to delete.',
     label = 'Delete',
     size = 'w-6 h-6',
+    compact = false,
     onconfirm,
   }: Props = $props();
 </script>
 
-<ConfirmButton {confirmText} {label} {onconfirm}
+<ConfirmButton {confirmText} {label} {compact} {onconfirm}
   ><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class={size}
     ><path
       fill="currentColor"

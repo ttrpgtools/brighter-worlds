@@ -1,9 +1,8 @@
 <script lang="ts">
   import Card from '$lib/ui/card.svelte';
-  import DeleteButton from '$lib/DeleteButton.svelte';
   import Disclosable from '$lib/Disclosable.svelte';
   import Icon from '$lib/ui/icon.svelte';
-  import Button from '$lib/ui/button.svelte';
+  import PlaymatActions from './PlaymatActions.svelte';
   import DieSelector from '$lib/sheet/DieSelector.svelte';
   import Equipment from '$lib/sheet/Equipment.svelte';
   import RollSelector from '$lib/sheet/RollSelector.svelte';
@@ -60,18 +59,15 @@
   imgclass="lg:rounded-bl-lg max-h-36 self-end"
 >
   {#snippet header()}
-    <div class="relative w-full flex items-center">
-      <Icon icon="nav-bestiary" />
+    <div class="min-w-0 w-full flex items-center gap-2">
+      <Icon icon="nav-bestiary" class="shrink-0" />
       <input
         type="text"
-        class="w-full border-0 relative py-1 top-0.5 dark:bg-gray-900 placeholder-shown:bg-gray-100 dark:placeholder-shown:bg-black focus:border-purple-600 focus:ring-0 font-subtitle text-xl h-full"
+        class="min-w-0 flex-1 border-0 relative py-1 top-0.5 dark:bg-gray-900 placeholder-shown:bg-gray-100 dark:placeholder-shown:bg-black focus:border-purple-600 focus:ring-0 font-subtitle text-xl h-full"
         placeholder="Name"
         bind:value={() => npc.name, (value) => setNpc('name', value)}
       />
-      <div class="absolute inset-y-0 gap-3 right-0 flex items-center">
-        <Button size="icon" icon="share" onclick={onshare} />
-        <DeleteButton onconfirm={ondelete} size="w-3 h-3" />
-      </div>
+      <PlaymatActions name={npc.name} kind="NPC" {onshare} onremove={ondelete} />
     </div>
   {/snippet}
   <div class="relative flex flex-col gap-2">

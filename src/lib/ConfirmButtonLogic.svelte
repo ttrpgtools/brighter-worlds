@@ -1,5 +1,6 @@
 <script lang="ts">
   import { primaryInput } from './util/detect';
+  import { onDestroy } from 'svelte';
   interface Props {
     onconfirm: () => void;
     children: import('svelte').Snippet<
@@ -10,6 +11,7 @@
           handleOut: () => void;
           confirming: boolean;
           ready: boolean;
+          cancel: () => void;
         },
       ]
     >;
@@ -19,21 +21,27 @@
 
   let confirming = $state(false);
   let ready = $state(false);
-  let mouseouttimer: ReturnType<typeof setTimeout> | undefined = undefined;
+  let mouseouttimer: ReturnType<typeof setTimeout> | undefined;
+  let readyTimer: ReturnType<typeof setTimeout> | undefined;
+  let touchTimer: ReturnType<typeof setTimeout> | undefined;
+
+  function cancel() {
+    clearTimeout(mouseouttimer);
+    clearTimeout(readyTimer);
+    clearTimeout(touchTimer);
+    confirming = false;
+    ready = false;
+  }
 
   function handleClick() {
     if (!confirming) {
       confirming = true;
-      setTimeout(() => (ready = true), 350);
+      readyTimer = setTimeout(() => (ready = true), 350);
       if (primaryInput === 'touch') {
-        setTimeout(() => {
-          ready = false;
-          confirming = false;
-        }, 4000);
+        touchTimer = setTimeout(cancel, 4000);
       }
     } else if (ready) {
-      confirming = false;
-      ready = false;
+      cancel();
       onconfirm();
     }
   }
@@ -41,10 +49,7 @@
     if (mouseouttimer) {
       clearTimeout(mouseouttimer);
     }
-    mouseouttimer = setTimeout(() => {
-      confirming = false;
-      ready = false;
-    }, 1500);
+    mouseouttimer = setTimeout(cancel, 1500);
   }
 
   function handleIn() {
@@ -52,6 +57,8 @@
       clearTimeout(mouseouttimer);
     }
   }
+
+  onDestroy(cancel);
 </script>
 
-{@render children({ handleClick, handleIn, handleOut, confirming, ready })}
+{@render children({ handleClick, handleIn, handleOut, confirming, ready, cancel })}

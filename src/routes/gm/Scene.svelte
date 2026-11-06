@@ -1,6 +1,6 @@
 <script lang="ts">
   import Icon from '$lib/ui/icon.svelte';
-  import Button from '$lib/ui/button.svelte';
+  import PlaymatActions from './PlaymatActions.svelte';
   import { renderSafe } from '$lib/md/render';
   import type { Scene } from '$lib/types';
 
@@ -15,16 +15,19 @@
 </script>
 
 <div
-  class="relative rounded-lg group/scene bg-white shadow-xl dark:bg-gray-900 dark:shadow-purple-400/20 ring-1 flex flex-col lg:flex-row ring-gray-900/5"
+  class="relative rounded-lg bg-white shadow-xl dark:bg-gray-900 dark:shadow-purple-400/20 ring-1 flex flex-col lg:flex-row ring-gray-900/5"
 >
   {#if src}<img alt="header" {src} class="lg:rounded-l-lg max-w-xs" />{/if}
-  <div class="px-4 py-5 sm:p-6 flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
-    <div class="flex flex-col items-start gap-2">
-      <h3 class="text-xl font-subtitle leading-6 flex-1 flex items-center gap-2">
-        {#if scene.icon}<Icon icon={scene.icon} />{/if}<span class="relative top-0.5"
-          >{scene.name}</span
-        >
-      </h3>
+  <div class="min-w-0 px-4 py-5 sm:p-6 flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
+    <div class="flex flex-col gap-2">
+      <div class="flex items-start justify-between gap-3">
+        <h3 class="min-w-0 text-xl font-subtitle leading-6 flex-1 flex items-center gap-2">
+          {#if scene.icon}<Icon icon={scene.icon} class="shrink-0" />{/if}<span
+            class="relative top-0.5 break-words">{scene.name}</span
+          >
+        </h3>
+        <PlaymatActions name={scene.name} kind="scene" {onshare} {onremove} />
+      </div>
       <p>{scene.desc}</p>
     </div>
     {#if scene.gmnotes}
@@ -34,14 +37,5 @@
         {@html renderSafe(scene.gmnotes)}
       </div>
     {/if}
-  </div>
-  <div class="hidden absolute top-2 right-2 group-hover/scene:flex gap-3">
-    <Button size="icon" icon="share" onclick={onshare} />
-    <button
-      type="button"
-      onclick={onremove}
-      class="text-lg rounded-full leading-none h-6 w-6 bg-purple-300 dark:bg-purple-900 flex items-center justify-center"
-      ><span class="relative -top-px">&times;</span></button
-    >
   </div>
 </div>

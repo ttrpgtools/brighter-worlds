@@ -63,6 +63,7 @@
   } from './hexcrawl';
   import { weather } from './weather.svelte';
   import { defined } from '$lib/util/array';
+  import { Die } from '$lib/dice';
 
   interface Props {
     data: PageData;
@@ -400,13 +401,16 @@
       >
         {#snippet actions()}
           <Button
-            size="sm"
+            size="icon-sm"
+            variant="ghost"
+            title={`Roll ${table.name}`}
             aria-label={`Roll ${table.name}`}
-            onclick={() => customTables[table.id]?.rollTable()}>Roll</Button
+            onclick={() => customTables[table.id]?.rollTable()}
+            ><Die which={6} size="size-5" /></Button
           >
         {/snippet}
         {#if tableResults[table.id]}
-          <p class="mt-2 break-words text-sm" aria-live="polite">
+          <p class="mt-2 wrap-break-word text-sm" aria-live="polite">
             {tableResults[table.id]?.roll}: {rollLabel(tableResults[table.id]) ||
               'No matching result'}
           </p>

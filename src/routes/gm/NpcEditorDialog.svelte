@@ -1,6 +1,7 @@
 <script lang="ts">
   import InputDialog from '$lib/InputDialog.svelte';
-  import type { NpcStats, UsableEntity } from '$lib/types';
+  import type { DieValue, NpcStats, UsableEntity } from '$lib/types';
+  import DieSelector from '$lib/sheet/DieSelector.svelte';
   import Button from '$lib/ui/button.svelte';
   import { cloneEditorDraft } from '$lib/util/gm-editor-validation';
   import { newNpcDraft, npcFieldErrors, saveNpcDraft } from './template-drafts';
@@ -56,16 +57,20 @@
     <div class="grid grid-cols-3 gap-3">
       {#each ['str', 'dex', 'wil'] as attr (attr)}
         {@const key = attr as 'str' | 'dex' | 'wil'}
-        <label class="flex flex-col gap-1"
-          >{attr.toUpperCase()}<select
-            bind:value={draft[key]}
-            onchange={() => (dirty[key] = true)}
-            aria-invalid={!!dirty[key] && !!fieldErrors[key].length}
-            class="rounded-full dark:bg-gray-900"
-          >
-            {#each [4, 6, 8, 10, 12] as die (die)}<option value={die}>d{die}</option>{/each}
-          </select></label
-        >
+        <div class="flex flex-col gap-1">
+          <span>{attr.toUpperCase()}</span>
+          <DieSelector
+            label={attr.toUpperCase()}
+            bind:current={
+              () => draft[key],
+              (value) => {
+                draft[key] = value as DieValue;
+                dirty[key] = true;
+              }
+            }
+            invalid={!!dirty[key] && !!fieldErrors[key].length}
+          />
+        </div>
       {/each}
     </div>
     <div class="grid grid-cols-2 gap-3">
@@ -98,7 +103,7 @@
     </div>
     {#each draft.attacks as attack, index (attack.id)}
       <div class="flex flex-wrap items-center gap-2">
-        <span class="min-w-0 flex-1 break-words">{attack.name}</span>
+        <span class="min-w-0 flex-1 wrap-break-word">{attack.name}</span>
         <Button
           size="sm"
           variant="ghost"
