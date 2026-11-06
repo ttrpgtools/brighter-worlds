@@ -202,12 +202,12 @@
           flat
           onshare={() => {}}
         />
-        {#if (npc.wants || npc.found) && npc.notes?.length > 120}
+        {#if npc.wants || npc.found || npc.notes?.length}
           <Card>
             <div>
               <ul class="-my-5 divide-y divide-gray-200 dark:divide-gray-600">
                 {#if npc.notes?.length > 0}
-                  {#each npc.notes as note}
+                  {#each npc.notes as note, i (i)}
                     <li class="py-3">
                       <p class="text-sm font-medium">{note}</p>
                     </li>

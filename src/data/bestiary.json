@@ -24,7 +24,8 @@
       "Roll on the STR Equipment table to see what unique weapons they wield."
     ],
     "wants": "Filthy lucre.",
-    "found": "Delving into dangerous places in search of said lucre."
+    "found": "Delving into dangerous places in search of said lucre.",
+    "armor": 1
   },
   {
     "id": "beast-alligator",
@@ -85,8 +86,18 @@
     "dex": 10,
     "wil": 8,
     "attacks": [
-      { "id": "beastattack-ohsgietngsoheitgn", "name": "Claws", "damage": [8, 8], "desc": "" },
-      { "id": "beastattack-oasiengseohtignmh", "name": "Bite", "damage": 10, "desc": "" }
+      {
+        "id": "beastattack-ohsgietngsoheitgn",
+        "name": "Claws",
+        "damage": [8, 8],
+        "desc": ""
+      },
+      {
+        "id": "beastattack-oasiengseohtignmh",
+        "name": "Bite",
+        "damage": 10,
+        "desc": ""
+      }
     ],
     "notes": [
       "Long limbs carry it disturbingly quickly across any surface.",
@@ -104,7 +115,12 @@
     "dex": 8,
     "wil": 6,
     "attacks": [
-      { "id": "beastattack-oinsegnsfrnsfog", "name": "Scavenged Weapon", "damage": 6, "desc": "" }
+      {
+        "id": "beastattack-oinsegnsfrnsfog",
+        "name": "Scavenged Weapon",
+        "damage": 6,
+        "desc": ""
+      }
     ],
     "notes": [
       "Weird little guys.",
@@ -122,18 +138,24 @@
     "dex": 8,
     "wil": 8,
     "attacks": [
-      { "id": "beastattack-seotignlrfdmg", "name": "Claws", "damage": 6, "desc": "" },
+      {
+        "id": "beastattack-seotignlrfdmg",
+        "name": "Claws",
+        "damage": 6,
+        "desc": ""
+      },
       {
         "id": "beastattack-oiftmgbosetim",
         "name": "Bite",
         "damage": 6,
-        "desc": "deals Direct Damage to WIL on odd damage rolls."
+        "desc": ""
       }
     ],
     "notes": [
       "A cat who lost all nine of its lives, then somehow one more.",
       "Half ethereal, unaffected by physical things unless it wants to be.",
-      "Having a Half-Dead Cat cross your path is considered to be good luck."
+      "Having a Half-Dead Cat cross your path is considered to be good luck.",
+      "Deals Direct Damage to WIL on odd damage rolls."
     ],
     "wants": "All the things a normal cat wants, if a normal cat was capable of sharpening its claws on your soul.",
     "found": "Hunting mice, then toying with their souls."
@@ -170,7 +192,12 @@
     "dex": 4,
     "wil": 4,
     "attacks": [
-      { "id": "beastattack-oisnsioefgsgfdu8", "name": "Dagger", "damage": 6, "desc": "" }
+      {
+        "id": "beastattack-oisnsioefgsgfdu8",
+        "name": "Dagger",
+        "damage": 6,
+        "desc": ""
+      }
     ],
     "notes": [
       "Makes enhanced Morale Saves as long as their Master lives.",
@@ -235,7 +262,12 @@
     "dex": 6,
     "wil": 6,
     "attacks": [
-      { "id": "beastattack-89sgs98ngdnote", "name": "Rusty Weapon", "damage": 6, "desc": "" }
+      {
+        "id": "beastattack-89sgs98ngdnote",
+        "name": "Rusty Weapon",
+        "damage": 6,
+        "desc": ""
+      }
     ],
     "notes": [
       "A collection of dead bones animated through evil magicks, confluence of dark energies, unfinished business, or other arcane happenstance."
@@ -251,7 +283,12 @@
     "dex": 8,
     "wil": 6,
     "attacks": [
-      { "id": "beastattack-qwdtqwvseciohn", "name": "Grabby Paws", "damage": 6, "desc": "" }
+      {
+        "id": "beastattack-qwdtqwvseciohn",
+        "name": "Grabby Paws",
+        "damage": 6,
+        "desc": ""
+      }
     ],
     "notes": [
       "Six legged raccoon-like creature.",
@@ -316,7 +353,14 @@
     "str": 4,
     "dex": 6,
     "wil": 8,
-    "attacks": [{ "id": "beastattack-etl83t2lrns", "name": "Staff", "damage": 4, "desc": "" }],
+    "attacks": [
+      {
+        "id": "beastattack-etl83t2lrns",
+        "name": "Staff",
+        "damage": 4,
+        "desc": ""
+      }
+    ],
     "notes": [
       "Carries a Grimoire with d4-1 random Spells, and d4-1 random Rituals.",
       "A dabbler in arcane forces beyond their own understanding.",

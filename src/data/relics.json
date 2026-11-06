@@ -34,7 +34,7 @@
   {
     "id": "relic-06",
     "name": "Lizardskin Cloak",
-    "desc": "Billowing cloak made of tanned lizard skin, scale pattern still visible. If the cloak is charged a bright yellow like a morning sun, while discharged it’s a dull blue.\n\nWhile charged, can be made to glow as a dim torch. Discharge the cloak to release either:\n\n- a bright flash which will dazzle or blind anyone looking at it.\n- a lance of sunlight dealing d10 damage that sets its target alight on critical damage.\n\nRecharge by basking in sunlight while wearing it for 6 hours.",
+    "desc": "Billowing cloak made of tanned lizard skin, scale pattern still visible. If the cloak is charged a bright yellow like a morning sun, while discharged it’s a dull blue.\n\nWhile charged, can be made to glow as a dim torch. Discharge the cloak to release either:\n\n- a bright flash which will dazzle or blind anyone looking at it.\n- a lance of sunlight dealing d10 damage whose Wounds ignite the target.\n\nRecharge by basking in sunlight while wearing it for 6 hours.",
     "damage": 10
   },
   {
@@ -57,5 +57,36 @@
     "name": "Umbral Dagger",
     "desc": "A long, slightly curved dagger. Regardless of the ambient light, one edge of the dagger appears to be illuminated and the other is hidden in shadow.\n\nThe dagger can cut both light and shadow, allowing the user to pick up and manipulate the severed pieces as though they were fabric.",
     "damage": 6
+  },
+  {
+    "id": "relic-clutches-of-chosen-kinship",
+    "name": "Clutches of Chosen Kinship",
+    "desc": "A matched pair of handbags linked to the same pocket dimension. Any number of objects that fit through the opening can be stored inside and accessed from either bag. Finding a specific item takes a few minutes.\n\nPersonality: Loyalty and friendship."
+  },
+  {
+    "id": "relic-grapple-of-forced-perspective",
+    "name": "Grapple of Forced Perspective",
+    "desc": "Close one eye and hook the grapple onto anything you can see, regardless of distance. Mind the length of the rope.\n\nPersonality: Detached perspective."
+  },
+  {
+    "id": "relic-gourd-of-pleasant-fullness",
+    "name": "Gourd of Pleasant Fullness",
+    "desc": "Regardless of how much liquid is poured into the gourd, enough of that liquid to fully satisfy all nearby drinkers pours out.\n\nPersonality: Generous host."
+  },
+  {
+    "id": "relic-hammer-of-vigorous-obstinacy",
+    "name": "Hammer of Vigorous Obstinacy",
+    "desc": "A hammer and three spikes. An object with one of these spikes hammered into it becomes immovable and indestructible. The Resplendent Tower remains half floating after a landslide thanks to one of these spikes.\n\nPersonality: Unyielding stubbornness."
+  },
+  {
+    "id": "relic-torch-of-mischievous-light",
+    "name": "Torch of Mischievous Light",
+    "desc": "An ever-burning torch that especially illuminates things deliberately hidden or wishing to remain obscured.\n\nPersonality: Impish inquisitiveness."
+  },
+  {
+    "id": "relic-sword-of-cutting-judgment",
+    "name": "Sword of Cutting Judgment",
+    "desc": "When multiple people disagree about a future action, spin the sword on the ground. It points toward the person whose proposed course is most likely to lead to violence. Can only be used once per future event.\n\nPersonality: Quick tempered.",
+    "damage": 8
   }
 ]

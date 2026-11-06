@@ -2,7 +2,7 @@
 
 Audited 6 November 2026 against the live [Brighter Worlds website](https://www.brighterworldsrpg.com/), which still identifies the game as **beta 0.3**. The application's package version (`1.0.0-beta.10`) is independent of the rules version.
 
-**Audit result: partially reconciled.** The update reached several descriptions and the main creation flow, but missed other descriptions, starting grants, shared perk tables, and automated mechanics. The findings below record the audit baseline; subsequent implementation is tracked here.
+**Audit result: reconciled within the agreed scope.** All actionable findings are implemented across the four follow-up tasks, including the final GM-reference sweep. Historical findings below are retained as the audit baseline, not an outstanding work list. Existing characters remain unchanged; manual tabletop procedures and source ambiguities are recorded explicitly.
 
 ## Implementation progress and agreed scope
 
@@ -15,7 +15,7 @@ Four broad Mux tasks track the follow-up:
 | `bwo-rules-shared-mechanics` | Shared damage, Saves, Armor, Grit, and burden mechanics                    | Implemented; validation below |
 | `bwo-rules-callings`         | Calling descriptions, perks, and starting grants                           | Implemented; validation below |
 | `bwo-rules-wizard`           | Complete legal selections and usable generated character stats/items       | Implemented; validation below |
-| `bwo-rules-catalogues`       | Missing magic items, bestiary corrections, and remaining reference cleanup | Queued                        |
+| `bwo-rules-catalogues`       | Missing magic items, bestiary corrections, and remaining reference cleanup | Implemented; validation below |
 
 The shared mechanics now resolve each attack independently, retain every Direct Damage Save for sharing/logging, handle overflow and zero Attributes, provide an explicit out-of-combat Wound action, and use current Wound terminology. Zero-Attribute Saves fail automatically on PC and NPC sheets; failed casting that exhausts WIL incapacitates.
 
@@ -41,6 +41,27 @@ Multi-Function now rolls and records two actual tool functions, once on continua
 
 Wizard validation: **318 tests pass**, including 46 new helper, gear, and state-machine regressions. Every published Calling has a complete-flow test, with additional local/account companion bundle checks, invalid-selection checks, abandoned-draft checks, and interrupted-navigation/save checks. Type checks, production build, formatting and diff checks pass. Svelte autofixer reports no issues in the changed components/module; its two remaining suggestions concern intentionally nonreactive Map caches/bundle assembly. No dev server or browser interaction tests were run.
 
+## Final catalogue and reference closure
+
+The final task adds all six Legacy of an Unknown Craftswoman items, their personalities, and the complete collection/ghost rule. The set rule is maintained once in [relic-sets.json](../src/data/relic-sets.json) and included in each member's ordinary description by [relic-manager.ts](../src/lib/data/relic-manager.ts), so shared/exported items retain it without a format change. Sword of Cutting Judgment has d8 damage. Lizardskin Cloak now triggers ignition on Wounds. [Official magic items](https://www.brighterworldsrpg.com/MagicItems/).
+
+Adventurer now has 1 Armor. Half-Dead Cat's odd-roll WIL effect is shown as a shared creature trait instead of being silently restricted to Bite. The source places the effect after both attacks without explicitly specifying its scope; the shared-note placement preserves that wording and leaves the interpretation to the GM. No attack-target automation was inferred. The GM NPC sheet now displays notes, wants, and found text whenever present, fixing a condition that previously hid ordinary creature notes. All 14 official creatures and the intentional app-only Screaming Ghost remain. [Official bestiary](https://www.brighterworldsrpg.com/Bestiary/).
+
+The final sweep also found outdated active copy in the [GM combat reference](../src/routes/gm/+page.svelte). It now describes player-first initiative with an opening DEX Save when needed, per-attack Direct Damage using the affected Attribute, Wounds, incapacitation/death at zero Attributes, and overflow without discarded damage. Dual Wielding and Non-Combat Damage sections are included. Links lead to the full Combat and Harm and Healing rules. The unused older Calling JSON was removed. [Official combat rules](https://www.brighterworldsrpg.com/SRD/Combat.html).
+
+| Final coverage                         | Result                                                               |
+| -------------------------------------- | -------------------------------------------------------------------- |
+| Published Callings                     | All 15 current, plus both internal companion templates               |
+| Spells and rituals                     | 50/50 spells and 50/50 rituals; no material omissions or differences |
+| Magic items                            | 17/17, including all six set members and the set rule                |
+| Bestiary                               | 14/14 official creatures, plus preserved app-only Screaming Ghost    |
+| Automated mechanics and new characters | Shared mechanics and wizard findings resolved by the earlier tasks   |
+| Existing characters                    | No migration, catalogue reconciliation, or alternate rules runtime   |
+
+No actionable audit findings remain within this scope. Half-Dead Cat's attack scope and the official Devoted page's use of “Eulogy” remain upstream wording ambiguities, not pending application changes. Manual gameplay procedures listed below remain intentionally manual. No optional automation is required to close this audit.
+
+Final validation: **320 tests pass**, including a portable set-item export regression and a server-rendered NPC trait visibility regression. `pnpm check` reports zero errors and warnings; the production build, changed-file formatting, and diff checks pass. Svelte autofixer reports no remaining issues in the changed components. The final source comparison confirms all 50 spell and 50 ritual definitions, with only the previously documented harmless editorial differences. No dev server or browser interaction tests were run. Changes are uncommitted; no Git history or deployment actions were taken.
+
 ## Scope and method
 
 - Read all 34 relevant linked pages: seven core rules pages, character creation, the Callings index and all 15 Callings, spells, rituals, magic items, the running-the-game index and its five linked pages, and the bestiary.
@@ -49,7 +70,7 @@ Wizard validation: **318 tests pass**, including 46 new helper, gear, and state-
 - Checked mechanics in source and with deterministic temporary tests. No dev server, browser session, deployment, or saved-character edits were performed.
 - This is a source/data audit, not a visual or end-to-end UI audit. Adventure text, pre-generated characters, and Cast & Crew were outside the application's current rules catalogue scope. The live site itself contains typos and inconsistent wording; harmless editorial differences are not treated as rules failures.
 
-## Fix first: active Calling differences
+## Audit baseline: active Calling differences
 
 All Calling definitions below are in [callings.json](../src/data/callings.json). Shared enhancements are in [tables.json](../src/data/tables.json). The IDs identify the exact records.
 
@@ -80,7 +101,7 @@ In [tables.json](../src/data/tables.json):
 
 In [the companion creation page](../src/routes/character/new/companion/+page.svelte), selecting perks only adds descriptive abilities. STR/DEX/WIL, Grit, attacks, and armor remain at base values. For example, a companion with Big still leaves creation with d6 STR and a d6 attack. Treat this as a generated-sheet correctness gap: either apply selected modifiers or clearly prompt the required edits. The same distinction matters for Artificer equipment and Soulbearer forms; the generic enhancement flow stores text rather than applying item/form changes.
 
-## Shared mechanics
+## Audit baseline: shared mechanics
 
 | Priority | Finding                                                   | Evidence and expected direction                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | -------- | --------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -94,13 +115,13 @@ In [the companion creation page](../src/routes/character/new/companion/+page.sve
 | Medium   | Burden handling has no Calling exception.                 | [burdened](../src/lib/util/character.ts) always penalizes the third bulky entry; [Grit.svelte](../src/lib/sheet/Grit.svelte) then actively zeroes Grit and disables Rest. This overrides Artificer's Mule, which permits four. Burden also counts entries rather than quantities. Make the threshold reflect applicable abilities. [Artificer](https://www.brighterworldsrpg.com/Callings/Artificer.html).                                                      |
 | Low      | Damage result messages still use “critical damage.”       | Replace the player-facing terminology in [damage.ts](../src/lib/sheet/damage.ts) with Wound / Direct Damage Save as appropriate. [Recent changes](https://www.brighterworldsrpg.com/).                                                                                                                                                                                                                                                                          |
 
-## Character creation validation and remaining text
+## Audit baseline: character creation validation and remaining text
 
 - **Medium:** The [attribute step](../src/routes/character/new/attributes/+page.svelte) describes the correct d8/d6/d4 assignment but permits Next with d4/d4/d4 or other incomplete selections. [Equipment](../src/routes/character/new/equipment/+page.svelte) can likewise advance before all three rolls; enhancement/companion selection controls enforce upper limits but not required counts. Validate completed selections against the current [creation rules](https://www.brighterworldsrpg.com/Character_Creation/) before finishing.
 - **Low:** The old [starting advanced-ability page](../src/routes/character/new/abilities/+page.svelte) still says the first ability is free. The wizard currently skips this state, and the route guard redirects direct entry, so this is dormant text rather than a free ability currently granted by the normal flow. The main [Calling detail dialog](../src/lib/sheet/CallingDetailDialog.svelte) already shows the correct costs. [Growth](https://www.brighterworldsrpg.com/SRD/Growth.html).
 - **Low:** Starting-equipment prose still uses Rugged/Blackened in its example rather than the current flair names. The Multi Function flair also loses the instruction to roll and combine two tools, and its effect is not resolved by [combineStartingGear](../src/lib/data/starting-equipment.ts). The remaining base tables match. [Character Creation](https://www.brighterworldsrpg.com/Character_Creation/).
 
-## Catalogue coverage
+## Audit baseline: catalogue coverage
 
 | Area                                                         | Result                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | ------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -116,7 +137,7 @@ The following checks help distinguish missed updates from features that already 
 - Starting Grit is derived correctly for all six legal Attribute assignments, producing 2–4 Grit. New generic NPCs use 3 Grit and d6 Attributes. [Core Rules](https://www.brighterworldsrpg.com/SRD/CoreRules.html), [GM Guidance](https://www.brighterworldsrpg.com/Running/GMGuidance.html).
 - Normal saves use 4+; enhanced rolls add d12 and keep the highest, and impaired rolls use d4. Ordinary attack dice also keep the highest. Direct Damage saves compare strictly against the incoming damage. [Core Rules](https://www.brighterworldsrpg.com/SRD/CoreRules.html), [Combat](https://www.brighterworldsrpg.com/SRD/Combat.html).
 - The normal wizard grants core abilities, does not grant a free advanced ability or starting XP, uses eight-row gear tables, and grants 50 coins. Random scrolls and Mystic weapons resolve to actual magic definitions. [Character Creation](https://www.brighterworldsrpg.com/Character_Creation/).
-- Standard casting spends remaining Grit, otherwise uses a WIL Save and offers failure/unconsciousness after stepping WIL down. Rituals are separate from spell casting. The zero-WIL outcome above remains incorrect. [Magic](https://www.brighterworldsrpg.com/SRD/Magic.html).
+- Standard casting spends remaining Grit, otherwise uses a WIL Save and offers failure/unconsciousness after stepping WIL down. Rituals are separate from spell casting. The zero-WIL outcome was corrected in the shared-mechanics task. [Magic](https://www.brighterworldsrpg.com/SRD/Magic.html).
 - Epitaph is the visible sheet label; XP entries can be marked spent. Existing `eulogy` property/type/file names are internal compatibility details and do not require a saved-data rename. [Growth](https://www.brighterworldsrpg.com/SRD/Growth.html).
 - Reaction-roll bands match. Travel dice, road subject selection, intensification, weather pre-rolls, and encounter activity tables match. Friends begins at d4, fills empty slots, and expands when full. Its automatic shrink-on-deletion behavior is an app extension. [GM Guidance](https://www.brighterworldsrpg.com/Running/GMGuidance.html), [Hexcrawling](https://www.brighterworldsrpg.com/Running/Hexcrawling.html), [Friends](https://www.brighterworldsrpg.com/Running/Friends.html).
 
@@ -128,14 +149,14 @@ The homepage says wilderness survival may be removed in future; that is not an i
 
 Rules data are copied into character sheets during creation; existing sheets are not dynamically replaced with the current catalogue. Editing JSON will fix new characters and catalogue references while older saved descriptions and grants remain unchanged. This is the desired behavior: no existing-character rules reconciliation workflow is required. Continue using one current sheet runtime and preserve existing customized text, spent XP, items, and bonuses. See [wizard.svelte.ts](../src/routes/character/new/wizard.svelte.ts), [calling-manager.ts](../src/lib/data/calling-manager.ts), and [sheet-manager.ts](../src/lib/data/sheet-manager.ts).
 
-[gpt-callings.json](../src/data/gpt-callings.json) contains still older rule text, but no active source imports it. Treat it as an unused maintenance hazard, not a second live source of rules.
+Removed the unused `src/data/gpt-callings.json` after confirming no source imports it. There is no second live Calling catalogue.
 
 Suggested implementation order:
 
 1. Correct shared mechanics with focused regression tests (implemented).
 2. Reconcile Calling text, starting grants, and enhancement tables (implemented).
 3. Tighten creation completion checks and handle stat/item changes from perks and Improvements (implemented).
-4. Add the missing magic-item set, correct the bestiary, and address remaining reference copy.
+4. Add the missing magic-item set, correct the bestiary, and address remaining reference copy (implemented).
 
 ## Initial audit validation record
 

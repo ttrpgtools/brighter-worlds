@@ -23,8 +23,9 @@
         engaged with.
       </p>
       <p>
-        If it’s not clear which side should act first, make a DEX Save vs the opposition to act
-        before them.
+        The players’ side goes first each Round. If it’s not obvious that a player can act before
+        the opposition, that player makes a DEX Save versus the opponent. Failure means they do not
+        act during the first Round; success means they act first as usual.
       </p>
       <h2 id="attacking">Attacking</h2>
       <p>
@@ -33,41 +34,34 @@
         able to avoid or otherwise defend against the attack. If there is more damage dealt than the
         remaining Grit, the excess damage becomes Direct Damage.
       </p>
+      <h2 id="direct-damage">Direct Damage</h2>
       <p>
-        Direct Damage represents the attack making physical contact with the target, and causes a
-        STR Save to avoid Critical Damage.
-      </p>
-      <h2 id="critical-damage-save">Critical Damage Save</h2>
-      <p>
-        After receiving Direct Damage, make a STR Save and roll higher than that amount to avoid
-        Critical Damage.
+        Direct Damage represents an attack making actual contact. Most attacks affect STR; an
+        attack’s description may instead specify DEX (entangling, slowing, paralyzing) or WIL
+        (stunning, confusing, psychic).
       </p>
       <p>
-        If you suffer multiple attacks simultaneously, make your Save against their combined Direct
-        Damage, rather than making separate Saves. Armor still applies to each attack individually.
-      </p>
-      <h2 id="critical-damage">Critical Damage</h2>
-      <p>
-        If you suffer Critical Damage, step down your STR and suffer any Critical Damage effects
-        from your attackers.
+        After receiving Direct Damage, make a Save with the affected Attribute and roll higher than
+        the damage to avoid a Wound. Resolve each attack separately, applying Armor to each attack.
       </p>
       <p>
-        If your STR steps down below a d4 (zero STR) you become
-        <em>incapacitated</em>. An <em>incapacitated</em> creature can only weakly crawl, and will die
-        in an hour without assistance. First aid from an ally gets you back on your feet, but doesn’t
-        restore your STR.
+        This Save can be impaired by multiple attackers, a specific weakness, or other harmful
+        circumstances. It can be enhanced by focusing on defense, resistance to the attack, or other
+        beneficial circumstances.
       </p>
-      <p>Taking Direct Damage, or trying to step down your die at zero STR is lethal.</p>
+      <h2 id="wounds">Wounds</h2>
+      <p>
+        A Wound steps down the affected Attribute (usually STR) and applies any Wound effects from
+        the attacker. If any Attribute drops below d4 to zero, the creature is
+        <em>incapacitated</em>: it can only weakly crawl and will die in an hour without assistance.
+        First aid from an ally gets it back on its feet without restoring Attributes.
+      </p>
+      <p>Direct Damage or a Wound to an Attribute already at zero results in death.</p>
       <h2 id="overflow-damage">Overflow Damage</h2>
       <p>
-        If the amount of Direct Damage you received is equal to or greater than the highest value on
-        your STR die, immediately suffer Critical Damage. If the damage in excess of that amount is
-        still equal to or greater than your now lowered STR die, repeat. If it is lower, make a
-        Critical Damage Save as usual trying to roll higher the remaining damage.
-      </p>
-      <p>
-        If your STR steps below a d4 during this process, you become incapacitated and ignore any
-        remaining damage.
+        If Direct Damage equals or exceeds the highest value on the affected die, immediately suffer
+        a Wound. Resolve any excess against the lowered die using the same Direct Damage procedure.
+        Damage that reaches an Attribute already at zero is lethal.
       </p>
       <h2 id="attack-modifiers">Attack Modifiers</h2>
       <p>
@@ -92,7 +86,7 @@
         to avoid surrender or flight.
       </p>
       <p>
-        NPCs make Morale Saves the first time they take Critical Damage, the first time one of their
+        NPCs make Morale Saves the first time they suffer a Wound, the first time one of their
         companions is incapacitated or killed, or if the tide of battle turns against them.
       </p>
       <p>
@@ -103,6 +97,23 @@
         A Morale Save might be <em>enhanced</em> due to a courageous leader, the promise of
         significant reward, or being particularly oblivious. It might be <em>impaired</em> due to being
         directly threatened, a hopeless situation, or the obvious evidence of immediate danger.
+      </p>
+      <h2 id="dual-wielding">Dual Wielding</h2>
+      <p>
+        When attacking one target with multiple weapons, roll all the weapons’ dice and keep the
+        highest result. When splitting attacks between targets, roll separately for each; normally
+        one or all of these attacks will be impaired by the difficulty of splitting your attention.
+      </p>
+      <h2 id="non-combat-damage">Non-Combat Damage</h2>
+      <p>
+        Outside combat, damage ignores Grit and directly causes a Wound. For example, failing a DEX
+        Save to avoid a trap immediately steps down STR. Poison may instead call for a STR Save to
+        resist it, with a Wound on failure.
+      </p>
+      <p>
+        Read the full <a href="https://www.brighterworldsrpg.com/SRD/Combat.html">Combat rules</a>
+        and <a href="https://www.brighterworldsrpg.com/SRD/HarmAndHealing.html">Harm and Healing</a>
+        for more detail.
       </p>
     </div>
   </SidebarSection>
