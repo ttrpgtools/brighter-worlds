@@ -4,7 +4,7 @@
     "name": "Alchemist",
     "tagline": "A crafter distilling the natural world into potions.",
     "for": "For players who like to plan ahead, collect ingredients, and do alchemy.",
-    "desc": "An expert at distillation and brewing. Via chemical and magical means you are able to unlock the potential of natural substances and combine them to create power effects. Nothing is beyond your means, so long as you’re able to find sufficiently powerful ingredients.\n\nYou’ll start with a **Recipe Book** (*bulky*) which holds your potion recipes. If you obtain Spells or Rituals in the future, this book also acts as a Grimoire which can store magic.\n\nCreate **two potion recipes** to start with, you have **3 Vials** of each of those potions already brewed.",
+    "desc": "An expert at distillation and brewing. Via chemical and magical means you are able to unlock the potential of natural substances and combine them to create power effects. What normally takes days in a specialized lab takes you hours with a makeshift setup over a campfire. Nothing is beyond your means, so long as you’re able to find sufficiently powerful ingredients.\n\nYou’ll start with a **Recipe Book** (*bulky*) which holds your potion recipes. If you obtain Spells or Rituals in the future, this book also acts as a Grimoire which can store magic.\n\nCreate **two potion recipes** to start with, you have **3 Vials** of each of those potions already brewed.",
     "equipment": [
       {
         "name": "Recipe Book",
@@ -12,7 +12,6 @@
         "bulky": true,
         "enableMagic": true
       },
-      { "name": "Alchemy Supplies", "desc": "", "bulky": false },
       {
         "name": "Vials of Potion 1",
         "desc": "Edit this to your first potion",
@@ -34,31 +33,30 @@
         "desc": "A potion is a liquid substance consumed or applied in some way to create a magical effect.\n\nYou can distill plants, minerals, animal parts, and other ingredients into potion components. With the necessary components, you can brew doses of any potion whose recipe you know.\n\nWith time and effort you can develop new potion recipes. Explain the desired effects along with the proposed recipe. A potion recipe must contain at least two dissimilar components along with a brewing process. Brewing will usually take at least an hour and will produce 3 doses of the potion.\n\nAny potion effect is possible, but the required components and process may be esoteric or prohibitive.\n\nBased on your proposed recipe the GM will tell you if it will work, or if one or more more of the following are true:\n\n- It will require one or more additional components.\n- It requires a laborious, time consuming, or difficult to achieve brewing process.\n- It takes a large amount of raw materials to produce a single dose.\n- It creates an unstable, volatile potion that must be used quickly or lose its efficacy.\n- The process is uncertain, and the final effect will depend on a random roll.\n- It will have an unintended side effect when consumed."
       },
       {
-        "id": "ability-pId4TB77H6iZ0vQoQLKm",
-        "type": "advanced",
         "name": "Dungeon Delicatessen",
-        "desc": "You always know the best way to break down and prepare any creature for the safest and tastiest dining experience. When you cook and eat a monster organ temporarily gain a lessened version of an associated trait or ability. Lasts until you eat your next meal."
+        "desc": "You always know the best way to break down and prepare any creature for the safest and tastiest dining experience. When you cook and eat a monster organ temporarily gain a lessened version of an associated trait or ability. Lasts until you eat your next meal.",
+        "id": "ability-pId4TB77H6iZ0vQoQLKm",
+        "type": "advanced"
       },
       {
-        "id": "ability-SX1GhIO17",
-        "type": "advanced",
         "name": "Fine Palate",
-        "desc": "You are (optionally) immune to the effects of anything you imbibe, and can identify all ingredients it contains."
+        "desc": "You are (optionally) immune to the effects of anything you imbibe, and can identify all ingredients it contains.",
+        "id": "ability-SX1GhIO17",
+        "type": "advanced"
       },
       {
-        "id": "ability-79Dl2Qz2hr73wEn",
-        "type": "advanced",
         "name": "Homebrewer",
-        "desc": "You can brew alcoholic beverages with mild potion effects. Beverage recipes require only one component plus a fermentable (grain, fruit, sugar, etc.)."
+        "desc": "You can brew alchemical, alcoholic beverages with only one component plus a fermentable (grain, fruit, sugar, etc.). These have milder effects than normal potions, but can be made in greater quantities.",
+        "id": "ability-79Dl2Qz2hr73wEn",
+        "type": "advanced"
       },
       {
-        "id": "ability-J3a6NGE",
-        "type": "advanced",
         "name": "Complex Compounding",
-        "desc": "You can produce non-liquid potions that take the form of solids or gasses."
+        "desc": "You can produce solid or gaseous “potions” as easily as liquid ones.",
+        "id": "ability-J3a6NGE",
+        "type": "advanced"
       }
     ],
-    "rituals": ["ritual-bi-21"],
     "info": ""
   },
   {
@@ -66,7 +64,7 @@
     "name": "Animal’s Companion",
     "tagline": "A bonded pair of person and beast, facing the world side by side.",
     "for": "For players who want a cool pet or to ride a bear.",
-    "desc": "Ranger, beastmaster, wildspeaker, hunter… the labels don’t matter, what’s important is that your companion is by your side. Your bond extends to the ends of the world and beyond.",
+    "desc": "You have formed a special bond with a creature. It will follow your commands and is unfailingly loyal.\n\nYou start with your **Animal Companion**, decide what sort of creature they are and choose three Perks to combine with these base stats:\n\n3 Grit, d6 STR, d6 DEX, and d6 WIL, and a d6 attack\n\n*(A bird or other flying Companion requires you to choose the Flying Perk.)*\n\nYou also start with a bag of their favorite snacks.",
     "equipment": [
       { "name": "Bag of Snacks", "desc": "Something your companion loves.", "bulky": false }
     ],
@@ -76,35 +74,35 @@
         "id": "ability-f9YeyJAf9yKLmzhaA",
         "type": "core",
         "name": "Animal Companion",
-        "desc": "You have formed a special bond with a creature. It will follow your commands and is unfailingly loyal. Should the worst happen, your companion will return to your side from beyond the Black River as a ghost. You can spend your own XP on your companion as you would on yourself."
+        "desc": "Your companion is unfailingly loyal and will follow your commands.\n\nShould the worst happen, your companion will return to your side from beyond the Black River as a ghost.\n\nYou can spend XP on your companion as you would on yourself.\n\n### Companion Perks\n\n- **Big:** Step up STR and Attack.\n- **Fast:** Step up DEX and gain +1 Armor\n- **Clever:** Step up WIL, it can communicate with anyone flawlessly.\n- **Vicious:** Step up Attack, and gain an extra effect (e.g. poison, armor piercing, blast, etc.).\n- **Flying:** Through wings or other means.\n- **Tiny:** +2 Grit, can be easily concealed.\n- **Invertebrate:** No bones! +2 Grit and can fit into nearly any space.\n- **Durable:** +2 Armor (scales, plates, evasion, exoskeleton, etc.).\n- **Marsupial:** Has a pouch which can carry a single bulky item.\n- **Perceptive:** Has some enhanced sense (smelling, hearing, echolocation, electroception, dowsing, night vision, etc.)\n- **Tricky:** +2 Grit and a special skill.\n- **Special:** Some other unique thing (good at digging, chromatophores, is a swarm, etc.)"
       },
       {
+        "name": "Level Up",
+        "desc": "Through training, special diet, or ritual your companion has learned some new tricks. Pick two more Perks from the Companion Perks list.",
         "id": "ability-2CpsKcwa",
         "type": "advanced",
-        "name": "Level Up",
-        "desc": "Through training, special diet, or ritual your companion has learned some new tricks. Pick two more abilities from the Animal Companion list.",
         "choices": [
           { "choose": "enhancement", "table": "rt-animal-companion", "linked": true },
           { "choose": "enhancement", "table": "rt-animal-companion", "linked": true }
         ]
       },
       {
-        "id": "ability-45gBa",
-        "type": "advanced",
         "name": "Tag Team",
-        "desc": "When fighting the same enemy, you and your Animal Companion may make a maneuver alongside your attacks (tripping, disarming, etc.)."
+        "desc": "When fighting the same enemy, you and your Animal Companion may make a maneuver alongside your attacks (tripping, disarming, etc.).",
+        "id": "ability-45gBa",
+        "type": "advanced"
       },
       {
-        "id": "ability-t8NAuqBj8Y",
-        "type": "advanced",
         "name": "Mind Meld",
-        "desc": "You can share thoughts and senses with your Animal Companion from any distance."
+        "desc": "You can share thoughts and senses with your Animal Companion from any distance.",
+        "id": "ability-t8NAuqBj8Y",
+        "type": "advanced"
       },
       {
-        "id": "ability-7OoePjkQa87",
-        "type": "advanced",
         "name": "Blink Bud",
-        "desc": "You can teleport to your Animal Companion, teleport your Animal Companion to you, or swap places no matter the distance."
+        "desc": "You can teleport to your Animal Companion, teleport your Animal Companion to you, or swap places no matter the distance.",
+        "id": "ability-7OoePjkQa87",
+        "type": "advanced"
       }
     ],
     "info": ""
@@ -118,14 +116,10 @@
     "equipment": [
       {
         "name": "Your Archive",
-        "desc": "Acts as a Grimoire that also stores your Topics. Starts with one Topic of information based on your prior studies and one ritual of your choice.",
+        "desc": "Acts as a Grimoire and holds two Topics. Note each Topic the first two times you use Deep Lore.",
         "bulky": true,
         "enableMagic": true
       }
-    ],
-    "choices": [
-      { "choose": "equipment", "type": "wil", "die": 10 },
-      { "choose": "magic", "type": "ritual", "random": false }
     ],
     "abilities": [
       {
@@ -135,28 +129,28 @@
         "desc": "You are a **Linguistic Expert**: fluent in every known language, and can quickly learn new ones given time and examples of text or speech.\n\nThe **Deep Lore** of the world is always at your fingertips inside your **Archive**. The first time you encounter something new that falls within a Topic stored in your Archive, you may ask the GM a single question about it which will be answered honestly. Further questions about the same subject will take time or research to answer.\n\nGiven a new source of knowledge, it takes you at least one hour to copy a new Topic into your Archive. Significantly complex, in depth, or esoteric Topics may take more time to understand."
       },
       {
-        "id": "ability-xwtZl5iJZps6lsz",
-        "type": "advanced",
         "name": "Office Assistant",
-        "desc": "Whether due to accumulated knowledge or through some arcane rite, your Archive has awoken into a sentient, floating being. Using your Archive as a Grimoire to cast Spells or perform Rituals still requires you to be in contact with it."
+        "desc": "Whether due to accumulated knowledge or through some arcane rite, your Archive has awoken into a sentient, floating being. Using your Archive as a Grimoire to cast Spells or perform Rituals still requires you to be in contact with it.",
+        "id": "ability-xwtZl5iJZps6lsz",
+        "type": "advanced"
       },
       {
-        "id": "ability-Je3E95zYpeVWxrx",
-        "type": "advanced",
         "name": "Monster Manual",
-        "desc": "Thoroughly examine a creature to record it as a Topic in your Archive. When you take ten minutes to review your notes you, and any who listen to you lecture on the subject, gain +1 armor against those creatures the next time your encounter them, and can easily identify any weaknesses."
+        "desc": "Thoroughly examine a creature to record it as a Topic in your Archive. When you take ten minutes to review your notes you, and any who listen to you lecture on the subject, gain +1 armor against those creatures the next time your encounter them, and can easily identify any weaknesses.",
+        "id": "ability-Je3E95zYpeVWxrx",
+        "type": "advanced"
       },
       {
-        "id": "ability-Fl1Cq8wGLLtwXK",
-        "type": "advanced",
         "name": "Psychometry",
-        "desc": "You can read an object’s history just by touching it. When you handle an object you can sense events that have happened to it. Emotionally charged and recent events take precedence, but with careful study you may ask specific questions."
+        "desc": "You can read an object’s history just by touching it. When you handle an object you can sense events that have happened to it. Emotionally charged and recent events take precedence, but with careful study you may ask specific questions.",
+        "id": "ability-Fl1Cq8wGLLtwXK",
+        "type": "advanced"
       },
       {
-        "id": "ability-4U0u0",
-        "type": "advanced",
         "name": "Leap of Logic",
-        "desc": "Your years of study have developed into a startlingly accurate intuition. The first time you encounter a situation (or person), you may ask the GM a single yes or no question about it (or them)."
+        "desc": "Your years of study have developed into a startlingly accurate intuition. The first time you encounter a situation (or person), you may ask the GM a single yes or no question about it (or them).",
+        "id": "ability-4U0u0",
+        "type": "advanced"
       }
     ],
     "info": ""
@@ -166,14 +160,18 @@
     "name": "Artificer",
     "tagline": "A builder of weapons, armor, and tools.",
     "for": "For players who like to craft items, or assemble mechanics like lego bricks.",
-    "desc": "Your habit of always taking things apart to learn how they worked didn’t always endear you to people. When you started putting things back together people were mollified. Once they realized the things you’d put back together were better than before? That’s when you got popular.",
+    "desc": "You’re good at taking things apart and putting them back together, *usually* leaving them better than they started.\n\nYou start with three **Masterwork Items** you’re particularly proud of: a **Weapon** (1d6 damage), **Armor** (1 Armor), and a **Tool** (1 Improvement). Distribute 3 additional Improvements among these items and decide what exactly they are.",
     "equipment": [
-      { "name": "Your Artificing Tools", "desc": "", "bulky": false },
-      { "name": "Masterwork Weapon", "desc": "", "bulky": false, "damage": "6" },
-      { "name": "Masterwork Armor", "desc": "", "bulky": false, "armor": 1 },
-      { "name": "Masterwork Item", "desc": "", "bulky": false }
+      { "name": "Masterwork Weapon", "damage": 6, "bulky": false },
+      { "name": "Masterwork Armor", "armor": 1, "bulky": false },
+      {
+        "name": "Masterwork Tool",
+        "desc": "Starts with one Improvement. Distribute three additional Improvements among your three Masterwork items.",
+        "bulky": false
+      }
     ],
     "choices": [
+      { "choose": "enhancement", "table": "rt-artifice-improvements" },
       { "choose": "enhancement", "table": "rt-artifice-improvements" },
       { "choose": "enhancement", "table": "rt-artifice-improvements" },
       { "choose": "enhancement", "table": "rt-artifice-improvements" }
@@ -183,31 +181,31 @@
         "id": "ability-utgMYmv1ynu",
         "type": "core",
         "name": "Walking Workshop",
-        "desc": "You can upgrade mundane objects or create new ones with a single improvement. They are fragile, unless significant time and effort is put into their production.\n\nWhen a fragile item is used, roll a d6 (for weapons and armor roll on Direct Damage):\n\n**1:** It breaks immediately (and likely violently). **2-3:** It’s damaged, and will break next time. **4-6:** It’s fine for now."
+        "desc": "You can upgrade mundane objects or create new ones with a single Improvement. They are *fragile*, unless significant time, effort, or specialized materials are put into their production.\n\nWhen a *fragile* item is used, roll a d6 (for weapons and armor roll on Direct Damage):\n\n**1:** It breaks immediately (and likely violently). **2-3:** It’s damaged, and will break next time. **4-6:** It’s fine for now.\n\nYour **Masterwork** items return to their original state if broken.\n\n### Artificer Improvements\n\n- **Deadly:** Step up damage die, ignore Armor.\n- **Heavy:** Step up damage die, add bulky. Effective at damaging structures.\n- **Capsule:** Delivers a liquid on Direct Damage\n- **Ranged:** Attacks at a distance.\n- **Ethereal:** Deals Direct Damage to WIL, injures non-physical targets.\n- **Paired:** You have two of them.\n- **Entangling:** Deals Direct Damage to DEX, trips or staggers on Wounds.\n- **Extra Protection:** +1 Armor, add bulky.\n- **Ward:** +1 Armor against a specific threat.\n- **Locomoting:** Grants a form of movement\n- **Light:** remove bulky tag.\n- **Transforming:** Swaps between types.\n- **Concealed:** Collapses or hides.\n- **Sentient:** Has a mind of its own.\n- **Detecting:** Sense a specific thing, or grant a specific type of perception.\n- **Special:** A unique quality or ability."
       },
       {
-        "id": "ability-QOWLexeMSiXnGnELZAjl",
-        "type": "advanced",
         "name": "Mystical Graft",
-        "desc": "You can graft enchantments and effects from magic items, weapons or armor onto something else. This destroys the original item."
+        "desc": "You can graft enchantments and effects from magic tools, weapons, or armor onto other items. This destroys the original item.",
+        "id": "ability-QOWLexeMSiXnGnELZAjl",
+        "type": "advanced"
       },
       {
-        "id": "ability-g2E8hXKFXVcy4fk4f4Um",
-        "type": "advanced",
         "name": "An Eye for Engineering",
-        "desc": "With careful study you can always discern the purpose and function of a mechanism, as well as the best way to break or repair it."
+        "desc": "With careful study you can always discern the purpose and function of a mechanism, as well as the best way to break or repair it.",
+        "id": "ability-g2E8hXKFXVcy4fk4f4Um",
+        "type": "advanced"
       },
       {
-        "id": "ability-GNfO7UB",
-        "type": "advanced",
         "name": "Efficient Artificing",
-        "desc": "You can use Walking Workshop to create fragile objects with two improvements, or non-fragile ones with one improvement."
+        "desc": "You can use Walking Workshop to create fragile objects with two improvements, or non-fragile ones with one improvement.",
+        "id": "ability-GNfO7UB",
+        "type": "advanced"
       },
       {
-        "id": "ability-ROkZpg6bJKwjCWnc1",
-        "type": "advanced",
         "name": "Mule",
-        "desc": "You can carry up to four *bulky* items without penalty."
+        "desc": "You can carry up to four *bulky* items without penalty.",
+        "id": "ability-ROkZpg6bJKwjCWnc1",
+        "type": "advanced"
       }
     ],
     "info": ""
@@ -219,7 +217,12 @@
     "for": "For players who don’t want to be at risk of dying easily, and would like to play a living cartoon.",
     "desc": "You’re a skeleton, made of bones and animated by some supernatural force. You’re hard to kill permanently, and don’t stay down for long.\n\nYou start with nothing more than your **Fearsome Visage** and **Lack of Flesh**.",
     "equipment": [
-      { "name": "A Lack of Flesh", "desc": "", "bulky": false, "armor": 1 },
+      {
+        "name": "A Lack of Flesh",
+        "desc": "Grants +1 Armor against physical damage only. Deactivate this Armor when it does not apply.",
+        "bulky": false,
+        "armor": 1
+      },
       { "name": "Fearsome Visage", "desc": "You frighten most creatures" }
     ],
     "abilities": [
@@ -227,31 +230,31 @@
         "id": "ability-oZUNYHmsuoCugkQWK",
         "type": "core",
         "name": "No Body to Love",
-        "desc": "Your **Lack of Flesh** grants you +1 Armor against physical damage.\n\nYour **Fearsome Visage** will be initially frightening to most creatures, unless you take measures to obscure your form.\n\nYou do not require food, water, or sleep and as long as your skull remains intact you cannot fully die.\n\nDirect Damage you suffer never overflows. When you suffer a Wound one of your limbs (or other significant part of your body) is broken off in addition to stepping down the relevant die. You don’t restore Attributes by resting, but instead by replacing lost or damaged bones.\n\nIf you willingly detach a limb, you remain in control of it (but are still at risk of losing STR if those detached parts are broken)."
+        "desc": "Your **Lack of Flesh** grants you +1 Armor against physical damage.\n\nYour **Fearsome Visage** will be initially frightening to most creatures, unless you take measures to obscure your form.\n\nYou do not require food, water, or sleep and as long as your skull remains intact you cannot fully die.\n\nDirect Damage you suffer never overflows. When you suffer a Wound one of your limbs (or other significant part of your body) is broken off in addition to stepping down the relevant die. You don’t restore Attributes by resting, but instead by replacing lost or damaged bones.\n\nIf you willingly detach a limb, you remain in control of it (but are at risk of losing Attributes if those detached parts are broken)."
       },
       {
-        "id": "ability-MSHeE9fRPF",
-        "type": "advanced",
         "name": "No Bones About It",
-        "desc": "You can incorporate other bones into your body to grant yourself an innate ability of the original creature. Unless extreme measures are taken the grafted bones are fragile and risk breaking after activating the borrowed ability."
+        "desc": "You can incorporate other bones into your body to grant yourself an innate ability of the original creature. Unless extreme measures are taken the grafted bones are [fragile](https://www.brighterworldsrpg.com/Callings/Artificer.html#core-ability---walking-workshop) and risk breaking after activating the borrowed ability.",
+        "id": "ability-MSHeE9fRPF",
+        "type": "advanced"
       },
       {
-        "id": "ability-WJ0gLa9GI",
-        "type": "advanced",
         "name": "Your Bones Are Your Money",
-        "desc": "You can remove bones from your body to offer in trade (causing a loss of STR). The person receiving your bones will believe they are valuable and greatly desirable. This lasts until midnight at which point the glamour is removed and they become aware they received nothing more than old bones."
+        "desc": "You can remove bones from your body to offer in trade (this still causes Attribute Loss). The person receiving your bones will believe they are valuable and greatly desirable. This glamour lasts until midnight, at which point they become aware they received nothing more than old bones.",
+        "id": "ability-WJ0gLa9GI",
+        "type": "advanced"
       },
       {
-        "id": "ability-57u3mM96QG8W",
-        "type": "advanced",
         "name": "Humerus Presence",
-        "desc": "You've developed a way of walking and talking that changes you from frightening to funny. Rather than an initial reaction of fear, you can choose for you first impression to be that of a harmless and hilarious bony jester."
+        "desc": "You’ve developed a way of walking and talking that changes you from frightening to funny. Rather than an initial reaction of fear, you can choose for you first impression to be that of a harmless and hilarious bony jester.",
+        "id": "ability-57u3mM96QG8W",
+        "type": "advanced"
       },
       {
-        "id": "ability-l1cgWRrEGQih",
-        "type": "advanced",
         "name": "Skeleton Crew",
-        "desc": "Animate a dead creature's skeleton as a mount, minion, or pet. It has stats as it did in life, but falls apart permanently upon being Wounded. Follows orders but otherwise has the intelligence of a moderately bright dog. You can maintain a number of animated skeletons equal to the number of Advanced Abilities you have."
+        "desc": "Animate a dead creature’s skeleton as a mount, minion, or pet. It has stats as it did in life, but falls apart permanently upon being Wounded. Follows orders but otherwise has the intelligence of a moderately bright dog. You can maintain a number of animated skeletons equal to the number of Advanced Abilities you have.",
+        "id": "ability-l1cgWRrEGQih",
+        "type": "advanced"
       }
     ],
     "info": ""
@@ -261,10 +264,9 @@
     "name": "Blessed of Water",
     "tagline": "Empowered through spiritually bonding with an aquatic place.",
     "for": "For players who like free-form effects, or want to play a water bender.",
-    "desc": "You have a pact with some watery patron. You might be the daughter of a river spirit, have been granted a boon by an ocean goddess, or did some great deed for the guardian of a particular cove. In any case you were granted a small part of their power, and can always hear their voice in the patter of rain, the burble of a creek, or the crash of ocean waves.\n\nName your Patron, and choose the Blessing they’ve granted you.\n\nYou start with a water skin, or some other vessel, full with a gallon of water.",
+    "desc": "You have a pact with some watery patron. You might be the daughter of a river spirit, have been granted a boon by an ocean goddess, or did some great deed for the guardian of a particular cove. In any case you were granted a small part of their power, and can always hear their voice in the patter of rain, the burble of a creek, or the crash of ocean waves.\n\nName your **Patron**, and choose the **Blessing** they’ve granted you.\n\nYou start with a water skin, or some other vessel, full with a gallon of water.",
     "equipment": [
-      { "name": "Waterskin", "desc": "", "bulky": false },
-      { "name": "A small, impossible token from your Patron", "desc": "", "bulky": false },
+      { "name": "Waterskin", "desc": "Holds a gallon of water.", "bulky": false },
       { "name": "Water", "desc": "Water wielded as a weapon", "damage": 6, "bulky": false }
     ],
     "choices": [{ "choose": "enhancement", "table": "rt-water-blessing" }],
@@ -273,7 +275,7 @@
         "id": "ability-yheXvd5Q3a4dI",
         "type": "core",
         "name": "One With The Water",
-        "desc": "You are equally at home in water as you are on land. You can freely control a volume of water about the same size as yourself, and if employed as a weapon it deals d6 damage."
+        "desc": "You are equally at home in water as you are on land. You can freely control a volume of water about the same size as yourself, and if employed as a weapon it deals d6 damage.\n\n### Water Blessings\n\nChoose the blessing your Patron grants you\n\n- **Fluid Form:** Freely transform into water and back into your normal state.\n- **Font of Self:** You can produce water at will, the same volume you can control per hour.\n- **Water Sight:** Once per day when you immerse yourself in a body of water you may ask your Patron one question about something that water touches.\n- **Thermo Regulation:** Freely change the state of water within your control (between gas, liquid, and solid). If used offensively, step up the damage your One With the Water deals.\n- **Tip Of The Iceberg:** Your volume of water you can control expands 10 fold.\n- **Healing Waters:** Your water instantly stabilizes wounds and cleanses poisons. Six hours of contact fully restores a single Attribute."
       },
       {
         "id": "ability-okdz7qxV4GY",
@@ -283,29 +285,29 @@
         "details": "Patron"
       },
       {
-        "id": "ability-G5JospkMNZ",
-        "type": "advanced",
         "name": "Twice Blessed",
         "desc": "Choose a second Water Blessing your Patron grants you.",
+        "id": "ability-G5JospkMNZ",
+        "type": "advanced",
         "choices": [{ "choose": "enhancement", "table": "rt-water-blessing" }]
       },
       {
-        "id": "ability-EJ0NF6WgFUE",
-        "type": "advanced",
         "name": "Liquid Construction",
-        "desc": "You can shape water into tools and equipment. Weapons deal d8 damage, and armor provides 1 Armor. You can maintain a number of items equal to twice the number of Advanced Abilities you have. Additionally, step up the damage your water does while using One With the Water offensively."
+        "desc": "You can shape water into tools and equipment. Weapons deal d8 damage, and armor provides 1 Armor. You can maintain a number of items equal to twice the number of Advanced Abilities you have. Additionally, step up the damage your water does while using One With the Water offensively.",
+        "id": "ability-EJ0NF6WgFUE",
+        "type": "advanced"
       },
       {
-        "id": "ability-udLeJ5HX1F4UL0",
-        "type": "advanced",
         "name": "Watery Tongue",
-        "desc": "You can communicate with any creature that claims water as its home."
+        "desc": "You can communicate with any creature that claims water as its home.",
+        "id": "ability-udLeJ5HX1F4UL0",
+        "type": "advanced"
       },
       {
-        "id": "ability-ouu9Fgs1Xu",
-        "type": "advanced",
         "name": "Water Walk",
-        "desc": "You (and any companions you choose to bring with you) may leap into a body of water, and emerge from the most recent body of water you were fully submerged in."
+        "desc": "You (and any companions you choose to bring with you) may leap into a body of water, and emerge from the most recent previous body of water you were fully submerged in.",
+        "id": "ability-ouu9Fgs1Xu",
+        "type": "advanced"
       }
     ],
     "info": ""
@@ -315,10 +317,15 @@
     "name": "Cleric of Small Gods",
     "tagline": "The only priest of a tiny deity whose words can change reality.",
     "for": "For players who prefer freeform magic over spell lists.",
-    "desc": "You carry a small god around with you. You protect it, rather than the other way around. Possibly a baby god, a god of a small concept, a recently reincarnated god, a local god whose home was destroyed, or a ‘killed’ god. Regardless you are bound to it, and may speak with its words to alter the world around you.",
+    "desc": "The only priest of a small god you carry with you. The god’s smallness may be in the scope of its domain, the narrowness of what it controls, or the degree to which it can exert its power. Regardless you are bound to it, and may speak with its words to alter the world around you.\n\nName your god, define the **Domain** it rules over, and describe the small physical form it has manifested as. The Domain dictates the scope of the freeform magic your God gives you access to.\n\nYou start with a **d8 Domain Die** and **Holy Vestments** which indicate your station.",
     "equipment": [
       { "name": "Your Small God", "desc": "", "bulky": false },
-      { "name": "Domain Die", "desc": "", "bulky": false, "damage": 8 },
+      {
+        "name": "Domain Die",
+        "desc": "Your d8 Domain Die for Words of God. A failed Save steps it down; restore it through recovery, offerings, or religious rites.",
+        "bulky": false,
+        "damage": 8
+      },
       { "name": "Holy Vestments", "desc": "", "bulky": false }
     ],
     "abilities": [
@@ -326,7 +333,7 @@
         "id": "ability-RmMAxmH7EYvH2QdZs",
         "type": "core",
         "name": "Words of God",
-        "desc": "Gods can speak only truth. When you speak with the words of your god if the words are not true, your god’s power will attempt to make it true. Define the Domain of your god."
+        "desc": "Gods can speak only truth about their Domain. When you speak with the words of your god if the words are not true, your god’s power will attempt to make it true.\n\nWhen you attempt to make something true by speaking with the words of your god, roll your Domain Die as you would a normal Save.\n\nIf you succeed the statement takes effect.\n\nIf you fail the statement does not take effect and you step down your Domain Die.\n\nDomain Die loss is restored the same way as other Attribute loss, or faster through offerings or religious rites for your God.\n\n### Words of God Modifiers\n\nMinor effects completely within your God’s Domain will succeed without a roll.\n\nMajor effects with expansive scopes, or effects completely outside your God’s Domain, are impossible.\n\nIf at least two of the following are true about your statement, *impair* the Save:\n\n- Impacts things outside your line of sight.\n- Contradicts the natural working of the world.\n- Describes a long lasting effect.\n- Is expansive in scope.\n- Is a poor fit for your god’s Domain.\n\nIf at least two of the following are true about your statement, *enhance* the Save:\n\n- Impacts only things you are touching.\n- Is copacetic with the natural working of the world.\n- Describes a fleeting effect.\n- Is limited in scope.\n- Is a perfect fit for your god’s Domain.\n\nIf at least two from both categories are true, roll the Save normally."
       },
       {
         "id": "ability-89C6zyRZUfL1X7",
@@ -336,28 +343,28 @@
         "details": "God"
       },
       {
-        "id": "ability-jJFcakPAxs44p",
-        "type": "advanced",
         "name": "Gemini",
-        "desc": "Your god has a second Domain, complementary in some way to the first."
+        "desc": "Your god has a second Domain, complementary in some way to the first.",
+        "id": "ability-jJFcakPAxs44p",
+        "type": "advanced"
       },
       {
-        "id": "ability-FIWYlZIG",
-        "type": "advanced",
         "name": "Holy Site",
-        "desc": "Spend a week and give a suitably impressive offering to create a holy site for your god. It shields those within from outside influence, and you may teleport yourself and your companions between holy sites."
+        "desc": "Spend a week and give a suitably impressive offering to create a holy site for your god. It shields those within from outside influence, and you may teleport yourself and your companions between holy sites.",
+        "id": "ability-FIWYlZIG",
+        "type": "advanced"
       },
       {
-        "id": "ability-vEDDL8QS",
-        "type": "advanced",
         "name": "Offerings",
-        "desc": "Make offerings to step up the Domain Die. Minor offerings last for a single statement, significant ones last for a day, and major offerings like establishing a church and congregation last indefinitely."
+        "desc": "Make offerings to step up the Domain Die. Minor offerings last for a single statement, significant ones last for a day, and major offerings like establishing a church and congregation last indefinitely.",
+        "id": "ability-vEDDL8QS",
+        "type": "advanced"
       },
       {
-        "id": "ability-yO6xcctfI1m7M",
-        "type": "advanced",
         "name": "Divine Colleagues",
-        "desc": "Your god can always tell you which (if any) god or spirit claims an area, as well as how to contact them."
+        "desc": "Your god can always tell you which (if any) god or spirit claims an area, as well as how to contact them.",
+        "id": "ability-yO6xcctfI1m7M",
+        "type": "advanced"
       }
     ],
     "info": ""
@@ -367,7 +374,7 @@
     "name": "Crystal Wizard",
     "tagline": "A magic user harnessing the mystic properties of crystals.",
     "for": "For players who like to prepare magic before casting it, like to read through lists of magic, or want to focus on rituals over spells.",
-    "desc": "Crystals speak to you. They whisper their secrets in frequencies and tones inaudible to most, but you’ve learned how to listen.\n\nYou start with a **Crystal Grimoire** which is stored within a crystal on, in, or around your body when not in use. Choose one Spell and two Rituals that it contains.\n\nYou also have two **Arcane Storage Crystals** each attuned to one of your two starting Rituals. These allow you to prepare rituals ahead of time to enact their effects instantly.",
+    "desc": "Crystals speak to you. They whisper their secrets in frequencies and tones inaudible to most, but you’ve learned how to listen.\n\nYou start with a **Crystal Grimoire** which is stored within a crystal on, in, or around your body when not in use. Choose one Spell and two Rituals that it contains.\n\nYou also have two **Arcane Storage Crystals** each attuned to one of your two starting Rituals. These allow you to *prepare* rituals ahead of time to enact their effects instantly.",
     "equipment": [
       {
         "name": "Crystal Grimoire",
@@ -377,7 +384,12 @@
       },
       {
         "name": "Arcane Storage Crystal",
-        "desc": "Attuned to one of your rituals.",
+        "desc": "Attuned to your first starting Ritual.",
+        "bulky": false
+      },
+      {
+        "name": "Arcane Storage Crystal",
+        "desc": "Attuned to your second starting Ritual.",
         "bulky": false
       }
     ],
@@ -394,28 +406,28 @@
         "desc": "You may attune your **Arcane Storage Crystals** with a ritual from your Grimoire. Attuning a crystal this way takes 6 hours, but does not require your constant attention (for example, you can start the process before you rest for the night). You can still perform attuned rituals out of your Grimoire as usual.\n\nDischarge a Storage Crystal to perform the attuned ritual immediately (a single combat round rather than 10 minutes), and without needing to sacrifice any components. Once discharged, a crystal must be attuned to a ritual to be used again.\n\nAnytime you spend XP you may convert an appropriate crystal in your posession into a new Storage Crystal. When you do, choose a new ritual to add to your Grimoire."
       },
       {
-        "id": "ability-nB0jwe",
-        "type": "advanced",
         "name": "Crystal Vibes",
-        "desc": "You can pick up on the mystic vibrations caused by the single most intense emotional, spiritual, or magical nearby presence. This could be the mood of a crowd, the nature of an ongoing ritual, the presence of an angry spirit, or some other non-physical effect. With time, preparation, and the correct crystals, you can suppress or enhance these vibrations."
+        "desc": "You can pick up on the mystic vibrations caused by the single most intense emotional, spiritual, or magical nearby presence. This could be the mood of a crowd, the nature of an ongoing ritual, the presence of an angry spirit, or some other non-physical effect. With time, preparation, and the correct crystals, you can suppress or enhance these vibrations.",
+        "id": "ability-nB0jwe",
+        "type": "advanced"
       },
       {
-        "id": "ability-fYQjuNkz6hkWa",
-        "type": "advanced",
         "name": "Soul Cage",
-        "desc": "Store your soul in your Crystal Grimoire. You cannot die as long as it’s intact. If your body is destroyed transferring the crystal into a new body allows you to inhabit it."
+        "desc": "Store your soul in your Crystal Grimoire. You cannot die as long as it’s intact. If your body is destroyed transferring the crystal into a new body allows you to inhabit it.",
+        "id": "ability-fYQjuNkz6hkWa",
+        "type": "advanced"
       },
       {
-        "id": "ability-NF46kd830sKJe",
-        "type": "advanced",
         "name": "Telegraphic Crystals",
-        "desc": "You can pair crystals such that things which effect one will effect the other. Sound, sight, and magic or other mystical effects are transmitted."
+        "desc": "You can pair crystals such that things which effect one will effect the other. Sound, sight, and magic or other mystical effects are transmitted.",
+        "id": "ability-NF46kd830sKJe",
+        "type": "advanced"
       },
       {
-        "id": "ability-9ySL3upAtuAg9lK",
-        "type": "advanced",
         "name": "Capture Crystals",
-        "desc": "Create special Capture Crystals by spending 1 permanent Max Grit. Use these crystals to capture the souls of recently killed creatures, or weakened or subservient spirits. Summon the captured creatures as you would cast a spell (setting your Grit to 0 or making a WIL Save). You are deprived as long as you maintain the summon. Particularly powerful souls and spirits may take additional resources or incentive to capture, or be difficult to control."
+        "desc": "You can use your Arcane Storage Crystals to capture the souls of recently killed creatures, or weakened or subservient spirits. Summon the captured creatures as you would cast a spell (setting your Grit to 0 or making a WIL Save). You are deprived as long as you maintain the summon. Particularly powerful souls and spirits may take additional resources or incentive to capture, or be difficult to control.",
+        "id": "ability-9ySL3upAtuAg9lK",
+        "type": "advanced"
       }
     ],
     "info": ""
@@ -425,10 +437,8 @@
     "name": "Demonic Sorcerer",
     "tagline": "A magic specialist borrowing the skills of a spirit living in their head.",
     "for": "For players who like to make do with random results, or like to talk to themselves.",
-    "desc": "A spirit of chaos, better known as a demon, has made its home in your head. In exchange for the shelter your body provides, it grants you access to the knowledge and skills its picked up from prior hosts. Sometime, when you die, it will leap to a new body and pass along the skills and knowledge it learned from you, but you might prefer not to think about that.",
-    "equipment": [
-      { "name": "Unusual choice of clothing", "desc": "Your demon insists on it.", "bulky": false }
-    ],
+    "desc": "A spirit of chaos, better known as a demon, has made its home in your head. As a create of pure spirit, it cannot exist in the world of matter on its own. In exchange for the shelter your body provides, it grants you access to the knowledge and skills its picked up from prior hosts.\n\nName the demon, and declare one Topic it knows about due to who its prior host was.\n\nIt also knows magic. Randomly select one Spell and one Ritual, then pick one Spell and one Ritual of your choice that it remembers.",
+    "equipment": [],
     "choices": [
       { "choose": "magic", "type": "spell", "random": false },
       { "choose": "magic", "type": "ritual", "random": false }
@@ -438,7 +448,7 @@
         "id": "ability-N8LCQHp",
         "type": "core",
         "name": "Demonic Passenger",
-        "desc": "You have a demon in your brain which acts as a hands free Grimoire, a magical tutor, and a repository of ancient knowledge. As a being of pure spirit it cannot exist or interact with the material world on its own, and requires your body to do either.\n\n**Inherited Knowledge:** Choose a Topic based on your Demon’s prior host. You may ask questions about that Topic as per the Archivist’s Deep Lore ability.\n\nAnytime you spend XP, your Demon recalls a random spell or ritual (choose which) from a prior host.\n\n**Magical Storage:** Your Demon stores spells and rituals as though it were a Grimoire. Transferring spells or rituals into it removes them from the original source as usual.\n\n**Hands Free Spellcasting:** Using your Demon’s power you can cast spells while keeping your hands free for other activities.\n\nYou can have your Demon cast spells for you by stepping your WIL down instead of the usual costs (setting your Grit to zero or making a WIL Save)."
+        "desc": "You may ask questions about the Topic your demon knows about, as per the [Archivist’s Deep Lore ability](https://www.brighterworldsrpg.com/Callings/Archivist.html#core-ability---archival-expertise), due to inheriting its knowledge.\n\nAnytime you spend XP, your Demon recalls a random spell or ritual from a prior host.\n\nYou may cast or perform any Spells or Rituals your demon knows as though it were a Grimoire. It can learn new Spells and Rituals the same way you would transfer them into a normal Grimoire.\n\nBy stepping down any of your Attributes you can let your Demon to cast a Spell for you. Doing so no longer requires use of your hands, or paying the usual costs (setting your Grit to zero or making a WIL Save) and does not take up your action in combat."
       },
       {
         "id": "ability-cZE7eJiYXtIlJoDGlR8",
@@ -448,28 +458,28 @@
         "details": "Demon"
       },
       {
+        "name": "Demonic Sense",
+        "desc": "Pick taste, smell, or touch. Your Demon can detect nearby supernatural objects or entities using that sense. It will pass along impressions of the nature of what it finds, but only in terms of the chosen sense (tasting notes for taste, aromas for smell, textures for touch).",
         "id": "ability-2rbpk03XDW",
-        "type": "advanced",
-        "name": "Demonic Sight",
-        "desc": "Your Demon has learned to share its spiritual senses with you, allowing you to sense the presence and nature of nearby magical or supernatural energies."
+        "type": "advanced"
       },
       {
-        "id": "ability-KQnTxwTrvpdKt",
-        "type": "advanced",
         "name": "Backseat Driver",
-        "desc": "If you are ever knocked unconscious or have your mind impaired in any way, you can choose to have your Demon take over and control your body instead."
+        "desc": "If you are ever knocked unconscious or have your mind impaired in any way, you can choose to have your Demon take over your body instead of losing control.",
+        "id": "ability-KQnTxwTrvpdKt",
+        "type": "advanced"
       },
       {
-        "id": "ability-xx8rVjoOacHhh4ctl",
-        "type": "advanced",
         "name": "Primal Chaos",
-        "desc": "Set your Grit to zero, or destroy a delicate, fragile, or complex object in your possession, to hurl a d10 damage orb of pure chaos which will rust metal, rot wood, or decay what it touches."
+        "desc": "Set your Grit to zero, or destroy a delicate, fragile, or complex object in your possession, to hurl a d10 damage orb of pure chaos which will rust metal, rot wood, or decay what it touches.",
+        "id": "ability-xx8rVjoOacHhh4ctl",
+        "type": "advanced"
       },
       {
-        "id": "ability-iC4qvTIARTCeR",
-        "type": "advanced",
         "name": "Demonic Expression",
-        "desc": "Ongoing exposure to otherworldly energies has induced a unique mutation. For example: a demonic eye that sees true names, a scaled arm that steals secrets, or translucent skin that let's you sink into shadows."
+        "desc": "Ongoing exposure to otherworldly energies has induced a unique mutation. For example: a demonic eye that sees true names, a scaled arm that steals secrets, or translucent skin that let’s you sink into shadows.",
+        "id": "ability-iC4qvTIARTCeR",
+        "type": "advanced"
       }
     ],
     "spells": ["?"],
@@ -493,20 +503,13 @@
         "id": "ability-nBOETu4rE",
         "type": "core",
         "name": "Oath of Devotion",
-        "desc": "If you break your vow, you lose your boons for a year and a day, or until you make amends.\n\nYour Vow applies only to you, not to your companions."
+        "desc": "If you break your vow, you lose your boons for a year and a day, or until you make amends.\n\nYour Vow applies only to you, not to your companions.\n\n### Vow\n\n- **Honesty:** You may not tell a lie, or engage in dishonest tactics.\n- **Poverty:** You may not own money, gold, or gems.\n- **Mercy:** You must accept offers of surrender, and you must honor good faith requests for assistance.\n- **Stability:** You must complete any task, journey, or quest you undertake.\n- **Nonviolence:** You may never initiate violence unless it is in defense of yourself or another.\n- **Observance:** You must complete a ritual or task related to your devotion in each location you visit.\n\n### Boons\n\n- **By Will Sustained:** You do not need to eat, drink, breathe, or sleep.\n- **Unsullied Truth:** You always know if someone is lying, or if something is hidden by illusion or glamour in your presence.\n- **Can’t Stop Won’t Stop:** Direct Damage you suffer never overflows your current die. After you take a Wound restore your Grit to Max.\n- **Weapon of Faith:** Choose an improvement from the [Artificer’s Improvement list](https://www.brighterworldsrpg.com/Callings/Artificer.html#artificer-improvements). Weapons you hold gain that Improvement.\n- **Healing Touch:** Stabilize a wound immediately. With a night’s focus completely restore an Attribute to Max.\n- **Minor Miracle:** You have the ability to perform a minor miracle related to your devotion."
       },
       {
-        "id": "ability-rWOhqv3ZHrS",
-        "type": "companion",
-        "name": "Idol",
-        "desc": "",
-        "details": "Idol"
-      },
-      {
-        "id": "ability-8SHdWB1l9xx2EzseJ1YK",
-        "type": "advanced",
         "name": "Doubly Devoted",
         "desc": "Take a second Vow, and gain two additional Boons.",
+        "id": "ability-8SHdWB1l9xx2EzseJ1YK",
+        "type": "advanced",
         "choices": [
           { "choose": "enhancement", "table": "rt-devoted-vows" },
           { "choose": "enhancement", "table": "rt-devoted-boons" },
@@ -514,22 +517,22 @@
         ]
       },
       {
-        "id": "ability-ha0c4cfA8o",
-        "type": "advanced",
         "name": "Living Legend",
-        "desc": "Choose your Name, Oath, Vow or a Eulogy Entry you haven't previously chosen and put a tick next to it. Based on the chosen element, force a strong reaction from an NPC: pick two from Fear, Hate, Respect, and Adoration. The GM will pick one of those to be true."
+        "desc": "Choose your Name, Oath, Vow, or an Epitaph Entry you haven’t previously chosen and put a tick next to it. Based on the chosen element, force a strong reaction from an NPC: pick two from Fear, Hate, Respect, and Adoration. The GM will pick one of those to be true.",
+        "id": "ability-ha0c4cfA8o",
+        "type": "advanced"
       },
       {
-        "id": "ability-uQ3tbvrG4C",
-        "type": "advanced",
         "name": "Constant Vigilance",
-        "desc": "You are never taken by surprise. If there’s a question as to who acts first in a situation, the answer is you."
+        "desc": "You are never taken by surprise. If there’s a question as to who acts first in a situation, the answer is you.",
+        "id": "ability-uQ3tbvrG4C",
+        "type": "advanced"
       },
       {
-        "id": "ability-szuS6Pmb",
-        "type": "advanced",
         "name": "Always Prepared",
-        "desc": "You carry a bag which can be opened at any time to reveal a useful, mundane item of your choice. You can do so again once you’ve been somewhere you could have restocked it."
+        "desc": "You carry a bag which can be opened at any time to reveal a useful, mundane item of your choice. You can do so again once you’ve been somewhere you could have restocked it.",
+        "id": "ability-szuS6Pmb",
+        "type": "advanced"
       }
     ],
     "info": ""
@@ -539,17 +542,18 @@
     "name": "Grimblade",
     "tagline": "Owner of a mystic weapon.",
     "for": "For players who want to hit things and cast spells at the same time.",
-    "desc": "You are a grimblade and you have a grimblade, a unique and very large weapon that you’ve learned the trick of putting spells into. Whether you physically inscribe it onto a meteor metal blade, or embed the spells into a crystal hammer, you find this eminently more practical than lugging a big book around.",
+    "desc": "And you *have* a grimblade, a unique and very large weapon that you’ve learned the trick of putting spells into. Whether you physically inscribe then onto a meteor metal blade, or embed the spells into a crystal hammer, you find this eminently more practical than lugging a big book around.\n\nYou start with **Your Grimblade**. Decide what sort of weapon it is: start with d10 damage and *bulky*, then add a single Improvement from the [Artificer’s Improvement list](https://www.brighterworldsrpg.com/Callings/Artificer.html#artificer-improvements).\n\nThen pick two Spells that are contained within it.",
     "equipment": [
       {
         "name": "Grimblade",
-        "desc": "Feel the magic.",
+        "desc": "Your indestructible, personal weapon. Add one Artificer Improvement. Stores your two starting Spells, but cannot store Rituals.",
         "bulky": true,
         "damage": 10,
         "enableMagic": { "type": "spells" }
       }
     ],
     "choices": [
+      { "choose": "enhancement", "table": "rt-artifice-improvements" },
       { "choose": "magic", "type": "spell", "random": false },
       { "choose": "magic", "type": "spell", "random": false }
     ],
@@ -558,31 +562,31 @@
         "id": "ability-WgN2wz0bGxQ",
         "type": "core",
         "name": "Grimblade",
-        "desc": "You have a mystical weapon capable of storing spells (but not rituals) as though it were a Grimoire. It is any type of melee weapon, made of some unusual material. Your Grimblade is indestructible and you always know where it is.\n\n### Grimblade\n\nYour Grimblade acts as a Grimoire which can only store spells. It can take the form of engraving arcane words onto the flat of a great two handed blade, embedding mystic energy into the crystalline head of a massive hammer, or simply bashing people about the head with a very large book.\n\n### Kinetic Spellcasting\n\nIf you deal Direct Damage (not necessarily a Wound) with your Grimblade you may immediately cast a spell ignoring the usual costs. You do not set your Grit to zero or make a Save. You can still cast spells from it as usual, but if you cast a spell while at zero Grit you roll the Save with your STR rather than your WIL."
+        "desc": "Your **Grimblade** is a mystical weapon capable of storing spells (but not rituals) as though it were a Grimoire. It is indestructible, you always know where it is, and it doesn’t work for anyone but you.\n\nWhen you deal Direct Damage with your Grimblade (not necessarily a Wound) you may immediately cast a Spell it contains without paying the usual costs (do not set your Grit to zero or make a Save).\n\nYou can still cast Spells from it as though it were a standard Grimoire, however if you wish to store and perform Rituals you’ll need a separate Grimoire to keep them in."
       },
       {
-        "id": "ability-2hSXpe4gys1petRbfTZr",
-        "type": "advanced",
         "name": "Hammerspace",
-        "desc": "You can store your Grimblade in a sub dimensional space (a Mary Poppins bag, a small portal, a tattoo, etc.) where it can be retrieved instantly."
+        "desc": "You can store your Grimblade in a sub dimensional space (a Mary Poppins bag, a small portal, a tattoo, etc.) where it is undetectable, but can be retrieved instantly.",
+        "id": "ability-2hSXpe4gys1petRbfTZr",
+        "type": "advanced"
       },
       {
-        "id": "ability-33jNo6LbpJCgtocaF",
-        "type": "advanced",
         "name": "Spell Disruption",
-        "desc": "You can destroy weak (and disrupt powerful) ongoing spells and enchantments with your Grimblade. If there is risk of magical backlash, make a STR Save to avoid it."
+        "desc": "You can destroy weak (and disrupt powerful) ongoing spells and enchantments with your Grimblade. If there is risk of magical backlash, make a STR Save to avoid it.",
+        "id": "ability-33jNo6LbpJCgtocaF",
+        "type": "advanced"
       },
       {
-        "id": "ability-nuSoGVvdxfBp9MOk1j6",
-        "type": "advanced",
         "name": "Mystic Strike",
-        "desc": "Set your Grit to zero to deal max damage on an attack. You can only do this if you’re not already at zero Grit."
+        "desc": "Set your Grit to zero to deal max damage on an attack. You can only do this if you’re not already at zero Grit.",
+        "id": "ability-nuSoGVvdxfBp9MOk1j6",
+        "type": "advanced"
       },
       {
-        "id": "ability-x6EJOh1t5HZEl9b0I",
-        "type": "advanced",
         "name": "I, Grimblade",
-        "desc": "Whether through the magic stored within it or from some other means, your Grimblade has become sentient and ambulatory. It can float, act, and attack on its own. Kinetic Spellcasting still requires you to be wielding the blade yourself to function."
+        "desc": "Whether through the magic stored within it or from some other means, your Grimblade has become sentient and ambulatory. It can float, act, and attack on its own. It has 3 Grit and no Attributes, use your own if it needs to make a Save. Any amount of Direct Damage will incapacitate it until it can recover its Grit.",
+        "id": "ability-x6EJOh1t5HZEl9b0I",
+        "type": "advanced"
       }
     ],
     "info": ""
@@ -607,31 +611,31 @@
         "id": "ability-iVwrspxo0",
         "type": "core",
         "name": "Runic Inscription",
-        "desc": "Runic magic is subtler than both Spells and Rituals, dealing mostly with modifying existing things. The effects are long lasting, but generally less powerful.\n\nYou can inscribe runes that incorporate one Element, one Verb, and one Subject.\n\nWhen you inscribe a rune, tell the GM what your intended effect is and what components you plan to use to achieve that. They’ll tell you if that’s possible, or if you’ll have to do more to achieve your goal. Wide reaching or particularly powerful effects might require a unique material to hold the rune, or for the rune to be duplicated in multiple places.\n\nOnce inscribed, activate a rune by physically touching it to one of your **Key Runes**. Each Key Rune can only empower on Rune at a time. You may deactivate a Rune with a thought from any distance to free a Key Rune to be used again. Any number of Runes can be inscribed, but you may only have one per Key Rune empowered at once.\n\nWhenever you spend XP gain an additional Key Rune."
+        "desc": "Your runic inscriptions incorporate one Element, one Verb, and one Subject. Inscribing a rune takes at least 10 minutes, and potentially more if the inscription is complex, large, or otherwise involved.\n\nTell the GM what your intended effect is and what components you plan to use to achieve that. They’ll tell you if that’s possible, or if you’ll have to do more to achieve your goal. Powerful or wide reaching effects might require a unique material to hold the rune, or for the rune to be duplicated in multiple places.\n\nActivate an inscribed rune by physically touching it to one of your Key Runes. You may deactivate a Rune from any distance to free a Key Rune to be used again. Any number of Runes can be inscribed, but only one rune per Key Rune may be empowered simultaneously.\n\nWhenever you spend XP gain an additional Key Rune.\n\n### Elements\n\nElements control what the rune deals with. They may be applied literally or metaphorically.\n\n- **Air:** breath, wind\n- **Fire:** burning, heat\n- **Earth:** solidity, weight\n- **Water:** liquid, change\n\n### Verbs\n\nVerbs control how the element of the rune is applied.\n\n- **Enhance:** addition, amplification\n- **Impair:** reduction, suppression\n- **Move:** motive force, relocation\n- **Create:** production, renewal\n- **Destroy:** removal, decay\n\n### Subjects\n\nSubjects control what is effected by the rune.\n\n- **Self:** acts on the specific element chosen for the rune\n- **Object:** acts on an inanimate object, often what the rune is inscribed onto\n- **Creature:** acts on a living thing, often what the rune is inscribed onto"
       },
       {
-        "id": "ability-1Se9MxJCXOeijXRmAN",
-        "type": "advanced",
         "name": "Expansive Research",
-        "desc": "Learn the remaining Elements, Verbs and Subjects from the standard lists."
+        "desc": "Learn the remaining Elements, Verbs and Subjects from the standard lists.",
+        "id": "ability-1Se9MxJCXOeijXRmAN",
+        "type": "advanced"
       },
       {
-        "id": "ability-uCW7oACqPu7",
-        "type": "advanced",
         "name": "Remote Control",
-        "desc": "You can activate inscribed runes from a distance without needing physical contact with the Key Rune used. You may also inscribe specific conditions into your run which, after being empowered, will cause a runes effects to activate upon the conditions being met."
+        "desc": "You can activate inscribed runes from a distance without needing physical contact with the Key Rune used. You may also inscribe specific conditions into your run which, after being empowered, will cause a runes effects to activate upon the conditions being met.",
+        "id": "ability-uCW7oACqPu7",
+        "type": "advanced"
       },
       {
-        "id": "ability-UNkzs6E2",
-        "type": "advanced",
         "name": "Synergistic Conjunctions",
-        "desc": "You’ve learned the **And** component which lets you write runes that incorporate multiple Elements, Verbs, and Subjects simultaneously. This can also be used to chain several runes together."
+        "desc": "You’ve learned the **And** component which lets you write runes that incorporate multiple Elements, Verbs, and Subjects simultaneously. This can also be used to chain several runes together.",
+        "id": "ability-UNkzs6E2",
+        "type": "advanced"
       },
       {
-        "id": "ability-0L2lI8NkURy43",
-        "type": "advanced",
         "name": "Esoteric Elements",
-        "desc": "You’ve learned to manipulate the following two elements in your runes:\n\n- **Time**: dealing with speeding or slowing things.\n- **Space**: dealing with locations and distances."
+        "desc": "You’ve learned to manipulate the following two elements in your runes:\n\n- **Time:** dealing with speeding or slowing things.\n- **Space:** dealing with locations and distances.",
+        "id": "ability-0L2lI8NkURy43",
+        "type": "advanced"
       }
     ],
     "info": ""
@@ -641,17 +645,11 @@
     "name": "Sneaky Bastard",
     "tagline": "An expert in self cloning and underhanded tricks.",
     "for": "For players who like plans within plans, and to be in two places at once.",
-    "desc": "You’ve always been up to something. When people look one way, you’re going the other. There’s always at least one more ace up your sleeve. Of course all this has a tendency to ruffle feathers, so it’s a good thing you’ve got the perfect partner to watch your back… yourself.",
+    "desc": "You’ve always been up to something. When people look one way, you’re going the other. There’s always at least one more ace up your sleeve. Of course all this has a tendency to ruffle feathers, so it’s a good thing you’ve got the perfect partner to watch your back… yourself.\n\nSelect which **Self Cloning Technique** you’ve mastered:\n\n- **Split Self**, divide your physical self in two.\n- **Shadow Clone**, you and your shadow can act dependently.\n- **Illusory**, create images of yourself.\n\nYou start with a **Dramatic Looking Cloak** and some **Daggers** (d6) hidden about your person. You always seem to have at least one more when you need one.",
     "equipment": [
       {
         "name": "Daggers",
         "desc": "You always manage to have another one secreted about your person.",
-        "bulky": false,
-        "damage": 6
-      },
-      {
-        "name": "Bump keys",
-        "desc": "(1: the lock and key break, 2: the lock breaks, 3: the key breaks, 4-6: nothing breaks)",
         "bulky": false,
         "damage": 6
       },
@@ -662,49 +660,48 @@
         "id": "ability-HgZpwyb5CcfUGG",
         "type": "core",
         "name": "Self Cloning Technique",
-        "desc": "You have the ability to split apart or create copies of yourself. Choose the style of cloning you use:\n\n### Split Self\n\nDivide yourself in two. Your split starts with your Grit and a d4 in all Attributes. You may step down your own Attributes to step up the corresponding Attribute of your clone. If either half dies the missing Attributes are lost, although you may heal back to your maximums as usual. You are both halves of yourself at all times and you both have access to your inventory, although only one half may use a specific item at any given time.\n\n### Shadow Clone\n\nYou can separate your shadow from your physical self. Your shadow is insubstantial and immaterial, but cannot pass through opaque objects. It is immune to physical damage, but vulnerable to magic and bright lights. Your shadow can hide in the shadow of another creature, and while there you can read their surface thoughts, and communicate to them mentally.\n\n### Illusory\n\nCreate a number of illusory clones up to the number of advanced abilities you have. Your clones are insubstantial and intangible but are otherwise indistinguishable from your real self. You do not have to declare which of you is real until it matters, and you share the senses of all clones simultaneously. When attacking with clones if you would deal Direct Damage you must either declare the clone is actually you or reveal it as an illusion."
+        "desc": "You’ve mastered one of the following self cloning techniques in your pursuit of being the sneakiest of all bastards.\n\n### Split Self\n\nDivide yourself in two. Your clone has 1 Grit and d4 in all Attributes but may be improved by spending XP as you would yourself. You are both halves of yourself at all times and you both have access to your inventory, although only one half may use a specific item at any given time. If either half is killed, it will bud off of the remaining half after spending 6 hours resting.\n\n### Shadow Clone\n\nYou can split off your shadow and attach it to another creature so long as you or your shadow touches theirs. While attached you can see through their eyes and read their surface thoughts, or move to another creature in the same way. Your shadow can be destroyed with magic, bright lights, or if the creature it’s attached to is killed. If destroyed, your shadow can be reformed by spending 10 minutes in total darkness.\n\n### Illusory Images\n\nCreate up to two illusory clones within your line of sight. Your clones are insubstantial and intangible but are otherwise indistinguishable from your real self. You do not have to declare which is real until you or a clone would deal or recieve Direct Damage, or otherwise interact physically."
       },
       {
-        "id": "ability-dLECI7M47my",
-        "type": "advanced",
         "name": "Multifarious Copies",
-        "desc": "When you create your clone you may freely change its physical appearance."
+        "desc": "When you create your clone you may freely change its physical appearance.",
+        "id": "ability-dLECI7M47my",
+        "type": "advanced"
       },
       {
-        "id": "ability-N7Nq1oJ",
-        "type": "advanced",
         "name": "For He Can Creep",
-        "desc": "Your footsteps make no sound, and you are impossible to see by mundane means while you are motionless in shadow. You may extend this effect to anyone you choose within 10 feet of you."
+        "desc": "Your footsteps make no sound, and you are impossible to see by mundane means while you are motionless in shadow. You may extend this effect to anyone you choose within 10 feet of you.",
+        "id": "ability-N7Nq1oJ",
+        "type": "advanced"
       },
       {
-        "id": "ability-cqcAwHfJzhK",
-        "type": "advanced",
         "name": "Snap",
-        "desc": "Set your Grit to zero to instantly recall your clone to yourself, or yourself to your clone from any distance. Anyone touching you while you do so is carried along, although they may get a Save to break contact beforehand. You can only do this if you’re not already at zero Grit."
+        "desc": "Set your Grit to zero to instantly recall your clone to yourself, or yourself to your clone from any distance. Anyone touching you while you do so is carried along, although they may get a Save to break contact beforehand. You can only do this if you’re not already at zero Grit.",
+        "id": "ability-cqcAwHfJzhK",
+        "type": "advanced"
       },
       {
-        "id": "ability-5Iifb8xa8x3lgCew",
-        "type": "advanced",
         "name": "Pick Pocket",
-        "desc": "While a creature is totally unaware of your presence (discounting clones) you may swap an object they carry with an object of similar size and heft."
+        "desc": "While a creature is totally unaware of your presence (discounting clones) you may swap an object they carry with an object of similar size and heft.",
+        "id": "ability-5Iifb8xa8x3lgCew",
+        "type": "advanced"
       }
     ],
-    "info": ""
+    "info": "",
+    "choices": [{ "choose": "enhancement", "table": "rt-cloning-techniques" }]
   },
   {
     "id": "calling-soulbearer",
     "name": "Soulbearer",
-    "tagline": "A steward of a beast’s soul, able to transform into that creature through ancient rites.",
+    "tagline": "A keeper of beast souls, borrowing their skills and forms.",
     "for": "For players who want to be an animal sometimes.",
-    "desc": "The soul of a great beast lives within you, granting you its skills and form. Shamanic ritual prepares for such a transfer, layering soul upon soul for generations until an animal is ready to make a Soulbearer.",
+    "desc": "Charged with the keeping and shepherding creature’s souls. You’ve been bound to one **Great Soul** of some beast that stays with you forever, although the other souls you bear are merely temporary companions.\n\nYou start with a **Great Soul** permanently living within your body, allowing you to borrow its skills and form. Choose which creature the soul belonged to, and pick three Perks from the [Animal’s Companion list](https://www.brighterworldsrpg.com/Callings/Animal's%20Companion.html#companion-perks) to represent it. When you transform into the creature’s shape those Perks modify your existing stats.",
     "equipment": [
       {
         "name": "Your Great Soul",
-        "desc": "You may want to maintain a separate sheet for your animal shape.",
+        "desc": "Choose the creature whose soul you bear. Its three Perks modify your existing stats while you are transformed.",
         "bulky": false
-      },
-      { "name": "Beneficial trait", "desc": "Something from your soul animal.", "bulky": false },
-      { "name": "Inconvenient trait", "desc": "Something from your soul animal.", "bulky": false }
+      }
     ],
     "choices": [
       { "choose": "enhancement", "table": "rt-animal-companion" },
@@ -715,32 +712,32 @@
       {
         "id": "ability-Cz3QXo",
         "type": "core",
-        "name": "Great Soul",
-        "desc": "An unusually dense and powerful soul from some animal has been ritualistically implanted into you. This grants you some measure of that animal’s skills as well as the ability to freely transform into it."
-      },
-      {
-        "id": "ability-zh6TmLb",
-        "type": "advanced",
-        "name": "Soul Sight",
-        "desc": "Temporarily blind yourself to the material world to see creature’s souls. You can see, through all but the most powerful of illusions, what sort of creature they are as well as their current mood."
-      },
-      {
-        "id": "ability-CvRBK4Lwr",
-        "type": "advanced",
-        "name": "Spiritual Resistance",
-        "desc": "Your Great Soul gives you a spiritual density and fullness that makes it difficult for outside forces to influence you. You are immune to charm, sleep, fear, mind control, and other similar supernatural effects."
-      },
-      {
-        "id": "ability-WWhF1MVXlfHIAYPCB0hc",
-        "type": "advanced",
-        "name": "Speaker to the Dead",
-        "desc": "You can consult with the lingering souls and spirits of those who died nearby. Recalcitrant spirits may require offerings or favors before being willing to assist."
-      },
-      {
-        "id": "ability-IZpjC5D6bZdc",
-        "type": "advanced",
         "name": "Psychopomp",
-        "desc": "When you are attendant to the death of a creature (whether caused by you or not) you may take temporary custody of its soul. You can use your Great Soul ability to take that creature’s form once, but afterwards the soul passes beyond the Black River."
+        "desc": "You have the ability to bear souls within you and tap into their abilities and forms.\n\nWhen you are attendant to the death of a creature (whether caused by you or not) you may take temporary custody of its soul.\n\nYou may freely transform into any creature whose soul you bear. If it is your **Great Soul** you may do so as many times as you wish. For any other souls, you may do so a single time before the soul passes beyond the Black River and is lost to you.\n\nUse the Perks from the Animal’s Companion list as a guideline for how to modify your own stats. Transforming happens quickly, although you may need to make a Save if you’re transforming in reaction to something, and lasts as long as you like. Grit and Ability loss is maintained between your forms (you won’t magically heal by transforming)."
+      },
+      {
+        "name": "Soul Sight",
+        "desc": "Temporarily blind yourself to the material world to see souls. Based on a soul, you can tell what sort of creature they are as well as their current mood. Your sight pierces most illusions, but is blocked by mundane materials such as stone or earth.",
+        "id": "ability-zh6TmLb",
+        "type": "advanced"
+      },
+      {
+        "name": "Spiritual Resistance",
+        "desc": "Your Great Soul gives you a spiritual density and fullness that makes it difficult for outside forces to influence you. You are immune to charm, sleep, fear, mind control, and other similar supernatural effects.",
+        "id": "ability-CvRBK4Lwr",
+        "type": "advanced"
+      },
+      {
+        "name": "Speaker to the Dead",
+        "desc": "You can consult with the lingering souls and spirits of those who died nearby. Recalcitrant spirits may require offerings or favors before being willing to assist.",
+        "id": "ability-WWhF1MVXlfHIAYPCB0hc",
+        "type": "advanced"
+      },
+      {
+        "name": "Manifestation",
+        "desc": "You can manifest a soul you bear outside of your body in the form its owner originally took. While manifested, the creature can exert its full strength, but time and action will quickly drain it of vitality. Your Great Soul must return to you to rest, while temporary souls will pass beyond the Black River.",
+        "id": "ability-soulbearer-manifestation",
+        "type": "advanced"
       }
     ],
     "info": ""
@@ -750,7 +747,7 @@
     "name": "Witch",
     "tagline": "A magician of ancient secrets, assisted by their magically bonded familiar.",
     "for": "For players who want to cast spells and also have an adorable pet.",
-    "desc": "Familiar at your side, you channel the forces of magic across the mystic bond that connects you. You are a shepherd to ancient secrets, passed from person to person to keep them safe from forces who would rather see it lost.",
+    "desc": "A Familiar at your side, you channel the forces of magic across the mystic bond that connects you. You are a shepherd to ancient secrets, passed from person to person to keep them safe from forces who would rather see them lost.\n\nYou start with your **Familiar**, a small creature magically bonded to you, decide what sort of small creature they are and choose three Perks from the [Animal’s Companion list](https://www.brighterworldsrpg.com/Callings/Animal's%20Companion.html#companion-perks) to combine with these base stats:\n\n1 Grit, d4 STR, d4 DEX, and d4 WIL, and a d4 attack\n\n*(A bird or other flying Companion requires you to choose the Flying Perk.)*\n\nYou also start with a **Grimoire** storing two Spells and one Ritual of your choice.\n\nPlus a fanciful hat upon your head.",
     "equipment": [
       { "name": "Grimoire", "desc": "Giant book of spells.", "bulky": true, "enableMagic": true },
       { "name": "A fanciful hat or ornamentation", "desc": "Ooo, that is fancy.", "bulky": false }
@@ -765,32 +762,32 @@
       {
         "id": "ability-27yXkuj",
         "type": "core",
-        "name": "Familiar Bond",
-        "desc": "You have magically bonded to a small creature. This bond allows you to channel magic through the Familiar, letting it cast spells for you."
+        "name": "Bonded Familiar",
+        "desc": "You can channel magic through your bond to have your Familiar cast a Spell in your place.\n\nCasting a Spell through your Familiar works the same as you casting a spell, except the Familiar pays the costs instead of you: its Grit is set to zero, or it must make a WIL Save. Your Familiar can concentrate on a spell to maintain it by remaining Deprived as usual. You still need your Grimoire on your person to cast spells through your Familiar.\n\nYou may cast a Spell simultaneously with your Familiar, and separately concentrate on it, allowing you to cast and maintain two Spells simultaneously.\n\nSo long as you are alive, your Familiar cannot be permanently destroyed. If they are killed, the next time you rest you may resummon your Familiar instead of restoring Attribute Loss."
       },
       {
-        "id": "ability-ObEnmS842gybJWPcFw0",
-        "type": "advanced",
         "name": "Wild Spellcapture",
-        "desc": "You know the ancient secrets of binding wild magic into spells and rituals. By disintegrating your familiar into raw magic while it interacts with a natural magical phenomenon, your Familiar Bond creates a direct link to the magic allowing you to bind it into your Grimoire (you'll have to re-summon your Familiar afterwards). Work with the GM to determine the details of the spell or ritual you create."
+        "desc": "You know the ancient secrets of binding wild magic into spells and rituals. By disintegrating your familiar into raw magic while it interacts with a natural magical phenomenon, your Familiar Bond creates a direct link to the magic allowing you to bind it into your Grimoire (you’ll have to re-summon your Familiar afterwards). Work with the GM to determine the details of the spell or ritual you create.",
+        "id": "ability-ObEnmS842gybJWPcFw0",
+        "type": "advanced"
       },
       {
-        "id": "ability-Zb6RYv",
-        "type": "advanced",
         "name": "Familiar Sights",
-        "desc": "You can borrow the senses of your familiar and guide them remotely."
+        "desc": "You can borrow the senses of your familiar and guide them remotely.",
+        "id": "ability-Zb6RYv",
+        "type": "advanced"
       },
       {
-        "id": "ability-R6T3Dti",
-        "type": "advanced",
         "name": "Unfamiliar Familiar",
-        "desc": "Each time you re-summon your Familiar you can choose a new form for it to take (adjusting the Animal’s Companion options as needed)."
+        "desc": "Each time you re-summon your Familiar you can choose a new form for it to take (adjusting the Animal’s Companion options as needed).",
+        "id": "ability-R6T3Dti",
+        "type": "advanced"
       },
       {
-        "id": "ability-CeazMCuLjUgGJL5V8U3y",
-        "type": "advanced",
         "name": "Witch Steed",
-        "desc": "In your hands a broom, cauldron, or other household object becomes a flying steed."
+        "desc": "In your hands a broom, cauldron, or other household object becomes a flying steed.",
+        "id": "ability-CeazMCuLjUgGJL5V8U3y",
+        "type": "advanced"
       }
     ],
     "info": ""
@@ -803,11 +800,12 @@
     "name": "Familiar",
     "tagline": "A magical companion.",
     "for": "",
-    "desc": "Casting a spell through your Familiar works the same as you casting a spell, except the Familiar pays the costs: its Grit is set to zero, or it must make a WIL Save. You can have your Familiar concentrate on a spell cast through it to maintain it, and remain deprived, in your place. This allows you to keep two spells maintained simultaneously.\n\nSo long as you are alive, your Familiar Bond prevents your Familiar from being permanently destroyed. If killed you can always re-summon your Familiar through an hour long ritual unique to you.",
+    "desc": "Choose three Companion Perks to add to 1 Grit, d4 STR, d4 DEX, d4 WIL, and a d4 attack. A flying Familiar requires Flying.\n\nYou can channel magic through your bond to have your Familiar cast a Spell in your place.\n\nCasting a Spell through your Familiar works the same as you casting a spell, except the Familiar pays the costs instead of you: its Grit is set to zero, or it must make a WIL Save. Your Familiar can concentrate on a spell to maintain it by remaining Deprived as usual. You still need your Grimoire on your person to cast spells through your Familiar.\n\nYou may cast a Spell simultaneously with your Familiar, and separately concentrate on it, allowing you to cast and maintain two Spells simultaneously.\n\nSo long as you are alive, your Familiar cannot be permanently destroyed. If they are killed, the next time you rest you may resummon your Familiar instead of restoring Attribute Loss.",
     "equipment": [
       { "name": "Attack", "desc": "Bites, claws, pecks...", "bulky": false, "damage": 4 }
     ],
     "choices": [
+      { "choose": "enhancement", "table": "rt-animal-companion" },
       { "choose": "enhancement", "table": "rt-animal-companion" },
       { "choose": "enhancement", "table": "rt-animal-companion" }
     ],
@@ -822,7 +820,7 @@
     "name": "Companion",
     "tagline": "A loyal companion.",
     "for": "",
-    "desc": "",
+    "desc": "Choose three Companion Perks to add to 3 Grit, d6 STR, d6 DEX, d6 WIL, and a d6 attack. A flying companion requires Flying.\n\nYour companion is unfailingly loyal and will follow your commands.\n\nShould the worst happen, your companion will return to your side from beyond the Black River as a ghost.\n\nYou can spend XP on your companion as you would on yourself.\n\n### Companion Perks\n\n- **Big:** Step up STR and Attack.\n- **Fast:** Step up DEX and gain +1 Armor\n- **Clever:** Step up WIL, it can communicate with anyone flawlessly.\n- **Vicious:** Step up Attack, and gain an extra effect (e.g. poison, armor piercing, blast, etc.).\n- **Flying:** Through wings or other means.\n- **Tiny:** +2 Grit, can be easily concealed.\n- **Invertebrate:** No bones! +2 Grit and can fit into nearly any space.\n- **Durable:** +2 Armor (scales, plates, evasion, exoskeleton, etc.).\n- **Marsupial:** Has a pouch which can carry a single bulky item.\n- **Perceptive:** Has some enhanced sense (smelling, hearing, echolocation, electroception, dowsing, night vision, etc.)\n- **Tricky:** +2 Grit and a special skill.\n- **Special:** Some other unique thing (good at digging, chromatophores, is a swarm, etc.)",
     "equipment": [
       { "name": "Attack", "desc": "Bites, claws, pecks...", "bulky": false, "damage": 6 }
     ],
@@ -836,7 +834,7 @@
         "id": "ability-2CpsKcwa-companion",
         "type": "advanced",
         "name": "Level Up",
-        "desc": "Through training, special diet, or ritual you have learned some new tricks. Pick two more abilities from the Animal Companion list.",
+        "desc": "Through training, special diet, or ritual your companion has learned some new tricks. Pick two more Perks from the Companion Perks list.",
         "choices": [
           { "choose": "enhancement", "table": "rt-animal-companion" },
           { "choose": "enhancement", "table": "rt-animal-companion" }

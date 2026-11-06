@@ -13,7 +13,7 @@ Four broad Mux tasks track the follow-up:
 | Task key                     | Scope                                                                      | Status                        |
 | ---------------------------- | -------------------------------------------------------------------------- | ----------------------------- |
 | `bwo-rules-shared-mechanics` | Shared damage, Saves, Armor, Grit, and burden mechanics                    | Implemented; validation below |
-| `bwo-rules-callings`         | Calling descriptions, perks, and starting grants                           | Queued                        |
+| `bwo-rules-callings`         | Calling descriptions, perks, and starting grants                           | Implemented; validation below |
 | `bwo-rules-wizard`           | Complete legal selections and usable generated character stats/items       | Queued                        |
 | `bwo-rules-catalogues`       | Missing magic items, bestiary corrections, and remaining reference cleanup | Queued                        |
 
@@ -24,6 +24,12 @@ Effective Armor is capped at three including NPC base Armor, and inactive/zero-q
 Explicit maximum DEX/WIL edits adjust Max Grit by the step difference, preserving existing custom bonuses and current spent Grit. Merely loading a sheet does not recalculate its Grit maximum. No saved format, load-time content reconciliation, or catalogue definitions changed in this chunk.
 
 Validation: `pnpm test:unit --run` passes all 263 tests, including 47 new mechanics regressions; `pnpm check` reports zero errors and warnings; `pnpm build` passes. The build's Cloudflare emulator required loopback permission to complete prerendering. No dev server was run. Browser interaction checks require a separately authorized environment and were not performed. Svelte autofixer checks found no new component issues; existing key/style recommendations were left outside this mechanics change.
+
+The Calling update now refreshes all 15 published introductions, core abilities, and advanced ability descriptions, plus both hidden companion templates and all shared choice tables. This resolves the Calling-text and table-value findings recorded below. Starting definitions now supply three Familiar Perks, two separately editable Storage Crystals, four total Artificer Improvements, and Grimblade's Improvement; obsolete bonus magic, equipment, and the Devoted Idol entry are removed. Sneaky Bastard records its required technique through a new choice table using the existing enhancement mechanism.
+
+Existing Calling, table, and continuing ability IDs remain stable. Manifestation has a new ID rather than reusing the removed advanced Psychopomp ID, so older saved unlocks cannot be mistaken for the new ability. Existing character content remains unchanged. Automatic perk stat changes, form handling, assigning Improvements to particular items, and completion validation remain in `bwo-rules-wizard`.
+
+Calling validation: compared 248 published paragraphs/list items against the refreshed catalogue, with no omitted rule blocks after explicitly accounting for small editorial corrections. Corrected upstream cross-reference URLs and kept choice descriptions as plain text. Nine new catalogue/grant/reference tests pass; the full suite now passes **272 tests**, with zero Svelte/TypeScript errors or warnings, a successful production build, and passing formatting/diff checks. No components, saved formats, migration code, or saved characters changed in this chunk.
 
 ## Scope and method
 
@@ -117,7 +123,7 @@ Rules data are copied into character sheets during creation; existing sheets are
 Suggested implementation order:
 
 1. Correct shared mechanics with focused regression tests (implemented).
-2. Reconcile Calling text, starting grants, and enhancement tables.
+2. Reconcile Calling text, starting grants, and enhancement tables (implemented).
 3. Tighten creation completion checks and handle stat/item changes from perks and Improvements.
 4. Add the missing magic-item set, correct the bestiary, and address remaining reference copy.
 

@@ -1,12 +1,12 @@
 [
   {
     "id": "rt-animal-companion",
-    "name": "Animal Companion Abilities",
-    "desc": "Enhance your companion with the following abilities.",
+    "name": "Companion Perks",
+    "desc": "Choose Perks to represent the creature. A flying creature requires Flying.",
     "type": "ability",
     "options": [
       { "name": "Big", "desc": "Step up STR and Attack." },
-      { "name": "Fast", "desc": "Step up DEX and gain +2 Grit" },
+      { "name": "Fast", "desc": "Step up DEX and gain +1 Armor" },
       { "name": "Clever", "desc": "Step up WIL, it can communicate with anyone flawlessly." },
       {
         "name": "Vicious",
@@ -15,7 +15,7 @@
       { "name": "Flying", "desc": "Through wings or other means." },
       { "name": "Tiny", "desc": "+2 Grit, can be easily concealed." },
       { "name": "Invertebrate", "desc": "No bones! +2 Grit and can fit into nearly any space." },
-      { "name": "Durable", "desc": "+1 Armor (scales, plates, evasion, exoskeleton, etc.)." },
+      { "name": "Durable", "desc": "+2 Armor (scales, plates, evasion, exoskeleton, etc.)." },
       { "name": "Marsupial", "desc": "Has a pouch which can carry a single bulky item." },
       {
         "name": "Perceptive",
@@ -30,11 +30,11 @@
   },
   {
     "id": "rt-artifice-improvements",
-    "name": "Artifice Improvements",
+    "name": "Artificer Improvements",
     "desc": "Enhance your equipment with the following abilities.",
     "type": "improvement",
     "options": [
-      { "name": "Deadly", "desc": "Step up damage die." },
+      { "name": "Deadly", "desc": "Step up damage die, ignore Armor." },
       {
         "name": "Heavy",
         "desc": "Step up damage die, add bulky. Effective at damaging structures."
@@ -43,7 +43,7 @@
       { "name": "Ranged", "desc": "Attacks at a distance." },
       { "name": "Ethereal", "desc": "Deals Direct Damage to WIL, injures non-physical targets." },
       { "name": "Paired", "desc": "You have two of them." },
-      { "name": "Entangling", "desc": "Deals Direct Damage to DEX, trips or staggers on a Wound." },
+      { "name": "Entangling", "desc": "Deals Direct Damage to DEX, trips or staggers on Wounds." },
       { "name": "Extra Protection", "desc": "+1 Armor, add bulky." },
       { "name": "Ward", "desc": "+1 Armor against a specific threat." },
       { "name": "Locomoting", "desc": "Grants a form of movement" },
@@ -112,7 +112,7 @@
       },
       {
         "name": "Observance",
-        "desc": "You must complete a ritual or task (something inconvenient) in each location you visit."
+        "desc": "You must complete a ritual or task related to your devotion in each location you visit."
       }
     ]
   },
@@ -133,7 +133,7 @@
       },
       {
         "name": "Weapon of Faith",
-        "desc": "Choose an improvement from the Artificer’s Improvement list (Pg 27). Weapons you hold gain that Improvement."
+        "desc": "Choose an improvement from the Artificer’s Improvement list. Weapons you hold gain that Improvement."
       },
       {
         "name": "Healing Touch",
@@ -147,7 +147,7 @@
   },
   {
     "id": "rt-ruins-elements",
-    "name": "Ruinic Elements",
+    "name": "Runic Elements",
     "desc": "",
     "type": "element",
     "options": [
@@ -159,7 +159,7 @@
   },
   {
     "id": "rt-ruins-verbs",
-    "name": "Ruinic Verbs",
+    "name": "Runic Verbs",
     "desc": "",
     "type": "verb",
     "options": [
@@ -172,13 +172,39 @@
   },
   {
     "id": "rt-ruins-subjects",
-    "name": "Ruinic Subjects",
+    "name": "Runic Subjects",
     "desc": "",
     "type": "subject",
     "options": [
-      { "name": "Self", "desc": "the element itself" },
-      { "name": "Object", "desc": "an inanimate object" },
-      { "name": "Creature", "desc": "a living thing" }
+      { "name": "Self", "desc": "acts on the specific element chosen for the rune" },
+      {
+        "name": "Object",
+        "desc": "acts on an inanimate object, often what the rune is inscribed onto"
+      },
+      {
+        "name": "Creature",
+        "desc": "acts on a living thing, often what the rune is inscribed onto"
+      }
+    ]
+  },
+  {
+    "id": "rt-cloning-techniques",
+    "name": "Self Cloning Techniques",
+    "desc": "Choose the technique you have mastered.",
+    "type": "technique",
+    "options": [
+      {
+        "name": "Split Self",
+        "desc": "Divide yourself in two. Your clone has 1 Grit and d4 in all Attributes but may be improved by spending XP as you would yourself. You are both halves of yourself at all times and you both have access to your inventory, although only one half may use a specific item at any given time. If either half is killed, it will bud off of the remaining half after spending 6 hours resting."
+      },
+      {
+        "name": "Shadow Clone",
+        "desc": "You can split off your shadow and attach it to another creature so long as you or your shadow touches theirs. While attached you can see through their eyes and read their surface thoughts, or move to another creature in the same way. Your shadow can be destroyed with magic, bright lights, or if the creature it’s attached to is killed. If destroyed, your shadow can be reformed by spending 10 minutes in total darkness."
+      },
+      {
+        "name": "Illusory Images",
+        "desc": "Create up to two illusory clones within your line of sight. Your clones are insubstantial and intangible but are otherwise indistinguishable from your real self. You do not have to declare which is real until you or a clone would deal or recieve Direct Damage, or otherwise interact physically."
+      }
     ]
   }
 ]
