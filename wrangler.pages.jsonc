@@ -1,0 +1,8 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  // Compatibility build for the existing Pages project during the transition.
+  // This is not a data-compatible rollback to the historical deployed app.
+  "name": "brighter-worlds",
+  "pages_build_output_dir": ".svelte-kit/cloudflare",
+  "compatibility_date": "2026-06-13",
+}

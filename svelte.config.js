@@ -9,9 +9,9 @@ const config = {
 
   kit: {
     adapter: adapter({
-      ...(process.env.BWO_WORKER_BUILD === '1' ? { config: 'wrangler.worker.toml' } : {}),
+      config: process.env.BWO_PAGES_BUILD === '1' ? 'wrangler.pages.jsonc' : 'wrangler.jsonc',
       platformProxy: {
-        configPath: './wrangler.worker.toml',
+        configPath: './wrangler.jsonc',
         remoteBindings: false,
       },
     }),

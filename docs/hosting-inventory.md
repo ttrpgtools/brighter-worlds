@@ -1,5 +1,7 @@
 # Hosting and origin inventory
 
+The dated inventory below is the original checkpoint. The 6 November refresh first encountered credential failures; the owner's renamed/updated `X_CF_API_TOKEN` then verified current Pages settings/deployments, Worker names, the empty zone route list and deployed Ankh/Aegis source registration/exports. Pages DNS and public old-app responses are unchanged. The requested dev-first Worker migration and Git build setup are prepared in source; see [rollout-evidence.md](rollout-evidence.md) and [dev-rollout.md](dev-rollout.md) for fresh evidence and the remaining runtime gates. No live hosting mutation has been performed.
+
 Recorded 5 November 2026 using read-only GitHub, Cloudflare API and public HTTP requests. DNS, zone ruleset and Page Rule checks are now complete using the owner-provided zone token in `.env.local`; the installed Wrangler OAuth credential alone lacked those permissions. Credential values are excluded from this report. No hosting settings, records, deployments or Git history were changed.
 
 ## Verified branches and deployment checkpoints

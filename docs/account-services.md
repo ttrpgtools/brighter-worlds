@@ -1,5 +1,7 @@
 # Optional account authentication and sheet APIs
 
+**Worker migration update, 6 November 2026:** Worker is now the default local build, using `wrangler.jsonc`; the former optional `wrangler.worker.toml` has been replaced. Dev and future root targets preserve the trusted service contract below. `pnpm build:pages` selects an explicit compatibility configuration. The owner's updated audit token now verifies deployed Ankh `bwo` root/dev registration and the Ankh/Aegis exports. Earlier hosting-preparation observations in this document are historical; current Git/cutover/recovery setup and the still-open consumer RPC/binding-delivery gate are in [dev-rollout.md](dev-rollout.md) and [rollout-evidence.md](rollout-evidence.md). No live domain or service binding was changed.
+
 This implements the server foundation for the Mux Ankh/Aegis task. The account library, opt-in saves, durable drafts, save queues and conflict UI are described in [account-persistence.md](account-persistence.md). Signing in here does not upload, overwrite or migrate a local sheet. Existing local editing, item links, migration recovery, backups, GM tools and Discord remain available without an account.
 
 ## Authentication and access

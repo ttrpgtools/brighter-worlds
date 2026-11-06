@@ -1,0 +1,59 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  // Default target is dev. Root uses the explicit production environment only
+  // after dev validation. Public domain attachment is a separate cutover step.
+  "name": "brighter-worlds-dev",
+  "main": ".svelte-kit/cloudflare/_worker.js",
+  "compatibility_date": "2026-06-13",
+  "workers_dev": false,
+  "preview_urls": false,
+  "routes": [],
+  "assets": {
+    "binding": "ASSETS",
+    "directory": ".svelte-kit/cloudflare",
+    "run_worker_first": true,
+  },
+  "services": [
+    {
+      "binding": "AUTH",
+      "service": "ankh",
+      "entrypoint": "AuthService",
+      "props": { "appId": "bwo" },
+    },
+    {
+      "binding": "STORE",
+      "service": "aegis",
+      "entrypoint": "Aegis",
+      "props": { "appId": "bwo" },
+    },
+  ],
+  "vars": {
+    "PUBLIC_ANKH": "https://ankh.ttrpg.tools",
+  },
+  "env": {
+    "production": {
+      "name": "brighter-worlds",
+      "workers_dev": false,
+      "preview_urls": false,
+      "routes": [],
+      // Bindings and vars are not inherited by named Wrangler environments.
+      "services": [
+        {
+          "binding": "AUTH",
+          "service": "ankh",
+          "entrypoint": "AuthService",
+          "props": { "appId": "bwo" },
+        },
+        {
+          "binding": "STORE",
+          "service": "aegis",
+          "entrypoint": "Aegis",
+          "props": { "appId": "bwo" },
+        },
+      ],
+      "vars": {
+        "PUBLIC_ANKH": "https://ankh.ttrpg.tools",
+      },
+    },
+  },
+}
