@@ -55,6 +55,8 @@ The converter should snapshot raw source records without altering them, validate
 
 ## Origin migration strategy
 
+The implemented home/library callouts, `/migrate` guide and origin-specific no-loss routes are documented in [migration-guidance.md](migration-guidance.md). They retain both origins and all recovery/deep-link routes without a hosting or redirect change.
+
 LocalStorage and IndexedDB are scoped to an origin. Loading new code at `brighterworlds.app` can read that origin's old storage; it cannot read `dev.brighterworlds.app` storage. A redirect changes the executing origin and cannot move the data. See [MDN Web Storage](https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API) and [MDN IndexedDB](https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API).
 
 Support three first-class routes, with the direct popup copy providing the primary same-browser experience:
