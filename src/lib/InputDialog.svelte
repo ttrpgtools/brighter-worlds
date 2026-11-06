@@ -12,6 +12,7 @@
     dice?: DieValue[];
     title?: string;
     scrollable?: boolean;
+    maxWidth?: string;
     showDelete?: boolean;
     form: T;
     okBtnLabel?: string;
@@ -25,6 +26,7 @@
     dice = [],
     title = '',
     scrollable = true,
+    maxWidth = 'max-w-md',
     showDelete = false,
     form,
     okBtnLabel = 'OK',
@@ -44,7 +46,12 @@
   }
 
   function handleKeys(ev: KeyboardEvent) {
-    if (isElement(ev.target) && ev.target.tagName.toUpperCase() === 'TEXTAREA') {
+    if (
+      ev.defaultPrevented ||
+      ev.isComposing ||
+      !isElement(ev.target) ||
+      ev.target.tagName.toUpperCase() !== 'INPUT'
+    ) {
       return;
     }
     ev.preventDefault();
@@ -57,7 +64,7 @@
   }
 </script>
 
-<DialogBase {title} bind:this={comp} {scrollable}>
+<DialogBase {title} bind:this={comp} {scrollable} {maxWidth}>
   {#snippet pretitle()}
     <div>
       {#if dice.length > 0}
@@ -74,11 +81,11 @@
     </div>
   {/snippet}
   <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-  <div role="dialog" tabindex="-1" class="mt-5" use:focusFirst onkeydown={onEnter(handleKeys)}>
+  <div role="group" tabindex="-1" class="mt-5" use:focusFirst onkeydown={onEnter(handleKeys)}>
     {@render children?.()}
   </div>
   {#snippet footer()}
-    <div class="mt-5 text-center flex gap-2 justify-start">
+    <div class="mt-5 text-center flex flex-wrap gap-2 justify-start">
       <Button disabled={!valid} onclick={okBtnAction}>{okBtnLabel}</Button>
       <Button variant="ghost" onclick={() => close()}>Cancel</Button>
       {#if showDelete}

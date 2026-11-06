@@ -3,11 +3,12 @@
   import ConfirmButtonLogic from './ConfirmButtonLogic.svelte';
   interface Props {
     confirmText: string;
+    label?: string;
     onconfirm: () => void;
     children?: import('svelte').Snippet;
   }
 
-  let { confirmText, children: subChild, onconfirm }: Props = $props();
+  let { confirmText, label, children: subChild, onconfirm }: Props = $props();
 </script>
 
 <ConfirmButtonLogic {onconfirm}>
@@ -15,6 +16,7 @@
     <span class="relative inline-block">
       <button
         type="button"
+        aria-label={label}
         onmouseleave={handleOut}
         onmouseenter={handleIn}
         onclick={handleClick}

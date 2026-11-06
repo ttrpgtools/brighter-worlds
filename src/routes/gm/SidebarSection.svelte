@@ -36,7 +36,15 @@
     >
     <h3 class="text-xl font-subtitle leading-6 flex-1">{title}</h3>
     {#if addable}
-      <Button class="border-0" icon="plus" size="tight" iconClass="size-4" {onclick} />
+      <Button
+        size="sm"
+        aria-label={`New ${title.replace(/^Custom /, '')}`}
+        onclick={(event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          onclick?.();
+        }}>New</Button
+      >
     {/if}
   </summary>
   <div class="flex flex-col {gap}">

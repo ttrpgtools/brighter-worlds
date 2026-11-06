@@ -142,7 +142,7 @@
       {#if menu}
         <Popover.Root bind:open={menuOpen}>
           <Popover.Trigger
-            aria-label="Table actions"
+            aria-label={`Actions for ${title}`}
             class="size-6 -left-2 relative flex items-center justify-center"
           >
             <Icon icon="dots" class="size-5" />
@@ -152,14 +152,19 @@
           </Popover.Content>
         </Popover.Root>
       {/if}
-      <button type="button" {onclick}
-        ><h3 class="text-xl font-subtitle leading-6">{title}</h3></button
-      >
+      {#if onclick}
+        <button type="button" {onclick} aria-label={`Edit ${title}`}
+          ><h3 class="text-xl font-subtitle leading-6">{title}</h3></button
+        >
+      {:else}
+        <h3 class="text-xl font-subtitle leading-6">{title}</h3>
+      {/if}
     </div>
     <div class="shrink-0">
       <div class="flex gap-4 items-center">
         <button
           type="button"
+          aria-label={`Roll ${title}`}
           onclick={() => (!once || rolled === 0) && rollTable()}
           disabled={once && rolled > 0}
           class="relative inline-flex items-center {knownDie(dieSides)
@@ -172,9 +177,10 @@
   {/snippet}
   <ul class="-mx-4 -my-5 sm:-mx-6 rounded-b-lg relative">
     <div
-      class="absolute py-2 px-4 sm:px-6 border-2 border-purple-400 dark:border-purple-600 w-full"
-      class:rounded-b-lg={shuffle === options.length}
-      class:hidden={shuffle === 0}
+      class={[
+        'absolute py-2 px-4 sm:px-6 border-2 border-purple-400 dark:border-purple-600 w-full',
+        { 'rounded-b-lg': shuffle === options.length, hidden: shuffle === 0 },
+      ]}
       style:transform={`translateY(${(shuffle - 1) * 100}%)`}
     >
       &nbsp;

@@ -10,6 +10,8 @@
     TableRoll,
   } from '$lib/types';
   import { isEncounter, isNpc } from '$lib/util/validate';
+  import LibraryEntry from '../LibraryEntry.svelte';
+  import Button from '$lib/ui/button.svelte';
   import CustomRolltable from '../CustomRolltable.svelte';
   import SidebarSection from '../SidebarSection.svelte';
   import RolltableDialog from '../RolltableDialog.svelte';
@@ -98,6 +100,26 @@
   let log = getRollLog();
 
   let tables = getTables();
+  let tableResults: Record<string, TableRoll<RolltableOption> | undefined> = $state({});
+
+  function recordTableRoll(tableId: string, result: TableRoll<RolltableOption>) {
+    tableResults[tableId] = result;
+    if (result.value.length) addLocalRoll(log, getRollResult(result));
+  }
+
+  function addTableResult(tableId: string) {
+    const result = tableResults[tableId];
+    if (!result?.value.length) return;
+    const first = result.value[0];
+    if (first.type === 'entity') {
+      const entity = first.value;
+      if (isNpc(entity)) addNpc(mat, getNpcInstance(entity));
+      else if (isEncounter(entity)) addEncounter(mat, entity);
+      else addItem(mat, entity);
+    } else {
+      addScene(mat, { id: id(), name: result.title || 'Table result', desc: first.value });
+    }
+  }
 
   onMount(() => {
     const unsub = rollResponses.subscribe(({ id, result }) => {
@@ -229,12 +251,14 @@
     const result = await tableDialog?.edit(table);
     if (result) {
       updateTable(tables, result);
+      delete tableResults[table.id];
     }
   }
 
   function remove(table: CustomRolltableDef) {
     removeTable(tables, table);
     delete customTables[table.id];
+    delete tableResults[table.id];
   }
 
   function requestRoll(table: CustomRolltableDef) {
@@ -365,46 +389,68 @@
 />
 <div class="flex flex-col gap-4">
   <SidebarSection title="Custom Roll Tables" open addable onclick={addCustom}>
-    {#each tables.items as table}
-      <div class="relative group/table">
-        <CustomRolltable
-          options={table.options}
-          title={table.name}
-          formula={table.formula}
-          onclick={() => editTable(table)}
-          onroll={addOption}
-          bind:this={customTables[table.id]}
-        >
-          {#snippet menu(closeMenu)}
-            <div class="flex flex-col">
-              <button
-                type="button"
-                onclick={() => (requestRoll(table), closeMenu())}
-                class="px-3 py-2 text-left hover:bg-purple-100 dark:hover:bg-purple-950"
-                >Request player roll</button
-              >
-              <button
-                type="button"
-                onclick={() => (fullEncounterRoll(table), closeMenu())}
-                class="px-3 py-2 text-left hover:bg-purple-100 dark:hover:bg-purple-950"
-                >Roll as dungeon encounter</button
-              >
-              <button
-                type="button"
-                onclick={() => (fullTravelRoll(table), closeMenu())}
-                class="px-3 py-2 text-left hover:bg-purple-100 dark:hover:bg-purple-950"
-                >Roll as travel encounter</button
-              >
-              <button
-                type="button"
-                onclick={() => (remove(table), closeMenu())}
-                class="px-3 py-2 text-left text-red-700 hover:bg-red-100 dark:text-red-300 dark:hover:bg-red-950"
-                >Delete table</button
-              >
-            </div>
-          {/snippet}
-        </CustomRolltable>
-      </div>
+    {#each tables.items as table (table.id)}
+      <LibraryEntry
+        name={table.name}
+        kind="roll table"
+        onedit={() => editTable(table)}
+        onadd={() => addTableResult(table.id)}
+        addDisabled={!tableResults[table.id]?.value.length}
+        ondelete={() => remove(table)}
+      >
+        {#snippet actions()}
+          <Button
+            size="sm"
+            aria-label={`Roll ${table.name}`}
+            onclick={() => customTables[table.id]?.rollTable()}>Roll</Button
+          >
+        {/snippet}
+        {#if tableResults[table.id]}
+          <p class="mt-2 break-words text-sm" aria-live="polite">
+            {tableResults[table.id]?.roll}: {rollLabel(tableResults[table.id]) ||
+              'No matching result'}
+          </p>
+        {:else}
+          <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+            Roll to choose a result to add to the mat.
+          </p>
+        {/if}
+        <details class="mt-3">
+          <summary class="cursor-pointer text-sm">Options and quick rolls</summary>
+          <div class="mt-3">
+            <CustomRolltable
+              options={table.options}
+              title={table.name}
+              formula={table.formula}
+              onroll={(result) => recordTableRoll(table.id, result)}
+              bind:this={customTables[table.id]}
+            >
+              {#snippet menu(closeMenu)}
+                <div class="flex flex-col">
+                  <button
+                    type="button"
+                    onclick={() => (requestRoll(table), closeMenu())}
+                    class="px-3 py-2 text-left hover:bg-purple-100 dark:hover:bg-purple-950"
+                    >Request player roll</button
+                  >
+                  <button
+                    type="button"
+                    onclick={() => (fullEncounterRoll(table), closeMenu())}
+                    class="px-3 py-2 text-left hover:bg-purple-100 dark:hover:bg-purple-950"
+                    >Roll as dungeon encounter</button
+                  >
+                  <button
+                    type="button"
+                    onclick={() => (fullTravelRoll(table), closeMenu())}
+                    class="px-3 py-2 text-left hover:bg-purple-100 dark:hover:bg-purple-950"
+                    >Roll as travel encounter</button
+                  >
+                </div>
+              {/snippet}
+            </CustomRolltable>
+          </div>
+        </details>
+      </LibraryEntry>
     {/each}
   </SidebarSection>
   <SidebarSection title="Dungeon" open>

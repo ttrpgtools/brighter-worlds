@@ -1,6 +1,7 @@
 <script lang="ts">
   import InputDialog from '$lib/InputDialog.svelte';
   import type { NpcStats } from '$lib/types';
+  import { cloneEditorDraft } from '$lib/util/gm-editor-validation';
 
   interface Props {
     npcList?: NpcStats[];
@@ -24,7 +25,7 @@
   async function showForm() {
     const item = await dialog?.open();
     if (item != null && item.selected) {
-      return item.selected;
+      return cloneEditorDraft(item.selected);
     }
   }
 
@@ -37,20 +38,24 @@
 
 <InputDialog
   title="Choose NPC"
-  scrollable={false}
+  okBtnLabel="Add NPC"
+  valid={!!form.selected}
   showDelete={false}
   dice={[]}
   bind:this={dialog}
   {form}
 >
-  <form class="text-center flex flex-col gap-2">
+  <div class="text-center flex flex-col gap-2">
+    <label for="encounter-npc-selection">NPC template</label>
     <select
+      id="encounter-npc-selection"
       bind:value={form.selected}
       class="rounded-full dark:bg-gray-900 dark:text-white focus:ring-purple-500 focus:border-purple-500"
     >
-      {#each npcList as npc}
+      <option value={undefined}>Choose an NPC</option>
+      {#each npcList as npc (npc.id)}
         <option value={npc}>{npc.name === 'Untitled' ? `New Blank` : npc.name}</option>
       {/each}
     </select>
-  </form>
+  </div>
 </InputDialog>

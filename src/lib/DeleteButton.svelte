@@ -2,14 +2,20 @@
   import ConfirmButton from './ConfirmButton.svelte';
   interface Props {
     confirmText?: string;
+    label?: string;
     size?: string;
     onconfirm: () => void;
   }
 
-  let { confirmText = 'Click again to delete.', size = 'w-6 h-6', onconfirm }: Props = $props();
+  let {
+    confirmText = 'Click again to delete.',
+    label = 'Delete',
+    size = 'w-6 h-6',
+    onconfirm,
+  }: Props = $props();
 </script>
 
-<ConfirmButton {confirmText} {onconfirm}
+<ConfirmButton {confirmText} {label} {onconfirm}
   ><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class={size}
     ><path
       fill="currentColor"

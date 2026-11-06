@@ -10,6 +10,7 @@ import { writable, type Updater, type Writable } from 'svelte/store';
 import { getContext, hasContext, setContext } from 'svelte';
 import { PersistedCollection } from './persisted-collection.svelte';
 import { getContextStore } from './settings';
+import { cloneEditorDraft } from '$lib/util/gm-editor-validation';
 
 const KEY = 'bw-encounters';
 const SETTINGS_KEY = 'bw-encounters-settings';
@@ -26,7 +27,7 @@ export function getNpcInstance(stats: NpcStats) {
     status: '',
     armor: stats.armor ?? 0,
     attacks: stats.attacks.map((att) => ({
-      ...att,
+      ...cloneEditorDraft(att),
       id: `beastattack-${id()}`,
     })),
     wants: stats.wants,
@@ -37,10 +38,10 @@ export function getNpcInstance(stats: NpcStats) {
   return empty;
 }
 
-function getEmptyEncounter() {
+export function getEmptyEncounter() {
   const empty: Encounter = {
     id: id(),
-    name: 'Untitled',
+    name: '',
     npcs: [],
     desc: '',
   };
@@ -60,11 +61,19 @@ export class EncounterManager {
   public list = new PersistedCollection<Encounter>(KEY);
   private encCache = new Map<string, Writable<Encounter>>();
 
-  async create(): Promise<[string, Writable<Encounter>]> {
-    const fresh = getEmptyEncounter();
-    this.list.appendItem(fresh);
-    const enc = this.getEncounter(fresh.id, fresh);
-    return [fresh.id, enc];
+  createDraft() {
+    return getEmptyEncounter();
+  }
+
+  save(draft: Encounter) {
+    const saved = cloneEditorDraft(draft);
+    saved.name = saved.name.trim();
+    if (!saved.name) throw new Error('Name: enter an encounter name.');
+    const cached = this.encCache.get(saved.id);
+    if (cached) cached.set(saved);
+    else if (this.list.items.some((item) => item.id === saved.id)) this.list.updateItem(saved);
+    else this.list.appendItem(saved);
+    return saved;
   }
 
   deleteEncounter(id: string) {

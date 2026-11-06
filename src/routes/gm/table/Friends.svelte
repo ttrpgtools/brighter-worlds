@@ -27,6 +27,7 @@
   let dialog: InputDialog<FriendForm> | undefined = $state();
   let form: FriendForm = $state(newForm(1));
   let selectedIndex: number | undefined = $state();
+  let nameDirty = $state(false);
 
   let slotIndexes = $derived(Array.from({ length: friends.roster.die }, (_, i) => i + 1));
   let valid = $derived(!!form.name.trim());
@@ -56,24 +57,29 @@
 
   function useNpcName() {
     const npc = currentNpc();
-    if (npc) form.name = npc.name;
+    if (npc) {
+      nameDirty = true;
+      form.name = npc.name;
+    }
   }
 
   async function editSlot(index: number) {
+    nameDirty = false;
     selectedIndex = index;
     form = editForm(index, friends.getSlot(index));
     const result = await dialog?.open();
     if (result) {
-      friends.upsertSlot(result);
+      friends.upsertSlot({ ...result, name: result.name.trim() });
     }
   }
 
   async function fillRolledSlot(result: FriendRollResult) {
+    nameDirty = false;
     selectedIndex = result.roll;
     form = newForm(result.roll);
     const item = await dialog?.open();
     if (item) {
-      friends.upsertSlot(item);
+      friends.upsertSlot({ ...item, name: item.name.trim() });
       return true;
     }
     return false;
@@ -109,46 +115,65 @@
 </script>
 
 <InputDialog
-  title="Friend"
+  title={friends.getSlot(form.index) ? 'Edit Friend' : 'New Friend'}
+  okBtnLabel={friends.getSlot(form.index) ? 'Save changes' : 'Create'}
   bind:this={dialog}
   {form}
   {valid}
   showDelete={!!friends.getSlot(form.index)}
   ondelete={removeSlot}
 >
-  <form class="text-center flex flex-col gap-2">
+  <div class="text-left flex flex-col gap-2">
     <div class="text-sm text-gray-600 dark:text-gray-300">Slot {form.index}</div>
+    <label for="friend-name">Name</label>
     <input
+      id="friend-name"
+      aria-invalid={nameDirty && !valid}
       type="text"
       data-1p-ignore
       name="name"
       placeholder="Name"
       bind:value={form.name}
+      oninput={() => (nameDirty = true)}
       class="rounded-full dark:bg-gray-900 dark:text-white focus:ring-purple-500 focus:border-purple-500"
     />
+    {#if nameDirty && !valid}<p class="text-sm text-red-700 dark:text-red-300">
+        Enter a name.
+      </p>{/if}
+    <label for="friend-notes">Notes</label>
     <textarea
+      id="friend-notes"
       name="notes"
       placeholder="Notes"
       bind:value={form.notes}
       class="min-h-24 rounded-xl dark:bg-gray-900 dark:text-white focus:ring-purple-500 focus:border-purple-500"
     ></textarea>
-    {#if npcList.length}
+    {#if npcList.length || form.sourceNpcId}
+      <label for="friend-npc">Linked NPC (optional)</label>
       <div class="flex gap-2">
         <select
+          id="friend-npc"
           bind:value={form.sourceNpcId}
           class="min-w-0 flex-1 rounded-full dark:bg-gray-900 dark:text-white focus:ring-purple-500 focus:border-purple-500"
         >
           <option value="">No linked NPC</option>
-          {#each npcList as npc}
+          {#if form.sourceNpcId && !currentNpc()}<option value={form.sourceNpcId}
+              >Missing NPC ({form.sourceNpcId})</option
+            >{/if}
+          {#each npcList as npc (npc.id)}
             <option value={npc.id}>{npc.name}</option>
           {/each}
         </select>
-        <Button size="sm" variant="outline" disabled={!form.sourceNpcId} onclick={useNpcName}
+        <Button size="sm" variant="outline" disabled={!currentNpc()} onclick={useNpcName}
           >Use</Button
         >
       </div>
+      {#if form.sourceNpcId && !currentNpc()}<p class="text-sm text-gray-600 dark:text-gray-300">
+          The linked NPC is unavailable. Choose another NPC or unlink it; this Friend can still be
+          saved.
+        </p>{/if}
     {/if}
-  </form>
+  </div>
 </InputDialog>
 
 <Card>
@@ -169,7 +194,7 @@
 
   <div class="flex flex-col gap-2">
     <div class="flex flex-col gap-2">
-      {#each slotIndexes as index}
+      {#each slotIndexes as index (index)}
         {@const slot = friends.getSlot(index)}
         <div class="flex gap-2">
           <button

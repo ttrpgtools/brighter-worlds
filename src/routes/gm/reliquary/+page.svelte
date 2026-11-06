@@ -1,6 +1,7 @@
 <script lang="ts">
   import { rollFormula } from '$lib/rolling/roll';
-  import Equipment from '$lib/sheet/Equipment.svelte';
+  import EquipmentDialog from '$lib/sheet/EquipmentDialog.svelte';
+  import LibraryEntry from '../LibraryEntry.svelte';
   import type { Item } from '$lib/types';
   import { snapshotState } from '$lib/util/snapshot.svelte';
   import SidebarSection from '../SidebarSection.svelte';
@@ -15,6 +16,7 @@
 
   let reliquary = getRelics();
   let mat = getPlaymat();
+  let itemDialog: EquipmentDialog | undefined = $state();
 
   function addToMat(item: Item) {
     const cloned = structuredClone(snapshotState(item));
@@ -29,20 +31,25 @@
   <title>Relics :: Brighter Worlds Online</title>
 </svelte:head>
 <div class="flex flex-col gap-4">
-  <SidebarSection title="Custom Items" open>
-    <Equipment
-      bind:equipment={reliquary.items}
-      title="Relics"
-      hideArmor
-      selectable
-      onselect={addToMat}
-      allowFormula
-      onroll={() => {}}
-      onshare={() => {}}
-    ></Equipment>
+  <EquipmentDialog
+    bind:this={itemDialog}
+    bind:equipment={reliquary.items}
+    allowFormula
+    allowDelete={false}
+  />
+  <SidebarSection title="Custom Items" open addable onclick={() => itemDialog?.addGear()}>
+    {#each reliquary.items as item (item.id)}
+      <LibraryEntry
+        name={item.name}
+        kind="item"
+        onedit={() => itemDialog?.editGear(item.id)}
+        onadd={() => addToMat(item)}
+        ondelete={() => reliquary.removeItem(item)}
+      />
+    {/each}
   </SidebarSection>
   <SidebarSection title="SRD Items">
-    {#each data.relics as relic}
+    {#each data.relics as relic (relic.id)}
       <div class="flex flex-row justify-between">
         <button type="button" class="cursor-pointer" onclick={() => addToMat(relic)}
           >{relic.name}</button
