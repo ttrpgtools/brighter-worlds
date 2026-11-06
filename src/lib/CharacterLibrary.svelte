@@ -3,6 +3,7 @@
   import { resolve } from '$app/paths';
   import Button from '$lib/ui/button.svelte';
   import CharacterCard from '$lib/CharacterCard.svelte';
+  import DialogBase from '$lib/DialogBase.svelte';
   import { DropdownMenu } from 'bits-ui';
   import MenuAction from '$lib/MenuAction.svelte';
   import Icon from '$lib/ui/icon.svelte';
@@ -42,19 +43,61 @@
   const cache = getSheetCache();
   const localStatus = writable('Loading…');
   let backups: SheetBackups | undefined = $state();
+  let removalDialog: DialogBase<undefined> | undefined = $state();
+  let removal: { entry: CharacterEntry; owner: string; epoch: number } | undefined = $state.raw();
+  let removing = $state(false);
+  let removalError = $state('');
+  const removalCancelId = $props.id();
+  let filterControls: HTMLDivElement | undefined = $state();
+  let returnFocus: HTMLButtonElement | undefined;
   let filter: CharacterFilter = $state('all');
   let entries = $derived(characterEntries($list ?? [], owner, items, records));
   let visible = $derived(filterCharacters(entries, filter));
   async function refreshLocal() {
     await loadList(list, cache, localStatus);
   }
-  async function remove(entry: CharacterEntry) {
-    if (entry.storage === 'account') {
-      await removeCache(entry.id);
+  function remove(entry: CharacterEntry, trigger?: HTMLButtonElement) {
+    if (removing) return;
+    returnFocus = trigger;
+    removalError = '';
+    removal = { entry, owner, epoch: session.current().epoch };
+    void removalDialog?.open();
+  }
+  async function confirmRemoval() {
+    const selected = removal;
+    if (!selected || removing) return;
+    if (
+      selected.entry.storage === 'account' &&
+      (owner !== selected.owner ||
+        session.current().epoch !== selected.epoch ||
+        !canReadAccount(session, selected.owner))
+    ) {
+      removalDialog?.close();
       return;
     }
-    if (confirm('Delete this local character? Its account copy, if any, stays untouched.'))
-      await deleteSheet(entry.id, list);
+    removing = true;
+    removalError = '';
+    try {
+      if (selected.entry.storage === 'account') {
+        await removeAccountCache(selected.owner, selected.entry.id);
+        if (owner === selected.owner) await load();
+      } else {
+        await deleteSheet(selected.entry.id, list);
+      }
+      removalDialog?.close();
+    } catch (caught) {
+      removalError =
+        caught instanceof Error ? caught.message : 'The character could not be removed.';
+    } finally {
+      removing = false;
+    }
+  }
+  function restoreRemovalFocus(event: Event) {
+    event.preventDefault();
+    if (returnFocus?.isConnected) returnFocus.focus();
+    else filterControls?.querySelector<HTMLButtonElement>('[aria-pressed="true"]')?.focus();
+    returnFocus = undefined;
+    removal = undefined;
   }
   async function load(reset = true) {
     const selected = owner;
@@ -91,6 +134,7 @@
       const next = current.account?.user?.id ?? current.offlineOwner ?? '';
       const access = `${next}:${!!current.account?.allowed}:${current.epoch}`;
       if (access !== lastAccess) {
+        if (removal?.entry.storage === 'account') removalDialog?.close();
         lastAccess = access;
         owner = next;
         generation++;
@@ -127,31 +171,12 @@
       busy = false;
     }
   }
-  async function removeCache(id: string) {
-    const selected = owner;
-    if (
-      !confirm(
-        'Remove this browser cache? The online sheet stays, and this draft is archived locally.',
-      )
-    )
-      return;
-    busy = true;
-    error = '';
-    try {
-      await removeAccountCache(selected, id);
-      if (owner === selected) await load();
-    } catch (caught) {
-      if (owner === selected)
-        error = caught instanceof Error ? caught.message : 'The cached draft could not be removed.';
-    } finally {
-      busy = false;
-    }
-  }
 </script>
 
 <SheetRecovery {cache} />
 <div class="mb-6 flex w-full max-w-6xl flex-wrap items-center justify-between gap-4">
   <div
+    bind:this={filterControls}
     class="inline-flex rounded-full bg-purple-100 p-1 dark:bg-purple-950"
     role="group"
     aria-label="Filter characters"
@@ -242,14 +267,14 @@
   {#each visible as entry (entry.key)}
     <CharacterCard
       {entry}
-      {busy}
+      busy={busy || removing}
       onbackup={() => {
         if (entry.storage === 'local') void backups?.downloadCharacter(entry.id);
         else void exportFile(entry.id);
       }}
       onremove={entry.storage === 'local' || entry.cached
-        ? () => {
-            void remove(entry);
+        ? (trigger) => {
+            remove(entry, trigger);
           }
         : undefined}
     />
@@ -272,3 +297,48 @@
     onclick={() => load(false)}>Load more characters</Button
   >{/if}
 <SheetBackups bind:this={backups} {cache} onrestore={refreshLocal} />
+<DialogBase
+  bind:this={removalDialog}
+  title={removal?.entry.storage === 'account' ? 'Remove browser cache?' : 'Delete local character?'}
+  titleClass="font-title text-3xl text-center"
+  preventDismiss={removing}
+  onOpenAutoFocus={(event) => {
+    event.preventDefault();
+    document.getElementById(removalCancelId)?.focus();
+  }}
+  onCloseAutoFocus={restoreRemovalFocus}
+>
+  {#if removal}
+    <p class="mt-5 break-words font-subtitle text-2xl">
+      {removal.entry.name || 'Unnamed adventurer'}
+    </p>
+    <p class="mt-3">
+      {#if removal.entry.storage === 'account'}
+        The online sheet stays, and this browser’s draft is archived locally for private recovery.
+      {:else}
+        This deletes the character stored in this browser. Its account copy, if any, stays
+        untouched. Download a backup first if you want to keep the local character.
+      {/if}
+    </p>
+  {/if}
+  {#if removalError}<p role="alert" class="mt-3 text-red-700 dark:text-red-300">
+      {removalError}
+    </p>{/if}
+  {#snippet footer()}
+    <div class="mt-5 flex flex-wrap gap-2">
+      <Button variant="destructive" disabled={removing || !removal} onclick={confirmRemoval}>
+        {removing
+          ? 'Removing…'
+          : removal?.entry.storage === 'account'
+            ? 'Remove browser cache'
+            : 'Delete local character'}
+      </Button>
+      <Button
+        id={removalCancelId}
+        variant="ghost"
+        disabled={removing}
+        onclick={() => removalDialog?.close()}>Cancel</Button
+      >
+    </div>
+  {/snippet}
+</DialogBase>

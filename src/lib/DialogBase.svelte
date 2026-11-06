@@ -8,6 +8,8 @@
     titleClass?: string;
     scrollable?: boolean;
     preventDismiss?: boolean;
+    onOpenAutoFocus?: (event: Event) => void;
+    onCloseAutoFocus?: (event: Event) => void;
     pretitle?: import('svelte').Snippet;
     children?: import('svelte').Snippet<[any]>;
     footer?: import('svelte').Snippet;
@@ -19,6 +21,8 @@
     titleClass = 'text-lg font-medium leading-6 text-center',
     scrollable = true,
     preventDismiss = false,
+    onOpenAutoFocus,
+    onCloseAutoFocus,
     pretitle,
     children,
     footer,
@@ -66,6 +70,8 @@
     </Dialog.Overlay>
 
     <Dialog.Content
+      {onOpenAutoFocus}
+      {onCloseAutoFocus}
       escapeKeydownBehavior={preventDismiss ? 'ignore' : 'close'}
       interactOutsideBehavior={preventDismiss ? 'ignore' : 'close'}
     >

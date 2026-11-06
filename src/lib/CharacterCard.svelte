@@ -15,8 +15,9 @@
     entry: CharacterEntry;
     busy?: boolean;
     onbackup: () => void;
-    onremove?: () => void;
+    onremove?: (trigger?: HTMLButtonElement) => void;
   } = $props();
+  let optionsButton: HTMLButtonElement | undefined = $state();
 </script>
 
 <Card class="min-w-0">
@@ -72,6 +73,7 @@
           <DropdownMenu.Trigger>
             {#snippet child({ props })}<button
                 {...props}
+                bind:this={optionsButton}
                 type="button"
                 aria-label={`Options for ${entry.name || 'character'}`}
                 class="inline-flex size-9 items-center justify-center rounded-full hover:bg-purple-100 dark:hover:bg-purple-800"
@@ -90,7 +92,7 @@
                   : 'Delete local character…'}
                 destructive
                 disabled={busy}
-                action={onremove}
+                action={() => onremove?.(optionsButton)}
               />
             </DropdownMenu.Content></DropdownMenu.Portal
           >
