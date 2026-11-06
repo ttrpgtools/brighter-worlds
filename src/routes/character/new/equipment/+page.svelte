@@ -5,8 +5,7 @@
   import Button from '$lib/ui/button.svelte';
   import { gearManager } from '$lib/data/gear-manager';
   import ItemFlair from './ItemFlair.svelte';
-  import { filterEmpty } from '$lib/util/array';
-  import { combineStartingGear, type StartingGearPair } from '$lib/data/starting-equipment';
+  import type { StartingGearPair } from '$lib/data/starting-equipment';
   import { onlyEquipment } from '$lib/util/guards';
 
   const [wizard, builder] = getWizard();
@@ -15,10 +14,7 @@
 
   const gearTables = gearManager.list;
   function forward() {
-    const rolledGear = filterEmpty(
-      allPairs.map((pair) => combineStartingGear($state.snapshot(pair))),
-    );
-    wizard.send('setEquipment', [...$gearTables.starting, ...rolledGear]);
+    wizard.send('setEquipment', $state.snapshot(allPairs));
   }
 
   if (browser) {
@@ -28,6 +24,11 @@
   type Pair = StartingGearPair;
   let allPairs: Pair[] = $state([]);
   let extras: EquipmentChoice[] = $derived((builder.sheet.choices ?? []).filter(onlyEquipment));
+  let valid = $derived(
+    Array.from({ length: 3 + extras.length }, (_, index) => allPairs[index]).every(
+      (pair) => pair?.[0] && pair[1],
+    ),
+  );
 
   function setPair({ pair, index }: { pair: Pair; index: number }) {
     allPairs[index] = pair;
@@ -48,9 +49,12 @@
 
 <p class="max-w-prose text-left mb-6">
   After rolling, you can opt to Swap the values for the Flair and the Item if that is more
-  interesting. For example if you roll your d6 STR and get a 2 and 6 you can either have a Rugged
-  Flail or a Blackened Bow.
+  interesting. For example if you roll your d6 STR and get a 2 and 6 you can either have a Heirloom
+  Flail or a Silent Bow. Multi-Function tools combine two freshly rolled tools when you continue.
 </p>
+{#if builder.sheet.abilities?.some((a) => a.name === 'Poverty' && a.details === 'vow')}
+  <p class="max-w-prose mb-4">Your Vow of Poverty means you start without the usual 50 coins.</p>
+{/if}
 
 <ItemFlair
   gear={$gearTables.str}
@@ -85,4 +89,4 @@
     />
   {/each}
 {/if}
-<Button onclick={forward}>Next</Button>
+<Button disabled={!valid} onclick={forward}>Next</Button>

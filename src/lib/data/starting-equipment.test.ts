@@ -62,6 +62,36 @@ it('preserves ordinary flair merging and incomplete/unrolled equipment without d
       ],
       random,
     ),
-  ).toEqual({ id: 'bucket', name: 'Weaponized Bucket', damage: 6, desc: 'Flair text. Item text.' });
+  ).toEqual({
+    id: expect.any(String),
+    name: 'Weaponized Bucket',
+    damage: 6,
+    desc: 'Flair text. Item text.',
+  });
   expect(random).not.toHaveBeenCalled();
+});
+
+it('resolves Multi-Function into exactly two rolled tool functions', () => {
+  const random = vi.fn().mockReturnValueOnce(1).mockReturnValueOnce(6);
+  const base = { id: 'air', name: 'Air Bladder' };
+  const item = combineStartingGear(
+    [{ id: 'flair', name: 'Multi-Function', desc: 'Roll two tools.' }, base],
+    random,
+  )!;
+  expect(item.name).toBe('Multi-Function Bucket / Rope (100ft)');
+  expect(item.desc).toContain('Bucket');
+  expect(item.desc).toContain('Rope (100ft)');
+  expect(item.id).not.toBe(base.id);
+  expect(random.mock.calls).toEqual([[8], [8]]);
+  expect(base).toEqual({ id: 'air', name: 'Air Bladder' });
+});
+
+it('gives ordinary gear independent IDs and nested data', () => {
+  const base = { id: 'bucket', name: 'Bucket', magic: { charges: { current: 1, max: 1 } } };
+  const first = combineStartingGear(['Floating', base])!;
+  const second = combineStartingGear(['Floating', base])!;
+  expect(first.id).not.toBe(second.id);
+  first.magic!.charges!.current = 0;
+  expect(second.magic!.charges!.current).toBe(1);
+  expect(base.magic.charges.current).toBe(1);
 });

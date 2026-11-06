@@ -19,35 +19,38 @@
   let flairRoll = 0;
   let itemRoll = 0;
   let both = $state(false);
+  let rolling = $state(false);
   let flairTable: RollableTable<string | Item> | undefined = $state();
   let itemTable: RollableTable<Item> | undefined = $state();
 
   type Pair = [string | Item | undefined, Item | undefined];
   let pair: Pair = $state([undefined, undefined]);
 
-  function swap() {
-    const x = itemRoll;
-    itemTable?.rollTable(flairRoll);
-    flairTable?.rollTable(x);
-  }
-
-  function roll() {
-    flairTable?.rollTable();
-    itemTable?.rollTable();
-  }
-
-  function act() {
-    if (both) {
-      swap();
-    } else {
-      roll();
+  async function act() {
+    if (rolling) return;
+    const swap = both;
+    const previousFlair = flairRoll;
+    const previousItem = itemRoll;
+    rolling = true;
+    both = false;
+    flair = '';
+    item = undefined;
+    onroll({ pair: [undefined, undefined], index });
+    try {
+      await Promise.all([
+        flairTable?.rollTable(swap ? previousItem : undefined),
+        itemTable?.rollTable(swap ? previousFlair : undefined),
+      ]);
+    } finally {
+      rolling = false;
+      report();
     }
   }
 
   function report() {
     pair = [flair, item];
     both = !!flair && item != null;
-    if (both) {
+    if (both && !rolling) {
       onroll({ pair, index });
     }
   }
@@ -68,7 +71,8 @@
 <div class="flex flex-col gap-2 mb-4 w-full">
   <div class="flex gap-4 items-center justify-center">
     <span class="text-2xl">{gear.name} / {type.toUpperCase()}</span>
-    <Button onclick={act}>{both ? `Swap` : `Roll`}</Button>
+    <Button disabled={rolling} onclick={act}>{rolling ? 'Rolling…' : both ? 'Swap' : 'Roll'}</Button
+    >
   </div>
   <div class="flex justify-center gap-4 mb-6 flex-wrap">
     <div class="w-full max-w-sm">

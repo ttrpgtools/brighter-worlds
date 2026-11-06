@@ -1,48 +1,12 @@
 <script lang="ts">
-  import { STEP, getWizard, guardWizardStep } from '../wizard.svelte';
-  import Button from '$lib/ui/button.svelte';
-  import type { PageData } from './$types';
-  import GroupInputs from '$lib/GroupInputs.svelte';
-  import type { Ability, HasChoices } from '$lib/types';
-
-  const [wizard, builder] = getWizard();
-
-  interface Props {
-    data: PageData;
-  }
-
-  let { data }: Props = $props();
-  let advanced = $derived(
-    data.list
-      .find((x) => x.id === builder.sheet.calling?.id)
-      ?.abilities.filter((x) => x.type === 'advanced') ?? [],
-  );
-  let chosen: (Ability & HasChoices)[] = $state([]);
-
-  guardWizardStep(wizard, STEP.ABILITIES);
-
-  function forward() {
-    wizard.send('setAbilities', chosen);
-  }
+  import MenuLink from '$lib/MenuLink.svelte';
 </script>
 
-<div class="flex flex-col gap-6 items-center">
-  <h3 class="max-w-prose text-center mb-4 text-2xl font-subtitle">
-    Choose your starting advanced ability
-  </h3>
-  <p class="max-w-prose text-left mb-4">
-    Each Calling has four Advanced Abilities that show ways your character might grow or develop as
-    they progress through the world.
+<div class="flex flex-col gap-6 items-center max-w-prose">
+  <h3 class="text-2xl font-subtitle">Advanced abilities</h3>
+  <p>
+    New characters begin with their Calling's core ability. Unlock the first advanced ability for 2
+    XP during play; later abilities cost 4, 6, and 8 XP.
   </p>
-  <p class="max-w-prose text-left mb-6">
-    Your first Advanced Ability is free. You may choose it now to start the game with, or save it
-    for use later. The other Advanced Abilities can be unlocked by spending XP earned during play.
-  </p>
-  <GroupInputs options={advanced} bind:selected={chosen} max={1}>
-    {#snippet children({ opt })}
-      {@html opt.desc}
-    {/snippet}
-  </GroupInputs>
-
-  <Button onclick={forward}>Next</Button>
+  <MenuLink href="/character/new">Create a character</MenuLink>
 </div>

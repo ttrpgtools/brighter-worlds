@@ -5,16 +5,19 @@
   import Button from '$lib/ui/button.svelte';
   import Die from '$lib/dice/Die.svelte';
   import { calculateGrit } from '$lib/util/grit';
+  import { validStartingAttributes } from '$lib/data/character-creation';
 
   const [wizard] = getWizard();
 
   guardWizardStep(wizard, STEP.ATTRIBUTES);
 
   function forward() {
-    wizard.send('setAttrs', attrs);
+    wizard.send('setAttrs', attrs, name);
   }
 
   const attrs: Attrs = $state({ str: 4, dex: 4, wil: 4 });
+  let name = $state('');
+  let valid = $derived(name.trim().length > 0 && validStartingAttributes(attrs));
   let strdice = $derived(
     [4].concat([6, 8].filter((d) => d !== attrs.dex && d !== attrs.wil)) as DieValue[],
   );
@@ -29,6 +32,15 @@
 </script>
 
 <h3 class="max-w-prose text-center mb-4 text-2xl font-subtitle">Choose your starting attributes</h3>
+<label class="flex flex-col gap-2 w-full max-w-md mb-4">
+  Character name
+  <input
+    type="text"
+    autocomplete="off"
+    bind:value={name}
+    class="rounded-md dark:bg-gray-900 border-gray-300 dark:border-gray-600 focus:ring-purple-500 focus:border-purple-500"
+  />
+</label>
 <div class="max-w-prose prose dark:prose-invert prose-lg text-left mb-6">
   <p>
     Attributes represent both a character's prowess and current status. All three of your Attributes
@@ -70,4 +82,4 @@
   </p>
   <p class="text-xl">Your starting grit: <strong>{grit}</strong></p>
 </div>
-<Button onclick={forward}>Next</Button>
+<Button disabled={!valid} onclick={forward}>Next</Button>

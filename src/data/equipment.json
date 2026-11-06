@@ -32,7 +32,7 @@
       "Collapsible",
       "Concealable",
       "Wearable",
-      "Multi Function",
+      { "name": "Multi-Function", "desc": "Roll two tools and combine their functions." },
       { "name": "Weaponized", "damage": 6 }
     ],
     "items": [

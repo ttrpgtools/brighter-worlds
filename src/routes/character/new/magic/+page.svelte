@@ -22,8 +22,9 @@
     builder.sheet.choices?.filter(onlyMagic).filter((x) => x.type === 'ritual').length ?? 0;
   let spells: Spell[] = $state([]);
   let rituals: Ritual[] = $state([]);
+  let valid = $derived(spells.length === spellsNeeded && rituals.length === ritualsNeeded);
   function forward() {
-    wizard.send('setMagic', spells, rituals);
+    wizard.send('setMagic', $state.snapshot(spells), $state.snapshot(rituals));
   }
   let spellPartition = $derived(
     partition(data.spells, (x) => !builder.sheet.spells?.some((y) => y.id === x.id)),
@@ -43,7 +44,7 @@
         <div class="text-gray-600 dark:text-gray-400 text-sm">
           <p>
             (Already assigned:
-            {#each spellPartition[1] as chosen, ci}
+            {#each spellPartition[1] as chosen, ci (chosen.id)}
               <span class="ml-1"
                 >{chosen.name}{#if ci !== spellPartition[1].length - 1},
                 {:else}){/if}</span
@@ -68,11 +69,11 @@
   {#if ritualsNeeded > 0}
     <div class="flex flex-col gap-2 items-center">
       <h4 class="text-lg">Rituals ({ritualsNeeded})</h4>
-      {#if spellPartition[1].length}
+      {#if ritualPartition[1].length}
         <div class="text-gray-600 dark:text-gray-400 text-sm">
           <p>
             (Already assigned:
-            {#each ritualPartition[1] as chosen, ci}
+            {#each ritualPartition[1] as chosen, ci (chosen.id)}
               <span class="ml-1"
                 >{chosen.name}{#if ci !== ritualPartition[1].length - 1},
                 {:else}){/if}</span
@@ -94,5 +95,5 @@
     </div>
   {/if}
 
-  <Button onclick={forward}>Next</Button>
+  <Button disabled={!valid} onclick={forward}>Next</Button>
 </div>

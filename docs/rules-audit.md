@@ -14,7 +14,7 @@ Four broad Mux tasks track the follow-up:
 | ---------------------------- | -------------------------------------------------------------------------- | ----------------------------- |
 | `bwo-rules-shared-mechanics` | Shared damage, Saves, Armor, Grit, and burden mechanics                    | Implemented; validation below |
 | `bwo-rules-callings`         | Calling descriptions, perks, and starting grants                           | Implemented; validation below |
-| `bwo-rules-wizard`           | Complete legal selections and usable generated character stats/items       | Queued                        |
+| `bwo-rules-wizard`           | Complete legal selections and usable generated character stats/items       | Implemented; validation below |
 | `bwo-rules-catalogues`       | Missing magic items, bestiary corrections, and remaining reference cleanup | Queued                        |
 
 The shared mechanics now resolve each attack independently, retain every Direct Damage Save for sharing/logging, handle overflow and zero Attributes, provide an explicit out-of-combat Wound action, and use current Wound terminology. Zero-Attribute Saves fail automatically on PC and NPC sheets; failed casting that exhausts WIL incapacitates.
@@ -27,9 +27,19 @@ Validation: `pnpm test:unit --run` passes all 263 tests, including 47 new mechan
 
 The Calling update now refreshes all 15 published introductions, core abilities, and advanced ability descriptions, plus both hidden companion templates and all shared choice tables. This resolves the Calling-text and table-value findings recorded below. Starting definitions now supply three Familiar Perks, two separately editable Storage Crystals, four total Artificer Improvements, and Grimblade's Improvement; obsolete bonus magic, equipment, and the Devoted Idol entry are removed. Sneaky Bastard records its required technique through a new choice table using the existing enhancement mechanism.
 
-Existing Calling, table, and continuing ability IDs remain stable. Manifestation has a new ID rather than reusing the removed advanced Psychopomp ID, so older saved unlocks cannot be mistaken for the new ability. Existing character content remains unchanged. Automatic perk stat changes, form handling, assigning Improvements to particular items, and completion validation remain in `bwo-rules-wizard`.
+Existing Calling, table, and continuing ability IDs remain stable. Manifestation has a new ID rather than reusing the removed advanced Psychopomp ID, so older saved unlocks cannot be mistaken for the new ability. Existing character content remains unchanged. Perk stat changes, form handling, assigning Improvements to items, and completion validation were handed to the subsequent wizard task.
 
 Calling validation: compared 248 published paragraphs/list items against the refreshed catalogue, with no omitted rule blocks after explicitly accounting for small editorial corrections. Corrected upstream cross-reference URLs and kept choice descriptions as plain text. Nine new catalogue/grant/reference tests pass; the full suite now passes **272 tests**, with zero Svelte/TypeScript errors or warnings, a successful production build, and passing formatting/diff checks. No components, saved formats, migration code, or saved characters changed in this chunk.
+
+The wizard update now requires a name, a legal d8/d6/d4 assignment, complete choice groups, all starting-equipment rolls, and the exact number of distinct unowned spells/rituals. Both the controls and state transitions enforce completion; the obsolete free-advanced-ability state is removed. Its old URL explains advancement without granting an ability.
+
+Companions and Familiars receive their chosen Attribute steps, derived and explicit Grit bonuses, natural attack steps, and Armor. Flight requires Flying when the creature is marked as flying. Soulbearers instead receive clearly labelled form Perks and a named form reference, preserving human Attributes and explicitly carrying losses between forms; the natural attack remains a GM agreement.
+
+Artificers assign the Tool's intrinsic Improvement and three additional Improvements to their items; Grimblades assign their single Improvement. Repeated Improvements are supported. Existing attack dice, Armor, bulky status, and paired quantities update where the effect is numeric. Conditional/freeform effects remain recorded on the item, with descriptive details for Ward, Locomoting, Detecting, and Special. Weapon of Faith records its selected Improvement as a conditional boon. Thermo Regulation updates the water attack, and Poverty omits starting coins.
+
+Multi-Function now rolls and records two actual tool functions, once on continuation. Gear rolls and swaps must finish before continuation, and ordinary gear has independent IDs and nested data. Creation clones catalogue records, buffers companions until completion, retains local/account companion relations, and avoids duplicate creation when navigation is retried. Draft downloads preserve the identities of any local sheets already created. Existing characters and formats remain untouched.
+
+Wizard validation: **318 tests pass**, including 46 new helper, gear, and state-machine regressions. Every published Calling has a complete-flow test, with additional local/account companion bundle checks, invalid-selection checks, abandoned-draft checks, and interrupted-navigation/save checks. Type checks, production build, formatting and diff checks pass. Svelte autofixer reports no issues in the changed components/module; its two remaining suggestions concern intentionally nonreactive Map caches/bundle assembly. No dev server or browser interaction tests were run.
 
 ## Scope and method
 
@@ -124,7 +134,7 @@ Suggested implementation order:
 
 1. Correct shared mechanics with focused regression tests (implemented).
 2. Reconcile Calling text, starting grants, and enhancement tables (implemented).
-3. Tighten creation completion checks and handle stat/item changes from perks and Improvements.
+3. Tighten creation completion checks and handle stat/item changes from perks and Improvements (implemented).
 4. Add the missing magic-item set, correct the bestiary, and address remaining reference copy.
 
 ## Initial audit validation record

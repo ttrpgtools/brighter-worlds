@@ -1,22 +1,9 @@
-import type {
-  Ability,
-  Attrs,
-  Calling,
-  CallingEnhancement,
-  Character,
-  CharacterChoice,
-  HasChoices,
-  Item,
-  Spell,
-  Ritual,
-} from '$lib/types';
+import type { Attrs, Calling, Character, HasChoices, Item, Spell, Ritual } from '$lib/types';
 import { fsm } from '$lib/util/fsm.svelte';
 import { createSheet } from '$lib/data/sheet-manager';
 import { goto } from '$app/navigation';
 import { resolve } from '$app/paths';
 import { id } from '$lib/rolling/id';
-import { roll } from '$lib/rolling/roll';
-import { defined } from '$lib/util/array';
 import { getContext, hasContext, onMount, setContext } from 'svelte';
 import { calculateGrit } from '$lib/util/grit';
 import { track } from '$lib/util/track';
@@ -24,15 +11,30 @@ import { getAccountSession, type AccountSession } from '$lib/data/account-sessio
 import { createAccountCharacters, newCharacter } from '$lib/data/account-creation';
 import { buildBundle } from '$lib/data/sheet-format/codec';
 import { download } from '$lib/util/download';
+import {
+  applyCreationSelections,
+  beginCalling,
+  buildCompanion,
+  requireCreation,
+  resolveCreationEquipment,
+  validStartingAttributes,
+  validateStartingMagic,
+  type CreationSelection,
+} from '$lib/data/character-creation';
+import type { StartingGearPair } from '$lib/data/starting-equipment';
 
-class WizardBuilder {
+export class WizardBuilder {
   sheet: Partial<Character> & HasChoices = $state({});
   storage: 'local' | 'account' = $state('local');
   owner = '';
   companions: Character[] = [];
   working = $state(false);
   error = $state('');
+  ready = false;
   completed?: Character;
+  private localCompanions = new Map<string, string>();
+  private localRoot?: string;
+  private accountCreated = false;
   constructor(private session: AccountSession) {}
   configure(storage: 'local' | 'account', owner = '') {
     this.storage = storage;
@@ -43,17 +45,48 @@ class WizardBuilder {
     this.working = true;
     this.error = '';
     try {
+      const { choices, ...char } = $state.snapshot(this.sheet);
+      requireCreation(
+        this.ready &&
+          !choices?.length &&
+          char.name?.trim() &&
+          char.str &&
+          char.dex &&
+          char.wil &&
+          validStartingAttributes({ str: char.str.max, dex: char.dex.max, wil: char.wil.max }),
+        'Complete each creation step before saving your character.',
+      );
+      this.completed ??= newCharacter(char);
       if (this.storage === 'account') {
-        this.completed ??= newCharacter($state.snapshot(this.sheet));
-        await createAccountCharacters(this.owner, this.completed, this.companions, this.session);
+        if (!this.accountCreated) {
+          await createAccountCharacters(this.owner, this.completed, this.companions, this.session);
+          this.accountCreated = true;
+        }
         await goto(
-          resolve('/character/[id]', { id: this.completed.id }) +
-            `?account=${encodeURIComponent(this.owner)}`,
+          resolve(`/character/[id]?account=${encodeURIComponent(this.owner)}`, {
+            id: this.completed.id,
+          }),
         );
       } else {
-        const { choices, ...char } = $state.snapshot(this.sheet);
-        const [newId] = createSheet(char);
-        await goto(resolve('/character/[id]', { id: newId }));
+        // Draft companions stay in memory until the whole wizard is complete.
+        for (const companion of this.companions) {
+          if (this.localCompanions.has(companion.id)) continue;
+          const [localId] = createSheet(structuredClone(companion));
+          this.localCompanions.set(companion.id, localId);
+        }
+        if (!this.localRoot) {
+          const abilities = this.completed.abilities.map((ability) =>
+            ability.companionSheetId
+              ? {
+                  ...ability,
+                  companionSheetId:
+                    this.localCompanions.get(ability.companionSheetId) ?? ability.companionSheetId,
+                }
+              : ability,
+          );
+          [this.localRoot] = createSheet({ ...this.completed, abilities });
+        }
+        await goto(resolve('/character/[id]', { id: this.localRoot }));
       }
     } catch (caught) {
       this.error =
@@ -66,10 +99,28 @@ class WizardBuilder {
   }
   async backup() {
     try {
-      this.completed ??= newCharacter($state.snapshot(this.sheet));
+      const { choices, ...char } = $state.snapshot(this.sheet);
+      let root = this.completed ?? newCharacter(char);
+      let companions = this.companions;
+      if (this.storage === 'local') {
+        root = {
+          ...root,
+          id: this.localRoot ?? root.id,
+          abilities: root.abilities.map((a) =>
+            a.companionSheetId
+              ? {
+                  ...a,
+                  companionSheetId:
+                    this.localCompanions.get(a.companionSheetId) ?? a.companionSheetId,
+                }
+              : a,
+          ),
+        };
+        companions = companions.map((c) => ({ ...c, id: this.localCompanions.get(c.id) ?? c.id }));
+      }
       const { bundle } = await buildBundle(
-        new Map([this.completed, ...this.companions].map((character) => [character.id, character])),
-        [this.completed.id],
+        new Map([root, ...companions].map((character) => [character.id, character])),
+        [root.id],
         window.location.origin,
       );
       download(JSON.stringify(bundle, null, 2), 'brighter-worlds-creation-draft.json');
@@ -77,218 +128,211 @@ class WizardBuilder {
       this.error = String(caught);
     }
   }
-
   set(value: Partial<Character> & HasChoices) {
     this.sheet = value;
   }
-
   update(updater: (value: Partial<Character> & HasChoices) => Partial<Character> & HasChoices) {
     this.sheet = updater(this.sheet);
   }
+  resetDraft() {
+    this.sheet = {};
+    this.companions = [];
+    this.completed = undefined;
+    this.localCompanions.clear();
+    this.localRoot = undefined;
+    this.accountCreated = false;
+    this.ready = false;
+    this.error = '';
+  }
 }
-
-type Builder = WizardBuilder;
 
 export const STEP = {
   CALLING: 'calling',
   ATTRIBUTES: 'attributes',
-  ABILITIES: 'abilities',
   ENHANCEMENTS: 'enhancements',
   COMPANION: 'companion',
   EQUIPMENT: 'equipment',
   MAGIC: 'magic',
   DONE: 'done',
 } as const;
-
 type WizardSteps = (typeof STEP)[keyof typeof STEP];
 type WizardActions =
   | 'setCalling'
   | 'setAttrs'
-  | 'setAbilities'
   | 'setEnhancements'
   | 'setCompanion'
   | 'setEquipment'
   | 'setMagic'
   | 'reset';
+const routes = {
+  calling: '/character/new',
+  attributes: '/character/new/attributes',
+  enhancements: '/character/new/enhancements',
+  companion: '/character/new/companion',
+  equipment: '/character/new/equipment',
+  magic: '/character/new/magic',
+  done: '/character/new',
+} as const;
 
-function pickRandom<T>(arr: T[]) {
-  const which = roll(arr.length) - 1;
-  return arr[which];
-}
-
-function createWizard(builder: Builder, intern: HasChoices) {
+export function createWizard(builder: WizardBuilder) {
+  let availableSpells: Spell[] = [];
+  let availableRituals: Ritual[] = [];
+  function guarded(action: () => WizardSteps) {
+    builder.error = '';
+    try {
+      return action();
+    } catch (caught) {
+      builder.error = caught instanceof Error ? caught.message : String(caught);
+    }
+  }
+  function afterChoices() {
+    if (builder.sheet.choices?.some((c) => c.choose === 'enhancement' && !c.linked))
+      return STEP.ENHANCEMENTS;
+    if (builder.sheet.choices?.some((c) => c.choose === 'linked')) return STEP.COMPANION;
+    return STEP.EQUIPMENT;
+  }
   return fsm<WizardSteps, WizardActions>(STEP.CALLING, {
     [STEP.CALLING]: {
-      _enter() {
-        // NOOP
-      },
       setCalling(calling: Calling, spells: Spell[], rituals: Ritual[]) {
-        const core = calling.abilities.filter((x) => x.type === 'core');
-        const staticCompanions = calling.abilities
-          .filter((x) => x.type === 'companion')
-          .map(({ choices, ...ab }) => ab as Ability);
-        const allChoices = (calling.choices ?? []).concat(core.flatMap((x) => x.choices ?? []));
-        builder.update((b) => ({
-          ...b,
-          choices: allChoices,
-          calling: {
-            id: calling.id,
-            name: calling.name,
-            desc: calling.tagline,
-          },
-          equipment: calling.equipment,
-          abilities: staticCompanions.concat(core.map(({ choices, ...ab }) => ab)),
-          spells: (calling.spells ?? [])
-            .map((x) => (x === '?' ? pickRandom(spells) : spells.find((y) => y.id === x)))
-            .filter(defined),
-          rituals: (calling.rituals ?? [])
-            .map((x) => (x === '?' ? pickRandom(rituals) : rituals.find((y) => y.id === x)))
-            .filter(defined),
-        }));
-        intern.choices = allChoices;
-        return STEP.ATTRIBUTES;
+        return guarded(() => {
+          requireCreation(
+            !calling.hidden && calling.abilities.some((a) => a.type === 'core'),
+            'Choose a Calling.',
+          );
+          const draft = beginCalling($state.snapshot(calling), spells, rituals);
+          builder.resetDraft();
+          builder.set(draft);
+          availableSpells = structuredClone($state.snapshot(spells));
+          availableRituals = structuredClone($state.snapshot(rituals));
+          return STEP.ATTRIBUTES;
+        });
       },
     },
     [STEP.ATTRIBUTES]: {
-      setAttrs(attrs: Attrs) {
-        const grit = calculateGrit(attrs.dex, attrs.wil);
-        builder.update((b) => ({
-          ...b,
-          grit: { current: grit, max: grit },
-          str: { current: attrs.str, max: attrs.str },
-          dex: { current: attrs.dex, max: attrs.dex },
-          wil: { current: attrs.wil, max: attrs.wil },
-        }));
-        if (intern.choices?.some((x) => x.choose === 'enhancement' && !x.linked)) {
-          return STEP.ENHANCEMENTS;
-        }
-        if (intern.choices?.some((x) => x.choose === 'linked')) {
-          return STEP.COMPANION;
-        }
-        return STEP.EQUIPMENT;
-      },
-    },
-    [STEP.ABILITIES]: {
-      setAbilities(abils: (Ability & HasChoices)[]) {
-        const [abilityChoices, abilities] = abils.reduce(
-          (p, { choices, ...rest }) => [
-            [...p[0], ...(choices ?? [])],
-            [...p[1], rest as Ability],
-          ],
-          [[] as CharacterChoice[], [] as Ability[]],
-        );
-        const allChoices = (intern.choices ?? []).concat(abilityChoices);
-        builder.update((b) => ({
-          ...b,
-          choices: allChoices,
-          abilities: [...(b.abilities ?? []), ...abilities],
-        }));
-        intern.choices = allChoices;
-        if (allChoices.some((x) => x.choose === 'enhancement' && !x.linked)) {
-          return STEP.ENHANCEMENTS;
-        }
-        if (allChoices.some((x) => x.choose === 'linked')) {
-          return STEP.COMPANION;
-        }
-        return STEP.EQUIPMENT;
+      setAttrs(attrs: Attrs, name: string) {
+        return guarded(() => {
+          requireCreation(validStartingAttributes(attrs), 'Assign one d8, one d6 and one d4.');
+          requireCreation(name?.trim(), 'Give your character a name.');
+          const grit = calculateGrit(attrs.dex, attrs.wil);
+          builder.update((b) => ({
+            ...b,
+            name: name.trim(),
+            grit: { current: grit, max: grit },
+            str: { current: attrs.str, max: attrs.str },
+            dex: { current: attrs.dex, max: attrs.dex },
+            wil: { current: attrs.wil, max: attrs.wil },
+          }));
+          return afterChoices();
+        });
       },
     },
     [STEP.ENHANCEMENTS]: {
-      setEnhancements(enhancements: CallingEnhancement[]) {
-        const newAbilities = enhancements.map(
-          (x) =>
-            ({ id: id(), name: x.name, desc: x.desc, type: 'enhance', details: x.type }) as Ability,
-        );
-        intern.choices = intern.choices?.filter((x) => x.choose !== 'enhancement');
-        builder.update((b) => ({
-          ...b,
-          abilities: newAbilities.concat(b.abilities ?? []),
-          choices: intern.choices,
-        }));
-        if (intern.choices?.some((x) => x.choose === 'linked')) {
-          return STEP.COMPANION;
-        }
-        return STEP.EQUIPMENT;
+      setEnhancements(selections: CreationSelection[], formName = '') {
+        return guarded(() => {
+          builder.set(
+            applyCreationSelections(
+              $state.snapshot(builder.sheet),
+              $state.snapshot(selections),
+              formName,
+            ),
+          );
+          return afterChoices();
+        });
       },
     },
     [STEP.COMPANION]: {
-      setCompanion(companion: Partial<Character>) {
-        const companionSheet = $state.snapshot(companion);
-        let compId: string;
-        if (builder.storage === 'account') {
-          const character = newCharacter(companionSheet);
-          compId = character.id;
-          builder.companions = [...builder.companions, character];
-        } else {
-          [compId] = createSheet(companionSheet);
-        }
-        builder.update((b) => ({
-          ...b,
-          abilities: [
-            {
-              id: id(),
-              name: companionSheet.name ?? 'Companion',
-              desc: `<a href="/character/${compId}" class="text-purple-700 dark:text-purple-300" target="_blank">${companionSheet.name || `Companion`}'s Sheet</a>`,
-              type: 'companion',
-              details: companionSheet.calling?.name ?? '',
-            },
-            ...(b.abilities ?? []),
-          ],
-        }));
-        return STEP.EQUIPMENT;
+      setCompanion(template: Calling, name: string, perks: string[], flies = false) {
+        return guarded(() => {
+          const choices = builder.sheet.choices ?? [];
+          requireCreation(
+            choices.some((c) => c.choose === 'linked' && c.id === template.id),
+            'Choose the companion for your Calling.',
+          );
+          const extra = choices.filter((c) => c.choose === 'enhancement' && c.linked).length;
+          const partial = buildCompanion($state.snapshot(template), name, perks, flies, extra);
+          const companion = newCharacter(partial);
+          builder.companions.push(companion);
+          builder.update((b) => ({
+            ...b,
+            choices: choices.filter(
+              (c) => c.choose !== 'linked' && !(c.choose === 'enhancement' && c.linked),
+            ),
+            abilities: [
+              {
+                id: id(),
+                name: companion.name,
+                desc: 'Your bonded companion.',
+                type: 'companion',
+                companionSheetId: companion.id,
+                details: template.name,
+              },
+              ...(b.abilities ?? []),
+            ],
+          }));
+          return afterChoices();
+        });
       },
     },
     [STEP.EQUIPMENT]: {
-      setEquipment(eq: Item[]) {
-        const remainingChoices = (intern.choices ?? []).filter((x) => x.choose !== 'equipment');
-        builder.update((b) => ({
-          ...b,
-          equipment: (b.equipment ?? []).concat(eq),
-          choices: remainingChoices,
-        }));
-        intern.choices = remainingChoices;
-        if (intern.choices?.some((x) => x.choose === 'magic')) {
-          return STEP.MAGIC;
-        }
-        return STEP.DONE;
+      setEquipment(pairs: StartingGearPair[]) {
+        return guarded(() => {
+          const generated: Item[] = resolveCreationEquipment(
+            $state.snapshot(pairs),
+            $state.snapshot(builder.sheet),
+          );
+          builder.update((b) => ({
+            ...b,
+            equipment: [...(b.equipment ?? []), ...generated],
+            choices: (b.choices ?? []).filter((c) => c.choose !== 'equipment'),
+          }));
+          return builder.sheet.choices?.some((c) => c.choose === 'magic') ? STEP.MAGIC : STEP.DONE;
+        });
       },
     },
     [STEP.MAGIC]: {
       setMagic(spells: Spell[], rituals: Ritual[]) {
-        const remainingChoices = (intern.choices ?? []).filter((x) => x.choose !== 'magic');
-        builder.update((b) => ({
-          ...b,
-          choices: remainingChoices,
-          spells: (b.spells || []).concat(spells),
-          rituals: (b.rituals || []).concat(rituals),
-        }));
-        intern.choices = remainingChoices;
-        return STEP.DONE;
+        return guarded(() => {
+          const choices = builder.sheet.choices ?? [];
+          validateStartingMagic(
+            choices,
+            spells,
+            availableSpells,
+            builder.sheet.spells ?? [],
+            'spell',
+          );
+          validateStartingMagic(
+            choices,
+            rituals,
+            availableRituals,
+            builder.sheet.rituals ?? [],
+            'ritual',
+          );
+          builder.update((b) => ({
+            ...b,
+            choices: choices.filter((c) => c.choose !== 'magic'),
+            spells: [...(b.spells ?? []), ...structuredClone($state.snapshot(spells))],
+            rituals: [...(b.rituals ?? []), ...structuredClone($state.snapshot(rituals))],
+          }));
+          return STEP.DONE;
+        });
       },
     },
     [STEP.DONE]: {
       _enter() {
-        const { choices, ...char } = $state.snapshot(builder.sheet);
-        if (choices?.length) {
-          // Warn?
-        }
-        track(`finish wizard: ${char.calling?.name}`);
+        builder.ready = true;
+        track(`finish wizard: ${builder.sheet.calling?.name}`);
         void builder.finish();
       },
     },
     '*': {
       reset() {
-        builder.set({});
-        builder.companions = [];
-        builder.completed = undefined;
-        builder.error = '';
+        if (builder.working) return;
+        builder.resetDraft();
         return STEP.CALLING;
       },
       _enter({ to }) {
-        goto(
-          resolve('/character/new') +
-            `/${String(to)}` +
-            (builder.storage === 'account' ? '?storage=account' : ''),
+        void goto(
+          resolve(`${routes[to]}${builder.storage === 'account' ? '?storage=account' : ''}`),
         );
       },
     },
@@ -296,29 +340,23 @@ function createWizard(builder: Builder, intern: HasChoices) {
 }
 
 const SHEET_WIZARD = 'bw-wizard-sheet';
-
 export function getWizard() {
-  let wizard: [ReturnType<typeof createWizard>, Builder];
+  let wizard: [ReturnType<typeof createWizard>, WizardBuilder];
   if (!hasContext(SHEET_WIZARD)) {
     const builder = new WizardBuilder(getAccountSession());
-    const intern: HasChoices = {
-      choices: [],
-    };
-    wizard = [createWizard(builder, intern), builder];
+    wizard = [createWizard(builder), builder];
     setContext(SHEET_WIZARD, wizard);
-  } else {
-    wizard = getContext(SHEET_WIZARD);
-  }
+  } else wizard = getContext(SHEET_WIZARD);
   return wizard;
 }
-
 export function guardWizardStep(wizard: ReturnType<typeof createWizard>, expected: WizardSteps) {
+  const [, builder] = getWizard();
   onMount(() => {
-    if (wizard.current !== expected) {
-      goto(
-        resolve('/character/new') +
-          (window.location.search.includes('storage=account') ? '?storage=account' : ''),
+    if (wizard.current !== expected)
+      void goto(
+        resolve(
+          `${routes[wizard.current]}${builder.storage === 'account' ? '?storage=account' : ''}`,
+        ),
       );
-    }
   });
 }

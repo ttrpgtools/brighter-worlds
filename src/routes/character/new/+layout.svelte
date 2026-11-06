@@ -28,5 +28,10 @@
           >
         </div>{/if}
     </div>
-  {:else}{@render children?.()}{/if}
+  {:else}
+    {#if builder.error}<p role="alert" class="max-w-prose mb-4 text-red-700 dark:text-red-300">
+        {builder.error}
+      </p>{/if}
+    {@render children?.()}
+  {/if}
 </main>
