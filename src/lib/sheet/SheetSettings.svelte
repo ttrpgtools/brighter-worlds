@@ -34,8 +34,12 @@
 <InputDialog {title} {showDelete} dice={[]} bind:this={dialog} {form} {valid}>
   <form class="text-center flex flex-col gap-3">
     <div class="flex gap-3 items-center">
-      <Toggle bind:value={form.rollToBridge} /><span>Broadcast to Narrator</span>
+      <Toggle bind:value={form.rollToBridge} /><span>Broadcast between browser tabs</span>
     </div>
+    <p class="text-sm text-gray-600 dark:text-gray-400">
+      Shares events with Brighter Worlds tabs on this site. Discord sharing is configured
+      separately.
+    </p>
     <div class="flex gap-3 items-center">
       <Toggle bind:value={form.rollToDiscord} /><span>Send rolls to Discord</span>
     </div>

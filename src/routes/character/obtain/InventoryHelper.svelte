@@ -1,8 +1,8 @@
 <script lang="ts">
   import { loadSheet } from '$lib/data/sheet-manager';
-  import { isEmpty, type Item } from '$lib/types';
-  import { append, update } from '$lib/util/array';
-  import { untrack } from 'svelte';
+  import type { Item } from '$lib/types';
+  import { receiveItem } from '$lib/data/item-transfer';
+  import { onMount, untrack } from 'svelte';
 
   interface Props {
     id: string;
@@ -13,28 +13,23 @@
 
   const chosen = loadSheet(untrack(() => id));
   let ok = $state(false);
-  async function go() {
-    await chosen.loaded;
-    console.log($chosen);
-    if (!isEmpty($chosen) && $chosen.equipment && !ok) {
-      console.log('Checking existing equipment', $chosen.equipment.length, 'items');
-      const exist = $chosen.equipment.find((x) => x.name === item.name);
-      if (exist) {
-        console.log(`${item.name} already existed, adding ${item.quantity ?? 1}`);
-        exist.quantity = (exist.quantity ?? 1) + (item.quantity ?? 1);
-        $chosen.equipment = update($chosen.equipment, exist);
-      } else {
-        console.log(`Appending ${item.name}`);
-        $chosen.equipment = append($chosen.equipment, item);
-      }
-      console.log($chosen.equipment);
-      $chosen = $chosen;
-      ok = true;
-    }
-  }
-  go();
+  let error = $state('');
+  onMount(() => {
+    receiveItem(chosen, $state.snapshot(item))
+      .then(() => {
+        ok = true;
+      })
+      .catch(() => {
+        error =
+          'The item could not be saved. Open the character sheet and check its inventory and storage warning before trying again.';
+      });
+  });
 </script>
 
-{#if ok}
+{#if error}
+  <p role="alert">{error}</p>
+{:else if ok}
   <div>Added. You can close this window/tab.</div>
+{:else}
+  <p>Saving to your character…</p>
 {/if}

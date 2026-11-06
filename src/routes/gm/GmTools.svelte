@@ -3,7 +3,7 @@
   import Icon from '$lib/ui/icon.svelte';
   import Button from '$lib/ui/button.svelte';
   import { getEncountersSettings } from '$lib/data/encounter-manager';
-  import { hostSession, type Session } from '$lib/data/p2p';
+  import { broadcast } from '$lib/data/channel-child';
   import { Formula, roll } from '$lib/rolling/roll';
   import DamageDialog from '$lib/sheet/DamageDialog.svelte';
   import Roller from '$lib/sheet/Roller.svelte';
@@ -16,7 +16,6 @@
     Entity,
     Item,
     NpcInstance,
-    RemoteCtaReplyMessage,
     RemoteEmbedMessage,
   } from '$lib/types';
   import { armor } from '$lib/util/character';
@@ -26,7 +25,6 @@
     sendItemToDiscord,
     sendNpcToDiscord,
   } from '$lib/util/discord';
-  import type { Readable } from 'svelte/store';
   import { addLocalRoll, addRemoteRoll, getRollLog } from './playmat';
   import { formatCta, formatItem, formatNpc, formatRoll, formatScene } from '$lib/util/share';
   import { id } from '$lib/rolling/id';
@@ -39,8 +37,6 @@
 
   const encountersSettings = getEncountersSettings();
   const log = getRollLog();
-  let gameId: Readable<string> | undefined = $state();
-  let playerCount: Readable<number> | undefined = $state();
 
   onMount(() => {
     const unsub = rollRequests.subscribe((roll) => {
@@ -59,10 +55,25 @@
       const rem = { id: id(), name: '', type: 'embed' as const, embed: cta };
       addRemoteRoll(log, rem);
       if ($encountersSettings?.rollToBridge !== false) {
-        session?.send(rem);
+        publish(rem);
       }
     });
-    return () => unsub();
+    // The store retains a value for persistence callers; a newly opened GM page must not
+    // process that old value as a fresh roll response.
+    let initial = true;
+    const stopBroadcast = broadcast.subscribe((message) => {
+      if (initial) {
+        initial = false;
+        return;
+      }
+      if (message?.type !== 'embed' || sent.has(message.id)) return;
+      addRemoteRoll(log, message);
+      handleCtaReply(message.embed);
+    });
+    return () => {
+      unsub();
+      stopBroadcast();
+    };
   });
 
   function showRoll(sides: DieValue[], label: string = '', name = 'NPC') {
@@ -72,7 +83,7 @@
     if ($encountersSettings?.rollToBridge !== false) {
       const roll = formatRoll(name, best, label, sides);
       roll.title = name;
-      session?.send({ id: id(), name: '', type: 'embed', embed: roll });
+      publish({ id: id(), name: '', type: 'embed', embed: roll });
     }
     if ($encountersSettings?.rollToDiscord) {
       sendToDiscord(name, best, label, $encountersSettings.discordWebhook, sides);
@@ -93,7 +104,12 @@
     const value = f.roll();
     const roll = formatRoll(name, value, label ?? formula, f.dice);
     roll.title = name;
-    session?.send({ id: id(), name, embed: roll, type: 'embed' });
+    if ($encountersSettings?.rollToBridge !== false) {
+      publish({ id: id(), name, embed: roll, type: 'embed' });
+    }
+    if ($encountersSettings?.rollToDiscord) {
+      sendToDiscord(name, value, label ?? formula, $encountersSettings.discordWebhook, f.dice);
+    }
     dice?.show(`${value}`, f.dice, `${label ?? formula}`);
     addLocalRoll(log, {
       dice: f.dice,
@@ -144,7 +160,7 @@
         npc.name,
       );
       roll.title = npc.name;
-      session?.send({ id: id(), name: '', type: 'embed', embed: roll });
+      publish({ id: id(), name: '', type: 'embed', embed: roll });
     }
     dice?.show('Damage', results.dice, results.msg);
 
@@ -167,7 +183,7 @@
       sendSceneToDiscord(scene, $encountersSettings.discordWebhook);
     }
     if ($encountersSettings?.rollToBridge !== false) {
-      session?.send({ id: id(), name: '', type: 'embed', embed: formatScene(scene) });
+      publish({ id: id(), name: '', type: 'embed', embed: formatScene(scene) });
     }
   }
 
@@ -176,7 +192,7 @@
       sendNpcToDiscord(npc, $encountersSettings.discordWebhook);
     }
     if ($encountersSettings?.rollToBridge !== false) {
-      session?.send({ id: id(), name: '', type: 'embed', embed: formatNpc(npc) });
+      publish({ id: id(), name: '', type: 'embed', embed: formatNpc(npc) });
     }
   }
 
@@ -185,75 +201,24 @@
       sendItemToDiscord(item, $encountersSettings.discordWebhook);
     }
     if ($encountersSettings?.rollToBridge !== false) {
-      session?.send({ id: id(), name: '', type: 'embed', embed: formatItem(item) });
+      publish({ id: id(), name: '', type: 'embed', embed: formatItem(item) });
     }
   }
 
   function handleCtaReply(embed: DiscordEmbed) {
     if (embed.meta && embed.fields.length > 0) {
       const value = parseInt(embed.fields[0].name, 10);
-      rollResponses.emit({ id: embed.meta, result: value });
+      if (Number.isFinite(value)) rollResponses.emit({ id: embed.meta, result: value });
     }
   }
 
-  function handleData(ev: Event) {
-    const evt = ev as CustomEvent<{
-      name: string;
-      data: RemoteEmbedMessage | RemoteCtaReplyMessage;
-    }>;
-    console.log(evt);
-    if (evt && evt.detail && evt.detail.data) {
-      const data = evt.detail.data;
-      if (data.type === 'embed') {
-        addRemoteRoll(log, data);
-        handleCtaReply(data.embed);
-        session?.send(data);
-      } else {
-      }
-    }
-  }
-
-  function handleJoin(ev: Event) {
-    const evt = ev as CustomEvent<{ name: string; connection: { send: (data: any) => void } }>;
-    if (evt && evt.detail) {
-      addRemoteRoll(log, {
-        embed: {
-          title: `${evt.detail.name || 'Player'} joined.`,
-          fields: [],
-        },
-      });
-      evt.detail.connection?.send({
-        id: id(),
-        name: '',
-        type: 'embed',
-        embed: {
-          fields: [],
-          title: `Game joined. Welcome to Brighter Worlds ${evt.detail.name}`,
-        },
-      });
-    }
-  }
-
-  function handleLeave(ev: Event) {
-    const evt = ev as CustomEvent<{ name: string }>;
-    if (evt && evt.detail) {
-      addRemoteRoll(log, {
-        embed: {
-          title: `${evt.detail.name || 'Player'} left.`,
-          fields: [],
-        },
-      });
-    }
-  }
-
-  let session: Session | undefined;
-  function createSession() {
-    session = hostSession();
-    gameId = session.id;
-    playerCount = session.count;
-    session.addEventListener('data', handleData);
-    session.addEventListener('join', handleJoin);
-    session.addEventListener('leave', handleLeave);
+  // This is transport bookkeeping, not reactive UI state. Do not reflect a received event
+  // back to the channel or log our own local rolls twice.
+  const sent = new Set<string>();
+  function publish(message: RemoteEmbedMessage) {
+    sent.add(message.id);
+    if (sent.size > 1000) sent.delete(sent.values().next().value!);
+    broadcast.set(message);
   }
 </script>
 
@@ -266,11 +231,4 @@
 <Button size="icon" icon="cog" onclick={() => settingsDialog?.open()} />
 {#if $encountersSettings?.rollToDiscord}
   <Icon icon="discord" />
-{/if}
-{#if $encountersSettings?.rollToBridge !== false}
-  <Button size="icon" icon="broadcast" onclick={createSession} />
-  <div class="font-sans text-sm">
-    {$gameId ?? ''}
-    {#if $gameId}({$playerCount}){/if}
-  </div>
 {/if}

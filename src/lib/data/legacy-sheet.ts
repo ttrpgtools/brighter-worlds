@@ -1,4 +1,4 @@
-import type { Character } from '$lib/types';
+import type { Character, Item } from '$lib/types';
 
 export const validSheetId = (id: unknown): id is string =>
   typeof id === 'string' && /^[A-Za-z0-9_-]{1,128}$/.test(id);
@@ -92,6 +92,11 @@ function entity(input: unknown, path: string, kind?: string): Record<string, unk
     value.magic = magic;
   }
   return value;
+}
+
+/** Validate an inventory handoff using the same runtime rules as saved equipment. */
+export function normalizeLegacyItem(input: unknown): Item {
+  return entity(input, 'shared-item') as unknown as Item;
 }
 
 /** Normalize a *local* runtime record, retaining unknown fields and private settings locally. */

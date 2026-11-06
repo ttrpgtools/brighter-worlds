@@ -19,17 +19,11 @@
   import Calling from '$lib/sheet/Calling.svelte';
   import Statuses from '$lib/sheet/Statuses.svelte';
   import Roller from '$lib/sheet/Roller.svelte';
-  import {
-    broadcast,
-    broadcastItem,
-    broadcastMagic,
-    broadcastRoll,
-    broadcastScene,
-  } from '$lib/data/channel-child';
+  import { broadcast, broadcastItem, broadcastMagic, broadcastRoll } from '$lib/data/channel-child';
   import type { PageData } from './$types';
   import Button from '$lib/ui/button.svelte';
   import SheetSettings from '$lib/sheet/SheetSettings.svelte';
-  import { sendToDiscord } from '$lib/util/discord';
+  import { sendToDiscord, sendItemToDiscord, sendMagicToDiscord } from '$lib/util/discord';
   import Icon from '$lib/ui/icon.svelte';
   import Loader from '$lib/Loader.svelte';
   import { writable } from 'svelte/store';
@@ -131,11 +125,17 @@
   }
 
   function shareItem(item: Item) {
-    broadcastItem(item, $character.name);
+    if ($character.settings?.rollToBridge !== false) broadcastItem(item, $character.name);
+    if ($character.settings?.rollToDiscord) {
+      sendItemToDiscord(item, $character.settings.discordWebhook);
+    }
   }
 
   function shareMagic(mag: MagicType) {
-    broadcastMagic(mag, $character.name);
+    if ($character.settings?.rollToBridge !== false) broadcastMagic(mag, $character.name);
+    if ($character.settings?.rollToDiscord) {
+      sendMagicToDiscord(mag, $character.settings.discordWebhook, $character.name);
+    }
   }
 
   async function cast(ev: { dice: DieValue[]; name: string }) {

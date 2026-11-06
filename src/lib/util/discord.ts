@@ -1,5 +1,5 @@
-import type { DieValue, DiscordEmbed, Entity, Item } from '$lib/types';
-import { formatItem, formatNpc, formatRoll, formatScene } from './share';
+import type { DieValue, DiscordEmbed, Entity, Item, Magic } from '$lib/types';
+import { formatItem, formatMagic, formatNpc, formatRoll, formatScene } from './share';
 
 /* interface DiscordWebhookMessage {
   username?: string;
@@ -58,4 +58,8 @@ export async function sendNpcToDiscord(item: Entity, hook: string) {
 export async function sendItemToDiscord(item: Item, hook: string) {
   const relic = formatItem(item);
   return await sendEmbed(relic, hook);
+}
+
+export async function sendMagicToDiscord(item: Magic, hook: string, name?: string) {
+  return await sendEmbed(formatMagic(item, name), hook, name);
 }
