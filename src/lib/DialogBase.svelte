@@ -4,7 +4,9 @@
   interface Props {
     maxWidth?: string;
     title?: string;
+    titleClass?: string;
     scrollable?: boolean;
+    preventDismiss?: boolean;
     pretitle?: import('svelte').Snippet;
     children?: import('svelte').Snippet<[any]>;
     footer?: import('svelte').Snippet;
@@ -13,7 +15,9 @@
   let {
     maxWidth = 'max-w-md',
     title = '',
+    titleClass = 'text-lg font-medium leading-6 text-center',
     scrollable = true,
+    preventDismiss = false,
     pretitle,
     children,
     footer,
@@ -55,7 +59,10 @@
       {/snippet}
     </Dialog.Overlay>
 
-    <Dialog.Content>
+    <Dialog.Content
+      escapeKeydownBehavior={preventDismiss ? 'ignore' : 'close'}
+      interactOutsideBehavior={preventDismiss ? 'ignore' : 'close'}
+    >
       {#snippet child({ props })}
         <div class="fixed inset-0 z-50 flex min-h-full items-center justify-center p-4 text-center">
           <div
@@ -64,7 +71,7 @@
           >
             <div class="{scrollable ? 'overflow-y-auto' : ''} h-full -mx-6 px-6 pb-6">
               {@render pretitle?.()}
-              {#if !!title}<Dialog.Title class="text-lg font-medium leading-6 text-center">
+              {#if !!title}<Dialog.Title class={titleClass}>
                   {title}
                 </Dialog.Title>{/if}
               {@render children?.({ close, open })}

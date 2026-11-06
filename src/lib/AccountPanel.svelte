@@ -1,5 +1,6 @@
 <script lang="ts">
   import { resolve } from '$app/paths';
+  import Button from '$lib/ui/button.svelte';
   import type { accountSummary } from '$lib/server/ankh';
   let { account }: { account: ReturnType<typeof accountSummary> } = $props();
   const messages: Record<string, string> = {
@@ -13,7 +14,8 @@
 <main class="mx-auto max-w-xl px-6 py-12 space-y-6">
   <h1 class="font-title text-3xl">TTRPG Tools account</h1>
   <p>
-    Your local sheets and backups are available without signing in. Signing in does not upload them.
+    Create local characters in this browser or account characters you can open on other devices.
+    Existing local sheets stay local until you choose Save online from their storage menu.
   </p>
   {#if account.state === 'unconfigured' || account.state === 'unavailable'}
     <p role="status">
@@ -50,9 +52,7 @@
         data-sveltekit-reload>Manage shared profile</a
       >
       <form method="POST" action={resolve('/auth/logout')}>
-        <button class="rounded-full bg-purple-200 dark:bg-purple-900 px-4 py-2" type="submit"
-          >Sign out</button
-        >
+        <Button type="submit" variant="outline">Sign out</Button>
       </form>
     </div>
     <p class="text-sm text-gray-600 dark:text-gray-400">
@@ -64,8 +64,10 @@
       <a href={resolve('/auth/signup')} data-sveltekit-reload>Create an account</a>
     </div>
   {/if}
-  <a
-    class="inline-block underline text-purple-700 dark:text-purple-300"
-    href={resolve('/character')}>Local characters and backups</a
-  >
+  <div class="space-y-2 border-t border-purple-200 pt-5 dark:border-purple-800">
+    <Button href={resolve('/character')}>Your characters</Button>
+    <p class="text-sm text-gray-600 dark:text-gray-400">
+      Open local or account sheets, create a new character, or restore a file backup.
+    </p>
+  </div>
 </main>

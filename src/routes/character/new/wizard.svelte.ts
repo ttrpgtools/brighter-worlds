@@ -13,15 +13,70 @@ import type {
 import { fsm } from '$lib/util/fsm.svelte';
 import { createSheet } from '$lib/data/sheet-manager';
 import { goto } from '$app/navigation';
+import { resolve } from '$app/paths';
 import { id } from '$lib/rolling/id';
 import { roll } from '$lib/rolling/roll';
 import { defined } from '$lib/util/array';
 import { getContext, hasContext, onMount, setContext } from 'svelte';
 import { calculateGrit } from '$lib/util/grit';
 import { track } from '$lib/util/track';
+import { getAccountSession, type AccountSession } from '$lib/data/account-session';
+import { createAccountCharacters, newCharacter } from '$lib/data/account-creation';
+import { buildBundle } from '$lib/data/sheet-format/codec';
+import { download } from '$lib/util/download';
 
 class WizardBuilder {
   sheet: Partial<Character> & HasChoices = $state({});
+  storage: 'local' | 'account' = $state('local');
+  owner = '';
+  companions: Character[] = [];
+  working = $state(false);
+  error = $state('');
+  completed?: Character;
+  constructor(private session: AccountSession) {}
+  configure(storage: 'local' | 'account', owner = '') {
+    this.storage = storage;
+    this.owner = owner;
+  }
+  async finish() {
+    if (this.working) return;
+    this.working = true;
+    this.error = '';
+    try {
+      if (this.storage === 'account') {
+        this.completed ??= newCharacter($state.snapshot(this.sheet));
+        await createAccountCharacters(this.owner, this.completed, this.companions, this.session);
+        await goto(
+          resolve('/character/[id]', { id: this.completed.id }) +
+            `?account=${encodeURIComponent(this.owner)}`,
+        );
+      } else {
+        const { choices, ...char } = $state.snapshot(this.sheet);
+        const [newId] = createSheet(char);
+        await goto(resolve('/character/[id]', { id: newId }));
+      }
+    } catch (caught) {
+      this.error =
+        caught instanceof Error
+          ? caught.message
+          : 'The character could not be created. Your draft is kept open.';
+    } finally {
+      this.working = false;
+    }
+  }
+  async backup() {
+    try {
+      this.completed ??= newCharacter($state.snapshot(this.sheet));
+      const { bundle } = await buildBundle(
+        new Map([this.completed, ...this.companions].map((character) => [character.id, character])),
+        [this.completed.id],
+        window.location.origin,
+      );
+      download(JSON.stringify(bundle, null, 2), 'brighter-worlds-creation-draft.json');
+    } catch (caught) {
+      this.error = String(caught);
+    }
+  }
 
   set(value: Partial<Character> & HasChoices) {
     this.sheet = value;
@@ -69,7 +124,6 @@ function createWizard(builder: Builder, intern: HasChoices) {
       },
       setCalling(calling: Calling, spells: Spell[], rituals: Ritual[]) {
         const core = calling.abilities.filter((x) => x.type === 'core');
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const staticCompanions = calling.abilities
           .filter((x) => x.type === 'companion')
           .map(({ choices, ...ab }) => ab as Ability);
@@ -83,7 +137,6 @@ function createWizard(builder: Builder, intern: HasChoices) {
             desc: calling.tagline,
           },
           equipment: calling.equipment,
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           abilities: staticCompanions.concat(core.map(({ choices, ...ab }) => ab)),
           spells: (calling.spells ?? [])
             .map((x) => (x === '?' ? pickRandom(spells) : spells.find((y) => y.id === x)))
@@ -161,7 +214,14 @@ function createWizard(builder: Builder, intern: HasChoices) {
     [STEP.COMPANION]: {
       setCompanion(companion: Partial<Character>) {
         const companionSheet = $state.snapshot(companion);
-        const [compId] = createSheet(companionSheet);
+        let compId: string;
+        if (builder.storage === 'account') {
+          const character = newCharacter(companionSheet);
+          compId = character.id;
+          builder.companions = [...builder.companions, character];
+        } else {
+          [compId] = createSheet(companionSheet);
+        }
         builder.update((b) => ({
           ...b,
           abilities: [
@@ -213,17 +273,23 @@ function createWizard(builder: Builder, intern: HasChoices) {
           // Warn?
         }
         track(`finish wizard: ${char.calling?.name}`);
-        const [newId] = createSheet(char);
-        goto(`/character/${newId}/`);
+        void builder.finish();
       },
     },
     '*': {
       reset() {
         builder.set({});
+        builder.companions = [];
+        builder.completed = undefined;
+        builder.error = '';
         return STEP.CALLING;
       },
       _enter({ to }) {
-        goto(`/character/new/${String(to)}`);
+        goto(
+          resolve('/character/new') +
+            `/${String(to)}` +
+            (builder.storage === 'account' ? '?storage=account' : ''),
+        );
       },
     },
   });
@@ -234,7 +300,7 @@ const SHEET_WIZARD = 'bw-wizard-sheet';
 export function getWizard() {
   let wizard: [ReturnType<typeof createWizard>, Builder];
   if (!hasContext(SHEET_WIZARD)) {
-    const builder = new WizardBuilder();
+    const builder = new WizardBuilder(getAccountSession());
     const intern: HasChoices = {
       choices: [],
     };
@@ -249,7 +315,10 @@ export function getWizard() {
 export function guardWizardStep(wizard: ReturnType<typeof createWizard>, expected: WizardSteps) {
   onMount(() => {
     if (wizard.current !== expected) {
-      goto('/character/new');
+      goto(
+        resolve('/character/new') +
+          (window.location.search.includes('storage=account') ? '?storage=account' : ''),
+      );
     }
   });
 }

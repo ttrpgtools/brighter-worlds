@@ -25,10 +25,18 @@
     abilities: Ability[];
     callingList: Calling[];
     enhancements: CallingEnhancements[];
+    companionHref?: (id: string) => string;
     onroll?: (data: { dice: DieRollSet; name: string }) => void;
   }
 
-  let { calling, abilities = $bindable(), callingList, enhancements, onroll }: Props = $props();
+  let {
+    calling,
+    abilities = $bindable(),
+    callingList,
+    enhancements,
+    onroll,
+    companionHref,
+  }: Props = $props();
 
   let callingDialog: CallingDetailDialog | undefined = $state();
   let abilityDialog: CallingAbilityDialog | undefined = $state();
@@ -127,10 +135,14 @@
             </div>
           </div>
           {#if ability.companionSheetId}
-            <a
+            <Button
+              variant="link"
+              size="tight"
               class="text-sm text-purple-700 underline dark:text-purple-300"
-              href={resolve('/character/[id]', { id: ability.companionSheetId })}
-              >Open companion sheet</a
+              href={companionHref
+                ? companionHref(ability.companionSheetId)
+                : resolve('/character/[id]', { id: ability.companionSheetId })}
+              >Open companion sheet</Button
             >
           {:else if ability.unresolvedCompanionId}
             <p class="text-sm text-amber-700 dark:text-amber-300">

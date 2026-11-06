@@ -2,6 +2,8 @@
   import { recoveryState, ensureSheetMigration, localRecoveryFile } from '$lib/data/sheet-recovery';
   import { download } from '$lib/util/download';
   import type { SheetCache } from '$lib/data/sheet-manager';
+  import { getAccountSession } from '$lib/data/account-session';
+  const session = getAccountSession();
   let { cache }: { cache?: SheetCache } = $props();
   let error = $state('');
   let working = $state(false);
@@ -14,7 +16,11 @@
       return;
     working = true;
     try {
-      download(await localRecoveryFile(cache), 'brighter-worlds-private-recovery.json');
+      const owner = session.current().account?.user?.id ?? session.current().offlineOwner;
+      const json = await localRecoveryFile(cache, owner);
+      if ((session.current().account?.user?.id ?? session.current().offlineOwner) !== owner)
+        throw new Error('The account changed. Prepare the archive again.');
+      download(json, 'brighter-worlds-private-recovery.json');
     } catch {
       error =
         'The browser could not read the original records. Keep this page open and check browser storage permissions.';

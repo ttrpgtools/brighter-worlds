@@ -57,6 +57,13 @@ export interface AegisService {
 }
 export function requireAegis(event: RequestEvent) {
   const user = requireAccount(event);
+  const expectedOwner = event.request.headers.get('X-Brighter-Worlds-Owner');
+  if (expectedOwner && expectedOwner !== user.id) {
+    error(409, {
+      code: 'account_changed',
+      message: 'The signed-in account changed. This draft was not sent to another account.',
+    });
+  }
   const service = event.platform?.env.STORE;
   if (!service)
     error(503, { code: 'storage_unavailable', message: 'Account storage is not configured.' });

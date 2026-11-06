@@ -82,7 +82,23 @@ export async function privateRecoveryFile(
   cache?: SheetCache,
   database: UseStore = sheetDatabase,
   storage?: Storage,
+  extraRecords: { key: string; value: unknown }[] = [],
+  accountOwner?: string,
 ) {
+  function includeRecord(key: string, value: unknown) {
+    if (key.startsWith('bw-document:v1:account:') || key.startsWith('bw-transfer:v1:account:')) {
+      return (
+        !!accountOwner &&
+        (key.startsWith(`bw-document:v1:account:${encodeURIComponent(accountOwner)}:`) ||
+          key.startsWith(`bw-transfer:v1:account:${encodeURIComponent(accountOwner)}:`))
+      );
+    }
+    if (key.startsWith('bw-recovery:account:')) {
+      const row = value as { owner?: string; local?: { owner?: string } } | null;
+      return !!accountOwner && (row?.owner === accountOwner || row?.local?.owner === accountOwner);
+    }
+    return included(key);
+  }
   const records: { storage: string; key: string; value: unknown }[] = [];
   const warnings: string[] = [];
   let local = storage;
@@ -95,7 +111,7 @@ export async function privateRecoveryFile(
     if (local) {
       for (let i = 0; i < local.length; i++) {
         const key = local.key(i);
-        if (key && included(key))
+        if (key && includeRecord(key, null))
           records.push({ storage: 'localStorage', key, value: local.getItem(key) });
       }
     }
@@ -104,7 +120,7 @@ export async function privateRecoveryFile(
   }
   try {
     for (const [key, value] of await entries<IDBValidKey, unknown>(database)) {
-      if (typeof key === 'string' && included(key))
+      if (typeof key === 'string' && includeRecord(key, value))
         records.push({ storage: 'indexedDB', key, value: await recoveryGraph(value) });
     }
   } catch {
@@ -115,6 +131,12 @@ export async function privateRecoveryFile(
       storage: 'open-sheet',
       key: `bw-sheet-${id}`,
       value: await recoveryGraph(snapshotState(get(store))),
+    });
+  for (const { key, value } of extraRecords)
+    records.push({
+      storage: 'open-account-draft',
+      key,
+      value: await recoveryGraph(snapshotState(value)),
     });
   return JSON.stringify(
     { format: 'brighter-worlds.private-recovery', version: 2, warnings, records },

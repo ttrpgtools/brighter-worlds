@@ -1,6 +1,6 @@
 # Character and game backups
 
-The character list now provides **Back up all characters**, **Download game backup**, a file picker with a restore preview, and a separate **Download private recovery archive** action. Each character's download button exports that character with the available linked companion graph. No account or cloud service is required.
+The character list provides a secondary **Backups and restore** button beside **New Character**. It opens the shared app dialog with **Back up local characters**, **Download game backup**, and a clearly styled **Choose backup file** control with a restore preview. **Advanced recovery** contains the private recovery archive action. Each local character's download button still exports that character with the available linked companion graph; warnings or errors open the dialog for review. No account or cloud service is required for local backups. Character-card backup icons and account-sheet storage-menu downloads export the separate owner-scoped cached companion group; see [account-persistence.md](account-persistence.md). Game backups remain browser-local.
 
 ## Portable data
 
@@ -41,7 +41,7 @@ Open character stores are retained after restore, so unrelated unsaved edits are
 
 ## Private recovery archive
 
-This separate download requires acknowledgment that it can include original webhooks and private settings. It is for private/manual recovery, not sharing or ordinary restore. Version 2 includes raw localStorage text, tagged IndexedDB records/archives, and current open-sheet snapshots. Tagged graphs preserve Sets, Maps, Dates, cyclic references, typed buffers and arbitrary Blob bytes without silently converting them into empty objects. Portable image/schema limits do not discard oversized bytes from this explicit recovery path. Read failures are recorded as warnings.
+This separate download requires acknowledgment that it can include original webhooks and private settings. It is for private/manual recovery, not sharing or ordinary restore. Version 2 includes raw localStorage text, tagged IndexedDB records/archives, and current open-sheet snapshots. Tagged graphs preserve Sets, Maps, Dates, cyclic references, typed buffers and arbitrary Blob bytes without silently converting them into empty objects. Portable image/schema limits do not discard oversized bytes from this explicit recovery path. Read failures are recorded as warnings. Account cache rows, transfer receipts and account recovery records are included only for the selected signed-in or last verified offline owner. Other owners' caches remain untouched and excluded. Account-sheet recovery can include the current in-memory draft even when IndexedDB cannot be read.
 
 The ordinary importer intentionally rejects the version-2 private archive with an explanation. Damaged/ambiguous originals need review before they become game data or private settings again. Old version-1 original-localStorage recovery files can be read as legacy sheet input, with invalid rows reported and originals kept.
 

@@ -8,9 +8,13 @@ const config = {
   preprocess: vitePreprocess(),
 
   kit: {
-    adapter: adapter(
-      process.env.BWO_WORKER_BUILD === '1' ? { config: 'wrangler.worker.toml' } : {},
-    ),
+    adapter: adapter({
+      ...(process.env.BWO_WORKER_BUILD === '1' ? { config: 'wrangler.worker.toml' } : {}),
+      platformProxy: {
+        configPath: './wrangler.worker.toml',
+        remoteBindings: false,
+      },
+    }),
     alias: {
       $data: 'src/data',
     },

@@ -4,6 +4,7 @@
   import { onMount } from 'svelte';
   import { getSettings } from '$lib/data/settings';
   import { resolve } from '$app/paths';
+  import AccountMenu from './AccountMenu.svelte';
 
   const title = 'Menu';
 
@@ -26,7 +27,8 @@
   }
 </script>
 
-<div class="flex w-full flex-col items-center justify-center">
+<div class="flex items-center justify-center gap-2">
+  <AccountMenu />
   <div class="relative text-right">
     <div class="relative inline-block text-left">
       <DropdownMenu.Root>

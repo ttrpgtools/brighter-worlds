@@ -232,3 +232,33 @@ it('returns retryable errors without leaking RPC details or claiming an empty li
   expect(JSON.stringify(body)).not.toContain('private database');
   expect(response.headers.get('Cache-Control')).toBe('no-store');
 });
+
+it.each(['GET', 'POST', 'PUT', 'DELETE'])(
+  'rejects an expected-owner mismatch before %s reaches Aegis',
+  async (method) => {
+    const store = storeService();
+    const path =
+      method === 'GET' || method === 'POST' ? '/api/characters' : '/api/characters/hero_01';
+    const ev = event(path, {
+      auth: authService(),
+      store,
+      token: 'old',
+      method,
+      headers: { 'X-Brighter-Worlds-Owner': 'different-account' },
+      ...(method === 'GET'
+        ? {}
+        : { body: method === 'DELETE' ? { version: 1 } : { sheet: sheet(), version: 1 } }),
+    });
+    const handler =
+      method === 'GET' ? list : method === 'POST' ? create : method === 'PUT' ? update : remove;
+    const response = await handle({ event: ev, resolve: () => handler(ev as any) } as Parameters<
+      typeof handle
+    >[0]);
+    expect(response.status).toBe(409);
+    expect((await response.json()).error).toBe('account_changed');
+    expect(store.list).not.toHaveBeenCalled();
+    expect(store.create).not.toHaveBeenCalled();
+    expect(store.update).not.toHaveBeenCalled();
+    expect(store.delete).not.toHaveBeenCalled();
+  },
+);

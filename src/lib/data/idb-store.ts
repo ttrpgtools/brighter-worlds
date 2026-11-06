@@ -61,8 +61,13 @@ export function createIdbStore<T>(
       if (!available) throw new Error('Browser storage is unavailable.');
       if (dbKey.startsWith(SHEET_PREFIX)) {
         await transaction('readwrite', async (store) => {
-          if (await request(store.get(tombstoneKey(dbKey.slice(SHEET_PREFIX.length))))) {
-            throw new Error('This character was deleted. Export unsaved changes before leaving.');
+          const retired = await request(store.get(tombstoneKey(dbKey.slice(SHEET_PREFIX.length))));
+          if (retired) {
+            throw new Error(
+              retired.promotedTo
+                ? 'This character is now an account character. Reopen it from your character library. Export any unsaved changes before leaving.'
+                : 'This character was deleted. Export unsaved changes before leaving.',
+            );
           }
           store.put(snapshot, dbKey);
         });

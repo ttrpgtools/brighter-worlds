@@ -5,6 +5,7 @@
   import { getEncounterStates, getTabManager } from '$lib/data/ui-state';
   import SiteMenu from '$lib/SiteMenu.svelte';
   import { getSettings } from '$lib/data/settings';
+  import { provideAccountSession } from '$lib/data/account-session';
   interface Props {
     children?: import('svelte').Snippet;
   }
@@ -14,6 +15,7 @@
   getTabManager();
   getEncounterStates();
   getSettings();
+  provideAccountSession();
 </script>
 
 {@render children?.()}
@@ -21,7 +23,7 @@
   <Footer />
 {/if}
 {#if page.data?.layout?.showMenu ?? true}
-  <div class="absolute top-2 right-2">
+  <div class="absolute top-2 right-2 z-30">
     <SiteMenu />
   </div>
 {/if}

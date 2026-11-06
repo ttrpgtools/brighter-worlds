@@ -21,7 +21,7 @@ const LIST_KEY = 'bw-sheet-list';
 const SHEET_KEY_PREFIX = 'bw-sheet-';
 const SHEET_CACHE = 'bw-cache-sheets';
 
-function getEmptySheet() {
+export function getEmptySheet() {
   const empty: Character = {
     [EMPTY]: true,
     id: '',

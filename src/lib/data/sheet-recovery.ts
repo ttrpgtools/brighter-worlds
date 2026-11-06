@@ -198,7 +198,10 @@ export function readLegacyFallback(id: string) {
 }
 
 /** Explicit private recovery file, never used by portable exports/imports. */
-export async function localRecoveryFile(cache?: import('./sheet-manager').SheetCache) {
+export async function localRecoveryFile(
+  cache?: import('./sheet-manager').SheetCache,
+  accountOwner?: string,
+) {
   const { privateRecoveryFile } = await import('./private-recovery');
-  return privateRecoveryFile(cache);
+  return privateRecoveryFile(cache, undefined, undefined, [], accountOwner);
 }

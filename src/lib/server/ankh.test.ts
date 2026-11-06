@@ -256,3 +256,46 @@ it('retains SvelteKit redirect protocol on data requests', async () => {
   expect(await response.json()).toEqual({ type: 'redirect', location: '/account' });
   expect(response.headers.get('Set-Cookie')).toContain('rotated-test-token');
 });
+
+it.each([true, false])(
+  'the shared account menu can read its current profile when application access is %s, without session secrets',
+  async (allowed) => {
+    const auth = authService();
+    auth.verifySession.mockResolvedValue({
+      valid: true,
+      user: {
+        id: 'owner-A',
+        isAnonymous: false,
+        displayName: 'Alice',
+        email: 'alice@example.invalid',
+        avatar: 'https://images.example.invalid/alice.webp',
+        externalId: 'private-provider-id',
+      },
+      access: access({ allowed, reason: allowed ? 'account' : 'access_denied' }),
+      permissions: new Set(['private-permission']),
+      data: { webhook: 'private-app-data' },
+      cookie: cookie('private-rotated-token'),
+    } as any);
+    const ev = event('/api/session', { auth, token: 'private-old-token', store: storeService() });
+    const response = await run(ev, async () => session(ev as any));
+    expect(response.status).toBe(200);
+    expect(response.headers.get('Cache-Control')).toBe('no-store');
+    const body = await response.json();
+    expect(body.user).toEqual({
+      id: 'owner-A',
+      displayName: 'Alice',
+      email: 'alice@example.invalid',
+      avatar: 'https://images.example.invalid/alice.webp',
+    });
+    expect(body.allowed).toBe(allowed);
+    const text = JSON.stringify(body);
+    for (const secret of [
+      'private-provider-id',
+      'private-permission',
+      'private-app-data',
+      'private-rotated-token',
+      'private-old-token',
+    ])
+      expect(text).not.toContain(secret);
+  },
+);
