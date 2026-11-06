@@ -9,6 +9,7 @@ export const handle: Handle = async ({ event, resolve }) => {
   event.locals.permissions = new Set();
   const path = event.url.pathname;
   const authRoute = /^\/auth\/(login|signup|logout)\/?$/.test(path);
+  const transferRoute = /^\/migrate\/?$/.test(path);
   const api = path.startsWith('/api/');
   function early(response: Response) {
     for (const cookie of event.locals.ankhCookies?.values() ?? [])
@@ -17,7 +18,8 @@ export const handle: Handle = async ({ event, resolve }) => {
   }
   try {
     if (event.request.method === 'GET' && !api && !authRoute) await redeemAnkhCompletion(event);
-    if (!authRoute) {
+    // Local recovery must not wait for account verification, even with an existing cookie.
+    if (!authRoute && !transferRoute) {
       await getAnkhResponse(event);
       if (api && path !== '/api/session') requireAccount(event);
     }

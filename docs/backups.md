@@ -4,6 +4,8 @@ The character list provides a secondary **Backups and restore** button beside **
 
 ## Portable data
 
+An account-free [old-site transfer pop-up](sheet-transfer.md) now uses the same validated importer and collision policies. Its source page can also download selected character groups for ordinary file restore when the windows cannot connect.
+
 Character files use the v1 sheet/bundle contract in [sheet-format.md](sheet-format.md). Existing unversioned JSON character files are accepted too. The runtime converter has tested expected outputs for both historical fixtures, preserving zero/false values, custom statuses, legacy damage/magic rules, ordering and nested magic. Existing records are not changed by export.
 
 Game files use `brighter-worlds.browser-backup`, version 1, validated by `src/lib/data/sheet-format/browser-backup-v1.schema.json`. They contain a character bundle (or null), game data categories and their image attachments. The nine categories are:

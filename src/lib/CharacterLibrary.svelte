@@ -15,6 +15,7 @@
   import { loadList, getList, getSheetCache, deleteSheet } from '$lib/data/sheet-manager';
   import SheetBackups from '$lib/SheetBackups.svelte';
   import SheetRecovery from '$lib/SheetRecovery.svelte';
+  import SheetTransfer from '$lib/SheetTransfer.svelte';
   import { writable } from 'svelte/store';
   import { getAccountSession, canSaveAccount, canReadAccount } from '$lib/data/account-session';
   import { accountClient, accountHref } from '$lib/data/account-client';
@@ -172,6 +173,7 @@
     {/each}
   </div>
   <div class="flex flex-wrap items-center gap-2">
+    <SheetTransfer onrestore={refreshLocal} onfile={() => backups?.open()} />
     <Button
       variant="ghost"
       size="icon"

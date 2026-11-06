@@ -71,6 +71,8 @@ Rollback must not simply reinstall the old localStorage-writing app over newer r
 
 ## Direct popup transfer protocol
 
+Implemented in the current checkout; see [account-free sheet transfer](sheet-transfer.md) for the UI, protocol, durable receipts, fallback, and outstanding browser release checks. Hosting and the separate dev landing-page redirect remain unchanged.
+
 The root character list should offer a user-initiated **Find sheets from the old site** action whether the list is empty or already has local sheets. Do not assume an empty list is the only sign of missing dev-origin data. The dedicated dev route presents a compact selection view and an account-free copy action, with linked companions included or clearly identified.
 
 - Open the fixed dev route from the click handler with a fresh random session identifier, proposed in the fragment. Do not put character payloads, auth credentials or webhook settings in URLs. Both origins are configured constants, never a caller-supplied return origin.

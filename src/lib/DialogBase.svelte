@@ -1,5 +1,6 @@
 <script lang="ts">
   import { Dialog } from 'bits-ui';
+  import { onDestroy } from 'svelte';
 
   interface Props {
     maxWidth?: string;
@@ -49,6 +50,11 @@
       resolve = undefined;
     }
   }
+
+  onDestroy(() => {
+    resolve?.();
+    resolve = undefined;
+  });
 </script>
 
 <Dialog.Root open={expanded} onOpenChange={handleOpenChange}>

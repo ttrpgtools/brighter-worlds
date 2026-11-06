@@ -36,6 +36,7 @@
   import { registerForRollCall } from '$lib/data/broadcast-hub';
   import ChoiceDialog from '$lib/ChoiceDialog.svelte';
   import { track } from '$lib/util/track';
+  import { canUseSheet } from './access';
 
   let loadStatus = writable('Loading...');
 
@@ -75,6 +76,9 @@
       )
     : undefined;
   const access = online?.status ?? readable({ accessible: true });
+  function hasAccess(epoch?: number) {
+    return $access.accessible && canUseSheet(session, owner, epoch);
+  }
   const character =
     online?.sheet ??
     loadSheet(
@@ -112,6 +116,7 @@
   });
 
   function sendRollExternal(value: number, label: string, sides: DieValue[]) {
+    if (!hasAccess()) return;
     if ($character.settings?.rollToBridge !== false) {
       broadcastRoll($character.name, value, label, sides, $character.name);
       //broadcast.set({id: $character.id, name: $character.name, type: 'roll', dice: sides, result: best, label});
@@ -134,6 +139,7 @@
     rollValue?: number,
     titleClass = '',
   ) {
+    if (!hasAccess()) return;
     if (rollValue == null && sides.length === 0) return;
     const best = rollValue ?? bestRoll(sides);
     label = label || `d${sides}`;
@@ -144,6 +150,7 @@
   }
 
   function save(data: { dice: DieValue[] }, stat: string) {
+    if (!hasAccess()) return;
     const dice = data.dice;
     const label = dice.length
       ? `${stat} Save`
@@ -158,6 +165,7 @@
   }
 
   function shareItem(item: Item) {
+    if (!hasAccess()) return;
     if ($character.settings?.rollToBridge !== false) broadcastItem(item, $character.name);
     if ($character.settings?.rollToDiscord) {
       sendItemToDiscord(item, $character.settings.discordWebhook);
@@ -165,6 +173,7 @@
   }
 
   function shareMagic(mag: MagicType) {
+    if (!hasAccess()) return;
     if ($character.settings?.rollToBridge !== false) broadcastMagic(mag, $character.name);
     if ($character.settings?.rollToDiscord) {
       sendMagicToDiscord(mag, $character.settings.discordWebhook, $character.name);
@@ -172,6 +181,8 @@
   }
 
   async function cast(ev: { dice: DieValue[]; name: string }) {
+    if (!hasAccess()) return;
+    const epoch = session.current().epoch;
     if (!isFunctional($character.statuses) || $character.wil.current === 0) {
       await dice?.show(
         'Non Functional',
@@ -193,6 +204,7 @@
       const wilSave = bestRoll([$character.wil.current]);
       if (wilSave >= SAVE_GOAL) {
         await showRoll([$character.wil.current], 'WIL Save Success!', wilSave, 'text-emerald-500');
+        if (!hasAccess(epoch)) return;
         if (rolledDice.length) {
           await showRoll(rolledDice, name);
         } else {
@@ -205,6 +217,7 @@
         $character.wil.current = loss.die;
         $character.statuses = loss.statuses;
         const opt = await castDialog?.open();
+        if (!hasAccess(epoch)) return;
         if (opt === FAILED_CAST_UNC) {
           $character.statuses = new Set([...$character.statuses, status.UNCONSCIOUS]);
           if (rolledDice.length) {
@@ -213,6 +226,7 @@
             await dice?.show(`Cast`, [], name);
           }
         }
+        if (!hasAccess(epoch)) return;
         if (loss.die === 0) {
           await dice?.show('Incapacitated', [], 'Your WIL is now zero.');
         }
@@ -221,10 +235,13 @@
   }
 
   function openSettings() {
+    if (!hasAccess()) return;
     settingsDialog?.open();
   }
 
   async function takeDamage(type: Attr, mod?: DieMod) {
+    if (!hasAccess()) return;
+    const epoch = session.current().epoch;
     const chinfo: DamageDetails = {
       type,
       mod,
@@ -240,7 +257,7 @@
 
     const results = await damageDialog?.getDamage(chinfo);
 
-    if (results == null) return;
+    if (results == null || !hasAccess(epoch)) return;
 
     if (results.statuses != null) {
       $character.statuses = results.statuses;
@@ -271,6 +288,7 @@
   }
 
   function maximumChanged(attr: Attr, previous: DieValue, next: DieValue) {
+    if (!hasAccess()) return;
     $character.grit = gritAfterMaximumChange($character.grit, attr, previous, next);
   }
 
@@ -285,17 +303,21 @@
     Worlds Online</title
   >
 </svelte:head>
-<DiceDialog bind:this={dice} />
-<DamageDialog bind:this={damageDialog} />
-<ChoiceDialog
-  bind:this={castDialog}
-  choices={failedCast}
-  msg="WIL Save Failed. You lose some WIL and have to choose..."
-  titleClass="text-rose-500"
-  title={failedRoll.toString()}
-/>
-<SheetSettings bind:this={settingsDialog} bind:settings={$character.settings} />
-<Roller onroll={(die) => showRoll([die])} />
+{#if $access.accessible}
+  {#key owner ? $session.epoch : undefined}
+    <DiceDialog bind:this={dice} />
+    <DamageDialog bind:this={damageDialog} />
+    <ChoiceDialog
+      bind:this={castDialog}
+      choices={failedCast}
+      msg="WIL Save Failed. You lose some WIL and have to choose..."
+      titleClass="text-rose-500"
+      title={failedRoll.toString()}
+    />
+    <SheetSettings bind:this={settingsDialog} bind:settings={$character.settings} />
+    <Roller onroll={(die) => showRoll([die])} />
+  {/key}
+{/if}
 <SheetRecovery {cache} />
 <div class="absolute right-24 top-2 z-30">
   {#if online && owner}
@@ -399,6 +421,7 @@
         onshare={shareMagic}
       />
       <Calling
+        onroll={damage}
         companionHref={owner ? (id) => accountHref(owner, id) : undefined}
         calling={$character.calling}
         bind:abilities={$character.abilities}
