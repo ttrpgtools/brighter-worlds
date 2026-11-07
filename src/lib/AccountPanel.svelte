@@ -1,6 +1,7 @@
 <script lang="ts">
   import { resolve } from '$app/paths';
   import Button from '$lib/ui/button.svelte';
+  import AccountAvatar from '$lib/AccountAvatar.svelte';
   import type { accountSummary } from '$lib/server/ankh';
   let { account }: { account: ReturnType<typeof accountSummary> } = $props();
   const messages: Record<string, string> = {
@@ -25,11 +26,7 @@
     <div
       class="flex items-center gap-3 rounded-xl border border-purple-300 dark:border-purple-700 p-4"
     >
-      {#if account.user.avatar}<img
-          src={account.user.avatar}
-          alt=""
-          class="size-12 rounded-full"
-        />{/if}
+      <AccountAvatar user={account.user} size="lg" />
       <div>
         <p class="font-bold">{account.user.displayName}</p>
         {#if account.user.email}<p>{account.user.email}</p>{/if}

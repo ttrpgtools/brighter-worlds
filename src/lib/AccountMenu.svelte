@@ -3,12 +3,12 @@
   import { afterNavigate } from '$app/navigation';
   import { resolve } from '$app/paths';
   import Icon from '$lib/ui/icon.svelte';
+  import AccountAvatar from '$lib/AccountAvatar.svelte';
   import { getAccountSession } from '$lib/data/account-session';
 
   const session = getAccountSession();
   let account = $derived($session.account);
   let unavailable = $derived(!$session.account && !!$session.epoch);
-  let failedAvatar: string | undefined = $state();
   let logoutForm: HTMLFormElement | undefined;
   const itemClass =
     'flex w-full items-center gap-2 rounded-md px-3 py-2 text-gray-900 dark:text-white data-highlighted:bg-purple-500 data-highlighted:text-white';
@@ -44,19 +44,8 @@
         title={account?.user ? `Signed in as ${account.user.displayName}` : 'TTRPG Tools account'}
         class="inline-flex size-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-purple-300 shadow-lg hover:bg-purple-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 dark:bg-purple-700 dark:shadow-purple-400/20 dark:hover:bg-purple-800"
       >
-        {#if account?.user?.avatar && account.user.avatar !== failedAvatar}
-          <img
-            src={account.user.avatar}
-            alt=""
-            class="size-full object-cover"
-            onerror={() => {
-              failedAvatar = account?.user?.avatar;
-            }}
-          />
-        {:else if account?.user}
-          <span class="font-subtitle text-xl" aria-hidden="true"
-            >{Array.from(account.user.displayName.trim())[0]?.toUpperCase() || 'U'}</span
-          >
+        {#if account?.user}
+          <AccountAvatar user={account.user} />
         {:else}
           <Icon icon="user" class="size-4" />
         {/if}
