@@ -2,6 +2,7 @@ import type { Attrs, Calling, Character, HasChoices, Item, Spell, Ritual } from 
 import { fsm } from '$lib/util/fsm.svelte';
 import { createSheet } from '$lib/data/sheet-manager';
 import { goto } from '$app/navigation';
+import { browser } from '$app/environment';
 import { resolve } from '$app/paths';
 import { id } from '$lib/rolling/id';
 import { getContext, hasContext, onMount, setContext } from 'svelte';
@@ -331,9 +332,10 @@ export function createWizard(builder: WizardBuilder) {
         return STEP.CALLING;
       },
       _enter({ to }) {
-        void goto(
-          resolve(`${routes[to]}${builder.storage === 'account' ? '?storage=account' : ''}`),
-        );
+        if (browser)
+          void goto(
+            resolve(`${routes[to]}${builder.storage === 'account' ? '?storage=account' : ''}`),
+          );
       },
     },
   });
