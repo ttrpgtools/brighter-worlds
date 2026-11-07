@@ -1,10 +1,12 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  // Same compatible application, with cloud operations unavailable. Preserve
-  // the active dev Custom Domain here before any authorized recovery deployment.
+  // Same compatible application, with cloud operations unavailable. Default
+  // target is dev; root requires --env production. Preserve the active Custom
+  // Domain explicitly when performing an authorized recovery deployment.
   "name": "brighter-worlds-dev",
   "main": ".svelte-kit/cloudflare/_worker.js",
   "compatibility_date": "2026-06-13",
+  "compatibility_flags": ["nodejs_als"],
   "workers_dev": false,
   "preview_urls": false,
   "routes": [],
@@ -15,4 +17,15 @@
   },
   "services": [],
   "vars": { "PUBLIC_ANKH": "https://ankh.ttrpg.tools" },
+  "env": {
+    "production": {
+      "name": "brighter-worlds",
+      "compatibility_flags": ["nodejs_als"],
+      "workers_dev": false,
+      "preview_urls": false,
+      "routes": [],
+      "services": [],
+      "vars": { "PUBLIC_ANKH": "https://ankh.ttrpg.tools" },
+    },
+  },
 }

@@ -15,6 +15,7 @@ const targets = [
 for (const target of targets) {
   const config = readConfig({ config: 'wrangler.jsonc', env: target.env });
   assert.equal(config.name, target.name, 'Worker target name changed');
+  assert.ok(config.compatibility_flags.includes('nodejs_als'), 'SvelteKit needs AsyncLocalStorage');
   assert.equal(config.workers_dev, false, 'Unexpected public workers.dev origin');
   assert.equal(config.preview_urls, false, 'Unexpected public preview origin');
   assert.equal(config.assets.binding, 'ASSETS');
@@ -34,15 +35,21 @@ for (const target of targets) {
   }
 }
 
-const recovery = readConfig({ config: 'wrangler.recovery.jsonc' });
-assert.equal(recovery.name, 'brighter-worlds-dev');
-assert.deepEqual(recovery.services, [], 'Recovery must not write through live account services');
-assert.equal(recovery.assets.run_worker_first, true);
-assert.equal(recovery.workers_dev, false);
-assert.equal(recovery.preview_urls, false);
-for (const route of recovery.routes ?? []) {
-  assert.equal(route.pattern, 'dev.brighterworlds.app');
-  assert.equal(route.custom_domain, true);
+for (const target of targets) {
+  const recovery = readConfig({ config: 'wrangler.recovery.jsonc', env: target.env });
+  assert.equal(recovery.name, target.name, 'Recovery must preserve the intended Worker identity');
+  assert.ok(recovery.compatibility_flags.includes('nodejs_als'));
+  assert.deepEqual(recovery.services, [], 'Recovery must not write through live account services');
+  assert.equal(recovery.main, readConfig({ config: 'wrangler.jsonc', env: target.env }).main);
+  assert.equal(recovery.assets.binding, 'ASSETS');
+  assert.equal(recovery.assets.run_worker_first, true);
+  assert.equal(recovery.vars.PUBLIC_ANKH, 'https://ankh.ttrpg.tools');
+  assert.equal(recovery.workers_dev, false);
+  assert.equal(recovery.preview_urls, false);
+  for (const route of recovery.routes ?? []) {
+    assert.equal(route.pattern, target.domain, 'Recovery must not take over the other origin');
+    assert.equal(route.custom_domain, true);
+  }
 }
 
 const ignored = (await readFile('.svelte-kit/cloudflare/.assetsignore', 'utf8'))
@@ -78,6 +85,7 @@ console.log(
     {
       result: 'Local Worker configuration and build checks passed',
       targets: targets.map(({ name }) => name),
+      recoveryTargets: targets.map(({ name }) => name),
       entrypointBytes: worker.length,
       entrypointSha256: createHash('sha256').update(worker).digest('hex'),
       server: await fingerprint('.svelte-kit/output/server'),
