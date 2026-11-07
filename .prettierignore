@@ -11,3 +11,6 @@ node_modules
 pnpm-lock.yaml
 package-lock.json
 yarn.lock
+
+# Generated from the versioned JSON Schemas.
+src/lib/data/sheet-format/compiled-validators.js

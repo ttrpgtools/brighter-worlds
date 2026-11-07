@@ -1,0 +1,49 @@
+# Optional account authentication and sheet APIs
+
+The account APIs provide optional sign-in and online sheet storage. The account library, opt-in saves, durable drafts, save queues and conflict UI are described in [account-persistence.md](account-persistence.md). Signing in does not upload, overwrite or migrate a local sheet. Local editing, item links, migration recovery, backups, GM tools and Discord remain available without an account.
+
+## Authentication and access
+
+Ankh provides authentication and application access; Aegis provides account sheet storage through server-only service bindings. `bwo` is the application identity, and `pc` is the cloud sheet collection. The browser receives neither service credentials nor RPC bindings.
+
+- `/auth/login` and `/auth/signup` create a short-lived ticket and redirect to Ankh. Anonymous identity is created only when somebody explicitly starts sign-in/signup. Cookie-free local requests do not contact Ankh. A present cookie is verified afresh on dynamic requests; an outage leaves local pages available and account operations closed.
+- Return paths are constrained to the current origin. Tickets use a **full URL**, preserving root versus dev instead of letting a relative URL choose Ankh's first registered origin. Unknown Pages aliases cannot start sign-in. Supported consumer origins are `https://brighterworlds.app`, `https://dev.brighterworlds.app` and `http://bwo.localhost`.
+- `ankh_login` is redeemed on the server before verifying the old token. The rotated cookie is applied and a 303 removes the completion parameter. A lost RPC response leaves the cookie/code available for Ankh's idempotent retry. A missing/invalid code starts a fresh explicit login; it never authorizes storage.
+- Cookie instructions are applied on success, invalid verification and access denial. Cookies are HttpOnly, host-only (no Domain), and secure on HTTPS/production hosts. Early hook responses retain cookie headers. Auth/personal responses use `no-store` and `no-referrer`.
+- `valid` is identity, not authorization. Protected APIs also require a fresh `access.allowed === true`, matching `appId: bwo`, a live deadline, and a registered account. Missing/stale/foreign access contracts and service outages yield 503. Guests get 401; policy denials get 401/403 as appropriate. No stale allowed decision is cached or reused on failure.
+- Local/browser-owned sheets remain public application functionality. The application-access restriction applies to server-owned account operations. `/account`, `/access`, login, signup and logout remain reachable for a denied account. Account profile fields come from current verification; tokens, permissions and app session data are not returned to the browser.
+- Logout is a POST form with same-origin checks. Its ticket is created before deleting the host-local cookie. RPC failures preserve the cookie for retry. No anonymous cloud records are created, so an Ankh `upgradedFromUserId` does not require a consumer record migration.
+- Public reference pages can still prerender; build-time requests do not use cookies, query parameters or auth RPCs. Account/access pages explicitly disable prerendering.
+
+`PUBLIC_ANKH` defaults to `https://ankh.ttrpg.tools`; `PUBLIC_ANKH_LOCAL` defaults to `http://ankh.localhost` for the registered `.localhost` consumer. These are browser-facing server configuration values, not credentials. The TTRPG Tools account entry in the site menu opens the account/access screen. Profile management uses Ankh's `app=bwo` and a full origin-specific return URL.
+
+The account page provides a primary **Your characters** action and explicitly explains that sheets remain browser-local. An account control beside the hamburger shows the current avatar (or initials) after sign-in. Its dropdown offers characters, account/profile management and POST sign-out; signed-out users get sign-in/signup. The control reads the safe, uncached session API after navigation, window focus and menu opening, rather than putting personal profile data into prerendered pages. Superseded responses are ignored, and failures clear the displayed identity. This is sign-in context, not a claim that any sheet has been saved online. The character list now offers an account library; local sheets have an explicit Save online action.
+
+For local development, the adapter's `platformProxy` loads `wrangler.jsonc` with `remoteBindings: false`. The local Ankh and Aegis workers must already be running for account operations. The `AUTH` and `STORE` service bindings supply trusted `bwo` properties; configuring the browser-facing Ankh URL alone does not establish those RPC bindings. Local sheets and recovery remain usable without the services.
+
+## HTTP contract
+
+All storage endpoints require a current verified registered account and application access. Server code derives `{ userId }` from that identity; browser-supplied ownership, app IDs and metadata are rejected in write bodies. The optional X-Brighter-Worlds-Owner header is a precondition only: a mismatch with verified identity returns 409 account_changed before Aegis access. The trusted service binding supplies the application scope. There is no guest cloud access, arbitrary collection selector, automatic overwrite or bulk-import binding.
+
+| Endpoint                      | Input                                                                                    | Result                                                                                                        |
+| ----------------------------- | ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `GET /api/session`            | Host-local cookie, optional                                                              | Safe account/profile/access state; no token or app data. Still available during denial/outage.                |
+| `GET /api/characters`         | `limit` 1–100 (default 50); optional `cursor` as URL-encoded JSON `{ updatedAt, docId }` | `{ characters: [metadata/version/timestamps], nextCursor }`; one bounded page, not an unbounded library scan. |
+| `GET /api/characters/{id}`    | Valid sheet ID                                                                           | `{ sheet: { docId, data, meta, version, createdAt, updatedAt } }`.                                            |
+| `POST /api/characters`        | JSON `{ sheet: SheetDocumentV1 }`                                                        | Create only; 201 with committed storage version/timestamps.                                                   |
+| `PUT /api/characters/{id}`    | JSON `{ sheet: SheetDocumentV1, version: positiveInteger }`                              | Versioned update; ID must match the URL.                                                                      |
+| `DELETE /api/characters/{id}` | JSON `{ version: positiveInteger }`                                                      | Versioned delete. A missing record is an explicit 404.                                                        |
+
+Document `version: 1` is the portable **format version**. The HTTP envelope's `version` is Aegis's **storage revision**. They are independent.
+
+Writes validate the full strict portable schema, depth, UTF-8 size, entity IDs, companion relations and image URLs before RPC. Raw streamed bodies are bounded to 512 KiB plus 1 KiB envelope allowance; sheet data itself is bounded to 512 KiB. Server-derived metadata contains only name, calling, creation time and format version. Companion records remain independent documents in the same account; graph closure, partial progress and explicit transfer receipts are implemented in the opt-in synchronization client.
+
+Ordinary HTTP(S) image references remain supported. **Local `bundle-asset` references return 422 `unresolved_images`**, preventing a false successful save with missing bytes. The save UI blocks embedded images and retains local/file storage; this implementation does not silently remove images. Aegis's existing image service makes artwork public and square-crops/converts it, so applying it to arbitrary Brighter Worlds sheet/item art needs a deliberate UI choice. There is no image publishing operation here.
+
+Mutations require `application/json` and reject foreign Origin/Sec-Fetch-Site requests. Stable errors include `invalid_request`/`invalid_sheet` (400), `sign_in_required` (401), `application_access_denied` (401/403), `not_found` (404), `exists` or `conflict` (409, conflict includes currentVersion), `payload_too_large` (413), `json_required` (415), `unresolved_images` (422), `storage_quota` (507), and auth/access/storage unavailability (503, retryable). RPC details are not returned. Conflicts are never retried using a freshly fetched version; successful empty libraries are not synthesized on outages. The sync client reconciles lost write responses against the exact pending document rather than blindly overwriting.
+
+## Validation
+
+Automated tests exercise healthy unauthenticated local routes, auth outages, missing/expired/foreign access decisions, account denial with refreshed cookies, guest rejection, fresh per-request checks, root/dev/local login targets, unsafe returns, the one permitted empty-ticket retry, completion rotation/retry, denied-account logout, public prerendering, streamed-body/schema rejection, client ownership rejection, account isolation, pagination and versioned storage outcomes.
+
+Run `pnpm test:unit --run` for automated coverage and `pnpm check` for Svelte/TypeScript validation. These checks do not establish deployed service availability or live account behavior.

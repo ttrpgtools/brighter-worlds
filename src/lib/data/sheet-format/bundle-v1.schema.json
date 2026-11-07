@@ -1,0 +1,134 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://brighterworlds.app/schemas/bundle-v1.schema.json",
+  "title": "Brighter Worlds bundle v1",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "format": {
+      "const": "brighter-worlds.bundle"
+    },
+    "version": {
+      "const": 1
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_-]{1,128}$"
+    },
+    "exportedAt": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "origin": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "maxLength": 4096,
+              "pattern": "^https?://[^/?#@\\s]+$",
+              "format": "uri"
+            }
+          ]
+        },
+        "storage": {
+          "enum": ["browser-local", "account", "world", "file"]
+        }
+      },
+      "required": ["origin", "storage"]
+    },
+    "roots": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Za-z0-9_-]{1,128}$"
+      },
+      "maxItems": 1000,
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "sheets": {
+      "type": "array",
+      "items": {
+        "$ref": "https://brighterworlds.app/schemas/sheet-v1.schema.json"
+      },
+      "maxItems": 1000,
+      "minItems": 1
+    },
+    "assets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]{1,128}$"
+          },
+          "mediaType": {
+            "enum": ["image/png", "image/jpeg", "image/webp", "image/gif"]
+          },
+          "encoding": {
+            "const": "base64"
+          },
+          "data": {
+            "type": "string",
+            "maxLength": 2796204,
+            "pattern": "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$"
+          },
+          "byteLength": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 2097152
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        },
+        "required": ["id", "mediaType", "encoding", "data", "byteLength", "sha256"]
+      },
+      "maxItems": 1000
+    },
+    "unresolvedRelations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "sheetId": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]{1,128}$"
+          },
+          "abilityId": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]{1,128}$"
+          },
+          "targetSheetId": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]{1,128}$"
+          }
+        },
+        "required": ["sheetId", "abilityId", "targetSheetId"]
+      },
+      "maxItems": 1000
+    }
+  },
+  "required": [
+    "format",
+    "version",
+    "id",
+    "exportedAt",
+    "source",
+    "roots",
+    "sheets",
+    "assets",
+    "unresolvedRelations"
+  ]
+}

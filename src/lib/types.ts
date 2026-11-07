@@ -1,6 +1,28 @@
-import type { status } from "./const";
+import type { status } from './const';
+
+export const EMPTY: unique symbol = Symbol();
+
+function hasEmptySymbol(obj: unknown): obj is { [EMPTY]: boolean } {
+  return Object.getOwnPropertySymbols(obj).some((s) => s === EMPTY);
+}
+
+export function isEmpty(obj: unknown) {
+  return hasEmptySymbol(obj) ? obj[EMPTY] : false;
+}
+
+export function setEmpty(obj: unknown, value: boolean) {
+  if (hasEmptySymbol(obj)) {
+    obj[EMPTY] = value;
+    return true;
+  }
+  return false;
+}
 
 export type DieValue = 4 | 6 | 8 | 10 | 12;
+
+export type DieMod = 'impair' | 'enhance';
+
+export type DieRollSet = DieValue[] & { mod?: DieMod };
 
 export type Attr = 'str' | 'dex' | 'wil';
 
@@ -16,23 +38,16 @@ export interface Entity {
   id: string;
   name: string;
   desc?: string;
+  image?: string | Blob;
+  icon?: string;
 }
 
 export interface UsableEntity extends Entity {
-  damage?: DieValue;
-  extra?: DieValue;
+  damage?: DieValue | DieValue[];
   blast?: boolean;
 }
 
 export type MagicType = 'spell' | 'ritual';
-
-export interface Item extends UsableEntity {
-  bulky: boolean;
-  armor?: number;
-  fragile?: boolean;
-  quantity?: number;
-  enableMagic?: boolean | { type: MagicType | 'all', count?: number }
-}
 
 export interface Ritual extends UsableEntity {
   type: 'ritual';
@@ -42,11 +57,32 @@ export interface Spell extends UsableEntity {
   type: 'spell';
 }
 
+export type MagicCapacity = {
+  charges?: Attribute;
+  spell?: Spell | Spell[];
+  ritual?: Ritual | Ritual[];
+};
+
+export type MagicSource<T extends MagicType> = {};
+
+export interface Item extends UsableEntity {
+  unequiped?: boolean;
+  bulky?: boolean;
+  depleted?: boolean;
+  armor?: number;
+  fragile?: boolean;
+  quantity?: number;
+  quantFormula?: string;
+  magic?: MagicCapacity;
+}
+
 export type Magic = Spell | Ritual;
 
 export type AbilityType = 'core' | 'advanced' | 'companion' | 'enhance';
 
 export interface Ability extends UsableEntity {
+  companionSheetId?: string;
+  unresolvedCompanionId?: string;
   details?: string;
   type: AbilityType;
 }
@@ -89,12 +125,14 @@ export interface EulogyStanza {
 }
 
 export interface SheetSettings {
+  [EMPTY]?: boolean | undefined;
   rollToBridge: boolean;
   rollToDiscord: boolean;
   discordWebhook: string;
 }
 
 export interface Character {
+  [EMPTY]?: boolean | undefined;
   id: string;
   name: string;
   pronouns: string;
@@ -107,32 +145,59 @@ export interface Character {
   calling: Entity;
   abilities: Ability[];
   eulogy: EulogyStanza[];
-  spells: Spell[];
-  rituals: Ritual[];
+  spells?: Spell[];
+  rituals?: Ritual[];
   notes?: string;
   settings?: SheetSettings;
+  created: number;
+  sortkey: number;
 }
 
-export interface Attrs { str: DieValue; dex: DieValue; wil: DieValue; };
+export interface Attrs {
+  str: DieValue;
+  dex: DieValue;
+  wil: DieValue;
+}
 
 export interface CharacterSummary extends Attrs {
   id: string;
   name: string;
   calling: string;
+  created: number;
+  sortkey: number;
 }
 
-export interface NpcStats {
-  id: string;
-  name: string;
-  grit: number;
-  str: DieValue;
-  dex: DieValue;
-  wil: DieValue;
+interface BaseNpc extends Entity {
   armor?: number;
-  attacks: UsableEntity[],
-  notes: string[],
-  wants?: string,
-  found?: string,
+  notes: string[];
+  wants?: string;
+  found?: string;
+}
+
+export interface NpcStats extends BaseNpc, Attrs {
+  grit: number;
+  attacks: UsableEntity[];
+}
+
+export interface NpcInstance extends BaseNpc {
+  [EMPTY]?: boolean | undefined;
+  grit: Attribute;
+  str: Attribute<DieValue, 0>;
+  dex: Attribute<DieValue, 0>;
+  wil: Attribute<DieValue, 0>;
+  status: string;
+  attacks: Item[];
+  armor: number;
+}
+
+export interface Scene extends Entity {
+  gmnotes?: string;
+}
+
+export interface Encounter extends Entity {
+  [EMPTY]?: boolean | undefined;
+  npcs: NpcStats[];
+  desc: string;
 }
 
 export interface Calling extends Entity, HasChoices {
@@ -150,27 +215,53 @@ export interface Calling extends Entity, HasChoices {
 
 export interface DamageForm {
   damage: string;
+  wound?: boolean;
   bypassGrit: boolean;
   bypassArmor: boolean;
   overflow: boolean;
+  type: Attr;
 }
 
-export type Status = typeof status[keyof typeof status]
+export type Status = (typeof status)[keyof typeof status];
 
 export interface DamageDetails {
   armor: number;
   grit: number;
-  type: Attr;
-  die: DieValue | 0;
+  mod?: DieMod;
+  type?: Attr;
+  dice: Record<Attr, DieValue | 0>;
   statuses: Set<string>;
 }
 
 export interface DamageResults {
   msg: string;
   dice: DieValue[];
+  type: Attr;
   grit?: number;
   die?: DieValue | 0;
   statuses?: Set<string>;
+  saves: { dice: DieValue[]; save: number; dd: number }[];
+}
+
+export interface MultiValueOption {
+  trigger: number | [number, number];
+}
+
+interface TextRolltableOption extends MultiValueOption {
+  type: 'text';
+  value: string;
+}
+
+interface EntityRolltableOption extends MultiValueOption {
+  type: 'entity';
+  value: Entity;
+}
+
+export type RolltableOption = TextRolltableOption | EntityRolltableOption;
+
+export interface CustomRolltableDef extends Entity {
+  formula: string;
+  options: RolltableOption[];
 }
 
 export type RemoteMessageType = 'roll' | 'intro';
@@ -178,6 +269,20 @@ export type RemoteMessageType = 'roll' | 'intro';
 export interface BaseRemoteMessage {
   id: string;
   name: string;
+}
+
+export interface RollResult {
+  dice: DieValue[];
+  result: number;
+  label?: string;
+}
+
+export interface LogRoll {
+  id: string;
+  name: string;
+  type: 'roll';
+  roll: RollResult;
+  time?: Date | number;
 }
 
 export interface RemoteRollMessage extends BaseRemoteMessage {
@@ -192,23 +297,38 @@ export interface RemoteTextMessage extends BaseRemoteMessage {
   message: string;
 }
 
-export type RemoteMessage = RemoteRollMessage | RemoteTextMessage;
+export interface RemoteEmbedMessage extends BaseRemoteMessage {
+  type: 'embed';
+  embed: DiscordEmbed;
+  time?: Date | number;
+}
 
+export interface RemoteCtaReplyMessage extends BaseRemoteMessage {
+  type: 'ctareply';
+  cta: string;
+  time?: Date | number;
+}
+
+export type RemoteMessage = RemoteRollMessage | RemoteTextMessage | RemoteEmbedMessage;
 
 export type HandlerFn = (msg: RemoteMessage) => void;
 
 export interface TableRoll<T> {
   roll: number;
-  value: T;
+  dice?: DieValue[];
+  total?: number;
+  title?: string;
+  value: T[];
 }
 
 export interface StartingGearOptions {
   name: string;
-  flair: string[];
+  flair: (string | Item)[];
   items: Item[];
 }
 
 export interface StartingGear {
+  starting: Item[];
   str: StartingGearOptions;
   dex: StartingGearOptions;
   wil: StartingGearOptions;
@@ -216,11 +336,49 @@ export interface StartingGear {
 
 export interface CallingEnhancements extends Entity {
   type: string;
-  options: {name: string; desc: string}[];
+  options: { name: string; desc: string }[];
 }
 
 export interface CallingEnhancement {
   name: string;
   desc: string;
   type: string;
+}
+
+export interface BaseCta extends Identifiable {
+  label: string;
+  meta?: string;
+}
+export interface RollCta extends BaseCta {
+  type: 'roll';
+  formula: string;
+}
+
+export type MatAddable =
+  | {
+      kind: 'npc';
+      payload: NpcInstance;
+    }
+  | { kind: 'scene'; payload: Scene }
+  | { kind: 'item'; payload: Item }
+  | { kind: 'encounter'; payload: Encounter };
+
+export interface AddToMatCta extends BaseCta {
+  type: 'addToMat';
+  what: MatAddable[];
+}
+
+export type Cta = RollCta | AddToMatCta;
+
+export interface DiscordEmbed {
+  title?: string;
+  author?: { name: string; icon_url?: string };
+  description?: string;
+  url?: string;
+  color?: number;
+  cta?: Cta[];
+  footer?: { text: string; icon_url?: string };
+  image?: { url: string };
+  fields: { name: string; value: string; inline?: boolean }[];
+  meta?: string;
 }

@@ -1,0 +1,147 @@
+{
+  "format": "brighter-worlds.bundle",
+  "version": 1,
+  "id": "export_01",
+  "exportedAt": 1793912400000,
+  "source": {
+    "origin": "https://dev.brighterworlds.app",
+    "storage": "browser-local"
+  },
+  "roots": ["hero_01"],
+  "sheets": [
+    {
+      "format": "brighter-worlds.sheet",
+      "version": 1,
+      "id": "hero_01",
+      "createdAt": null,
+      "character": {
+        "name": "Mara",
+        "pronouns": "she/her",
+        "grit": {
+          "current": 0,
+          "max": 3
+        },
+        "str": {
+          "current": 0,
+          "max": 6
+        },
+        "dex": {
+          "current": 8,
+          "max": 8
+        },
+        "wil": {
+          "current": 4,
+          "max": 4
+        },
+        "statuses": ["Wounded", "A custom omen"],
+        "calling": {
+          "id": "custom-calling",
+          "name": "Lantern Keeper",
+          "desc": "A custom calling."
+        },
+        "equipment": [
+          {
+            "id": "blade_01",
+            "name": "Moon blade",
+            "desc": "A named heirloom.",
+            "bulky": false,
+            "damage": 6,
+            "legacyRules": {
+              "extra": 4
+            }
+          },
+          {
+            "id": "book_01",
+            "name": "Book of rain",
+            "legacyRules": {
+              "enableMagic": {
+                "type": "spells",
+                "count": 2
+              }
+            }
+          }
+        ],
+        "abilities": [
+          {
+            "id": "companion_ability",
+            "name": "Pip",
+            "type": "companion",
+            "desc": "Pip's Sheet",
+            "details": "A loyal fox"
+          }
+        ],
+        "eulogy": [
+          {
+            "id": "verse_01",
+            "message": "Found the lost lantern.",
+            "xp": true,
+            "spent": false
+          }
+        ],
+        "spells": [],
+        "rituals": [],
+        "notes": "Custom notes survive."
+      },
+      "relations": [
+        {
+          "kind": "companion",
+          "abilityId": "companion_ability",
+          "sheetId": "pip_01"
+        }
+      ]
+    },
+    {
+      "format": "brighter-worlds.sheet",
+      "version": 1,
+      "id": "pip_01",
+      "createdAt": null,
+      "character": {
+        "name": "Pip",
+        "pronouns": "he/him",
+        "grit": {
+          "current": 2,
+          "max": 2
+        },
+        "str": {
+          "current": 0,
+          "max": 6
+        },
+        "dex": {
+          "current": 8,
+          "max": 8
+        },
+        "wil": {
+          "current": 4,
+          "max": 4
+        },
+        "statuses": [],
+        "calling": {
+          "id": "fox",
+          "name": "Fox",
+          "image": {
+            "kind": "bundle-asset",
+            "assetId": "pip_portrait"
+          }
+        },
+        "equipment": [],
+        "abilities": [],
+        "eulogy": [],
+        "spells": [],
+        "rituals": [],
+        "notes": ""
+      },
+      "relations": []
+    }
+  ],
+  "assets": [
+    {
+      "id": "pip_portrait",
+      "mediaType": "image/png",
+      "encoding": "base64",
+      "data": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGD4DwABBAEAX+XDSwAAAABJRU5ErkJggg==",
+      "byteLength": 70,
+      "sha256": "abc58d5127d7cdf313beb9ec8ee839860a9c6bfbc48c8b8eb6a3f7d8bb63de6f"
+    }
+  ],
+  "unresolvedRelations": []
+}

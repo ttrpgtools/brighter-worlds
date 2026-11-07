@@ -1,56 +1,98 @@
 <script lang="ts">
-  import { builder, STEP, wizard } from "../wizard";
-  import { goto } from "$app/navigation";
-  import { browser } from "$app/environment";
-  import Button from "$lib/Button.svelte";
-  import type { Ability, Character } from "$lib/types";
-  import type { PageData } from "./$types";
-  import { onlyEnhancement, onlyLinked } from "$lib/util/guards";
-  import GroupInputs from "$lib/GroupInputs.svelte";
-  import { id } from "$lib/rolling/id";
+  import { STEP, getWizard, guardWizardStep } from '../wizard.svelte';
+  import Button from '$lib/ui/button.svelte';
+  import type { PageData } from './$types';
+  import type { CallingEnhancement } from '$lib/types';
+  import GroupInputs from '$lib/GroupInputs.svelte';
+  import Toggle from '$lib/ui/toggle.svelte';
+  import { buildCompanion } from '$lib/data/character-creation';
 
-  export let data: PageData;
-
-  if ($wizard !== STEP.COMPANION && browser) {
-    goto(`/character/new`);
-  }
-
-  let linked = $builder.choices?.filter(onlyLinked);
-  let myEnhance = $builder.choices?.filter(onlyEnhancement).filter(x => x.linked) ?? [];
-  let temp = '';
-  let compCalling = linked && linked.length ? (temp = linked[0].id, data.companions.find(x => x.id === temp)) : undefined;
-  let compEnhance = compCalling?.choices?.filter(onlyEnhancement) ?? [];
-  let totalEnhance = compEnhance.length + myEnhance.length;
-  const companion: Partial<Character> = { name: '' }; 
-  if (compCalling) {
-    companion.grit = { current: compCalling.grit ?? 3, max: compCalling.grit ?? 3 };
-    companion.str = { current: compCalling.attrs?.str ?? 4, max: compCalling.attrs?.str ?? 4 };
-    companion.dex = { current: compCalling.attrs?.dex ?? 4, max: compCalling.attrs?.dex ?? 4 };
-    companion.wil = { current: compCalling.attrs?.wil ?? 4, max: compCalling.attrs?.wil ?? 4 };
-    companion.calling = {
-      id: compCalling.id,
-      name: compCalling.name,
-      desc: compCalling.tagline
-    };
-    companion.equipment = compCalling.equipment;
-    companion.abilities = [];
-  }
-  const options = data.enhancements?.options.map(x => ({id: id(), ...x, details: data.enhancements?.type, type: 'enhance'} as Ability));
+  const [wizard, builder] = getWizard();
+  let { data }: { data: PageData } = $props();
+  guardWizardStep(wizard, STEP.COMPANION);
+  let template = $derived(
+    data.companions.find((c) =>
+      builder.sheet.choices?.some((choice) => choice.choose === 'linked' && choice.id === c.id),
+    ),
+  );
+  let extraPerks = $derived(
+    builder.sheet.choices?.filter((c) => c.choose === 'enhancement' && c.linked).length ?? 0,
+  );
+  let count = $derived(
+    (template?.choices?.filter((c) => c.choose === 'enhancement').length ?? 0) + extraPerks,
+  );
+  let name = $state('');
+  let flies = $state(false);
+  let selected: CallingEnhancement[] = $state([]);
+  let preview = $derived.by(() => {
+    if (!template) return;
+    try {
+      return buildCompanion(
+        $state.snapshot(template),
+        name,
+        selected.map((s) => s.name),
+        flies,
+        extraPerks,
+      );
+    } catch {
+      return;
+    }
+  });
   function forward() {
-    wizard.setCompanion(companion);
+    if (template)
+      wizard.send(
+        'setCompanion',
+        template,
+        name,
+        selected.map((s) => s.name),
+        flies,
+      );
   }
 </script>
-<div class="flex flex-col gap-6 items-center">
-  <h3 class="max-w-prose text-2xl font-subtitle">Build-a-Companion</h3>
-  <p class="max-w-prose">Fluffy or fierce?</p>
-  
-  <input type="text" name="name" placeholder="Name" bind:value={companion.name} class="rounded-full dark:bg-gray-900 dark:text-white focus:ring-purple-500 focus:border-purple-500 max-w-sm">
-  
-  {#if options && totalEnhance}
-  <p class="max-w-prose">{data.enhancements?.desc} ({totalEnhance})</p>
-  <GroupInputs {options} max={totalEnhance} bind:selected={companion.abilities} let:opt>
-  {opt.desc}
-  </GroupInputs>
+
+<div class="flex flex-col gap-6 items-center w-full max-w-prose">
+  <h3 class="text-2xl font-subtitle">Create your {template?.name.toLowerCase() ?? 'companion'}</h3>
+  <label class="flex flex-col gap-2 w-full max-w-md"
+    >Name
+    <input
+      type="text"
+      bind:value={name}
+      class="rounded-md dark:bg-gray-900 border-gray-300 dark:border-gray-600 focus:ring-purple-500 focus:border-purple-500"
+    />
+  </label>
+  <div class="flex gap-2 items-center"><Toggle bind:value={flies} /> This creature can fly</div>
+  <p>
+    Choose {count} different Perks. A flying creature needs Flying. Attribute, Grit, attack and Armor
+    changes will be included on its sheet.
+  </p>
+  {#if data.enhancements}
+    <GroupInputs
+      options={data.enhancements.options.map((o) => ({ ...o, type: 'perk' }))}
+      max={count}
+      bind:selected
+    >
+      {#snippet children({ opt })}{opt.desc}{/snippet}
+    </GroupInputs>
   {/if}
-  <Button on:click={forward}>Next</Button>
+  {#if flies && !selected.some((p) => p.name === 'Flying')}<p
+      class="text-amber-700 dark:text-amber-300"
+    >
+      Choose the Flying Perk for this creature.
+    </p>{/if}
+  {#if preview}
+    <div class="rounded-lg border border-purple-400 p-4 w-full max-w-md space-y-2">
+      <p>
+        <strong>{name}</strong>: STR d{preview.str?.max}, DEX d{preview.dex?.max}, WIL d{preview.wil
+          ?.max}, {preview.grit?.max} Grit.
+      </p>
+      {#each preview.equipment ?? [] as item (item.id)}<p>
+          {item.name}{#if item.damage}: d{item.damage}{/if}{#if item.armor}: {item.armor} Armor{/if}
+        </p>{/each}
+      <p class="text-sm">
+        Unusual senses, skills, and attack effects are recorded as Perks for you to describe with
+        the GM.
+      </p>
+    </div>
+  {/if}
+  <Button disabled={!preview} onclick={forward}>Next</Button>
 </div>

@@ -4,8 +4,6 @@ import { JsonDataManager } from './base-manager';
 
 const tableList = tables as CallingEnhancements[];
 
-class CallingEnhancementManager extends JsonDataManager<CallingEnhancements> {
-
-}
+class CallingEnhancementManager extends JsonDataManager<CallingEnhancements> {}
 
 export const enhancementManager = new CallingEnhancementManager(tableList);

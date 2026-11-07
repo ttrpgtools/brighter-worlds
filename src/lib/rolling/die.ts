@@ -1,5 +1,5 @@
-import { UINT32_SIZE } from "./constants";
-import type { Distribution, Engine } from "./types";
+import { UINT32_SIZE } from './constants';
+import type { Distribution, Engine } from './types';
 
 /**
  * Returns a Distribution to return a value within [min, max]
@@ -26,7 +26,7 @@ export function add(distribution: Distribution, addend: number): Distribution {
   if (addend === 0) {
     return distribution;
   } else {
-    return engine => distribution(engine) + addend;
+    return (engine) => distribution(engine) + addend;
   }
 }
 
@@ -49,7 +49,7 @@ function bitmask(masking: number): Distribution {
 function downscaleToLoopCheckedRange(range: number): Distribution {
   const extendedRange = range + 1;
   const maximum = extendedRange * Math.floor(UINT32_SIZE / extendedRange);
-  return engine => {
+  return (engine) => {
     let value = 0;
     do {
       value = engine.next() >>> 0;

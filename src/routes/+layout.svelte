@@ -1,11 +1,29 @@
-<script>
-	import '../app.postcss';
-	import ModeSwitcher from '$lib/ModeSwitcher.svelte';
+<script lang="ts">
+  import '../app.css';
   import Footer from '$lib/Footer.svelte';
-	import { page } from '$app/stores';
+  import { page } from '$app/state';
+  import { getEncounterStates, getTabManager } from '$lib/data/ui-state';
+  import SiteMenu from '$lib/SiteMenu.svelte';
+  import { getSettings } from '$lib/data/settings';
+  import { provideAccountSession } from '$lib/data/account-session';
+  interface Props {
+    children?: import('svelte').Snippet;
+  }
+
+  let { children }: Props = $props();
+
+  getTabManager();
+  getEncounterStates();
+  getSettings();
+  provideAccountSession();
 </script>
-<slot />
-{#if $page.data?.layout?.showFooter ?? true}
-<Footer />
+
+{@render children?.()}
+{#if page.data?.layout?.showFooter ?? true}
+  <Footer />
 {/if}
-<ModeSwitcher />
+{#if page.data?.layout?.showMenu ?? true}
+  <div class="absolute top-2 right-2 z-30">
+    <SiteMenu />
+  </div>
+{/if}

@@ -1,9 +1,9 @@
-import type { Identifiable } from "$lib/types";
+import type { Identifiable } from '$lib/types';
 
 export class JsonDataManager<T extends Identifiable> {
   protected table: Map<string, T>;
   constructor(data: T[]) {
-    this.table = new Map<string, T>(data.map(x => ([x.id, x])));
+    this.table = new Map<string, T>(data.map((x) => [x.id, x]));
   }
 
   getAll(): T[] {

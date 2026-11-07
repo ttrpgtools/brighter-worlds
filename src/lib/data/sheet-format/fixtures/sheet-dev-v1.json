@@ -1,0 +1,104 @@
+{
+  "format": "brighter-worlds.sheet",
+  "version": 1,
+  "id": "hero_01",
+  "createdAt": 1683849600000,
+  "character": {
+    "name": "Mara after the journey",
+    "pronouns": "she/her",
+    "grit": {
+      "current": 5,
+      "max": 3
+    },
+    "str": {
+      "current": 0,
+      "max": 6
+    },
+    "dex": {
+      "current": 8,
+      "max": 8
+    },
+    "wil": {
+      "current": 4,
+      "max": 4
+    },
+    "statuses": ["Wounded", "A custom omen"],
+    "calling": {
+      "id": "custom-calling",
+      "name": "Lantern Keeper",
+      "desc": "A custom calling."
+    },
+    "equipment": [
+      {
+        "id": "blade_01",
+        "name": "Moon blade",
+        "desc": "A named heirloom.",
+        "bulky": false,
+        "damage": 6,
+        "legacyRules": {
+          "extra": 4
+        }
+      },
+      {
+        "id": "book_01",
+        "name": "Book of rain",
+        "legacyRules": {
+          "enableMagic": {
+            "type": "spells",
+            "count": 2
+          }
+        }
+      },
+      {
+        "id": "wand_01",
+        "name": "Ember branch",
+        "unequiped": true,
+        "quantity": 2,
+        "quantFormula": "d4+1",
+        "magic": {
+          "charges": {
+            "current": 0,
+            "max": 3
+          },
+          "spell": {
+            "id": "spark_01",
+            "name": "Blue spark",
+            "type": "spell",
+            "damage": [4, 6],
+            "image": {
+              "kind": "url",
+              "url": "https://example.invalid/spark.webp"
+            }
+          }
+        }
+      }
+    ],
+    "abilities": [
+      {
+        "id": "companion_ability",
+        "name": "Pip",
+        "type": "companion",
+        "desc": "Pip's Sheet",
+        "details": "A loyal fox"
+      }
+    ],
+    "eulogy": [
+      {
+        "id": "verse_01",
+        "message": "Found the lost lantern.",
+        "xp": true,
+        "spent": false
+      }
+    ],
+    "spells": [],
+    "rituals": [],
+    "notes": "Custom notes survive."
+  },
+  "relations": [
+    {
+      "kind": "companion",
+      "abilityId": "companion_ability",
+      "sheetId": "pip_01"
+    }
+  ]
+}

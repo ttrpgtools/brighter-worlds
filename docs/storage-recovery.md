@@ -1,0 +1,15 @@
+# Browser sheet migration and recovery
+
+Automatic migration now retains the original `bw-sheet-*` localStorage records. Each record is processed independently. A single IndexedDB readwrite transaction stores an exact local-only raw archive, compares the destination, writes and reads back a missing destination, and records the migration outcome. Nothing reports success until that transaction completes. The index is archived separately. Healthy orphan records migrate even if the old list is damaged; list-only, malformed and mismatched-ID records produce recovery messages.
+
+A committed digest journal prevents reimporting the same retained source over newer edits or after a destination disappears. Changed legacy sources and divergent existing IndexedDB records are kept as conflicts, never overwritten. Deletion writes a tombstone and removes the live record in one transaction; stale sheet tabs cannot write through that tombstone. Automatic migration does not read recovery archives as live source data or delete the sole recoverable copy.
+
+The runtime record under `bw-sheet-{id}` remains compatible with the current application, including Sets, custom data and local Discord settings. This is not an envelope-format cutover. Portable conversion and private-setting exclusions belong to the backup layer. Archives/journals use separate `bw-recovery:v1:*` / `bw-migration:v1:*` keys and do not appear in the character list.
+
+Direct sheet loading waits for migration. Opening an unknown/missing sheet does not create a persisted blank placeholder. Unavailable IndexedDB is not treated as durable memory storage: legacy sheets can remain readable, edits stay in memory with a visible warning, and save promises reject. A successful reload after storage access is restored is required for a store whose initial load failed. Keep the page open and export unsaved edits before reloading.
+
+The character list and individual sheet pages show storage/recovery problems and offer a retry check plus an explicit private recovery archive of original localStorage text, tagged IndexedDB records and open-sheet snapshots. That manual recovery archive is separate from portable backups and may contain original Discord settings; its download requires acknowledgment in the UI. It must not be uploaded or sent to another user as a routine sheet export.
+
+All database serialization uses the same default `idb-keyval` database/object store, so competing migration tabs serialize through IndexedDB rather than relying on a single tab's in-memory lock. No asynchronous crypto/network work occurs inside a transaction. Legacy applications that are already open can still edit their own localStorage copies; a subsequent check treats changed source records as conflicts.
+
+Tests use fake-indexeddb to exercise actual transaction boundaries, quota abort/rollback, retries, concurrent migrators, tombstones, corrupt/list-only/orphan records and direct-link initialization. Production browser privacy, quota and persistence behavior still require the planned browser/release checks. No development server or live user browser data was used for these tests.

@@ -1,0 +1,441 @@
+<script lang="ts">
+  import DiceDialog from '$lib/DiceDialog.svelte';
+  import SheetRecovery from '$lib/SheetRecovery.svelte';
+  import { isEmpty } from '$lib/types';
+  import { bestRoll } from '$lib/rolling/roll';
+  import Name from '$lib/sheet/Name.svelte';
+  import type { Attr, DamageDetails, DieMod, DieValue, Item, Magic as MagicType } from '$lib/types';
+  import Attribute from '$lib/sheet/Attribute.svelte';
+  import Equipment from '$lib/sheet/Equipment.svelte';
+  import Grit from '$lib/sheet/Grit.svelte';
+  import EulogyNotes from '$lib/sheet/EulogyNotes.svelte';
+  import MenuLink from '$lib/MenuLink.svelte';
+  import { getList, getSheetCache, loadSheet, tryMigrate } from '$lib/data/sheet-manager';
+  import { onMount, untrack } from 'svelte';
+  import { SAVE_GOAL, status } from '$lib/const';
+  import Magic from '$lib/sheet/Magic.svelte';
+  import { armor, burdened, isFunctional, loseAttributeStep } from '$lib/util/character';
+  import { gritAfterMaximumChange } from '$lib/util/grit';
+  import DamageDialog from '$lib/sheet/DamageDialog.svelte';
+  import Calling from '$lib/sheet/Calling.svelte';
+  import Statuses from '$lib/sheet/Statuses.svelte';
+  import Roller from '$lib/sheet/Roller.svelte';
+  import { broadcast, broadcastItem, broadcastMagic, broadcastRoll } from '$lib/data/channel-child';
+  import type { Calling as CallingData, CallingEnhancements } from '$lib/types';
+  import LocalSheetStorage from '$lib/LocalSheetStorage.svelte';
+  import SheetSyncStatus from '$lib/SheetSyncStatus.svelte';
+  import { createAccountSheet } from '$lib/data/account-persistence';
+  import { getAccountSession } from '$lib/data/account-session';
+  import { accountHref } from '$lib/data/account-client';
+  import Button from '$lib/ui/button.svelte';
+  import SheetSettings from '$lib/sheet/SheetSettings.svelte';
+  import { sendToDiscord, sendItemToDiscord, sendMagicToDiscord } from '$lib/util/discord';
+  import Icon from '$lib/ui/icon.svelte';
+  import Loader from '$lib/Loader.svelte';
+  import { writable, readable } from 'svelte/store';
+  import { registerForRollCall } from '$lib/data/broadcast-hub';
+  import ChoiceDialog from '$lib/ChoiceDialog.svelte';
+  import { track } from '$lib/util/track';
+  import { canUseSheet } from './access';
+
+  let loadStatus = writable('Loading...');
+
+  interface Props {
+    data: {
+      id: string;
+      owner?: string | null;
+      callings: CallingData[];
+      enhancements: CallingEnhancements[];
+    };
+  }
+
+  let { data }: Props = $props();
+
+  const FAILED_CAST_UNC = 1;
+  const FAILED_CAST_FAIL = 2;
+  const failedCast = [
+    { value: FAILED_CAST_FAIL, label: `Spell Fails` },
+    { value: FAILED_CAST_UNC, label: `Fall Unconscious` },
+  ];
+  let failedRoll = $state(0);
+
+  let dice: DiceDialog | undefined = $state();
+  let damageDialog: DamageDialog | undefined = $state();
+  let settingsDialog: SheetSettings | undefined = $state();
+  let castDialog: ChoiceDialog<number> | undefined = $state();
+
+  const list = getList();
+  const cache = getSheetCache();
+  const session = getAccountSession();
+  const owner = untrack(() => data.owner);
+  const online = owner
+    ? createAccountSheet(
+        owner,
+        untrack(() => data.id),
+        session,
+      )
+    : undefined;
+  const access = online?.status ?? readable({ accessible: true });
+  function hasAccess(epoch?: number) {
+    return $access.accessible && canUseSheet(session, owner, epoch);
+  }
+  const character =
+    online?.sheet ??
+    loadSheet(
+      untrack(() => data.id),
+      list,
+      cache,
+    );
+  (online ? online.loaded : tryMigrate(loadStatus, cache).then(() => character.loaded)).finally(
+    () => loadStatus.set(''),
+  );
+
+  onMount(() => {
+    const unsubs: (() => void)[] = [];
+    unsubs.push(broadcast.subscribe((msg) => console.log(`[Sheet] Broadcast received`, msg)));
+    unsubs.push(
+      registerForRollCall((here) =>
+        $access.accessible && $character.name
+          ? here(
+              owner ? `account:${encodeURIComponent(owner)}:${$character.id}` : $character.id,
+              $character.name,
+            )
+          : setTimeout(() => {
+              if ($access.accessible && $character.name)
+                here(
+                  owner ? `account:${encodeURIComponent(owner)}:${$character.id}` : $character.id,
+                  $character.name,
+                );
+            }, 200),
+      ),
+    );
+    track('character opened');
+    return () => {
+      unsubs.forEach((x) => x());
+    };
+  });
+
+  function sendRollExternal(value: number, label: string, sides: DieValue[]) {
+    if (!hasAccess()) return;
+    if ($character.settings?.rollToBridge !== false) {
+      broadcastRoll($character.name, value, label, sides, $character.name);
+      //broadcast.set({id: $character.id, name: $character.name, type: 'roll', dice: sides, result: best, label});
+    }
+    if ($character.settings?.rollToDiscord) {
+      sendToDiscord(
+        $character.name,
+        value,
+        label,
+        $character.settings.discordWebhook,
+        sides,
+        $character.name,
+      );
+    }
+  }
+
+  async function showRoll(
+    sides: DieValue[],
+    label: string = '',
+    rollValue?: number,
+    titleClass = '',
+  ) {
+    if (!hasAccess()) return;
+    if (rollValue == null && sides.length === 0) return;
+    const best = rollValue ?? bestRoll(sides);
+    label = label || `d${sides}`;
+    sendRollExternal(best, label, sides);
+    await dice?.show(`${best}`, sides, label, titleClass);
+    console.log(`${label} =`, best);
+    return best;
+  }
+
+  function save(data: { dice: DieValue[] }, stat: string) {
+    if (!hasAccess()) return;
+    const dice = data.dice;
+    const label = dice.length
+      ? `${stat} Save`
+      : `${stat} Save (automatic failure: Attribute at zero)`;
+    const value = bestRoll(dice);
+    showRoll(dice, label, value, value >= SAVE_GOAL ? 'text-emerald-500' : 'text-rose-500');
+  }
+
+  function damage(ev: { dice: DieValue[]; name: string }) {
+    const { dice, name } = ev;
+    showRoll(dice, name);
+  }
+
+  function shareItem(item: Item) {
+    if (!hasAccess()) return;
+    if ($character.settings?.rollToBridge !== false) broadcastItem(item, $character.name);
+    if ($character.settings?.rollToDiscord) {
+      sendItemToDiscord(item, $character.settings.discordWebhook);
+    }
+  }
+
+  function shareMagic(mag: MagicType) {
+    if (!hasAccess()) return;
+    if ($character.settings?.rollToBridge !== false) broadcastMagic(mag, $character.name);
+    if ($character.settings?.rollToDiscord) {
+      sendMagicToDiscord(mag, $character.settings.discordWebhook, $character.name);
+    }
+  }
+
+  async function cast(ev: { dice: DieValue[]; name: string }) {
+    if (!hasAccess()) return;
+    const epoch = session.current().epoch;
+    if (!isFunctional($character.statuses) || $character.wil.current === 0) {
+      await dice?.show(
+        'Non Functional',
+        [],
+        `Your status indicates you may not be 'casting capable' at the moment`,
+      );
+      return;
+    }
+    const name = ev.name;
+    const rolledDice = ev.dice;
+    if ($character.grit.current > 0) {
+      $character.grit.current = 0;
+      if (rolledDice.length) {
+        await showRoll(rolledDice, name);
+      } else {
+        await dice?.show(`Cast`, [], name);
+      }
+    } else {
+      const wilSave = bestRoll([$character.wil.current]);
+      if (wilSave >= SAVE_GOAL) {
+        await showRoll([$character.wil.current], 'WIL Save Success!', wilSave, 'text-emerald-500');
+        if (!hasAccess(epoch)) return;
+        if (rolledDice.length) {
+          await showRoll(rolledDice, name);
+        } else {
+          await dice?.show(`Cast`, [], name);
+        }
+      } else {
+        failedRoll = wilSave;
+        sendRollExternal(wilSave, 'WIL Save Failed', [$character.wil.current]);
+        const loss = loseAttributeStep($character.wil.current, $character.statuses);
+        $character.wil.current = loss.die;
+        $character.statuses = loss.statuses;
+        const opt = await castDialog?.open();
+        if (!hasAccess(epoch)) return;
+        if (opt === FAILED_CAST_UNC) {
+          $character.statuses = new Set([...$character.statuses, status.UNCONSCIOUS]);
+          if (rolledDice.length) {
+            await showRoll(rolledDice, name);
+          } else {
+            await dice?.show(`Cast`, [], name);
+          }
+        }
+        if (!hasAccess(epoch)) return;
+        if (loss.die === 0) {
+          await dice?.show('Incapacitated', [], 'Your WIL is now zero.');
+        }
+      }
+    }
+  }
+
+  function openSettings() {
+    if (!hasAccess()) return;
+    settingsDialog?.open();
+  }
+
+  async function takeDamage(type: Attr, mod?: DieMod) {
+    if (!hasAccess()) return;
+    const epoch = session.current().epoch;
+    const chinfo: DamageDetails = {
+      type,
+      mod,
+      armor: armor($character.equipment),
+      statuses: $character.statuses,
+      grit: $character.grit.current,
+      dice: {
+        str: $character.str.current,
+        dex: $character.dex.current,
+        wil: $character.wil.current,
+      },
+    };
+
+    const results = await damageDialog?.getDamage(chinfo);
+
+    if (results == null || !hasAccess(epoch)) return;
+
+    if (results.statuses != null) {
+      $character.statuses = results.statuses;
+    }
+    if (results.grit != null) {
+      $character.grit.current = results.grit;
+    }
+    if (results.die != null) {
+      $character[type].current = results.die;
+    }
+    for (const save of results.saves) {
+      sendRollExternal(
+        save.save,
+        `${type.toUpperCase()} Direct Damage Save against ${save.dd}.`,
+        save.dice,
+      );
+    }
+    console.log(`Take Damage Result Dice`, results.dice);
+    dice?.show('Damage', results.dice, results.msg);
+  }
+
+  function isDeprived() {
+    return $character.statuses.has(status.DEPRIVED);
+  }
+
+  function isBurdened() {
+    return burdened($character.equipment, $character.abilities);
+  }
+
+  function maximumChanged(attr: Attr, previous: DieValue, next: DieValue) {
+    if (!hasAccess()) return;
+    $character.grit = gritAfterMaximumChange($character.grit, attr, previous, next);
+  }
+
+  function isSharing() {
+    return $character.settings?.rollToBridge !== false || $character.settings?.rollToDiscord;
+  }
+</script>
+
+<svelte:head>
+  <title
+    >{online && !$access.accessible ? 'Account Sheet' : $character.name || 'Character Sheet'} :: Brighter
+    Worlds Online</title
+  >
+</svelte:head>
+{#if $access.accessible}
+  {#key owner ? $session.epoch : undefined}
+    <DiceDialog bind:this={dice} />
+    <DamageDialog bind:this={damageDialog} />
+    <ChoiceDialog
+      bind:this={castDialog}
+      choices={failedCast}
+      msg="WIL Save Failed. You lose some WIL and have to choose..."
+      titleClass="text-rose-500"
+      title={failedRoll.toString()}
+    />
+    <SheetSettings bind:this={settingsDialog} bind:settings={$character.settings} />
+    <Roller onroll={(die) => showRoll([die])} />
+  {/key}
+{/if}
+<SheetRecovery {cache} />
+<div class="absolute right-24 top-2 z-30">
+  {#if online && owner}
+    <SheetSyncStatus controller={online} {owner} id={data.id} {cache} />
+  {:else if !isEmpty($character)}
+    <LocalSheetStorage id={data.id} {cache} />
+  {/if}
+</div>
+{#if $loadStatus}
+  <div class="fixed inset-0 flex items-center justify-center z-50 bg-purple-500/10">
+    <div
+      class="py-12 px-20 rounded-2xl bg-gray-600/40 flex items-center justify-center flex-col gap-8"
+    >
+      <Loader size="w-16 h-16" />
+      {$loadStatus}
+    </div>
+  </div>
+{/if}
+{#if online && !$access.accessible}
+  <p class="p-6 text-center">Sign in to this sheet’s account to open its cached draft.</p>
+{:else if !isEmpty($character)}
+  <div
+    class="relative flex flex-col justify-start overflow-hidden dark:bg-gray-800 pt-14 pb-10 px-4 gap-4"
+  >
+    <!-- <img src="/img/beams.jpg" alt="" class="absolute top-1/2 left-1/2 max-w-none -translate-x-1/2 -translate-y-1/2" width="1308" /> -->
+    <div
+      class="absolute inset-0 bg-[url(/img/grid.svg)] dark:invert bg-center mask-[linear-gradient(180deg,white,rgba(255,255,255,0))]"
+    ></div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div class="flex gap-2 items-center md:items-start">
+        <div><Button size="icon" icon="cog" onclick={openSettings} /></div>
+        <div class="relative justify-self-center text-center grow">
+          <h1 class="text-4xl font-title">Brighter Worlds</h1>
+          <span class="md:block font-symbol text-6xl hidden h-4 relative -top-6 text-purple-500"
+            >j</span
+          >
+        </div>
+        <div class="w-8 flex flex-col gap-2">
+          {#if $character.settings?.rollToDiscord}
+            <Icon icon="discord" />
+          {/if}
+          {#if $character.settings?.rollToBridge !== false}
+            <Icon icon="broadcast" />
+          {/if}
+        </div>
+      </div>
+      <Name bind:name={$character.name} bind:pronouns={$character.pronouns} />
+      <div
+        class="relative rounded-lg bg-white shadow-xl dark:bg-gray-900 dark:shadow-purple-400/20 ring-1 ring-gray-900/5 md:h-100 flex flex-col gap-6"
+      >
+        <div class="px-4 py-5 sm:px-6 flex flex-col gap-4 h-full">
+          <Grit bind:value={$character.grit} isDeprived={isDeprived()} isBurdened={isBurdened()} />
+          <Attribute
+            name="str"
+            bind:value={$character.str}
+            onroll={(ev) => save(ev, 'STR')}
+            ondamage={takeDamage}
+            onmaxchange={maximumChanged}
+          />
+          <Attribute
+            name="dex"
+            bind:value={$character.dex}
+            onroll={(ev) => save(ev, 'DEX')}
+            ondamage={takeDamage}
+            onmaxchange={maximumChanged}
+          />
+          <Attribute
+            name="wil"
+            bind:value={$character.wil}
+            onroll={(ev) => save(ev, 'WIL')}
+            ondamage={takeDamage}
+            onmaxchange={maximumChanged}
+          />
+          <Statuses bind:statuses={$character.statuses} />
+        </div>
+      </div>
+
+      <Equipment
+        bind:equipment={$character.equipment}
+        onroll={damage}
+        class="md:h-100"
+        isSharing={isSharing()}
+        onshare={shareItem}
+      />
+      <Magic
+        title="Spells"
+        bind:magicList={$character.spells}
+        onroll={cast}
+        castable
+        oncast={cast}
+        type={'spell'}
+        isSharing={isSharing()}
+        onshare={shareMagic}
+      />
+      <Magic
+        title="Rituals"
+        bind:magicList={$character.rituals}
+        onroll={damage}
+        type={'ritual'}
+        isSharing={isSharing()}
+        onshare={shareMagic}
+      />
+      <Calling
+        onroll={damage}
+        companionHref={owner ? (id) => accountHref(owner, id) : undefined}
+        calling={$character.calling}
+        bind:abilities={$character.abilities}
+        callingList={data.callings}
+        enhancements={data.enhancements}
+      />
+      <EulogyNotes bind:notes={$character.notes} bind:eulogy={$character.eulogy} />
+    </div>
+  </div>
+{:else if !$loadStatus}
+  <p class="relative z-10 p-6 text-center">
+    This character could not be loaded. Your saved records have not been replaced.
+  </p>
+{/if}
+<div class="text-center my-6 flex flex-col items-center">
+  <MenuLink href="/character/" icon="nav-characters">All Characters</MenuLink>
+</div>

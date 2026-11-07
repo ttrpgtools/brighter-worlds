@@ -1,4 +1,4 @@
-import { INT32_SIZE } from "./constants";
+import { INT32_SIZE } from './constants';
 
 /**
  * See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Int32Array
@@ -14,6 +14,6 @@ const I32Array: typeof Int32Array = (() => {
   } catch (_) {
     // nothing to do here
   }
-  return (Array as unknown) as typeof Int32Array;
+  return Array as unknown as typeof Int32Array;
 })();
 export { I32Array as Int32Array };
