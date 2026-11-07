@@ -111,7 +111,7 @@ export class SourceTransfer extends TransferConnection {
     }
     this.changed();
   }
-  /** Only the explicit source-side Copy button calls this, after local review. */
+  /** Only the explicit source-side Copy button calls this, after choosing sheets to copy. */
   async offer(text: string) {
     if (!this.check() || !this.connected || this.phase !== 'selecting')
       throw new Error('Start a new transfer from brighterworlds.app, or download the backup.');

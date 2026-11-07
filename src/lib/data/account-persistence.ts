@@ -624,7 +624,7 @@ export async function cacheAccountGraph(
   async function visit(id: string) {
     if (seen.has(id)) return;
     seen.add(id);
-    if (seen.size > 100) throw new Error('This linked group is too large to open at once.');
+    if (seen.size > 100) throw new Error('Too many companion sheets to open at once.');
     const remote = await client.get(id);
     if (session.current().epoch !== epoch || !canSaveAccount(session, owner))
       throw new AccountError('account_changed', 'The account changed.');

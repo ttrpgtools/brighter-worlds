@@ -118,8 +118,46 @@ describe('preview, atomic restore and retry', () => {
     expect(map.get('hero_01')).not.toBe('hero_01');
     expect(map.get('pip_01')).not.toBe('pip_01');
     const parent = await get(`bw-sheet-${map.get('hero_01')}`, db);
+    expect(parent.name).toBe('Mara (copy)');
+    expect((await get(`bw-sheet-${map.get('pip_01')}`, db)).name).toBe('Pip (copy)');
+    expect(result.find((x) => x.id === 'hero_01')?.name).toBe('Mara (copy)');
     expect(parent.abilities[0].companionSheetId).toBe(map.get('pip_01'));
     expect((await get('bw-sheet-hero_01', db)).name).toBe('Current character');
+  });
+  it('keeps same-name sheets with different IDs separate without treating their names as conflicts', async () => {
+    await set('bw-sheet-unrelated', { ...runtime(), id: 'unrelated' }, db);
+    const prepared = await prepareBackup(json, db);
+    expect(prepared.statuses.every((x) => x.state === 'new')).toBe(true);
+    await restoreBackup(prepared, 'copy', false, db);
+    expect((await get('bw-sheet-hero_01', db)).name).toBe('Mara');
+    expect((await get('bw-sheet-unrelated', db)).name).toBe('Mara');
+  });
+  it('numbers additional copies and keeps long copied names exportable', async () => {
+    await set('bw-sheet-hero_01', runtime('Current'), db);
+    await set('bw-sheet-existing_copy', { ...runtime('Mara (copy)'), id: 'existing_copy' }, db);
+    const result = await restoreBackup(await prepareBackup(json, db), 'copy', false, db);
+    const copied = await get(
+      `bw-sheet-${result.find((x) => x.id === 'hero_01')!.destinationId}`,
+      db,
+    );
+    expect(copied.name).toBe('Mara (copy 2)');
+    const long = structuredClone(fixture);
+    long.sheets[0].character.name = '🌟'.repeat(512);
+    const again = await restoreBackup(
+      await prepareBackup(JSON.stringify(long), db),
+      'copy',
+      false,
+      db,
+    );
+    const longCopy = await get(
+      `bw-sheet-${again.find((x) => x.id === 'hero_01')!.destinationId}`,
+      db,
+    );
+    expect(Array.from(longCopy.name)).toHaveLength(512);
+    expect(longCopy.name.endsWith(' (copy)')).toBe(true);
+    await expect(
+      encodeSheet(longCopy, new ExportContext(null), longCopy.id),
+    ).resolves.toBeDefined();
   });
   it('uses durable receipts after a lost acknowledgment and never resets later edits', async () => {
     await set('bw-sheet-hero_01', runtime('Current'), db);

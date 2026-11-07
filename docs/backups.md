@@ -41,6 +41,8 @@ Selecting a file validates its entire structure, companion manifest, unique IDs,
 
 Open character stores are retained after restore, so unrelated unsaved edits are not discarded by clearing the cache. Export includes current open-sheet snapshots when available, including edits whose disk write failed. Reopen other sheet/GM pages to read newly restored data, and close other Brighter Worlds tabs before replacing GM categories.
 
+When a conflicting restore makes fresh copies, their names gain **(copy)** (or **copy 2**, etc. if needed). Companion references point to the new copies. Sheets with matching names and different IDs are distinct sheets; a name alone does not cause a conflict. Retrying a completed restore reuses its receipt and does not rename or recreate sheets again.
+
 ## Private recovery archive
 
 This separate download requires acknowledgment that it can include original webhooks and private settings. It is for private/manual recovery, not sharing or ordinary restore. Version 2 includes raw localStorage text, tagged IndexedDB records/archives, and current open-sheet snapshots. Tagged graphs preserve Sets, Maps, Dates, cyclic references, typed buffers and arbitrary Blob bytes without silently converting them into empty objects. Portable image/schema limits do not discard oversized bytes from this explicit recovery path. Read failures are recorded as warnings. Account cache rows, transfer receipts and account recovery records are included only for the selected signed-in or last verified offline owner. Other owners' caches remain untouched and excluded. Account-sheet recovery can include the current in-memory draft even when IndexedDB cannot be read.

@@ -173,7 +173,7 @@ export async function saveOnlineSelection(
         name: selection.bundle.sheets.find((x) => x.id === original)?.character.name ?? id,
         phase: 'cache-missing',
         message:
-          'This transfer’s cached draft was removed. Check the account library or start a new linked copy; the original local sheets are kept.',
+          'This transfer’s cached draft was removed. Check the account library or make another copy of these sheets; the original local sheets are kept.',
       });
       continue;
     }

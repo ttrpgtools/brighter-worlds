@@ -6,6 +6,7 @@
   import SheetBackups from '$lib/SheetBackups.svelte';
   import SheetRecovery from '$lib/SheetRecovery.svelte';
   import SheetTransfer from '$lib/SheetTransfer.svelte';
+  import MigrationSheetPicker from '$lib/MigrationSheetPicker.svelte';
   import { createSheetCache, getSheetCache } from '$lib/data/sheet-manager';
   import { download } from '$lib/util/download';
   import {
@@ -59,12 +60,14 @@
       busy = false;
     }
   }
-  async function review() {
+  async function prepareSelection(copy: boolean) {
     await perform(async () => {
       const result = await exportTransferSelection([...selected]);
       if (disposed) return;
       backup = { json: result.json, bundle: result.payload as SheetBundleV1 };
       warnings = [...new Set([...warnings, ...result.warnings])];
+      if (copy) await connection?.offer(result.json);
+      else download(result.json, 'brighter-worlds-selected-sheets.json');
     });
   }
   function receive(event: MessageEvent) {
@@ -88,6 +91,7 @@
       const inventory = await transferSheets();
       if (disposed) return;
       summaries = inventory.summaries;
+      selected = summaries.map((sheet) => sheet.id);
       warnings = inventory.warnings;
     });
     return () => {
@@ -120,8 +124,8 @@
   {#if oldSite}
     <h2 class="font-subtitle text-3xl">Copy without an account</h2>
     <p>
-      Choose local characters from this browser to copy to brighterworlds.app. Linked companions are
-      included. No account is needed, and your originals stay here.
+      All readable local sheets are selected below. Uncheck any you do not want to copy. Companion
+      sheets are included automatically. No account is needed, and your originals stay here.
     </p>
     {#if (!view || view.ended) && view?.phase !== 'finished'}
       <p
@@ -133,77 +137,23 @@
       </p>
     {:else if view.phase === 'connecting'}<p role="status">Waiting for the new-site window…</p>
     {:else if view.phase === 'offered' || view.phase === 'sending'}<p role="status">
-        Sending your selected backup…
+        Sending your selected sheets…
       </p>
     {:else if view.phase === 'review'}<p role="status">
-        Review the sheets in the brighterworlds.app window and confirm the copy there.
+        Confirm the copy in the brighterworlds.app window.
       </p>{/if}
-    {#if !backup}
-      <fieldset disabled={busy} class="space-y-3">
-        <legend class="mb-3 font-subtitle text-2xl">Choose characters</legend>
-        <div class="max-h-96 space-y-2 overflow-y-auto">
-          {#each summaries as sheet (sheet.id)}
-            <label
-              class="flex cursor-pointer items-start gap-3 rounded-xl border border-purple-200 p-3 dark:border-purple-800"
-            >
-              <input type="checkbox" bind:group={selected} value={sheet.id} class="mt-1" />
-              <span class="min-w-0 break-words">
-                <strong>{sheet.name || 'Unnamed character'}</strong>
-                <span class="block text-base text-gray-600 dark:text-gray-300">
-                  {sheet.calling || 'No Calling'}{sheet.companions
-                    ? ` · ${sheet.companions} companion link(s)`
-                    : ''}
-                </span>
-              </span>
-            </label>
-          {:else}<p>
-              {busy
-                ? 'Reading local sheets…'
-                : 'No readable local sheets were found. Check that this is the browser and profile you used before.'}
-            </p>{/each}
-        </div>
-        <Button disabled={busy || !selected.length} onclick={review}>Review selected sheets</Button>
-      </fieldset>
-    {:else}
-      <section class="space-y-3" aria-labelledby="selection-heading">
-        <h2 id="selection-heading" class="font-subtitle text-2xl">
-          Selected sheets and companions
-        </h2>
-        <ul class="max-h-64 list-inside list-disc overflow-y-auto text-base">
-          {#each backup.bundle.sheets as sheet (sheet.id)}
-            <li>
-              {sheet.character.name || 'Unnamed character'}{backup.bundle.roots.includes(sheet.id)
-                ? ''
-                : ' (linked companion)'}
-            </li>
-          {/each}
-        </ul>
-        <p class="text-base">
-          These sheets include their notes, equipment and images. Private settings such as Discord
-          webhooks are excluded. You will review any existing copies on the new site before saving.
-        </p>
-        <div class="flex flex-wrap gap-3">
-          {#if view?.phase === 'selecting' && !view.ended}
-            <Button
-              disabled={busy}
-              onclick={() => perform(async () => connection?.offer(backup!.json))}
-              >Copy to brighterworlds.app</Button
-            >
-          {/if}
-          <Button
-            variant="outline"
-            onclick={() => download(backup!.json, 'brighter-worlds-characters.json')}
-            >Download selected backup</Button
-          >
-          {#if !view || view.phase === 'selecting' || view.ended}<Button
-              variant="ghost"
-              disabled={busy}
-              onclick={() => {
-                backup = undefined;
-              }}>Change selection</Button
-            >{/if}
-        </div>
-      </section>
+    {#if view?.phase !== 'finished'}
+      {#if busy && !summaries.length}<p role="status">Reading local sheets…</p>
+      {:else}
+        <MigrationSheetPicker
+          sheets={summaries}
+          bind:selected
+          disabled={busy || (!!view && !view.ended && view.phase !== 'selecting')}
+          canCopy={view?.phase === 'selecting' && !view.ended}
+          oncopy={() => prepareSelection(true)}
+          ondownload={() => prepareSelection(false)}
+        />
+      {/if}
     {/if}
     {#if busy}<p role="status">Preparing your sheets…</p>{/if}
     {#if error}<p role="alert" class="text-red-700 dark:text-red-300">{error}</p>{/if}
@@ -234,7 +184,7 @@
       <h2 class="font-subtitle text-3xl">Copy directly from the old site</h2>
       <p>
         This is the quickest path in the same browser and profile. Open the old site in a pop-up,
-        select your local characters, then review and confirm the copy here. Linked companions are
+        uncheck any sheets you do not want, then confirm the copy here. Companion sheets are
         included. No account is needed, and originals stay on the old site.
       </p>
       {#if page.url.origin === ROOT_ORIGIN}
@@ -282,7 +232,7 @@
       </li>
       <li>
         Review the selected character and its linked companions. Wait for every sheet to show Saved
-        online. A duplicate ID alone does not confirm a matching copy. If a group only partly saves,
+        online. A duplicate ID alone does not confirm a matching copy. If only some sheets save,
         keep the originals, review each result and use Retry transfer after resolving the reported
         problem.
       </li>
@@ -293,7 +243,7 @@
       </li>
     </ol>
     <p class="text-base">
-      Account saving currently supports characters and companions with image URLs. Groups with
+      Account saving currently supports characters and companions with image URLs. Sheets with
       embedded images or missing companions need a file backup or recovery first. GM data needs a
       game backup; it is not saved to your account.
     </p>
@@ -307,15 +257,16 @@
     >
     <p>
       If both sites have sheets with the same ID, matching content can remain unchanged after
-      verification. When copies differ, <strong>Keep both</strong> creates a copy of the entire incoming
-      companion group with new IDs and keeps the existing sheets. Skipping conflicts keeps the current
-      copies; skipped records have not been copied.
+      verification. When copies differ, <strong>Keep both</strong> copies the selected sheets with new
+      IDs and adds “(copy)” to their names. Companion sheets remain connected, and existing sheets are
+      kept. Skipping conflicts keeps the current copies; skipped records have not been copied.
     </p>
     <p>
       Review results for every record. A failed save or lost connection is not confirmation of a
       completed transfer. Retry the same selection or backup; verified receipts prevent it from
       being applied twice. An “already applied” result refers to that earlier transfer, so check
-      your current destination sheets too. Use a new linked copy only when you intend another copy.
+      your current destination sheets too. Make another copy only when you intend to keep an
+      additional copy.
     </p>
   </details>
   <details class="space-y-3 border-t border-purple-200 pt-5 dark:border-purple-800">

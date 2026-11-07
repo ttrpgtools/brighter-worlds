@@ -196,13 +196,18 @@
               </li>
             {/each}
           </ul>
-          <label class="flex flex-col gap-1 text-base"
-            >If characters differ
-            <select class="rounded border bg-transparent p-2" bind:value={policy} disabled={busy}>
-              <option value="copy">Keep both: copy the linked group with new IDs</option>
-              <option value="skip">Keep current copies and skip conflicts</option>
-            </select>
-          </label>
+          {#if prepared.statuses.some((sheet) => sheet.state === 'conflict')}
+            <label class="flex flex-col gap-1 text-base"
+              >If characters differ
+              <select class="rounded border bg-transparent p-2" bind:value={policy} disabled={busy}>
+                <option value="copy">Keep both: copy with new IDs</option>
+                <option value="skip">Keep existing sheets and skip conflicts</option>
+              </select>
+            </label>
+            <p class="text-base">
+              New copies have “(copy)” added to their names. Existing sheets are kept.
+            </p>
+          {/if}
         {/if}
         {#if prepared.game.length}
           <p class="text-base">Game data: {prepared.game.map((x) => label(x.key)).join(', ')}.</p>
@@ -259,9 +264,9 @@
               outcomes = [];
               warnings = [
                 ...prepared.warnings,
-                'This is a new restore. The linked character group will receive new IDs.',
+                'This is a new restore. These sheets and their companions will be copied with new IDs and “(copy)” in their names.',
               ];
-            })}>Prepare another linked copy</Button
+            })}>Make another copy</Button
         >
       {/if}
     {/if}

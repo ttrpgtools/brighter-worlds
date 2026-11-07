@@ -71,9 +71,9 @@
         const ids = new Set(result.outcomes.map((item) => item.original));
         list.update((current) => current?.filter((sheet) => !ids.has(sheet.id)));
         await goto(
-          resolve('/character/[id]', {
+          resolve(`/character/[id]?account=${encodeURIComponent(result.owner)}`, {
             id: result.outcomes.find((item) => item.original === id)!.id,
-          }) + `?account=${encodeURIComponent(result.owner)}`,
+          }),
           { replaceState: true },
         );
       }
@@ -154,7 +154,8 @@
           </li>{/each}
       </ul>
       {#if result.copied}<p>
-          A new linked group was created to keep existing account copies safe.
+          The character and its companion sheets were copied separately to keep existing account
+          sheets safe.
         </p>{/if}
       {#if result.complete}
         {#if !owner && !result.promoted}<p role="alert">

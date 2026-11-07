@@ -393,6 +393,24 @@ export async function restoreBackup(
     prepared.statuses.filter((x) => copyGraph || x.state !== 'conflict').map((x) => x.id),
   );
   const restoreOrder = Date.now();
+  const usedNames = new Set(
+    [...prepared.snapshots.entries()]
+      .filter(([key]) => key.startsWith(SHEET_PREFIX) && key !== LIST_KEY)
+      .map(([, value]) => (value as { name?: unknown } | null)?.name)
+      .filter((name): name is string => typeof name === 'string'),
+  );
+  for (const document of fresh.bundle?.sheets ?? []) usedNames.add(document.character.name);
+  function copyName(name: string) {
+    const base = Array.from(name || 'Unnamed character');
+    for (let number = 1; ; number++) {
+      const suffix = number === 1 ? ' (copy)' : ` (copy ${number})`;
+      const candidate = base.slice(0, 512 - suffix.length).join('') + suffix;
+      if (!usedNames.has(candidate)) {
+        usedNames.add(candidate);
+        return candidate;
+      }
+    }
+  }
   const sheets = (fresh.bundle?.sheets ?? [])
     .filter((x) => included.has(x.id))
     .map((document, index) => {
@@ -403,6 +421,7 @@ export async function restoreBackup(
         included,
         fresh.bundle?.unresolvedRelations,
       );
+      if (copyGraph) value.name = copyName(value.name);
       value.sortkey = restoreOrder + index;
       return { document, value };
     });
