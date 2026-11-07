@@ -24,7 +24,7 @@ The document version describes data shape only. Aegis concurrency versions, Para
 
 All objects in the schemas use `additionalProperties: false`. Producers construct payloads through explicit field allowlists at every level. Readers reject extra fields rather than silently stripping them and claiming a complete import. Schema validity is not proof of trusted origin or ownership.
 
-Never include `settings`, Discord webhooks, roll-to-bridge/Discord toggles, cookies, tokens, account IDs/permissions, sync metadata, local sorting, window/session state or raw recovery records in a portable sheet/bundle. Keep Discord preferences and webhook secrets in an origin-local settings record, scoped to the relevant local/account identity; sign-in must not publish them. This task does not remove existing Discord settings from runtime sheets.
+Never include `settings`, Discord webhooks, roll-to-bridge/Discord toggles, cookies, tokens, account IDs/permissions, sync metadata, local sorting, window/session state or raw recovery records in a portable sheet/bundle. Keep Discord preferences and webhook secrets in an origin-local settings record, scoped to the relevant local/account identity; sign-in must not publish them. Existing runtime sheets may retain Discord settings; portable exports exclude them.
 
 Unknown legacy fields must survive in the **local recovery archive**, with a visible compatibility warning and path to the original record. They do not enter a generic `extensions` or `legacy` bag in portable JSON: that would allow accidental transmission of secrets. Promote a useful unknown game field only through a reviewed allowlist/migration. The fixtures intentionally contain an unknown legacy field to document this split.
 
@@ -53,7 +53,7 @@ Bundle asset IDs are scoped to that bundle. Verify canonical base64, decoded siz
 
 Shape limits: 1,000 sheets/assets/entries per character collection, 128 statuses of at most 128 characters, names at most 512 characters, text fields at most 65,536 characters, and individual decoded image attachments at most 2 MiB. Application-level limits are additionally **512 KiB UTF-8 per sheet document**, **16 MiB total UTF-8 bundle JSON**, nesting depth at most 20, and at most 8 MiB decoded assets per bundle. Enforce total bytes/depth before expensive parsing/validation. These are initial transport bounds, not evidence of a user's quota. Oversized recoverable data stays local and downloadable through an explicitly separate raw recovery path; never trim silently to fit. The 512 KiB document bound matches the inspected Aegis source, and must be rechecked at integration time.
 
-JSON Schema checks structure, enums, extra fields and per-field counts. Importers must additionally enforce bytes/depth, normalized URLs, raster content/digests, ID uniqueness, root membership, relation closure and authorization. `uniqueItems` compares full JSON values; it does **not** establish unique sheet IDs. Keep these semantic checks explicit in the following implementation tasks.
+JSON Schema checks structure, enums, extra fields and per-field counts. Importers must additionally enforce bytes/depth, normalized URLs, raster content/digests, ID uniqueness, root membership, relation closure and authorization. `uniqueItems` compares full JSON values; it does **not** establish unique sheet IDs. Import and storage code must perform these semantic checks explicitly.
 
 ## Duplicate IDs, copies and retries
 
@@ -69,7 +69,7 @@ JSON Schema checks structure, enums, extra fields and per-field counts. Importer
 
 Content digests use SHA-256 of compact UTF-8 JSON with recursively sorted object keys (JavaScript code-unit order), unchanged array order, normal JSON scalar encoding and no Unicode normalization. A document digest covers its entire normalized v1 document. A transfer digest covers ordered roots, ordered normalized sheets and ordered validated asset descriptors (`id`, `mediaType`, `byteLength`, `sha256`); exclude export ID/time and base64 bytes after verifying their content hashes. Bind source origin/export ID separately in the receipt.
 
-Destination receipts contain source origin/export ID, canonical selected-content digest, complete source→destination ID mapping and per-record commit outcomes; they contain no auth credentials. Only successful durable writes/readback produce success receipts. Journal writes, rollback and recovery UX are implementation work for migration/import tasks, not behavior supplied by the schema.
+Destination receipts contain source origin/export ID, canonical selected-content digest, complete source→destination ID mapping and per-record commit outcomes; they contain no auth credentials. Only successful durable writes/readback produce success receipts. Journal writes, rollback and recovery are responsibilities of the migration/import implementation; schema validation alone does not provide them.
 
 ## Storage ownership and keys
 
@@ -112,7 +112,7 @@ Unversioned source data is **v0 input**, not a valid v1 document. JSON files can
 
 Missing legacy optional fields normalize to pronouns/notes `""`, arrays `[]`, statuses `[]`, relations `[]`, and `createdAt: null`. Missing/malformed grit or attributes, invalid known-field types or ID disagreement with the original storage key are recovery cases requiring an explicit decision; do not invent gameplay values or overwrite a good destination. Recover a missing sheet ID from its storage key only when unambiguous, and journal that decision. Preserve valid zero/false values using presence checks rather than `value || default`.
 
-The definition task established the following acceptance criteria. The backup implementation now supplies the upgrader/runtime adapters and tests; persistent migration and restore behavior are described in the implementation documents:
+The upgrader, runtime adapters and tests enforce the following compatibility criteria. See [backups](backups.md) and [storage recovery](storage-recovery.md) for persistent migration and restore behavior:
 
 1. Normalize the root fixture to the exact v1 fixture, leaving input and raw recovery source unchanged; report exclusions and unresolved relations.
 2. A dev runtime record with actual Set statuses and a Blob image exports to a valid bundle and restores equivalent state and byte-identical images. Known game fields survive; settings and unknown fields remain local.
@@ -120,8 +120,8 @@ The definition task established the following acceptance criteria. The backup im
 4. Whole-graph copying rewrites parent/companion IDs consistently, repeated transfer is idempotent, and missing/ambiguous dependencies remain visible.
 5. Unsupported versions, invalid/oversized/deep data, invalid images and schema violations leave the original bytes and destination unchanged. Any partial durable progress has a resumable journal and accurate per-record outcomes.
 
-The contract tests validate the examples and schema rejection cases; additional backup/migration tests exercise the implemented adapters, transactional storage and restore flows. Cloud saving is still a later task. Run `pnpm test:unit --run src/lib/data/sheet-format/contract.test.ts`.
+The contract tests validate the examples and schema rejection cases; additional backup/migration tests exercise the implemented adapters, transactional storage and restore flows. Account storage uses this format through the [sheet APIs](account-services.md). Run `pnpm test:unit --run src/lib/data/sheet-format/contract.test.ts`.
 
-## Validation recorded
+## Validation
 
-`pnpm test:unit --run`: 6 files / 45 tests passed, including 30 contract checks. `pnpm check`: no new errors; the existing `src/routes/play/log/+page.svelte:80` Cta narrowing error remains. Formatting and `git diff --check` pass. No dev server, storage migration or deployment was run.
+Run `pnpm test:unit --run src/lib/data/sheet-format/contract.test.ts` for the portable-format contract. The full unit suite also covers normalization, backup/restore and persistent recovery. Run `pnpm check` for Svelte/TypeScript validation.

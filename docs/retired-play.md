@@ -1,6 +1,6 @@
 # Retired play integrations
 
-Miro embedding, the PeerJS game mesh, and the Narrator feed/iframe bridge have been retired. Parallax integration remains a later task. This cleanup makes no hosting, DNS, origin, or persisted-data changes.
+Miro embedding, the PeerJS game mesh, and the Narrator feed/iframe bridge have been retired. Compatibility routes and retained sharing behavior are described below.
 
 ## Compatibility routes
 
@@ -21,4 +21,4 @@ The only removed package dependencies are `peerjs` and `split.js`; the latter wa
 
 Automated checks cover both root/dev Discord item-link round trips (including Unicode), retained event types and no echo, multiple/repeated same-tab pickers, two open tabs of one character, old presence messages, cleanup, invalid payloads, inventory stacking and failed/pending saves. Existing migration, backup, persistence and game-tool checks continue to run. Production compilation and Svelte/TypeScript checks validate the compatibility pages and removed imports.
 
-No dev server or live browser-storage test was run. Before rollout, exercise a two-tab inventory receipt, a test Discord webhook, GM roll sharing and the retired URLs on both origins. Browser storage remains scoped to its origin; this cleanup does not implement the later dev-to-root migration popup.
+Run `pnpm test:unit --run` and `pnpm check` for automated verification. Browser storage and cross-tab messaging remain scoped to their origin.

@@ -40,10 +40,10 @@ Editing after a review invalidates that preview. A document deleted elsewhere is
 
 **Delete online** is a separate confirmed, versioned action and retains the cached draft plus a recovery archive. **Remove browser cache** is available in the library, archives that row locally, and never deletes the online sheet. **Keep a local copy** uses the existing validated file restore path with fresh linked IDs. Portable downloads omit credentials and private settings. Private recovery includes raw settings/webhooks after an explicit warning and limits account rows/receipts/recovery records to the selected owner; local/GM recovery data remains included.
 
-## Images and rollout verification
+## Images and verification
 
 Online saving currently supports HTTP(S) image URLs. Embedded Blob images remain supported by browser sheets and file backups, but online transfer rejects them with a clear message. No image bytes are silently dropped or published. Aegis's public/cropped artwork service needs a separate product decision before it can handle arbitrary sheet/item art.
 
-Automated tests cover two independent cached controllers against versioned storage, offline reloads, account switching, stale responses, edits during saves/comparisons/refreshes, lost acknowledgments, local write failures, conflict replacement/reload, deletion, companion remapping, sensitive exclusions and partial/repeated transfers. UI smoke checks use the already-running local app and a synthetic local character. No real account upload or deletion was used for verification. Live two-device/origin behavior, deployed bindings/policies and quota handling remain checks for the separately authorized dev rollout described in [account-services.md](account-services.md).
+Automated tests cover two independent cached controllers against versioned storage, offline reloads, account switching, stale responses, edits during saves/comparisons/refreshes, lost acknowledgments, local write failures, conflict replacement/reload, deletion, companion remapping, sensitive exclusions and partial/repeated transfers.
 
-Validation after the UX follow-up: **209 tests in 21 files pass**; `pnpm check` reports **0 errors and 0 warnings**. The Pages production build succeeds; both hosting build targets also passed during the persistence implementation. Formatting and diff checks pass. Svelte analysis checks the changed components. Existing rich descriptions remain guarded by `sanitizeDescription`; dynamic wizard navigation preserves the resolved application base.
+The server authentication and HTTP contract are documented in [account-services.md](account-services.md). Run `pnpm test:unit --run` and `pnpm check` to verify the implementation.
